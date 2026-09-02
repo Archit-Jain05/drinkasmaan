@@ -1,0 +1,445 @@
+{%- comment -%}
+  Asmaan splash screen.
+
+  A full-screen intro that counts up while the page loads, then wipes away to
+  reveal the site — the pattern used on ciaoenergy.com.
+
+  Place it FIRST on the template. The curtain is position:fixed so it covers
+  the page from wherever it sits, but anything rendered above it paints for a
+  frame before the curtain lands on top.
+
+  Nothing outside this section is touched: the stylesheet and module are loaded
+  by URL from here rather than registered in snippets/stylesheets.liquid and
+  snippets/scripts.liquid, and no theme class is overridden.
+{%- endcomment -%}
+
+{%- liquid
+  if section.settings.background_gradient != blank
+    assign splash_background = section.settings.background_gradient
+  else
+    assign splash_background = section.settings.background_color
+  endif
+
+  assign splash_logo = section.settings.logo | default: settings.logo
+
+  case section.settings.media_source
+    when 'can'
+      assign can_asset = 'asmaan-can-' | append: section.settings.can_flavour | append: '.webp'
+      assign media_url = can_asset | asset_url
+    when 'image'
+      if section.settings.image != blank
+        assign media_url = section.settings.image | image_url: width: 1100
+      endif
+  endcase
+-%}
+
+{%- comment -%}
+  Critical bits inline so the curtain is correctly placed on the first paint,
+  before the stylesheet below has arrived. The rest lives in the asset.
+{%- endcomment -%}
+<style>
+  .asmaan-splash { display: none; }
+  html[data-asmaan-splash] .asmaan-splash { display: block; }
+  html[data-asmaan-splash='active'],
+  html[data-asmaan-splash='active'] body { overflow: hidden; }
+  .asmaan-splash__curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    background: {{ splash_background }};
+    color: {{ section.settings.text_color }};
+  }
+</style>
+
+{%- comment -%}
+  Runs at parse time, before the page paints, so the lock is in place from the
+  first frame. It also decides whether this visit gets a splash at all — which
+  keeps a suppressed visit from ever flashing the curtain.
+
+  With JavaScript off the attribute is never set, the curtain stays
+  display:none, and the shopper gets the page as normal.
+{%- endcomment -%}
+<script
+  data-frequency="{{ section.settings.frequency }}"
+  data-max-duration="{{ section.settings.max_duration }}"
+>
+  (function () {
+    var script = document.currentScript;
+    var frequency = script.getAttribute('data-frequency');
+    var design = !!(window.Shopify && window.Shopify.designMode);
+    var show = true;
+
+    if (!design && frequency !== 'always') {
+      try {
+        var store = frequency === 'session' ? window.sessionStorage : window.localStorage;
+        var key = 'asmaan:splash:seen';
+        var last = store.getItem(key);
+
+        show = frequency === 'session' ? !last : !last || Date.now() - Number(last) > 86400000;
+        if (show) store.setItem(key, String(Date.now()));
+      } catch (error) {
+        /* private browsing, blocked storage — a splash beats a broken gate */
+        show = true;
+      }
+    }
+
+    if (!show) return;
+
+    document.documentElement.setAttribute('data-asmaan-splash', design ? 'preview' : 'active');
+
+    /* The module might never arrive. Nothing may leave the page locked. */
+    var ceiling = Number(script.getAttribute('data-max-duration')) || 7000;
+    setTimeout(function () {
+      if (!window.__asmaanSplashActive) document.documentElement.removeAttribute('data-asmaan-splash');
+    }, ceiling + 4000);
+    setTimeout(function () {
+      document.documentElement.removeAttribute('data-asmaan-splash');
+    }, ceiling + 15000);
+  })();
+</script>
+
+{{ 'asmaan-splash.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-splash.js' | asset_url }}" type="module"></script>
+
+<div
+  class="asmaan-splash"
+  style="
+    --asmaan-splash-bg: {{ splash_background }};
+    --asmaan-splash-fg: {{ section.settings.text_color }};
+    --asmaan-splash-accent: {{ section.settings.accent_color }};
+  "
+  data-asmaan-splash-root
+  data-align="{{ section.settings.alignment }}"
+  data-percent="{{ section.settings.show_percent }}"
+  data-bar="{{ section.settings.show_bar }}"
+  data-accent="{{ section.settings.show_accent }}"
+  data-min-duration="{{ section.settings.min_duration }}"
+  data-max-duration="{{ section.settings.max_duration }}"
+  data-reveal-duration="{{ section.settings.reveal_duration }}"
+  role="progressbar"
+  aria-label="{{ section.settings.aria_label | default: 'Loading' | escape }}"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+>
+  {%- if section.settings.show_accent -%}
+    <div class="asmaan-splash__accent" data-asmaan-splash-accent></div>
+  {%- endif -%}
+
+  <div class="asmaan-splash__curtain" data-asmaan-splash-curtain>
+    <div class="asmaan-splash__stage" data-asmaan-splash-stage>
+      {%- case section.settings.media_source -%}
+        {%- when 'can' -%}
+          <img
+            class="asmaan-splash__media asmaan-splash__media--can"
+            src="{{ media_url }}"
+            alt=""
+            width="760"
+            height="1950"
+            fetchpriority="high"
+            decoding="async"
+            data-asmaan-splash-media
+          >
+
+        {%- when 'image' -%}
+          {%- if media_url -%}
+            <img
+              class="asmaan-splash__media"
+              src="{{ media_url }}"
+              alt=""
+              width="{{ section.settings.image.width }}"
+              height="{{ section.settings.image.height }}"
+              fetchpriority="high"
+              decoding="async"
+              data-asmaan-splash-media
+            >
+          {%- endif -%}
+
+        {%- when 'video' -%}
+          {%- if section.settings.video != blank -%}
+            <video
+              class="asmaan-splash__media"
+              {% if section.settings.video.preview_image %}
+                poster="{{ section.settings.video.preview_image | image_url: width: 1100 }}"
+              {% endif %}
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="auto"
+              data-asmaan-splash-media
+            >
+              {%- for source in section.settings.video.sources -%}
+                <source src="{{ source.url }}" type="{{ source.mime_type }}">
+              {%- endfor -%}
+            </video>
+          {%- endif -%}
+      {%- endcase -%}
+    </div>
+
+    <div class="asmaan-splash__foot" data-asmaan-splash-foot>
+      {%- if splash_logo != blank -%}
+        <img
+          class="asmaan-splash__logo"
+          src="{{ splash_logo | image_url: width: 520 }}"
+          alt="{{ shop.name | escape }}"
+          width="{{ splash_logo.width }}"
+          height="{{ splash_logo.height }}"
+          decoding="async"
+        >
+      {%- elsif section.settings.wordmark != blank -%}
+        <p class="asmaan-splash__wordmark">{{ section.settings.wordmark }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.tagline != blank -%}
+        <p class="asmaan-splash__tagline">{{ section.settings.tagline }}</p>
+      {%- endif -%}
+
+      <span class="asmaan-splash__percent" data-asmaan-splash-percent>0%</span>
+
+      <span class="asmaan-splash__bar">
+        <span class="asmaan-splash__bar-fill" data-asmaan-splash-bar></span>
+      </span>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Asmaan splash",
+  "tag": "div",
+  "class": "asmaan-splash-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Place this section first on the template. It covers the page while it loads, then wipes away."
+    },
+    {
+      "type": "header",
+      "content": "Artwork"
+    },
+    {
+      "type": "select",
+      "id": "media_source",
+      "label": "Show",
+      "options": [
+        {
+          "value": "can",
+          "label": "Asmaan can"
+        },
+        {
+          "value": "image",
+          "label": "Custom image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        },
+        {
+          "value": "none",
+          "label": "Nothing"
+        }
+      ],
+      "default": "can"
+    },
+    {
+      "type": "select",
+      "id": "can_flavour",
+      "label": "Can",
+      "options": [
+        {
+          "value": "mango",
+          "label": "Mango"
+        },
+        {
+          "value": "jamun",
+          "label": "Jamun"
+        },
+        {
+          "value": "magenta",
+          "label": "Magenta"
+        }
+      ],
+      "default": "mango",
+      "visible_if": "{{ section.settings.media_source == 'can' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "visible_if": "{{ section.settings.media_source == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "visible_if": "{{ section.settings.media_source == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "info": "Falls back to the theme logo. Leave both empty to use the wordmark below."
+    },
+    {
+      "type": "text",
+      "id": "wordmark",
+      "label": "Wordmark",
+      "default": "Asmaan"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline"
+    },
+    {
+      "type": "header",
+      "content": "Readout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_percent",
+      "label": "Show percentage",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bar",
+      "label": "Show progress bar",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "end",
+          "label": "Right"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "text",
+      "id": "aria_label",
+      "label": "Screen reader label",
+      "default": "Loading"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#0b0b0c"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient",
+      "info": "Overrides the background color when set."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#f4f1ea"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_accent",
+      "label": "Second panel on exit",
+      "info": "A trailing panel behind the curtain, so the reveal wipes in two layers.",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Second panel",
+      "default": "#17161a",
+      "visible_if": "{{ section.settings.show_accent }}"
+    },
+    {
+      "type": "header",
+      "content": "Timing"
+    },
+    {
+      "type": "range",
+      "id": "min_duration",
+      "label": "Minimum on screen",
+      "min": 400,
+      "max": 4000,
+      "step": 100,
+      "unit": "ms",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "max_duration",
+      "label": "Give up waiting after",
+      "min": 2000,
+      "max": 12000,
+      "step": 500,
+      "unit": "ms",
+      "default": 7000,
+      "info": "The counter releases to 100% even if the page is still loading."
+    },
+    {
+      "type": "range",
+      "id": "reveal_duration",
+      "label": "Wipe duration",
+      "min": 400,
+      "max": 2000,
+      "step": 100,
+      "unit": "ms",
+      "default": 900
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "select",
+      "id": "frequency",
+      "label": "Show",
+      "options": [
+        {
+          "value": "session",
+          "label": "Once per visit"
+        },
+        {
+          "value": "day",
+          "label": "Once per day"
+        },
+        {
+          "value": "always",
+          "label": "Every page load"
+        }
+      ],
+      "default": "session",
+      "info": "Always shows in the theme editor so you can style it."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Asmaan splash",
+      "category": "Asmaan"
+    }
+  ]
+}
+{% endschema %}
