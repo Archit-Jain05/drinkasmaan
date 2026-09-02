@@ -1,0 +1,155 @@
+/* Interactive 3D Asmaan can — layout for snippets/asmaan-can-3d.liquid. */
+
+.asmaan-can {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin-inline: auto;
+}
+
+.asmaan-can__poster,
+.asmaan-can__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.asmaan-can__poster {
+  object-fit: contain;
+  transition: opacity 0.7s ease;
+}
+
+.asmaan-can__poster[data-faded="true"] {
+  opacity: 0;
+}
+
+.asmaan-can__canvas {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  /* vertical scrolling still has to work with a finger on the can */
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.asmaan-can[data-asmaan-can-ready="true"] .asmaan-can__canvas {
+  opacity: 1;
+}
+
+.asmaan-can__canvas:active {
+  cursor: grabbing;
+}
+
+.asmaan-can[data-draggable="false"] .asmaan-can__canvas {
+  pointer-events: none;
+  cursor: default;
+}
+
+/* --- the section around it ------------------------------------------------ */
+
+.asmaan-cans {
+  padding: 3.5rem 1.5rem 4.5rem;
+}
+
+.asmaan-cans__inner {
+  max-width: 1400px;
+  margin-inline: auto;
+}
+
+.asmaan-cans__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.asmaan-cans__title {
+  margin: 0;
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.asmaan-cans__views {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.asmaan-cans__view {
+  padding: 0.4rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  font: inherit;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.asmaan-cans__view:hover {
+  opacity: 0.85;
+}
+
+.asmaan-cans__view[aria-pressed="true"] {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  opacity: 1;
+}
+
+.asmaan-cans__grid {
+  display: grid;
+  gap: 3.5rem 2rem;
+}
+
+@media screen and (min-width: 750px) {
+  .asmaan-cans__grid {
+    grid-template-columns: repeat(var(--asmaan-cans-columns, 3), minmax(0, 1fr));
+  }
+}
+
+.asmaan-cans__item {
+  margin: 0;
+  text-align: center;
+}
+
+.asmaan-cans__caption {
+  margin-top: 1.5rem;
+}
+
+.asmaan-cans__name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  font-size: 1.125rem;
+}
+
+.asmaan-cans__swatch {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+  transform: translateY(1px);
+}
+
+.asmaan-cans__note {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  opacity: 0.6;
+}
+
+.asmaan-cans__hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.4;
+}

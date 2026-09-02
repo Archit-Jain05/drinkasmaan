@@ -1,0 +1,88 @@
+{%- comment -%}
+  One interactive 3D Asmaan can.
+
+  Renders a poster image straight away and swaps in a WebGL can once the engine
+  has loaded, so the markup is useful with JavaScript off, on a crawler, and on
+  a device with no WebGL.
+
+  Accepts:
+    label       - {Object|String} label texture: an image_picker/file image, or
+                  the filename of a theme asset (e.g. "asmaan-label-mango.jpg").
+                  This is the 360 degree print, not a photo of the can.
+    poster      - {Object|String} still shown until the can is ready. Optional.
+    alt         - {String}  accessible name. Default: "Asmaan can".
+    tint        - {String}  colour the environment bounces back onto the metal.
+    ground      - {String}  what the can is standing on, reflection-wise. Match
+                  the section background or the base goes black.
+    detail      - {String}  "high" or "low". Default "high"; use "low" in grids.
+    draggable   - {Boolean} let the pointer turn the can. Default true.
+    idle_spin   - {Number}  rad/s the can drifts at when left alone. Default 0.
+    view        - {String}  panel to open on: front, back, left, right.
+    ratio       - {String}  CSS aspect-ratio for the box. Default "760 / 1950".
+    id          - {String}  unique id, so the view buttons can find this can.
+
+  Usage:
+    {% render 'asmaan-can-3d', label: 'asmaan-label-jamun.jpg', view: 'front' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign can_alt = alt | default: 'Asmaan can'
+  assign can_ratio = ratio | default: '760 / 1950'
+  assign can_detail = detail | default: 'high'
+  assign can_view = view | default: 'front'
+
+  if label.src
+    assign label_url = label | image_url: width: 2048
+  elsif label contains '//'
+    assign label_url = label
+  else
+    assign label_url = label | asset_url
+  endif
+
+  if poster.src
+    assign poster_url = poster | image_url: width: 760
+  elsif poster contains '//'
+    assign poster_url = poster
+  elsif poster != blank
+    assign poster_url = poster | asset_url
+  endif
+
+  case can_view
+    when 'right'
+      assign spin = -1.5707963
+    when 'back'
+      assign spin = 3.1415927
+    when 'left'
+      assign spin = 1.5707963
+    else
+      assign spin = 0
+  endcase
+-%}
+
+<div
+  class="asmaan-can"
+  style="aspect-ratio: {{ can_ratio }};"
+  {% if id %}id="{{ id }}"{% endif %}
+  role="img"
+  aria-label="{{ can_alt | escape }}{% if draggable != false %} — interactive 3D model, drag it to turn the can{% endif %}"
+  data-asmaan-can
+  data-engine="{{ 'asmaan-can-engine.js' | asset_url }}"
+  data-label="{{ label_url }}"
+  data-spin="{{ spin }}"
+  data-detail="{{ can_detail }}"
+  data-draggable="{% if draggable == false %}false{% else %}true{% endif %}"
+  {% if tint %}data-tint="{{ tint }}"{% endif %}
+  {% if ground %}data-ground="{{ ground }}"{% endif %}
+  {% if idle_spin %}data-idle-spin="{{ idle_spin }}"{% endif %}
+>
+  {%- if poster_url -%}
+    <img
+      class="asmaan-can__poster"
+      src="{{ poster_url }}"
+      alt=""
+      loading="lazy"
+      decoding="async"
+      data-asmaan-can-poster
+    >
+  {%- endif -%}
+</div>
