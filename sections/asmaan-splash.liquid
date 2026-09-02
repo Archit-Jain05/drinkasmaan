@@ -39,7 +39,8 @@
 {%- endcomment -%}
 <style>
   .asmaan-splash { display: none; }
-  html[data-asmaan-splash] .asmaan-splash { display: block; }
+  html[data-asmaan-splash] .asmaan-splash,
+  .asmaan-splash--editor { display: block; }
   html[data-asmaan-splash='active'],
   html[data-asmaan-splash='active'] body { overflow: hidden; }
   .asmaan-splash__curtain {
@@ -51,58 +52,69 @@
   }
 </style>
 
-{%- comment -%}
-  Runs at parse time, before the page paints, so the lock is in place from the
-  first frame. It also decides whether this visit gets a splash at all — which
-  keeps a suppressed visit from ever flashing the curtain.
-
-  With JavaScript off the attribute is never set, the curtain stays
-  display:none, and the shopper gets the page as normal.
-{%- endcomment -%}
-<script
-  data-frequency="{{ section.settings.frequency }}"
-  data-max-duration="{{ section.settings.max_duration }}"
->
-  (function () {
-    var script = document.currentScript;
-    var frequency = script.getAttribute('data-frequency');
-    var design = !!(window.Shopify && window.Shopify.designMode);
-    var show = true;
-
-    if (!design && frequency !== 'always') {
-      try {
-        var store = frequency === 'session' ? window.sessionStorage : window.localStorage;
-        var key = 'asmaan:splash:seen';
-        var last = store.getItem(key);
-
-        show = frequency === 'session' ? !last : !last || Date.now() - Number(last) > 86400000;
-        if (show) store.setItem(key, String(Date.now()));
-      } catch (error) {
-        /* private browsing, blocked storage — a splash beats a broken gate */
-        show = true;
-      }
-    }
-
-    if (!show) return;
-
-    document.documentElement.setAttribute('data-asmaan-splash', design ? 'preview' : 'active');
-
-    /* The module might never arrive. Nothing may leave the page locked. */
-    var ceiling = Number(script.getAttribute('data-max-duration')) || 7000;
-    setTimeout(function () {
-      if (!window.__asmaanSplashActive) document.documentElement.removeAttribute('data-asmaan-splash');
-    }, ceiling + 4000);
-    setTimeout(function () {
-      document.documentElement.removeAttribute('data-asmaan-splash');
-    }, ceiling + 15000);
-  })();
-</script>
-
 {{ 'asmaan-splash.css' | asset_url | stylesheet_tag }}
-<script src="{{ 'asmaan-splash.js' | asset_url }}" type="module"></script>
+
+{%- comment -%}
+  The theme editor injects section markup into the live preview, and injected
+  <script> tags never execute. So the editor gets no JavaScript at all: the
+  curtain is made visible server-side by the --editor class instead, laid out
+  in normal flow (see the stylesheet) so it can be styled without covering the
+  canvas. The real overlay behaviour is on the storefront and preview links.
+{%- endcomment -%}
+{%- unless request.design_mode -%}
+  {%- comment -%}
+    Runs at parse time, before the page paints, so the lock is in place from
+    the first frame. It also decides whether this visit gets a splash at all —
+    which keeps a suppressed visit from ever flashing the curtain.
+
+    With JavaScript off the attribute is never set, the curtain stays
+    display:none, and the shopper gets the page as normal.
+  {%- endcomment -%}
+  <script
+    data-frequency="{{ section.settings.frequency }}"
+    data-max-duration="{{ section.settings.max_duration }}"
+  >
+    (function () {
+      var script = document.currentScript;
+      var frequency = script.getAttribute('data-frequency');
+      var show = true;
+
+      if (frequency !== 'always') {
+        try {
+          var store = frequency === 'session' ? window.sessionStorage : window.localStorage;
+          var key = 'asmaan:splash:seen';
+          var last = store.getItem(key);
+
+          show = frequency === 'session' ? !last : !last || Date.now() - Number(last) > 86400000;
+          if (show) store.setItem(key, String(Date.now()));
+        } catch (error) {
+          /* private browsing, blocked storage — a splash beats a broken gate */
+          show = true;
+        }
+      }
+
+      if (!show) return;
+
+      document.documentElement.setAttribute('data-asmaan-splash', 'active');
+
+      /* The module might never arrive. Nothing may leave the page locked. */
+      var ceiling = Number(script.getAttribute('data-max-duration')) || 7000;
+      setTimeout(function () {
+        if (!document.documentElement.hasAttribute('data-asmaan-splash-live')) {
+          document.documentElement.removeAttribute('data-asmaan-splash');
+        }
+      }, ceiling + 4000);
+      setTimeout(function () {
+        document.documentElement.removeAttribute('data-asmaan-splash');
+      }, ceiling + 15000);
+    })();
+  </script>
+
+  <script src="{{ 'asmaan-splash.js' | asset_url }}" type="module"></script>
+{%- endunless -%}
 
 <div
-  class="asmaan-splash"
+  class="asmaan-splash{% if request.design_mode %} asmaan-splash--editor{% endif %}"
   style="
     --asmaan-splash-bg: {{ splash_background }};
     --asmaan-splash-fg: {{ section.settings.text_color }};

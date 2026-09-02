@@ -232,25 +232,6 @@ function init(scope = document) {
   run(root);
 }
 
+// The section renders no <script> at all in the theme editor, so there is no
+// design-mode branch to handle here — reaching this file means a real visit.
 init();
-
-// Theme editor: let the merchant replay the splash by selecting the section,
-// and re-run it when the section is re-rendered after a setting change.
-if (window.Shopify?.designMode) {
-  /** @param {Event} event */
-  const replay = (event) => {
-    const target = event.target;
-    if (!(target instanceof HTMLElement)) return;
-
-    const root = target.querySelector('[data-asmaan-splash-root]');
-    if (!(root instanceof HTMLElement)) return;
-
-    root.hidden = false;
-    root.dataset.running = 'false';
-    document.documentElement.setAttribute(STATE_ATTRIBUTE, 'preview');
-    init(target);
-  };
-
-  document.addEventListener('shopify:section:load', replay);
-  document.addEventListener('shopify:section:select', replay);
-}

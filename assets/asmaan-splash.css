@@ -12,8 +12,29 @@
   display: none;
 }
 
-html[data-asmaan-splash] .asmaan-splash {
+html[data-asmaan-splash] .asmaan-splash,
+.asmaan-splash--editor {
   display: block;
+}
+
+/* --- theme editor --------------------------------------------------------
+   The editor injects section markup into the preview, and injected <script>
+   tags never run — so the section ships no JavaScript there and is made
+   visible by this class instead.
+
+   It also drops out of position:fixed into normal flow. A merchant styling the
+   splash needs to see it, but not to be trapped behind it: in flow they can
+   scroll straight past to the rest of the page. */
+
+.asmaan-splash--editor .asmaan-splash__curtain {
+  position: relative;
+  z-index: 0;
+  height: 100vh;
+  height: 100svh;
+}
+
+.asmaan-splash--editor .asmaan-splash__accent {
+  display: none;
 }
 
 /* Scroll is only locked for a real run ("active"). In the theme editor the
