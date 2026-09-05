@@ -1,6 +1,6 @@
 /**
- * Asmaan Interactive Experience Engine & 3D WebGL Can Stage
- * Complete port of https://asmaan-one.vercel.app/ for Shopify
+ * Asmaan Interactive Experience Engine & 3D WebGL Multi-Can Carousel
+ * 100% Exact Port of https://asmaan-one.vercel.app/ for Shopify
  */
 
 (function () {
@@ -76,6 +76,30 @@
     { at: 1, spin: 5.9, pitch: 0.12, roll: -0.1, x: 0.02, y: -0.34, scale: 0.8 }
   ];
 
+  // Carousel Layout Constants
+  var SLOT_OF_HALF_WIDTH = 0.78;
+  var MIN_SLOT = 2.2;
+  var RING_SLOTS = 6;
+  var DEPTH = 1.5;
+  var WAVE_HEIGHT = 0.3;
+  var WAVE_PER_SLOT = 2.27;
+  var TURN_PER_SLOT = 0.7;
+  var TILT_X = -0.05;
+  var LEAN_Y = 0.28;
+  var LEAN_Z = 0.06;
+  var TRACK_FOLLOW = 7;
+  var CLOSE_UP_DOLLY = 0.53;
+  var CLOSE_UP_CAM_Y = -0.7;
+  var CLOSE_UP_CAM_PITCH = 0.16;
+  var STUDIO_DIM = 0.98;
+  var SPOT_INTENSITY = 7;
+  var CLOSE_UP_ENV = 0.06;
+  var SPOT_HEIGHT = 3.2;
+  var SPOT_DEPTH = 3;
+  var SPOT_AIM = 0.9;
+  var FRICTION = 2.4;
+  var IDLE_DELAY_MS = 1800;
+
   var currentTasteIndex = 0;
   var motionMuted = false;
 
@@ -90,6 +114,16 @@
   function range(value, from, to) {
     if (to === from) return value >= to ? 1 : 0;
     return Math.min(Math.max((value - from) / (to - from), 0), 1);
+  }
+
+  function wrapAngle(radians) {
+    return radians - Math.PI * 2 * Math.round(radians / (Math.PI * 2));
+  }
+
+  function wrapRange(value, min, max) {
+    var size = max - min;
+    var folded = (value - min) % size;
+    return (folded < 0 ? folded + size : folded) + min;
   }
 
   function poseAt(progress) {
@@ -119,37 +153,53 @@
     return -rect.top / travel;
   }
 
-  // --- Three.js 3D Model Construction -------------------------------------
   function shellProfile(THREE) {
-    var points = [
-      new THREE.Vector2(0.0, 0.168),
-      new THREE.Vector2(0.26, 0.162),
-      new THREE.Vector2(0.46, 0.138),
-      new THREE.Vector2(0.61, 0.083),
-      new THREE.Vector2(0.72, 0.026)
+    var v2 = function (x, y) { return new THREE.Vector2(x, y); };
+    return [
+      v2(0.0, 0.168),
+      v2(0.26, 0.162),
+      v2(0.46, 0.138),
+      v2(0.61, 0.083),
+      v2(0.72, 0.026),
+      v2(0.842, 0.0), v2(0.8804, 0.0547), v2(0.9265, 0.1094), v2(0.9608, 0.164), v2(0.9837, 0.2187),
+      v2(0.9937, 0.2734), v2(0.9956, 0.3281), v2(0.9956, 0.3828), v2(0.9956, 0.4375), v2(0.9956, 0.4921),
+      v2(0.9956, 0.5468), v2(0.9956, 0.6015), v2(0.9956, 0.6562), v2(0.9956, 0.7109), v2(0.9956, 0.7655),
+      v2(0.9956, 0.8202), v2(0.9956, 0.8749), v2(0.9956, 0.9296), v2(0.9956, 0.9843), v2(0.9956, 1.0389),
+      v2(0.9956, 1.0936), v2(0.9956, 1.1483), v2(0.9956, 1.203), v2(0.9956, 1.2577), v2(0.9956, 1.3124),
+      v2(0.9956, 1.367), v2(0.9958, 1.4217), v2(0.9966, 1.4764), v2(0.9981, 1.5311), v2(0.9995, 1.5858),
+      v2(1.0, 1.6404), v2(1.0, 1.6951), v2(1.0, 1.7498), v2(1.0, 1.8045), v2(1.0, 1.8592),
+      v2(1.0, 1.9139), v2(1.0, 1.9685), v2(1.0, 2.0232), v2(1.0, 2.0779), v2(1.0, 2.1326),
+      v2(1.0, 2.1873), v2(1.0, 2.2419), v2(1.0, 2.2966), v2(1.0, 2.3513), v2(1.0, 2.406),
+      v2(1.0, 2.4607), v2(1.0, 2.5154), v2(1.0, 2.57), v2(1.0, 2.6247), v2(1.0, 2.6794),
+      v2(1.0, 2.7341), v2(1.0, 2.7888), v2(1.0, 2.8434), v2(1.0, 2.8981), v2(1.0, 2.9528),
+      v2(1.0, 3.0075), v2(1.0, 3.0622), v2(1.0, 3.1168), v2(1.0, 3.1715), v2(1.0, 3.2262),
+      v2(1.0, 3.2809), v2(1.0, 3.3356), v2(1.0, 3.3903), v2(0.9997, 3.4449), v2(0.9986, 3.4996),
+      v2(0.997, 3.5543), v2(0.9959, 3.609), v2(0.9956, 3.6637), v2(0.9956, 3.7183), v2(0.9956, 3.773),
+      v2(0.9956, 3.8277), v2(0.9956, 3.8824), v2(0.9956, 3.9371), v2(0.9956, 3.9918), v2(0.9956, 4.0464),
+      v2(0.9956, 4.1011), v2(0.9956, 4.1558), v2(0.9956, 4.2105), v2(0.9956, 4.2652), v2(0.9956, 4.3198),
+      v2(0.9956, 4.3745), v2(0.9956, 4.4292), v2(0.9956, 4.4839), v2(0.9956, 4.5386), v2(0.9956, 4.5933),
+      v2(0.9956, 4.6479), v2(0.9956, 4.7026), v2(0.9955, 4.7573), v2(0.9939, 4.812), v2(0.9865, 4.8667),
+      v2(0.9711, 4.9213), v2(0.9551, 4.976), v2(0.9501, 5.0307), v2(0.9479, 5.0854), v2(0.9195, 5.1401),
+      v2(0.8803, 5.1947),
+      v2(0.892, HEIGHT + 0.012),
+      v2(0.901, HEIGHT + 0.03),
+      v2(0.895, HEIGHT + 0.048),
+      v2(0.871, HEIGHT + 0.056),
+      v2(0.847, HEIGHT + 0.044),
+      v2(0.83, HEIGHT + 0.018),
+      v2(0.74, HEIGHT + 0.002),
+      v2(0.45, HEIGHT - 0.006),
+      v2(0.2, HEIGHT - 0.001),
+      v2(0.0, HEIGHT + 0.004)
     ];
-    for (var i = 0; i < PROFILE.length; i++) {
-      points.push(new THREE.Vector2(PROFILE[i][0], PROFILE[i][1]));
-    }
-    points.push(
-      new THREE.Vector2(0.892, HEIGHT + 0.012),
-      new THREE.Vector2(0.901, HEIGHT + 0.03),
-      new THREE.Vector2(0.895, HEIGHT + 0.048),
-      new THREE.Vector2(0.871, HEIGHT + 0.056),
-      new THREE.Vector2(0.847, HEIGHT + 0.044),
-      new THREE.Vector2(0.83, HEIGHT + 0.018),
-      new THREE.Vector2(0.74, HEIGHT + 0.002),
-      new THREE.Vector2(0.45, HEIGHT - 0.006),
-      new THREE.Vector2(0.2, HEIGHT - 0.001),
-      new THREE.Vector2(0.0, HEIGHT + 0.004)
-    );
-    return points;
   }
 
   function radiusAt(y) {
     for (var i = 1; i < PROFILE.length; i++) {
-      var r0 = PROFILE[i - 1][0], y0 = PROFILE[i - 1][1];
-      var r1 = PROFILE[i][0], y1 = PROFILE[i][1];
+      var r0 = PROFILE[i - 1][0];
+      var y0 = PROFILE[i - 1][1];
+      var r1 = PROFILE[i][0];
+      var y1 = PROFILE[i][1];
       if (y <= y1) return r0 + ((r1 - r0) * (y - y0)) / (y1 - y0);
     }
     return PROFILE[PROFILE.length - 1][0];
@@ -158,7 +208,8 @@
   function sleeveGeometry(THREE, segments) {
     var rings = [[radiusAt(LABEL.bottom), LABEL.bottom]];
     for (var i = 0; i < PROFILE.length; i++) {
-      var r = PROFILE[i][0], y = PROFILE[i][1];
+      var r = PROFILE[i][0];
+      var y = PROFILE[i][1];
       if (y > LABEL.bottom && y < LABEL.top) rings.push([r, y]);
     }
     rings.push([radiusAt(LABEL.top), LABEL.top]);
@@ -169,20 +220,21 @@
     var span = LABEL.top - LABEL.bottom;
 
     for (var ri = 0; ri < rings.length; ri++) {
-      var cr = rings[ri][0], cy = rings[ri][1];
+      var rad = rings[ri][0];
+      var yPos = rings[ri][1];
       for (var s = 0; s <= segments; s++) {
         var u = s / segments;
         var theta = (u - 0.5) * Math.PI * 2;
-        var radius = cr + SLEEVE_OFFSET;
-        positions.push(radius * Math.sin(theta), cy, radius * Math.cos(theta));
-        uvs.push(u, (cy - LABEL.bottom) / span);
+        var rTotal = rad + SLEEVE_OFFSET;
+        positions.push(rTotal * Math.sin(theta), yPos, rTotal * Math.cos(theta));
+        uvs.push(u, (yPos - LABEL.bottom) / span);
       }
     }
 
     var stride = segments + 1;
-    for (var rj = 0; rj < rings.length - 1; rj++) {
-      for (var sj = 0; sj < segments; sj++) {
-        var a = rj * stride + sj;
+    for (var rIndex = 0; rIndex < rings.length - 1; rIndex++) {
+      for (var seg = 0; seg < segments; seg++) {
+        var a = rIndex * stride + seg;
         var b = a + 1;
         var c = a + stride;
         var d = c + 1;
@@ -190,25 +242,29 @@
       }
     }
 
-    var geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-    geometry.setIndex(indices);
-    geometry.computeVertexNormals();
-    return geometry;
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
   }
 
-  function createTabGroup(THREE, metal) {
+  function createTabGroup(THREE, tabMaterial) {
     var group = new THREE.Group();
-    var ring = new THREE.Mesh(new THREE.TorusGeometry(0.21, 0.029, 10, 40), metal);
+    var ringGeo = new THREE.TorusGeometry(0.21, 0.029, 10, 40);
+    var neckGeo = new THREE.BoxGeometry(0.17, 0.022, 0.21);
+    var rivetGeo = new THREE.CylinderGeometry(0.057, 0.052, 0.03, 16);
+
+    var ring = new THREE.Mesh(ringGeo, tabMaterial);
     ring.rotation.x = -Math.PI / 2;
     ring.position.set(0, HEIGHT + 0.022, 0.25);
     ring.scale.set(1, 0.62, 1);
 
-    var neck = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.022, 0.21), metal);
+    var neck = new THREE.Mesh(neckGeo, tabMaterial);
     neck.position.set(0, HEIGHT + 0.02, 0.05);
 
-    var rivet = new THREE.Mesh(new THREE.CylinderGeometry(0.057, 0.052, 0.03, 16), metal);
+    var rivet = new THREE.Mesh(rivetGeo, tabMaterial);
     rivet.position.set(0, HEIGHT + 0.018, -0.02);
 
     group.add(ring, neck, rivet);
@@ -238,9 +294,10 @@
     ctx.globalAlpha = 1;
     ctx.filter = 'none';
 
-    var texture = new THREE.CanvasTexture(canvas);
-    texture.mapping = THREE.EquirectangularReflectionMapping;
-    return texture;
+    var tex = new THREE.CanvasTexture(canvas);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    return tex;
   }
 
   function createSpotMaskTexture(THREE) {
@@ -264,35 +321,42 @@
     ctx.fill();
     ctx.filter = 'none';
 
-    return new THREE.CanvasTexture(canvas);
+    var tex = new THREE.CanvasTexture(canvas);
+    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    return tex;
   }
 
   var stage3D = {
     renderer: null,
     scene: null,
     camera: null,
-    canModel: null,
-    textures: {},
-    activeTaste: 0,
+    cans: [],
+    slots: 6,
+    slotWidth: 2.2,
+    ringHalf: 6.6,
+    track: { position: 0, target: 0, spread: 1 },
     drag: 0,
     velocity: 0,
     isDragging: false,
-    pmrem: null,
+    scrubbing: false,
+    lastInput: 0,
     unit: 1,
     closeDistance: 1,
     applyTint: null,
-    setLabel: null
+    goTo: function (idx) {
+      this.track.target = idx;
+    }
   };
 
   function initStage3D() {
     var canHost = document.querySelector('[data-asmaan-stage-can]');
-    if (!canHost || !window.THREE) return;
+    if (!canHost) return;
+    var THREE = window.THREE;
+    if (!THREE) return;
 
     var canvas = canHost.querySelector('canvas');
     var posterImg = canHost.querySelector('img');
     if (!canvas) return;
-
-    var THREE = window.THREE;
 
     var renderer;
     try {
@@ -303,18 +367,19 @@
         powerPreference: 'high-performance'
       });
     } catch (e) {
-      console.warn('[Asmaan 3D] WebGL not supported, keeping fallback poster');
+      console.warn('[Asmaan 3D] WebGL not supported, keeping poster fallback');
       return;
     }
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.22;
+    if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100);
 
-    // Build Can
+    // Shared Geometry and Materials
     var segments = 144;
     var shellGeo = new THREE.LatheGeometry(shellProfile(THREE), segments);
     var labelGeo = sleeveGeometry(THREE, segments);
@@ -329,25 +394,40 @@
       metalness: 0.95,
       roughness: 0.33
     });
-    var labelMat = new THREE.MeshStandardMaterial({
-      metalness: 0.1,
-      roughness: 0.34,
-      envMapIntensity: 0.4
-    });
 
-    var shellMesh = new THREE.Mesh(shellGeo, shellMat);
-    var labelMesh = new THREE.Mesh(labelGeo, labelMat);
-    var tabGroupMesh = createTabGroup(THREE, tabMat);
+    // Build 6 cans (2 copies of the 3 colourways: Jamun, Mango, Magenta)
+    var copies = 2;
+    var cans = [];
+    for (var c = 0; c < copies; c++) {
+      for (var t = 0; t < TASTES.length; t++) {
+        var taste = TASTES[t];
+        var shellMesh = new THREE.Mesh(shellGeo, shellMat);
+        var labelMat = new THREE.MeshStandardMaterial({
+          metalness: 0.1,
+          roughness: 0.34,
+          envMapIntensity: 0.4
+        });
+        var labelMesh = new THREE.Mesh(labelGeo, labelMat);
+        var tabMesh = createTabGroup(THREE, tabMat);
 
-    var inner = new THREE.Group();
-    inner.add(shellMesh, labelMesh, tabGroupMesh);
-    inner.position.y = -HEIGHT / 2;
+        var inner = new THREE.Group();
+        inner.add(shellMesh, labelMesh, tabMesh);
+        inner.position.y = -HEIGHT / 2;
 
-    var group = new THREE.Group();
-    group.add(inner);
-    scene.add(group);
+        var grp = new THREE.Group();
+        grp.add(inner);
+        scene.add(grp);
 
-    // Lighting
+        cans.push({
+          group: grp,
+          labelMaterial: labelMat,
+          tasteId: taste.id,
+          tasteIndex: t
+        });
+      }
+    }
+
+    // Studio Lighting
     var keyLight = new THREE.DirectionalLight(0xfffdf8, 1.25);
     keyLight.position.set(-3.5, 4, 5);
     var fillLight = new THREE.DirectionalLight(0xc8d2ff, 0.26);
@@ -390,24 +470,33 @@
       prev.dispose();
     };
 
-    // Textures Loader
+    // Load textures with CORS support
     var textureLoader = new THREE.TextureLoader();
-    var loadedTextures = {};
+    if (typeof textureLoader.setCrossOrigin === 'function') {
+      textureLoader.setCrossOrigin('anonymous');
+    }
 
+    var loadedTextures = {};
     function loadTexture(tasteObj) {
-      var url = canHost.getAttribute(tasteObj.labelAttr);
-      if (!url) return Promise.resolve(null);
+      var rawUrl = canHost.getAttribute(tasteObj.labelAttr);
+      if (!rawUrl) return Promise.resolve(null);
+      var url = rawUrl;
+      if (url.indexOf('//') === 0) {
+        url = window.location.protocol + url;
+      }
       return new Promise(function (resolve) {
         textureLoader.load(
           url,
           function (tex) {
             tex.wrapS = THREE.RepeatWrapping;
+            if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
             tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
             loadedTextures[tasteObj.id] = tex;
             resolve(tex);
           },
           undefined,
-          function () {
+          function (err) {
+            console.warn('[Asmaan 3D] Failed to load label texture:', url, err);
             resolve(null);
           }
         );
@@ -415,31 +504,23 @@
     }
 
     Promise.all(TASTES.map(loadTexture)).then(function () {
-      var initialTex = loadedTextures[TASTES[0].id];
-      if (initialTex) {
-        labelMat.map = initialTex;
-        labelMat.needsUpdate = true;
+      for (var i = 0; i < cans.length; i++) {
+        var cItem = cans[i];
+        var tex = loadedTextures[cItem.tasteId];
+        if (tex) {
+          cItem.labelMaterial.map = tex;
+          cItem.labelMaterial.needsUpdate = true;
+        }
       }
-      // Reveal 3D canvas and hide fallback image
+      // Reveal 3D Canvas smoothly
       canvas.style.opacity = '1';
       if (posterImg) posterImg.style.opacity = '0';
     });
 
-    stage3D.setLabel = function (tasteIndex) {
-      var taste = TASTES[tasteIndex];
-      var tex = loadedTextures[taste.id];
-      if (tex) {
-        labelMat.map = tex;
-        labelMat.needsUpdate = true;
-      }
-      if (stage3D.applyTint) {
-        stage3D.applyTint(taste.primary);
-      }
-    };
+    // Make canvas visible immediately so aluminium geometry renders
+    canvas.style.opacity = '1';
 
-    // Framing & Resize
-    var unit = 1;
-    var closeDistance = 1;
+    // Resize and Framing
     function resize() {
       var w = canHost.clientWidth;
       var h = canHost.clientHeight;
@@ -457,16 +538,19 @@
       camera.updateProjectionMatrix();
       stage3D.unit = fitHeight;
       stage3D.closeDistance = distance;
-      unit = fitHeight;
-      closeDistance = distance;
+
+      var halfVisibleWidth = distance * Math.tan(((camera.fov * Math.PI) / 360) * camera.aspect);
+      stage3D.slotWidth = Math.max(MIN_SLOT, halfVisibleWidth * SLOT_OF_HALF_WIDTH);
+      stage3D.ringHalf = (cans.length * stage3D.slotWidth) / 2;
     }
 
     var resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(canHost);
     resize();
 
-    // Drag-to-spin interaction
+    // Pointer Drag Handling
     var pointerId = null;
+    var startX = 0;
     var lastX = 0;
     var lastTime = 0;
 
@@ -474,18 +558,30 @@
       pointerId = e.pointerId;
       canvas.setPointerCapture(pointerId);
       stage3D.isDragging = true;
+      startX = e.clientX;
       lastX = e.clientX;
       lastTime = performance.now();
+      stage3D.lastInput = lastTime;
       stage3D.velocity = 0;
+      stage3D.scrubbing = stage3D.track.spread > 0.4;
     });
 
     canvas.addEventListener('pointermove', function (e) {
       if (e.pointerId !== pointerId) return;
       var now = performance.now();
       var dx = e.clientX - lastX;
-      stage3D.drag += dx * 0.012;
-      stage3D.velocity = (dx * 0.012) / (Math.max(now - lastTime, 8) / 1000);
       lastX = e.clientX;
+      stage3D.lastInput = now;
+
+      if (stage3D.scrubbing) {
+        // Drag carousel
+        var deltaSlots = -(dx / stage3D.slotWidth) * 0.0042 * stage3D.unit;
+        stage3D.track.target += deltaSlots;
+      } else {
+        // Drag rotate
+        stage3D.drag += dx * 0.012;
+        stage3D.velocity = (dx * 0.012) / (Math.max(now - lastTime, 8) / 1000);
+      }
       lastTime = now;
     });
 
@@ -493,8 +589,16 @@
       if (e.pointerId !== pointerId) return;
       pointerId = null;
       stage3D.isDragging = false;
-      if (performance.now() - lastTime > 120) stage3D.velocity = 0;
-      stage3D.velocity = Math.max(-14, Math.min(14, stage3D.velocity));
+      if (stage3D.scrubbing) {
+        stage3D.scrubbing = false;
+        var nearest = Math.round(stage3D.track.target);
+        stage3D.track.target = nearest;
+        var wrappedIdx = ((nearest % TASTES.length) + TASTES.length) % TASTES.length;
+        setTaste(wrappedIdx);
+      } else {
+        if (performance.now() - lastTime > 120) stage3D.velocity = 0;
+        stage3D.velocity = Math.max(-14, Math.min(14, stage3D.velocity));
+      }
     }
 
     canvas.addEventListener('pointerup', endDrag);
@@ -503,7 +607,8 @@
     stage3D.renderer = renderer;
     stage3D.scene = scene;
     stage3D.camera = camera;
-    stage3D.canModel = group;
+    stage3D.cans = cans;
+    stage3D.slots = cans.length;
     stage3D.spot = spot;
     stage3D.studioLights = studioLights;
   }
@@ -544,9 +649,10 @@
       card.setAttribute('aria-current', String(i === index));
     });
 
-    // 6. Update 3D Stage Can texture and lighting
-    if (stage3D.setLabel) {
-      stage3D.setLabel(index);
+    // 6. Update 3D Stage Can
+    stage3D.goTo(index);
+    if (stage3D.applyTint) {
+      stage3D.applyTint(taste.primary);
     }
 
     // 7. Update Manifesto wash background
@@ -625,16 +731,8 @@
   function initScrollHub() {
     var stage = document.getElementById('stage');
     var scrollIndicator = document.querySelector('.scroll_indicator');
-    var benefitsNav = document.querySelector('.benefits_nav');
     var manifestoLayer = document.querySelector('.manifesto_layer');
     var canStageHost = document.querySelector('[data-asmaan-stage-can]') ? document.querySelector('[data-asmaan-stage-can]').closest('.fixed') : null;
-
-    var benefitSections = [
-      document.getElementById('benefit-sugar'),
-      document.getElementById('benefit-caffeine'),
-      document.getElementById('benefit-crash'),
-      document.getElementById('benefit-colour')
-    ];
 
     var pinnedSections = document.querySelectorAll('.section.is-pinned');
 
@@ -693,41 +791,84 @@
           pose.y += 0.06 * (1 - spread);
         }
 
-        // Apply 3D WebGL Transform
-        if (stage3D.canModel && stage3D.renderer && stage3D.camera) {
+        // Apply 3D WebGL Multi-Can Transform
+        if (stage3D.renderer && stage3D.camera && stage3D.cans && stage3D.cans.length > 0) {
+          stage3D.track.spread = spread;
+
+          // Track Follow
+          var followSpeed = stage3D.scrubbing ? TRACK_FOLLOW * 3 : TRACK_FOLLOW;
+          stage3D.track.position += (stage3D.track.target - stage3D.track.position) * (isMotionOff ? 1 : 1 - Math.exp(-followSpeed * dt));
+
+          // Drag / Drift
           if (!stage3D.isDragging) {
-            stage3D.velocity *= Math.exp(-2.4 * dt);
-            if (!isMotionOff && Math.abs(stage3D.velocity) < 0.001) {
-              stage3D.velocity = 0.08;
+            stage3D.velocity *= Math.exp(-FRICTION * dt);
+            if (!isMotionOff && Math.abs(stage3D.velocity) < 0.001 && (now - stage3D.lastInput > IDLE_DELAY_MS)) {
+              stage3D.velocity += (0.12 - stage3D.velocity) * (1 - Math.exp(-1.6 * dt));
             }
             stage3D.drag += stage3D.velocity * dt;
           }
 
           var u = stage3D.unit || 1;
-          stage3D.canModel.position.set(pose.x * u, pose.y * u, 0);
-          stage3D.canModel.rotation.set(pose.pitch, pose.spin + stage3D.drag, pose.roll);
-          stage3D.canModel.scale.setScalar(pose.scale);
-
-          // Close-up camera dolly
           var cDist = stage3D.closeDistance || 1;
-          stage3D.camera.position.set(0, closeUp * -0.7, cDist * (1 - closeUp * (1 - 0.53)));
-          stage3D.camera.rotation.set(closeUp * 0.16, 0, 0);
+
+          // Camera Dolly for Close-up
+          stage3D.camera.position.set(
+            0,
+            closeUp * CLOSE_UP_CAM_Y,
+            cDist * (1 - closeUp * (1 - CLOSE_UP_DOLLY))
+          );
+          stage3D.camera.rotation.set(closeUp * CLOSE_UP_CAM_PITCH, 0, 0);
 
           // Close-up spot
           if (stage3D.spot) {
-            stage3D.spot.intensity = closeUp * 7;
+            stage3D.spot.intensity = closeUp * SPOT_INTENSITY;
             stage3D.spot.visible = closeUp > 0.001;
             var canX = pose.x * u;
             var canY = pose.y * u;
-            stage3D.spot.position.set(canX, canY + 3.2, 3);
-            stage3D.spot.target.position.set(canX, canY + 0.9, 0);
+            stage3D.spot.position.set(canX, canY + SPOT_HEIGHT, SPOT_DEPTH);
+            stage3D.spot.target.position.set(canX, canY + SPOT_AIM, 0);
           }
 
           if (stage3D.studioLights) {
             for (var si = 0; si < stage3D.studioLights.length; si++) {
               var sItem = stage3D.studioLights[si];
-              sItem.light.intensity = sItem.intensity * (1 - closeUp * 0.98);
+              sItem.light.intensity = sItem.intensity * (1 - closeUp * STUDIO_DIM);
             }
+          }
+
+          // Multi-can row positions
+          var slots = stage3D.slots;
+          var slotWidth = stage3D.slotWidth;
+          var ringHalf = stage3D.ringHalf;
+
+          for (var ci = 0; ci < slots; ci++) {
+            var canObj = stage3D.cans[ci];
+            var grp = canObj.group;
+
+            var offset = (ci - stage3D.track.position) * slotWidth;
+            var x = slots > 1 ? wrapRange(offset, -ringHalf, ringHalf) : 0;
+            var slot = x / slotWidth;
+            var focus = Math.max(0, 1 - Math.abs(slot));
+
+            var presence = spread + (1 - spread) * focus * focus;
+            if (presence < 0.01 || Math.abs(x) > ringHalf - slotWidth * 0.5) {
+              grp.visible = false;
+              continue;
+            }
+            grp.visible = true;
+
+            var lift = Math.sin(slot * WAVE_PER_SLOT) * WAVE_HEIGHT;
+            grp.position.set(
+              pose.x * u + spread * x,
+              pose.y * u + spread * lift,
+              spread * -Math.abs(x) * DEPTH
+            );
+            grp.rotation.set(
+              pose.pitch + spread * TILT_X,
+              pose.spin + stage3D.drag + spread * (slot * TURN_PER_SLOT - LEAN_Y),
+              pose.roll + spread * LEAN_Z
+            );
+            grp.scale.setScalar(pose.scale * presence);
           }
 
           stage3D.renderer.render(stage3D.scene, stage3D.camera);
@@ -742,10 +883,6 @@
       }
 
       // 3. Pinned sections cross-fade calculation
-      var profileAmount = 0;
-      var benefitAmounts = [0, 0, 0, 0];
-      var manifestoAmount = 0;
-
       pinnedSections.forEach(function (sec) {
         var fade = sec.querySelector('.pin_fade');
         if (!fade) return;
@@ -759,55 +896,15 @@
         fade.style.setProperty('--pin-y', ((1 - enter) * 30 - (1 - exit) * 30) + 'px');
         fade.style.visibility = amount < 0.01 ? 'hidden' : 'visible';
 
-        if (sec.getAttribute('aria-label') === 'Tasting notes') {
-          profileAmount = amount;
-        } else if (sec.classList.contains('is-manifesto')) {
-          manifestoAmount = amount;
+        if (sec.classList.contains('is-manifesto')) {
+          if (manifestoLayer) {
+            var showM = amount > 0.01;
+            manifestoLayer.style.opacity = String(amount);
+            manifestoLayer.style.visibility = showM ? 'visible' : 'hidden';
+            manifestoLayer.setAttribute('data-active', String(showM));
+          }
         }
       });
-
-      // 4. Tasting notes background activation
-      document.body.classList.toggle('is-taste-active', profileAmount > 0.25);
-
-      // 5. Benefits side-nav & active lines
-      benefitSections.forEach(function (sec, idx) {
-        if (!sec) return;
-        var rect = sec.getBoundingClientRect();
-        var enter = range(rect.top, windowH * 0.4, 0);
-        var exit = range(rect.bottom - windowH, 0, windowH * 0.3);
-        var amt = enter * exit;
-        benefitAmounts[idx] = amt;
-
-        var maxWidthEl = sec.querySelector('.benefits_max-width');
-        if (maxWidthEl) {
-          maxWidthEl.style.setProperty('--benefits-line', amt > 0.3 ? '1' : '0');
-        }
-      });
-
-      var peakBenefit = Math.max.apply(null, benefitAmounts);
-      var activeBenefitIndex = benefitAmounts.indexOf(peakBenefit);
-
-      document.body.classList.toggle('is-taste-dim', peakBenefit > 0.25);
-
-      if (benefitsNav) {
-        benefitsNav.style.opacity = String(Math.round(peakBenefit * 20) / 20);
-        benefitsNav.style.visibility = peakBenefit < 0.02 ? 'hidden' : 'visible';
-
-        var iconWrappers = benefitsNav.querySelectorAll('.benefits_icon-wrapper');
-        iconWrappers.forEach(function (iw, i) {
-          var isActive = (i === activeBenefitIndex && peakBenefit > 0.02);
-          iw.classList.toggle('is-active', isActive);
-          iw.setAttribute('aria-current', String(isActive));
-        });
-      }
-
-      // 6. Manifesto layer
-      if (manifestoLayer) {
-        var showManifesto = manifestoAmount > 0.01;
-        manifestoLayer.style.opacity = String(manifestoAmount);
-        manifestoLayer.style.visibility = showManifesto ? 'visible' : 'hidden';
-        manifestoLayer.setAttribute('data-active', String(showManifesto));
-      }
 
       requestAnimationFrame(onFrame);
     }
@@ -859,24 +956,23 @@
         motionMuted = !motionMuted;
         motionToggle.setAttribute('aria-pressed', String(!motionMuted));
         document.documentElement.dataset.motion = motionMuted ? 'off' : 'on';
-        var barsIcon = motionToggle.querySelector('svg');
-        if (barsIcon) {
-          barsIcon.style.opacity = motionMuted ? '0.4' : '1';
-        }
       });
     }
   }
 
   function initFaqAccordion() {
-    document.querySelectorAll('.faq_question').forEach(function (button) {
+    var buttons = document.querySelectorAll('.faq_question');
+    buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         var isExpanded = button.getAttribute('aria-expanded') === 'true';
-        var answer = document.getElementById(button.getAttribute('aria-controls'));
+        var answerId = button.getAttribute('aria-controls');
+        var answer = document.getElementById(answerId);
 
-        document.querySelectorAll('.faq_question').forEach(function (otherBtn) {
+        buttons.forEach(function (otherBtn) {
           if (otherBtn !== button) {
             otherBtn.setAttribute('aria-expanded', 'false');
-            var otherAns = document.getElementById(otherBtn.getAttribute('aria-controls'));
+            var otherId = otherBtn.getAttribute('aria-controls');
+            var otherAns = document.getElementById(otherId);
             if (otherAns) otherAns.setAttribute('data-open', 'false');
           }
         });
@@ -889,8 +985,28 @@
     });
   }
 
+  function waitForThree(callback) {
+    if (window.THREE) {
+      callback();
+      return;
+    }
+    var attempts = 0;
+    var interval = setInterval(function () {
+      attempts++;
+      if (window.THREE) {
+        clearInterval(interval);
+        callback();
+      } else if (attempts > 100) {
+        clearInterval(interval);
+        console.warn('[Asmaan] Three.js load timed out');
+      }
+    }, 50);
+  }
+
   function init() {
-    initStage3D();
+    waitForThree(function () {
+      initStage3D();
+    });
     initTasteInteractions();
     initScrollHub();
     initNavbarAndMenu();
