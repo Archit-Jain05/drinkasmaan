@@ -1,0 +1,57 @@
+<footer class="asmaan-footer" role="contentinfo">
+  <div class="padding-global">
+    <div class="container-large">
+      <div class="asmaan-footer-main">
+        <!-- Brand Wordmark Logo Column -->
+        <div class="asmaan-footer-brand">
+          <a href="/" class="asmaan-footer-logo" aria-label="ASMAAN — Home">
+            ASMAAN
+          </a>
+          <p class="asmaan-footer-tagline">THE AMBITION TONIC</p>
+        </div>
+
+        <!-- Navigation Columns -->
+        <div class="asmaan-footer-columns">
+          <!-- Column 1: Primary Navigation -->
+          <nav class="asmaan-footer-nav-col" aria-label="Footer Primary Navigation">
+            <ul class="asmaan-footer-links">
+              <li><a href="/" class="asmaan-footer-link">HOME</a></li>
+              <li><a href="/#range" class="asmaan-footer-link">DRINK</a></li>
+              <li><a href="/pages/wear" class="asmaan-footer-link">WEAR</a></li>
+              <li><a href="/#newsletter" class="asmaan-footer-link">JOIN</a></li>
+              <li><a href="/pages/contact" class="asmaan-footer-link">SUPPORT</a></li>
+            </ul>
+          </nav>
+
+          <!-- Column 2: Legal and Policies -->
+          <nav class="asmaan-footer-nav-col" aria-label="Footer Policies and Legal">
+            <ul class="asmaan-footer-links">
+              <li><a href="/policies/privacy-policy" class="asmaan-footer-link">PRIVACY POLICY</a></li>
+              <li><a href="/policies/refund-policy" class="asmaan-footer-link">RETURN POLICY</a></li>
+              <li><a href="/policies/shipping-policy" class="asmaan-footer-link">SHIPPING POLICY</a></li>
+              <li><a href="/policies/terms-of-service" class="asmaan-footer-link">TERMS OF SERVICE</a></li>
+              <li><a href="/policies/subscription-policy" class="asmaan-footer-link">SUBSCRIPTION POLICY</a></li>
+              <li><a href="/pages/contact" class="asmaan-footer-link">AMBASSADOR PROGRAM</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="asmaan-footer-bottom">
+        <p class="asmaan-footer-copyright">
+          Copyright &copy; {{ 'now' | date: '%Y' }} Asmaan. All rights reserved.
+        </p>
+
+        <div class="asmaan-footer-actions">
+          <a href="https://www.instagram.com/drinkasmaan" target="_blank" rel="noreferrer" class="asmaan-footer-social-btn" aria-label="Instagram">
+            {% render 'asmaan-icons', name: 'instagram', class: 'h-4 w-4' %}
+          </a>
+          <a href="#top" class="asmaan-footer-top-btn" aria-label="Back to top" data-back-to-top>
+            {% render 'asmaan-icons', name: 'arrow-up', class: 'h-4 w-4' %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
