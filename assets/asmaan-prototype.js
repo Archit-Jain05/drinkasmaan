@@ -513,6 +513,195 @@
       roughness: 0.33
     });
 
+    // 3D Physical Liquid Water Droplets System for Chilled Cans
+    var dropGeoShared = new THREE.SphereGeometry(1, 14, 10);
+    var trailGeoShared = new THREE.PlaneGeometry(1, 1);
+
+    var baseDropMat;
+    try {
+      baseDropMat = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        roughness: 0.04,
+        metalness: 0.05,
+        transmission: 0.92,
+        ior: 1.333,
+        reflectivity: 0.9,
+        transparent: true,
+        opacity: 0.95,
+        envMapIntensity: 2.2,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.03,
+        depthWrite: false
+      });
+    } catch (e) {
+      baseDropMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.05,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.88,
+        envMapIntensity: 2.0,
+        depthWrite: false
+      });
+    }
+
+    var baseTrailMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.16,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+
+    function createCanDropletSystem(canInner, canIndex) {
+      var DROP_COUNT = 14;
+      var dropletGroup = new THREE.Group();
+      canInner.add(dropletGroup);
+
+      var dropMat = baseDropMat.clone();
+      var trailMat = baseTrailMat.clone();
+
+      var drops = [];
+      var seed = (canIndex + 1) * 314159;
+      function rnd() {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+      }
+
+      for (var i = 0; i < DROP_COUNT; i++) {
+        var mesh = new THREE.Mesh(dropGeoShared, dropMat);
+        dropletGroup.add(mesh);
+
+        var trailMesh = new THREE.Mesh(trailGeoShared, trailMat);
+        dropletGroup.add(trailMesh);
+
+        var isLarge = i < 4;
+        var isMedium = i >= 4 && i < 10;
+        var baseRadius = isLarge ? (0.042 + rnd() * 0.018) : (isMedium ? (0.030 + rnd() * 0.012) : (0.020 + rnd() * 0.008));
+        var angle = rnd() * Math.PI * 2;
+        var startY = 0.5 + rnd() * 3.8;
+        var speed = (isLarge ? 0.32 : (isMedium ? 0.22 : 0.12)) + rnd() * 0.15;
+        var hesitationFreq = 1.0 + rnd() * 2.5;
+        var hesitationOffset = rnd() * Math.PI * 2;
+
+        drops.push({
+          mesh: mesh,
+          trailMesh: trailMesh,
+          baseRadius: baseRadius,
+          angle: angle,
+          y: startY,
+          spawnY: 4.1 + rnd() * 0.4,
+          speed: speed,
+          hesitationFreq: hesitationFreq,
+          hesitationOffset: hesitationOffset,
+          state: 'sliding',
+          hangTimer: 0,
+          fallSpeed: 0,
+          fallY: 0,
+          stretch: 1.0,
+          trailLength: 0
+        });
+      }
+
+      return {
+        group: dropletGroup,
+        update: function (dt, focus, isMotionOff, now) {
+          if (focus < 0.02) {
+            dropletGroup.visible = false;
+            return;
+          }
+          dropletGroup.visible = true;
+
+          var focusOpacity = Math.min(1, focus * 1.3);
+          dropMat.opacity = 0.95 * focusOpacity;
+          trailMat.opacity = 0.16 * focusOpacity;
+
+          for (var i = 0; i < drops.length; i++) {
+            var d = drops[i];
+
+            if (!isMotionOff) {
+              if (d.state === 'sliding') {
+                var hes = Math.sin((now / 1000) * d.hesitationFreq + d.hesitationOffset);
+                var slideMult = hes > 0.15 ? Math.pow(hes, 1.8) * 1.5 : 0.06;
+                d.y -= d.speed * slideMult * dt;
+                d.stretch = 1.0 + slideMult * 1.25;
+                d.trailLength = Math.min(0.7, d.trailLength + d.speed * slideMult * dt * 0.5);
+
+                if (d.y <= 0.16) {
+                  d.state = 'hanging';
+                  d.hangTimer = 0;
+                }
+              } else if (d.state === 'hanging') {
+                d.hangTimer += dt;
+                d.stretch = 1.3 + d.hangTimer * 1.5;
+                d.y = 0.16 - d.hangTimer * 0.035;
+                d.trailLength = Math.max(0, d.trailLength - dt * 0.4);
+
+                if (d.hangTimer > 0.65) {
+                  d.state = 'falling';
+                  d.fallSpeed = 0.3;
+                  d.fallY = d.y;
+                }
+              } else if (d.state === 'falling') {
+                d.fallSpeed += 9.2 * dt * 0.45;
+                d.fallY -= d.fallSpeed * dt;
+                d.y = d.fallY;
+                d.stretch = 1.8;
+                d.trailLength = 0;
+
+                if (d.y < -1.4) {
+                  d.state = 'sliding';
+                  d.y = d.spawnY;
+                  d.angle = (d.angle + 1.2 + Math.random() * 2.0) % (Math.PI * 2);
+                  d.stretch = 1.0;
+                  d.hangTimer = 0;
+                  d.fallSpeed = 0;
+                  d.trailLength = 0;
+                }
+              }
+            }
+
+            var currentY = d.y;
+            var clampedY = Math.max(0.02, Math.min(4.85, currentY));
+            var r = radiusAt(clampedY);
+            var radialDist = r + d.baseRadius * 0.4;
+
+            d.mesh.position.set(
+              radialDist * Math.sin(d.angle),
+              currentY,
+              radialDist * Math.cos(d.angle)
+            );
+            d.mesh.rotation.y = d.angle;
+
+            var sX = d.baseRadius;
+            var sY = d.baseRadius * d.stretch;
+            var sZ = d.baseRadius * 0.75;
+            d.mesh.scale.set(sX, sY, sZ);
+
+            if (d.trailMesh) {
+              if (d.state === 'sliding' && d.trailLength > 0.04) {
+                d.trailMesh.visible = true;
+                var tHeight = d.trailLength;
+                var tY = currentY + tHeight * 0.5;
+                var tClampedY = Math.max(0.02, Math.min(4.85, tY));
+                var tR = radiusAt(tClampedY) + 0.005;
+
+                d.trailMesh.position.set(
+                  tR * Math.sin(d.angle),
+                  tY,
+                  tR * Math.cos(d.angle)
+                );
+                d.trailMesh.rotation.y = d.angle;
+                d.trailMesh.scale.set(d.baseRadius * 0.38, tHeight, 1);
+              } else {
+                d.trailMesh.visible = false;
+              }
+            }
+          }
+        }
+      };
+    }
+
     // Build 6 cans (2 sets of Jamun, Mango, Magenta)
     var copies = 2;
     var cans = [];
@@ -538,9 +727,13 @@
         grp.add(inner);
         scene.add(grp);
 
+        var dropletSys = createCanDropletSystem(inner, c * TASTES.length + t);
+
         cans.push({
           group: grp,
+          inner: inner,
           labelMaterial: labelMat,
+          dropletSystem: dropletSys,
           tasteId: taste.id,
           tasteIndex: t
         });
@@ -1050,6 +1243,9 @@
             var presence = spread + (1 - spread) * focus * focus;
             if (presence < 0.01 || Math.abs(x) > ringHalf - slotWidth * 0.5) {
               grp.visible = false;
+              if (canObj.dropletSystem) {
+                canObj.dropletSystem.update(dt, 0, isMotionOff, now);
+              }
               continue;
             }
             grp.visible = true;
@@ -1066,6 +1262,10 @@
               pose.roll + spread * LEAN_Z
             );
             grp.scale.setScalar(pose.scale * presence);
+
+            if (canObj.dropletSystem) {
+              canObj.dropletSystem.update(dt, focus, isMotionOff, now);
+            }
           }
 
           stage3D.renderer.render(stage3D.scene, stage3D.camera);
