@@ -605,14 +605,15 @@
 
       return {
         group: dropletGroup,
-        update: function (dt, focus, isMotionOff, now) {
-          if (focus < 0.02) {
+        update: function (dt, focus, isMotionOff, now, alphaMult) {
+          if (alphaMult === undefined) alphaMult = 1.0;
+          if (focus < 0.02 || alphaMult < 0.01) {
             dropletGroup.visible = false;
             return;
           }
           dropletGroup.visible = true;
 
-          var focusOpacity = Math.min(1, focus * 1.3);
+          var focusOpacity = Math.min(1, focus * 1.3) * alphaMult;
           dropMat.opacity = 0.95 * focusOpacity;
           trailMat.opacity = 0.16 * focusOpacity;
 
@@ -708,16 +709,24 @@
     for (var c = 0; c < copies; c++) {
       for (var t = 0; t < TASTES.length; t++) {
         var taste = TASTES[t];
-        var shellMesh = new THREE.Mesh(shellGeo, shellMat);
+        var canShellMat = shellMat.clone();
+        canShellMat.transparent = true;
+
         var labelMat = new THREE.MeshStandardMaterial({
           metalness: 0.1,
           roughness: 0.38,
           envMapIntensity: 0.45,
           normalMap: condensationNormalMap,
-          normalScale: condensationNormalMap ? new THREE.Vector2(0.7, 0.7) : undefined
+          normalScale: condensationNormalMap ? new THREE.Vector2(0.7, 0.7) : undefined,
+          transparent: true
         });
+
+        var canTabMat = tabMat.clone();
+        canTabMat.transparent = true;
+
+        var shellMesh = new THREE.Mesh(shellGeo, canShellMat);
         var labelMesh = new THREE.Mesh(labelGeo, labelMat);
-        var tabMesh = createTabGroup(THREE, tabMat);
+        var tabMesh = createTabGroup(THREE, canTabMat);
 
         var inner = new THREE.Group();
         inner.add(shellMesh, labelMesh, tabMesh);
@@ -732,10 +741,17 @@
         cans.push({
           group: grp,
           inner: inner,
+          shellMaterial: canShellMat,
           labelMaterial: labelMat,
+          tabMaterial: canTabMat,
           dropletSystem: dropletSys,
           tasteId: taste.id,
-          tasteIndex: t
+          tasteIndex: t,
+          setOpacity: function (alpha) {
+            this.shellMaterial.opacity = alpha;
+            this.labelMaterial.opacity = alpha;
+            this.tabMaterial.opacity = alpha;
+          }
         });
       }
     }
@@ -1240,15 +1256,35 @@
             var slot = x / slotWidth;
             var focus = Math.max(0, 1 - Math.abs(slot));
 
+            // Smooth Corner Overflow Fade:
+            // When a can approaches the edge of the track, smoothly fade it out into the cosmic background
+            // so it never abruptly pops or cuts off at the boundary.
+            var edgeDist = ringHalf - Math.abs(x);
+            var fadeWidth = slotWidth * 1.25;
+            var edgeFade = 1.0;
+            if (edgeDist <= 0) {
+              edgeFade = 0;
+            } else if (edgeDist < fadeWidth) {
+              var fNorm = edgeDist / fadeWidth;
+              edgeFade = fNorm * fNorm * (3 - 2 * fNorm); // Smooth cubic hermite curve
+            }
+
             var presence = spread + (1 - spread) * focus * focus;
-            if (presence < 0.01 || Math.abs(x) > ringHalf - slotWidth * 0.5) {
+            var totalAlpha = presence * edgeFade;
+
+            if (totalAlpha < 0.005) {
               grp.visible = false;
               if (canObj.dropletSystem) {
-                canObj.dropletSystem.update(dt, 0, isMotionOff, now);
+                canObj.dropletSystem.update(dt, 0, isMotionOff, now, 0);
               }
               continue;
             }
             grp.visible = true;
+
+            // Apply smooth opacity fade to all materials of this can
+            if (canObj.setOpacity) {
+              canObj.setOpacity(totalAlpha);
+            }
 
             var lift = Math.sin(slot * WAVE_PER_SLOT) * WAVE_HEIGHT;
             grp.position.set(
@@ -1284,10 +1320,10 @@
               canRotationY,
               pose.roll + spread * LEAN_Z
             );
-            grp.scale.setScalar(pose.scale * presence);
+            grp.scale.setScalar(pose.scale * presence * (0.85 + 0.15 * edgeFade));
 
             if (canObj.dropletSystem) {
-              canObj.dropletSystem.update(dt, focus, isMotionOff, now);
+              canObj.dropletSystem.update(dt, focus, isMotionOff, now, edgeFade);
             }
           }
 

@@ -1784,6 +1784,12 @@ input:focus-visible {
   transition: opacity 0.5s ease !important;
 }
 
+/* 3D Stage Carousel Smooth Corner Feathering */
+[data-asmaan-stage-can] {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
+}
+
 /* ==========================================================================
    Vercel Prototype Menu & Fullscreen Dropdown Architecture
    ========================================================================== */
