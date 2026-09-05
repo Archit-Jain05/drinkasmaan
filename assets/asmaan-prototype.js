@@ -1191,12 +1191,26 @@
     function setMenuState(open) {
       menuOverlay.setAttribute('data-open', String(open));
       menuOverlay.setAttribute('aria-hidden', String(!open));
+      document.body.style.overflow = open ? 'hidden' : '';
       if (menuBtn) {
         menuBtn.setAttribute('aria-expanded', String(open));
         menuBtn.classList.toggle('is-active', open);
         var spanText = menuBtn.querySelector('.menu-button-text') || menuBtn.querySelector('span');
         if (spanText) spanText.textContent = open ? 'Close' : 'Menu';
+        var centerDot = menuBtn.querySelector('.menu-button-center-dot') || menuBtn.querySelector('svg circle:nth-child(5)');
+        if (centerDot) {
+          centerDot.style.transform = open ? 'scale(2.1)' : 'scale(1)';
+          centerDot.style.transformOrigin = '6px 6px';
+          centerDot.style.transition = 'transform 0.35s ease';
+        }
       }
+      menuOverlay.querySelectorAll('.navbar_link, .navbar_bottom a').forEach(function (link) {
+        if (open) {
+          link.removeAttribute('tabindex');
+        } else {
+          link.setAttribute('tabindex', '-1');
+        }
+      });
     }
 
     window.__asmaanSetMenuState = setMenuState;
@@ -1429,13 +1443,10 @@
         return;
       }
 
-      // Dismiss dropdown if clicking outside
-      var dropdown = document.getElementById('site-menu');
-      if (dropdown && dropdown.getAttribute('data-open') === 'true') {
-        if (!e.target.closest('.navbar_dropdown-menu') && !e.target.closest('.navbar_menu-button, [data-menu-toggle]')) {
-          if (window.__asmaanSetMenuState) {
-            window.__asmaanSetMenuState(false);
-          }
+      // Close menu if clicking menu links
+      if (e.target.closest('#site-menu a')) {
+        if (window.__asmaanSetMenuState) {
+          window.__asmaanSetMenuState(false);
         }
       }
 
