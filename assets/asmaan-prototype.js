@@ -360,9 +360,12 @@
     }
   };
 
+  var stage3DInitialized = false;
   function initStage3D() {
     var canHost = document.querySelector('[data-asmaan-stage-can]');
     if (!canHost) return;
+    if (stage3DInitialized) return;
+    stage3DInitialized = true;
     var THREE = window.THREE;
     if (!THREE) return;
 
@@ -733,6 +736,11 @@
 
     document.querySelectorAll('[data-range-card]').forEach(function (card, i) {
       card.addEventListener('click', function () {
+        var href = card.getAttribute('data-href');
+        if (href && href !== '#' && href !== '') {
+          window.location.href = href;
+          return;
+        }
         setTaste(i);
         var stage = document.getElementById('stage');
         if (stage) {
@@ -742,7 +750,10 @@
     });
   }
 
+  var scrollHubInitialized = false;
   function initScrollHub() {
+    if (scrollHubInitialized) return;
+    scrollHubInitialized = true;
     var stage = document.getElementById('stage');
     var scrollIndicator = document.querySelector('.scroll_indicator');
     var manifestoLayer = document.querySelector('.manifesto_layer');
@@ -1177,4 +1188,25 @@
   }
 
   document.addEventListener('shopify:section:load', init);
+
+  document.addEventListener('shopify:block:select', function (e) {
+    var blockId = e.detail.blockId;
+    var btn = document.querySelector('[aria-controls="faq-answer-' + blockId + '"]');
+    var ans = document.getElementById('faq-answer-' + blockId);
+    if (btn && ans) {
+      btn.setAttribute('aria-expanded', 'true');
+      ans.setAttribute('data-open', 'true');
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  document.addEventListener('shopify:block:deselect', function (e) {
+    var blockId = e.detail.blockId;
+    var btn = document.querySelector('[aria-controls="faq-answer-' + blockId + '"]');
+    var ans = document.getElementById('faq-answer-' + blockId);
+    if (btn && ans) {
+      btn.setAttribute('aria-expanded', 'false');
+      ans.setAttribute('data-open', 'false');
+    }
+  });
 })();

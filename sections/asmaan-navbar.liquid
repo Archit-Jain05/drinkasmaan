@@ -21,7 +21,7 @@
       <div class="navbar_side">
         <button type="button" class="navbar_toggle" aria-pressed="true">
           {% render 'asmaan-icons', name: 'bars', class: 'h-4 w-5' %}
-          <span class="hidden sm:inline">Motion</span>
+          <span class="hidden sm:inline">{{ section.settings.motion_text | default: 'Motion' }}</span>
         </button>
       </div>
 
@@ -32,7 +32,7 @@
       <div class="navbar_side is-end">
         <button type="button" class="navbar_menu-button" aria-expanded="false" aria-controls="site-menu">
           {% render 'asmaan-icons', name: 'menu-dots', class: 'h-3 w-3' %}
-          <span>Menu</span>
+          <span>{{ section.settings.menu_text | default: 'Menu' }}</span>
         </button>
 
         {%- if section.settings.cta_text != blank -%}
@@ -89,6 +89,10 @@
   "class": "asmaan-navbar-section",
   "settings": [
     {
+      "type": "header",
+      "content": "Branding & Call to Action"
+    },
+    {
       "type": "text",
       "id": "wordmark",
       "label": "Wordmark",
@@ -103,17 +107,35 @@
     {
       "type": "url",
       "id": "cta_link",
-      "label": "CTA Button Link"
+      "label": "CTA Button Link",
+      "default": "#newsletter"
+    },
+    {
+      "type": "header",
+      "content": "Labels & Menu"
+    },
+    {
+      "type": "text",
+      "id": "motion_text",
+      "label": "Motion Toggle Label",
+      "default": "Motion"
+    },
+    {
+      "type": "text",
+      "id": "menu_text",
+      "label": "Menu Toggle Label",
+      "default": "Menu"
     },
     {
       "type": "link_list",
       "id": "menu",
-      "label": "Menu"
+      "label": "Menu (optional custom menu)"
     },
     {
       "type": "url",
       "id": "instagram_url",
-      "label": "Instagram URL"
+      "label": "Instagram URL",
+      "default": "https://www.instagram.com/drinkasmaan"
     }
   ],
   "presets": [

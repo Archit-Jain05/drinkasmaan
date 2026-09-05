@@ -13,7 +13,7 @@
             {% form 'customer', class: 'mt-[var(--pad-l)] text-left' %}
               {%- if form.posted_successfully? -%}
                 <p class="mt-[var(--pad-l)] text-size-medium text-center text-white" role="status">
-                  You're on the list. We'll write once, when the cans land.
+                  {{ section.settings.success_message | default: "You're on the list. We'll write once, when the cans land." }}
                 </p>
               {%- else -%}
                 <input type="hidden" name="contact[tags]" value="newsletter">
@@ -45,7 +45,7 @@
                 </button>
 
                 <p class="mt-[var(--pad-m)] text-center text-size-small text-white/50">
-                  By signing up you accept our <a href="{{ section.settings.privacy_link | default: '#' }}" class="underline">privacy policy</a>
+                  {{ section.settings.consent_text | default: 'By signing up you accept our' }} <a href="{{ section.settings.privacy_link | default: '#' }}" class="underline">{{ section.settings.privacy_label | default: 'privacy policy' }}</a>
                 </p>
               {%- endif -%}
             {% endform %}
@@ -64,7 +64,7 @@
                 target="_blank"
                 rel="noreferrer"
                 class="button is-secondary is-social"
-                aria-label="Asmaan on Instagram"
+                aria-label="{{ section.settings.brand_name | default: 'ASMAAN' }} on Instagram"
               >
                 {% render 'asmaan-icons', name: 'instagram', class: 'h-4 w-4' %}
               </a>
@@ -72,13 +72,13 @@
 
             <div class="footer_link-list">
               <span class="footer_link">&copy; {{ 'now' | date: '%Y' }} {{ section.settings.brand_name | default: 'ASMAAN' }}</span>
-              <a href="{{ section.settings.legal_link | default: '#' }}" class="footer_link">Legal</a>
-              <a href="{{ section.settings.terms_link | default: '#' }}" class="footer_link">Terms</a>
-              <a href="{{ section.settings.privacy_link | default: '#' }}" class="footer_link">Privacy policy</a>
+              <a href="{{ section.settings.legal_link | default: '#' }}" class="footer_link">{{ section.settings.legal_label | default: 'Legal' }}</a>
+              <a href="{{ section.settings.terms_link | default: '#' }}" class="footer_link">{{ section.settings.terms_label | default: 'Terms' }}</a>
+              <a href="{{ section.settings.privacy_link | default: '#' }}" class="footer_link">{{ section.settings.privacy_label | default: 'Privacy policy' }}</a>
             </div>
 
             <a href="#top" class="button is-secondary is-social">
-              Top
+              {{ section.settings.top_button_text | default: 'Top' }}
             </a>
           </div>
         </div>
@@ -93,6 +93,10 @@
   "tag": "div",
   "class": "asmaan-newsletter-section",
   "settings": [
+    {
+      "type": "header",
+      "content": "Branding & Newsletter Heading"
+    },
     {
       "type": "text",
       "id": "brand_name",
@@ -112,6 +116,10 @@
       "default": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land."
     },
     {
+      "type": "header",
+      "content": "Form Settings"
+    },
+    {
       "type": "text",
       "id": "placeholder",
       "label": "Input Placeholder",
@@ -125,14 +133,37 @@
     },
     {
       "type": "text",
+      "id": "success_message",
+      "label": "Success Message",
+      "default": "You're on the list. We'll write once, when the cans land."
+    },
+    {
+      "type": "text",
+      "id": "consent_text",
+      "label": "Consent text prefix",
+      "default": "By signing up you accept our"
+    },
+    {
+      "type": "text",
       "id": "warning_note",
       "label": "Warning Note",
       "default": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine."
     },
     {
+      "type": "header",
+      "content": "Footer Links & Labels"
+    },
+    {
       "type": "url",
       "id": "instagram_url",
-      "label": "Instagram Link"
+      "label": "Instagram Link",
+      "default": "https://www.instagram.com/drinkasmaan"
+    },
+    {
+      "type": "text",
+      "id": "legal_label",
+      "label": "Legal Link Label",
+      "default": "Legal"
     },
     {
       "type": "url",
@@ -140,14 +171,32 @@
       "label": "Legal Link"
     },
     {
+      "type": "text",
+      "id": "terms_label",
+      "label": "Terms Link Label",
+      "default": "Terms"
+    },
+    {
       "type": "url",
       "id": "terms_link",
       "label": "Terms Link"
     },
     {
+      "type": "text",
+      "id": "privacy_label",
+      "label": "Privacy Link Label",
+      "default": "Privacy policy"
+    },
+    {
       "type": "url",
       "id": "privacy_link",
       "label": "Privacy Link"
+    },
+    {
+      "type": "text",
+      "id": "top_button_text",
+      "label": "Back to Top Button Text",
+      "default": "Top"
     }
   ],
   "presets": [

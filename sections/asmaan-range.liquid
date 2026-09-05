@@ -16,8 +16,9 @@
               <button
                 type="button"
                 data-range-card="0"
+                {% if section.settings.card1_url != blank %}data-href="{{ section.settings.card1_url }}"{% endif %}
                 aria-current="true"
-                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40"
+                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
               >
                 <span
                   aria-hidden="true"
@@ -25,16 +26,16 @@
                   style="background: radial-gradient(circle at 50% 100%, #9089D3, #2A1D4A 55%, transparent 75%);"
                 ></span>
                 <img
-                  alt="The Kala Jamun can"
+                  alt="{{ section.settings.card1_title | default: 'Kala Jamun' }} can"
                   loading="lazy"
                   width="520"
                   height="1040"
                   decoding="async"
                   class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                  src="{{ 'jamun-front.webp' | asset_url }}"
+                  src="{% if section.settings.card1_image != blank %}{{ section.settings.card1_image | image_url: width: 520 }}{% else %}{{ 'jamun-front.webp' | asset_url }}{% endif %}"
                 >
-                <span class="relative heading-style-h3">Kala Jamun</span>
-                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">The original</span>
+                <span class="relative heading-style-h3">{{ section.settings.card1_title | default: 'Kala Jamun' }}</span>
+                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.card1_tag | default: 'The original' }}</span>
               </button>
             </li>
 
@@ -43,8 +44,9 @@
               <button
                 type="button"
                 data-range-card="1"
+                {% if section.settings.card2_url != blank %}data-href="{{ section.settings.card2_url }}"{% endif %}
                 aria-current="false"
-                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40"
+                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
               >
                 <span
                   aria-hidden="true"
@@ -52,16 +54,16 @@
                   style="background: radial-gradient(circle at 50% 100%, #EFB36B, #5A2A00 55%, transparent 75%);"
                 ></span>
                 <img
-                  alt="The Alphonso Mango can"
+                  alt="{{ section.settings.card2_title | default: 'Alphonso Mango' }} can"
                   loading="lazy"
                   width="520"
                   height="1040"
                   decoding="async"
                   class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                  src="{{ 'mango-front.webp' | asset_url }}"
+                  src="{% if section.settings.card2_image != blank %}{{ section.settings.card2_image | image_url: width: 520 }}{% else %}{{ 'mango-front.webp' | asset_url }}{% endif %}"
                 >
-                <span class="relative heading-style-h3">Alphonso Mango</span>
-                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">Gold into burnt amber</span>
+                <span class="relative heading-style-h3">{{ section.settings.card2_title | default: 'Alphonso Mango' }}</span>
+                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.card2_tag | default: 'Gold into burnt amber' }}</span>
               </button>
             </li>
 
@@ -70,8 +72,9 @@
               <button
                 type="button"
                 data-range-card="2"
+                {% if section.settings.card3_url != blank %}data-href="{{ section.settings.card3_url }}"{% endif %}
                 aria-current="false"
-                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40"
+                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
               >
                 <span
                   aria-hidden="true"
@@ -79,16 +82,16 @@
                   style="background: radial-gradient(circle at 50% 100%, #E6A0E8, #4E0749 55%, transparent 75%);"
                 ></span>
                 <img
-                  alt="The Wild Magenta can"
+                  alt="{{ section.settings.card3_title | default: 'Wild Magenta' }} can"
                   loading="lazy"
                   width="520"
                   height="1040"
                   decoding="async"
                   class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                  src="{{ 'print-front.webp' | asset_url }}"
+                  src="{% if section.settings.card3_image != blank %}{{ section.settings.card3_image | image_url: width: 520 }}{% else %}{{ 'print-front.webp' | asset_url }}{% endif %}"
                 >
-                <span class="relative heading-style-h3">Wild Magenta</span>
-                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">Rose and pink guava</span>
+                <span class="relative heading-style-h3">{{ section.settings.card3_title | default: 'Wild Magenta' }}</span>
+                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.card3_tag | default: 'Rose and pink guava' }}</span>
               </button>
             </li>
           </ul>
@@ -109,6 +112,84 @@
       "id": "title",
       "label": "Heading",
       "default": "The range"
+    },
+    {
+      "type": "header",
+      "content": "Card 1 — Kala Jamun"
+    },
+    {
+      "type": "text",
+      "id": "card1_title",
+      "label": "Title",
+      "default": "Kala Jamun"
+    },
+    {
+      "type": "text",
+      "id": "card1_tag",
+      "label": "Tag",
+      "default": "The original"
+    },
+    {
+      "type": "image_picker",
+      "id": "card1_image",
+      "label": "Custom Can Image"
+    },
+    {
+      "type": "url",
+      "id": "card1_url",
+      "label": "Product Link (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Card 2 — Alphonso Mango"
+    },
+    {
+      "type": "text",
+      "id": "card2_title",
+      "label": "Title",
+      "default": "Alphonso Mango"
+    },
+    {
+      "type": "text",
+      "id": "card2_tag",
+      "label": "Tag",
+      "default": "Gold into burnt amber"
+    },
+    {
+      "type": "image_picker",
+      "id": "card2_image",
+      "label": "Custom Can Image"
+    },
+    {
+      "type": "url",
+      "id": "card2_url",
+      "label": "Product Link (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Card 3 — Wild Magenta"
+    },
+    {
+      "type": "text",
+      "id": "card3_title",
+      "label": "Title",
+      "default": "Wild Magenta"
+    },
+    {
+      "type": "text",
+      "id": "card3_tag",
+      "label": "Tag",
+      "default": "Rose and pink guava"
+    },
+    {
+      "type": "image_picker",
+      "id": "card3_image",
+      "label": "Custom Can Image"
+    },
+    {
+      "type": "url",
+      "id": "card3_url",
+      "label": "Product Link (optional)"
     }
   ],
   "presets": [

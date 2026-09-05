@@ -10,12 +10,12 @@
       role="img"
       aria-label="A 250 ml can of Asmaan Ambition Tonic. Interactive 3D model — drag it to turn the can."
       data-asmaan-stage-can
-      data-img-jamun="{{ 'jamun-front.webp' | asset_url }}"
-      data-img-mango="{{ 'mango-front.webp' | asset_url }}"
-      data-img-print="{{ 'print-front.webp' | asset_url }}"
-      data-label-jamun="{{ 'asmaan-label-jamun.jpg' | asset_url }}"
-      data-label-mango="{{ 'asmaan-label-mango.jpg' | asset_url }}"
-      data-label-print="{{ 'asmaan-label-magenta.jpg' | asset_url }}"
+      data-img-jamun="{% if section.settings.jamun_poster != blank %}{{ section.settings.jamun_poster | image_url: width: 1040 }}{% else %}{{ 'jamun-front.webp' | asset_url }}{% endif %}"
+      data-img-mango="{% if section.settings.mango_poster != blank %}{{ section.settings.mango_poster | image_url: width: 1040 }}{% else %}{{ 'mango-front.webp' | asset_url }}{% endif %}"
+      data-img-print="{% if section.settings.print_poster != blank %}{{ section.settings.print_poster | image_url: width: 1040 }}{% else %}{{ 'print-front.webp' | asset_url }}{% endif %}"
+      data-label-jamun="{% if section.settings.jamun_label != blank %}{{ section.settings.jamun_label | image_url }}{% else %}{{ 'asmaan-label-jamun.jpg' | asset_url }}{% endif %}"
+      data-label-mango="{% if section.settings.mango_label != blank %}{{ section.settings.mango_label | image_url }}{% else %}{{ 'asmaan-label-mango.jpg' | asset_url }}{% endif %}"
+      data-label-print="{% if section.settings.print_label != blank %}{{ section.settings.print_label | image_url }}{% else %}{{ 'asmaan-label-magenta.jpg' | asset_url }}{% endif %}"
     >
       <img
         alt="A 250 ml can of Asmaan Ambition Tonic"
@@ -59,25 +59,25 @@
                 </div>
                 <div class="gamme_gradient-blur" aria-hidden="true"></div>
 
-                <h1 class="sr-only">Asmaan — the ambition tonic</h1>
+                <h1 class="sr-only">{{ section.settings.seo_h1 | default: 'Asmaan — the ambition tonic' }}</h1>
 
                 <div class="carousel_stack" data-taste-stack>
                   <div class="carousel_slide" data-active="true">
                     <div class="heading-style-h2">
-                      <span class="block">Kala</span>
-                      <span class="block">Jamun</span>
+                      <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
+                      <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
                     </div>
                   </div>
                   <div class="carousel_slide" data-active="false">
                     <div class="heading-style-h2">
-                      <span class="block">Alphonso</span>
-                      <span class="block">Mango</span>
+                      <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
+                      <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
                     </div>
                   </div>
                   <div class="carousel_slide" data-active="false">
                     <div class="heading-style-h2">
-                      <span class="block">Wild</span>
-                      <span class="block">Magenta</span>
+                      <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
+                      <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
                     </div>
                   </div>
                 </div>
@@ -108,13 +108,13 @@
                       <rect x="16" y="20" width="208" height="4" rx="2" fill="url(#bar-gradient)"></rect>
                       <circle data-liquid-circle cx="22" cy="22" r="8" fill="#fff" style="transition: cx 0.55s cubic-bezier(0.65, 0, 0.35, 1);"></circle>
                     </g>
-                    <circle data-taste-dot cx="22" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="Kala Jamun" aria-current="true"></circle>
-                    <circle data-taste-dot cx="120" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="Alphonso Mango" aria-current="false"></circle>
-                    <circle data-taste-dot cx="218" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="Wild Magenta" aria-current="false"></circle>
+                    <circle data-taste-dot cx="22" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.jamun_line1 | default: 'Kala' }} {{ section.settings.jamun_line2 | default: 'Jamun' }}" aria-current="true"></circle>
+                    <circle data-taste-dot cx="120" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.mango_line1 | default: 'Alphonso' }} {{ section.settings.mango_line2 | default: 'Mango' }}" aria-current="false"></circle>
+                    <circle data-taste-dot cx="218" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.print_line1 | default: 'Wild' }} {{ section.settings.print_line2 | default: 'Magenta' }}" aria-current="false"></circle>
                   </svg>
                 </div>
 
-                <div class="scroll_discover font-mono">Scroll to discover</div>
+                <div class="scroll_discover font-mono">{{ section.settings.discover_text | default: 'Scroll to discover' }}</div>
               </div>
             </div>
           </div>
@@ -134,20 +134,20 @@
                   <div class="carousel_stack" data-taste-stack>
                     <div class="carousel_slide" data-active="true">
                       <div class="heading-style-h2">
-                        <span class="block">Kala</span>
-                        <span class="block">Jamun</span>
+                        <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
+                        <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
                       </div>
                     </div>
                     <div class="carousel_slide" data-active="false">
                       <div class="heading-style-h2">
-                        <span class="block">Alphonso</span>
-                        <span class="block">Mango</span>
+                        <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
+                        <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
                       </div>
                     </div>
                     <div class="carousel_slide" data-active="false">
                       <div class="heading-style-h2">
-                        <span class="block">Wild</span>
-                        <span class="block">Magenta</span>
+                        <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
+                        <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
                       </div>
                     </div>
                   </div>
@@ -157,16 +157,16 @@
                   {% render 'asmaan-icons', name: 'corner', class: 'corner-left h-2 w-2 text-white/50' %}
                   <div class="carousel_stack" data-taste-stack>
                     <div class="carousel_slide" data-active="true">
-                      <p class="text-white/80">The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.</p>
-                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">The original</p>
+                      <p class="text-white/80">{{ section.settings.jamun_blurb | default: 'The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.' }}</p>
+                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.jamun_tag | default: 'The original' }}</p>
                     </div>
                     <div class="carousel_slide" data-active="false">
-                      <p class="text-white/80">A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.</p>
-                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">Gold into burnt amber</p>
+                      <p class="text-white/80">{{ section.settings.mango_blurb | default: 'A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.' }}</p>
+                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.mango_tag | default: 'Gold into burnt amber' }}</p>
                     </div>
                     <div class="carousel_slide" data-active="false">
-                      <p class="text-white/80">The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.</p>
-                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">Rose and pink guava</p>
+                      <p class="text-white/80">{{ section.settings.print_blurb | default: 'The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.' }}</p>
+                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.print_tag | default: 'Rose and pink guava' }}</p>
                     </div>
                   </div>
                   {% render 'asmaan-icons', name: 'corner', flip: true, class: 'corner-right h-2 w-2 text-white/50' %}
@@ -180,7 +180,7 @@
 
     <!-- 3. Benefits Section -->
     <div id="benefits">
-      <section id="benefit-sugar" aria-label="Zero sugar" class="section is-pinned" style="height: 170svh;">
+      <section id="benefit-sugar" aria-label="{{ section.settings.b1_title | default: 'Zero sugar' }}" class="section is-pinned" style="height: 170svh;">
         <div class="benefits_container">
           <div class="pin_fade">
             <div class="padding-global">
@@ -195,15 +195,15 @@
                             <div class="subhead_icon">
                               {% render 'asmaan-icons', name: 'cross', class: 'h-2.5 w-2.5' %}
                             </div>
-                            <div class="subhead_text">Sugar</div>
+                            <div class="subhead_text">{{ section.settings.b1_struck | default: 'Sugar' }}</div>
                           </div>
                         </div>
                       </div>
                       <div class="mb-[var(--pad-xs)]">
-                        <h2 class="heading-style-h2">Zero sugar</h2>
+                        <h2 class="heading-style-h2">{{ section.settings.b1_title | default: 'Zero sugar' }}</h2>
                       </div>
-                      <p class="text-white/75">Ten calories a can. Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.</p>
-                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">10 kcal per 250 ml</div>
+                      <p class="text-white/75">{{ section.settings.b1_body | default: 'Ten calories a can. Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.' }}</p>
+                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.b1_note | default: '10 kcal per 250 ml' }}</div>
                     </div>
                   </div>
                 </div>
@@ -213,7 +213,7 @@
         </div>
       </section>
 
-      <section id="benefit-caffeine" aria-label="Caffeine from green coffee" class="section is-pinned" style="height: 170svh;">
+      <section id="benefit-caffeine" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}" class="section is-pinned" style="height: 170svh;">
         <div class="benefits_container">
           <div class="pin_fade">
             <div class="padding-global">
@@ -228,15 +228,15 @@
                             <div class="subhead_icon">
                               {% render 'asmaan-icons', name: 'cross', class: 'h-2.5 w-2.5' %}
                             </div>
-                            <div class="subhead_text">Synthetic caffeine</div>
+                            <div class="subhead_text">{{ section.settings.b2_struck | default: 'Synthetic caffeine' }}</div>
                           </div>
                         </div>
                       </div>
                       <div class="mb-[var(--pad-xs)]">
-                        <h2 class="heading-style-h2">Caffeine from green coffee</h2>
+                        <h2 class="heading-style-h2">{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}</h2>
                       </div>
-                      <p class="text-white/75">100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.</p>
-                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">100 mg per can</div>
+                      <p class="text-white/75">{{ section.settings.b2_body | default: '100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.' }}</p>
+                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.b2_note | default: '100 mg per can' }}</div>
                     </div>
                   </div>
                 </div>
@@ -246,7 +246,7 @@
         </div>
       </section>
 
-      <section id="benefit-crash" aria-label="L-theanine and ashwagandha" class="section is-pinned" style="height: 170svh;">
+      <section id="benefit-crash" aria-label="{{ section.settings.b3_title | default: 'L-theanine and ashwagandha' }}" class="section is-pinned" style="height: 170svh;">
         <div class="benefits_container">
           <div class="pin_fade">
             <div class="padding-global">
@@ -261,15 +261,15 @@
                             <div class="subhead_icon">
                               {% render 'asmaan-icons', name: 'cross', class: 'h-2.5 w-2.5' %}
                             </div>
-                            <div class="subhead_text">The crash</div>
+                            <div class="subhead_text">{{ section.settings.b3_struck | default: 'The crash' }}</div>
                           </div>
                         </div>
                       </div>
                       <div class="mb-[var(--pad-xs)]">
-                        <h2 class="heading-style-h2">L-theanine and ashwagandha</h2>
+                        <h2 class="heading-style-h2">{{ section.settings.b3_title | default: 'L-theanine and ashwagandha' }}</h2>
                       </div>
-                      <p class="text-white/75">200 mg of L-theanine to take the edge off the caffeine, and 300 mg of KSM-66 ashwagandha under it. The curve climbs instead of spiking, then comes down flat.</p>
-                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">200 mg L-theanine &middot; 300 mg KSM-66</div>
+                      <p class="text-white/75">{{ section.settings.b3_body | default: '200 mg of L-theanine to take the edge off the caffeine, and 300 mg of KSM-66 ashwagandha under it. The curve climbs instead of spiking, then comes down flat.' }}</p>
+                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.b3_note | default: '200 mg L-theanine &middot; 300 mg KSM-66' }}</div>
                     </div>
                   </div>
                 </div>
@@ -279,7 +279,7 @@
         </div>
       </section>
 
-      <section id="benefit-colour" aria-label="Colour from food" class="section is-pinned" style="height: 170svh;">
+      <section id="benefit-colour" aria-label="{{ section.settings.b4_title | default: 'Colour from food' }}" class="section is-pinned" style="height: 170svh;">
         <div class="benefits_container">
           <div class="pin_fade">
             <div class="padding-global">
@@ -294,15 +294,15 @@
                             <div class="subhead_icon">
                               {% render 'asmaan-icons', name: 'cross', class: 'h-2.5 w-2.5' %}
                             </div>
-                            <div class="subhead_text">Artificial colour</div>
+                            <div class="subhead_text">{{ section.settings.b4_struck | default: 'Artificial colour' }}</div>
                           </div>
                         </div>
                       </div>
                       <div class="mb-[var(--pad-xs)]">
-                        <h2 class="heading-style-h2">Colour from food</h2>
+                        <h2 class="heading-style-h2">{{ section.settings.b4_title | default: 'Colour from food' }}</h2>
                       </div>
-                      <p class="text-white/75">No synthetic dyes and no proprietary blend. Every milligram in the can is printed on the can, and the colour comes from what is already in it.</p>
-                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">Vegan &middot; no artificial colour</div>
+                      <p class="text-white/75">{{ section.settings.b4_body | default: 'No synthetic dyes and no proprietary blend. Every milligram in the can is printed on the can, and the colour comes from what is already in it.' }}</p>
+                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.b4_note | default: 'Vegan &middot; no artificial colour' }}</div>
                     </div>
                   </div>
                 </div>
@@ -315,7 +315,7 @@
       <!-- Benefits Floating Side-Nav -->
       <div class="benefits_nav" style="opacity: 0; visibility: hidden;" aria-hidden="true">
         <div class="contents">
-          <a href="#benefit-sugar" class="benefits_icon-wrapper is-active" aria-label="Zero sugar" aria-current="true">
+          <a href="#benefit-sugar" class="benefits_icon-wrapper is-active" aria-label="{{ section.settings.b1_title | default: 'Zero sugar' }}" aria-current="true">
             <div class="benefits_icon">
               {% render 'asmaan-icons', name: 'benefit', icon: 'sugar', class: 'h-full w-full' %}
             </div>
@@ -323,7 +323,7 @@
         </div>
         <div class="contents">
           <div class="benefits_icon-separator"></div>
-          <a href="#benefit-caffeine" class="benefits_icon-wrapper" aria-label="Caffeine from green coffee" aria-current="false">
+          <a href="#benefit-caffeine" class="benefits_icon-wrapper" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}" aria-current="false">
             <div class="benefits_icon">
               {% render 'asmaan-icons', name: 'benefit', icon: 'bean', class: 'h-full w-full' %}
             </div>
@@ -331,7 +331,7 @@
         </div>
         <div class="contents">
           <div class="benefits_icon-separator"></div>
-          <a href="#benefit-crash" class="benefits_icon-wrapper" aria-label="L-theanine and ashwagandha" aria-current="false">
+          <a href="#benefit-crash" class="benefits_icon-wrapper" aria-label="{{ section.settings.b3_title | default: 'L-theanine and ashwagandha' }}" aria-current="false">
             <div class="benefits_icon">
               {% render 'asmaan-icons', name: 'benefit', icon: 'curve', class: 'h-full w-full' %}
             </div>
@@ -339,7 +339,7 @@
         </div>
         <div class="contents">
           <div class="benefits_icon-separator"></div>
-          <a href="#benefit-colour" class="benefits_icon-wrapper" aria-label="Colour from food" aria-current="false">
+          <a href="#benefit-colour" class="benefits_icon-wrapper" aria-label="{{ section.settings.b4_title | default: 'Colour from food' }}" aria-current="false">
             <div class="benefits_icon">
               {% render 'asmaan-icons', name: 'benefit', icon: 'drop', class: 'h-full w-full' %}
             </div>
@@ -361,15 +361,15 @@
         <div class="manifesto_shade"></div>
       </div>
       <div class="manifesto_type">
-        <span>Nothing</span>
-        <span>Hidden</span>
+        <span>{{ section.settings.manifesto_line1 | default: 'Nothing' }}</span>
+        <span>{{ section.settings.manifesto_line2 | default: 'Hidden' }}</span>
       </div>
     </div>
 
     <section class="section is-pinned is-manifesto" style="height: 170svh;">
       <div class="manifesto_container">
         <div class="pin_fade">
-          <h2 class="sr-only">Nothing hidden — every milligram is printed on the can.</h2>
+          <h2 class="sr-only">{{ section.settings.manifesto_label | default: 'Nothing hidden — every milligram is printed on the can.' }}</h2>
         </div>
       </div>
     </section>
@@ -385,10 +385,268 @@
   "class": "asmaan-stage-section",
   "settings": [
     {
+      "type": "header",
+      "content": "SEO & Stage Hero"
+    },
+    {
       "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "Asmaan — Ambition Tonic"
+      "id": "seo_h1",
+      "label": "SEO Page Title (H1)",
+      "default": "Asmaan — the ambition tonic"
+    },
+    {
+      "type": "text",
+      "id": "discover_text",
+      "label": "Discover Prompt",
+      "default": "Scroll to discover"
+    },
+    {
+      "type": "header",
+      "content": "Flavour 1 — Kala Jamun"
+    },
+    {
+      "type": "text",
+      "id": "jamun_line1",
+      "label": "Heading Line 1",
+      "default": "Kala"
+    },
+    {
+      "type": "text",
+      "id": "jamun_line2",
+      "label": "Heading Line 2",
+      "default": "Jamun"
+    },
+    {
+      "type": "text",
+      "id": "jamun_tag",
+      "label": "Sub-tag",
+      "default": "The original"
+    },
+    {
+      "type": "textarea",
+      "id": "jamun_blurb",
+      "label": "Tasting Notes Blurb",
+      "default": "The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight."
+    },
+    {
+      "type": "image_picker",
+      "id": "jamun_poster",
+      "label": "Fallback Poster Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "jamun_label",
+      "label": "3D Label Texture (360° Wrap)"
+    },
+    {
+      "type": "header",
+      "content": "Flavour 2 — Alphonso Mango"
+    },
+    {
+      "type": "text",
+      "id": "mango_line1",
+      "label": "Heading Line 1",
+      "default": "Alphonso"
+    },
+    {
+      "type": "text",
+      "id": "mango_line2",
+      "label": "Heading Line 2",
+      "default": "Mango"
+    },
+    {
+      "type": "text",
+      "id": "mango_tag",
+      "label": "Sub-tag",
+      "default": "Gold into burnt amber"
+    },
+    {
+      "type": "textarea",
+      "id": "mango_blurb",
+      "label": "Tasting Notes Blurb",
+      "default": "A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it."
+    },
+    {
+      "type": "image_picker",
+      "id": "mango_poster",
+      "label": "Fallback Poster Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mango_label",
+      "label": "3D Label Texture (360° Wrap)"
+    },
+    {
+      "type": "header",
+      "content": "Flavour 3 — Wild Magenta"
+    },
+    {
+      "type": "text",
+      "id": "print_line1",
+      "label": "Heading Line 1",
+      "default": "Wild"
+    },
+    {
+      "type": "text",
+      "id": "print_line2",
+      "label": "Heading Line 2",
+      "default": "Magenta"
+    },
+    {
+      "type": "text",
+      "id": "print_tag",
+      "label": "Sub-tag",
+      "default": "Rose and pink guava"
+    },
+    {
+      "type": "textarea",
+      "id": "print_blurb",
+      "label": "Tasting Notes Blurb",
+      "default": "The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet."
+    },
+    {
+      "type": "image_picker",
+      "id": "print_poster",
+      "label": "Fallback Poster Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "print_label",
+      "label": "3D Label Texture (360° Wrap)"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 1 — Sugar"
+    },
+    {
+      "type": "text",
+      "id": "b1_struck",
+      "label": "Strikethrough Label",
+      "default": "Sugar"
+    },
+    {
+      "type": "text",
+      "id": "b1_title",
+      "label": "Title",
+      "default": "Zero sugar"
+    },
+    {
+      "type": "textarea",
+      "id": "b1_body",
+      "label": "Description",
+      "default": "Ten calories a can. Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind."
+    },
+    {
+      "type": "text",
+      "id": "b1_note",
+      "label": "Metric / Note",
+      "default": "10 kcal per 250 ml"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 2 — Caffeine"
+    },
+    {
+      "type": "text",
+      "id": "b2_struck",
+      "label": "Strikethrough Label",
+      "default": "Synthetic caffeine"
+    },
+    {
+      "type": "text",
+      "id": "b2_title",
+      "label": "Title",
+      "default": "Caffeine from green coffee"
+    },
+    {
+      "type": "textarea",
+      "id": "b2_body",
+      "label": "Description",
+      "default": "100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version."
+    },
+    {
+      "type": "text",
+      "id": "b2_note",
+      "label": "Metric / Note",
+      "default": "100 mg per can"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 3 — Crash & Adaptogens"
+    },
+    {
+      "type": "text",
+      "id": "b3_struck",
+      "label": "Strikethrough Label",
+      "default": "The crash"
+    },
+    {
+      "type": "text",
+      "id": "b3_title",
+      "label": "Title",
+      "default": "L-theanine and ashwagandha"
+    },
+    {
+      "type": "textarea",
+      "id": "b3_body",
+      "label": "Description",
+      "default": "200 mg of L-theanine to take the edge off the caffeine, and 300 mg of KSM-66 ashwagandha under it. The curve climbs instead of spiking, then comes down flat."
+    },
+    {
+      "type": "text",
+      "id": "b3_note",
+      "label": "Metric / Note",
+      "default": "200 mg L-theanine · 300 mg KSM-66"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 4 — Colour"
+    },
+    {
+      "type": "text",
+      "id": "b4_struck",
+      "label": "Strikethrough Label",
+      "default": "Artificial colour"
+    },
+    {
+      "type": "text",
+      "id": "b4_title",
+      "label": "Title",
+      "default": "Colour from food"
+    },
+    {
+      "type": "textarea",
+      "id": "b4_body",
+      "label": "Description",
+      "default": "No synthetic dyes and no proprietary blend. Every milligram in the can is printed on the can, and the colour comes from what is already in it."
+    },
+    {
+      "type": "text",
+      "id": "b4_note",
+      "label": "Metric / Note",
+      "default": "Vegan · no artificial colour"
+    },
+    {
+      "type": "header",
+      "content": "Manifesto Section"
+    },
+    {
+      "type": "text",
+      "id": "manifesto_line1",
+      "label": "Manifesto Line 1",
+      "default": "Nothing"
+    },
+    {
+      "type": "text",
+      "id": "manifesto_line2",
+      "label": "Manifesto Line 2",
+      "default": "Hidden"
+    },
+    {
+      "type": "text",
+      "id": "manifesto_label",
+      "label": "Accessible Full Claim",
+      "default": "Nothing hidden — every milligram is printed on the can."
     }
   ],
   "presets": [
