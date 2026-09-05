@@ -1256,9 +1256,32 @@
               pose.y * u + spread * lift,
               spread * -Math.abs(x) * DEPTH
             );
+
+            // Homepage carousel rotation: ONLY the can focused in the centre rotates; side cans stay still.
+            if (canObj.spinAngle === undefined) canObj.spinAngle = 0;
+
+            if (!isMotionOff) {
+              if (spread > 0.15) {
+                // Multi-can carousel on homepage
+                if (focus > 0.65) {
+                  // Center focused can rotates with ambient drift
+                  canObj.spinAngle += stage3D.velocity * dt;
+                } else {
+                  // Side cans stay completely still at their resting angle (front-facing)
+                  var targetRest = Math.round(canObj.spinAngle / (Math.PI * 2)) * (Math.PI * 2);
+                  canObj.spinAngle += (targetRest - canObj.spinAngle) * (1 - Math.exp(-6.0 * dt));
+                }
+              } else {
+                // Scrolled into single-can narrative section
+                canObj.spinAngle = stage3D.drag;
+              }
+            }
+
+            var canRotationY = pose.spin + canObj.spinAngle + spread * (slot * TURN_PER_SLOT - LEAN_Y);
+
             grp.rotation.set(
               pose.pitch + spread * TILT_X,
-              pose.spin + stage3D.drag + spread * (slot * TURN_PER_SLOT - LEAN_Y),
+              canRotationY,
               pose.roll + spread * LEAN_Z
             );
             grp.scale.setScalar(pose.scale * presence);
