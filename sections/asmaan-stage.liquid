@@ -41,13 +41,13 @@
   </div>
 
   <main class="pointer-events-none relative">
-    <!-- 1. Hero Section (Void Energy Inspired Elevated Initial Hero) -->
-    <section id="range" aria-label="Asmaan Elevated Hero" class="section is-pinned asmaan-hero-pinned" style="height: 190svh;">
+    <!-- 1. Hero Range -->
+    <section id="range" aria-label="The range" class="section is-pinned" style="height: 170svh;">
       <div class="gamme_container">
         <div class="pin_fade">
           <div class="padding-global">
             <div class="container-large">
-              <div class="asmaan-hero-wrapper relative mx-auto text-center pb-[var(--pad-m)]">
+              <div class="relative mx-auto max-width-medium pb-[var(--pad-m)]">
                 <div class="gamme_gradient-wrapper" aria-hidden="true">
                   <div class="gamme_gradient-position">
                     <div class="gamme_gradient"></div>
@@ -55,110 +55,40 @@
                 </div>
                 <div class="gamme_gradient-blur" aria-hidden="true"></div>
 
-                <!-- Top Pill Badge (Void Energy ve-button-main style) -->
-                <div class="mb-3 pointer-events-auto">
-                  <a href="{{ section.settings.hero_pill_url | default: '#range-section' }}" class="ve-button-main asmaan-hero-pill" aria-label="{{ section.settings.hero_pill_text | default: 'DRINK ASMAAN' }}">
-                    <span class="ve-pill-glow"></span>
-                    <span>{{ section.settings.hero_pill_text | default: 'DRINK ASMAAN' }}</span>
-                  </a>
-                </div>
+                <h1 class="sr-only">{{ section.settings.seo_h1 | default: 'Asmaan — the ambition tonic' }}</h1>
 
-                <!-- Main Bold Statement Headline -->
-                <h1 class="asmaan-hero-headline">
-                  {{ section.settings.hero_title | default: 'THE WORLD’S FIRST ELEVATED BOTANICAL TONIC<br class="hidden sm:inline"> DESIGNED FOR CREATIVES' }}
-                </h1>
-
-                <!-- Crisp Mission Subtitle -->
-                <p class="asmaan-hero-subtitle mx-auto">
-                  {{ section.settings.hero_subtitle | default: 'Clean energy, adaptogens, and nootropics engineered for deep creative flow. Zero crash. Zero sugar.' }}
-                </p>
-
-                <!-- 4-Pillar Spec Bullets (Void Energy section-main-block-2) -->
-                <div class="asmaan-pillars-grid">
-                  <div class="asmaan-pillar-item">
-                    <div class="asmaan-pillar-header">
-                      <span class="asmaan-pillar-icon">
-                        {% render 'asmaan-icons', name: 'benefit', icon: 'curve', class: 'h-3.5 w-3.5' %}
-                      </span>
-                      <h3 class="asmaan-pillar-title">{{ section.settings.pillar1_title | default: 'Calm Focus' }}</h3>
-                    </div>
-                    <p class="asmaan-pillar-desc">{{ section.settings.pillar1_desc | default: 'Mental energy with a calm & relaxed body.' }}</p>
-                  </div>
-
-                  <div class="asmaan-pillar-item">
-                    <div class="asmaan-pillar-header">
-                      <span class="asmaan-pillar-icon">
-                        {% render 'asmaan-icons', name: 'cross', class: 'h-3 w-3' %}
-                      </span>
-                      <h3 class="asmaan-pillar-title">{{ section.settings.pillar2_title | default: 'Enhanced Mood' }}</h3>
-                    </div>
-                    <p class="asmaan-pillar-desc">{{ section.settings.pillar2_desc | default: 'Nootropics that balance stress and boost flow state.' }}</p>
-                  </div>
-
-                  <div class="asmaan-pillar-item">
-                    <div class="asmaan-pillar-header">
-                      <span class="asmaan-pillar-icon">
-                        {% render 'asmaan-icons', name: 'benefit', icon: 'bean', class: 'h-3.5 w-3.5' %}
-                      </span>
-                      <h3 class="asmaan-pillar-title">{{ section.settings.pillar3_title | default: 'Clean Energy' }}</h3>
-                    </div>
-                    <p class="asmaan-pillar-desc">{{ section.settings.pillar3_desc | default: 'The energy curve designed for longevity, not burnout.' }}</p>
-                  </div>
-
-                  <div class="asmaan-pillar-item">
-                    <div class="asmaan-pillar-header">
-                      <span class="asmaan-pillar-icon">
-                        {% render 'asmaan-icons', name: 'benefit', icon: 'sugar', class: 'h-3.5 w-3.5' %}
-                      </span>
-                      <h3 class="asmaan-pillar-title">{{ section.settings.pillar4_title | default: 'Creative Flow' }}</h3>
-                    </div>
-                    <p class="asmaan-pillar-desc">{{ section.settings.pillar4_desc | default: 'Built for long hours of deep, creative work.' }}</p>
-                  </div>
-                </div>
-
-                <!-- Action CTAs (Void Energy section-main-block-3) -->
-                <div class="asmaan-hero-actions pointer-events-auto">
-                  <a href="{{ section.settings.hero_cta_url | default: '#range-section' }}" class="button is-hero is-primary">
-                    <span>{{ section.settings.hero_cta_text | default: 'Shop Now' }}</span>
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </a>
-                  <a href="/pages/benefits" class="button is-hero is-secondary">
-                    {{ section.settings.hero_secondary_text | default: 'Explore Science' }}
-                  </a>
-                </div>
-
-                <!-- Liquid Flavour Chooser / Pagination -->
-                <div class="carousel_stack mt-4" data-taste-stack>
+                <div class="carousel_stack" data-taste-stack>
                   <div class="carousel_slide" data-active="true">
-                    <div class="heading-style-h3 text-white/90">
-                      <span>{{ section.settings.jamun_line1 | default: 'Kala' }} {{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
+                    <div class="heading-style-h2">
+                      <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
+                      <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
                     </div>
                   </div>
                   <div class="carousel_slide" data-active="false">
-                    <div class="heading-style-h3 text-white/90">
-                      <span>{{ section.settings.mango_line1 | default: 'Alphonso' }} {{ section.settings.mango_line2 | default: 'Mango' }}</span>
+                    <div class="heading-style-h2">
+                      <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
+                      <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
                     </div>
                   </div>
                   <div class="carousel_slide" data-active="false">
-                    <div class="heading-style-h3 text-white/90">
-                      <span>{{ section.settings.print_line1 | default: 'Wild' }} {{ section.settings.print_line2 | default: 'Magenta' }}</span>
+                    <div class="heading-style-h2">
+                      <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
+                      <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
                     </div>
                   </div>
                 </div>
 
                 <div class="carousel_nav pointer-events-auto">
-                  <button type="button" class="carousel_arrow is-prev" data-carousel-prev aria-label="Previous flavour">
+                  <button type="button" class="carousel_arrow is-prev" data-carousel-prev aria-label="Previous colourway">
                     {% render 'asmaan-icons', name: 'arrow', direction: 'left', class: 'h-5 w-5' %}
                   </button>
-                  <button type="button" class="carousel_arrow is-next" data-carousel-next aria-label="Next flavour">
+                  <button type="button" class="carousel_arrow is-next" data-carousel-next aria-label="Next colourway">
                     {% render 'asmaan-icons', name: 'arrow', direction: 'right', class: 'h-5 w-5' %}
                   </button>
                 </div>
 
                 <div class="carousel_pagination pointer-events-auto mx-auto w-[15rem] max-w-full">
-                  <svg viewBox="0 0 240 44" class="h-auto w-full overflow-visible" role="group" aria-label="Choose a flavour">
+                  <svg viewBox="0 0 240 44" class="h-auto w-full overflow-visible" role="group" aria-label="Choose a colourway">
                     <defs>
                       <filter id="liquid">
                         <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"></feGaussianBlur>
@@ -450,106 +380,6 @@
   "tag": "div",
   "class": "asmaan-stage-section",
   "settings": [
-    {
-      "type": "header",
-      "content": "Void Energy-Inspired Hero Settings"
-    },
-    {
-      "type": "text",
-      "id": "hero_pill_text",
-      "label": "Hero Pill Badge Text",
-      "default": "DRINK ASMAAN"
-    },
-    {
-      "type": "url",
-      "id": "hero_pill_url",
-      "label": "Hero Pill URL"
-    },
-    {
-      "type": "textarea",
-      "id": "hero_title",
-      "label": "Hero Headline",
-      "default": "THE WORLD\u2019S FIRST ELEVATED BOTANICAL TONIC DESIGNED FOR CREATIVES"
-    },
-    {
-      "type": "textarea",
-      "id": "hero_subtitle",
-      "label": "Hero Mission Subtitle",
-      "default": "Clean energy, adaptogens, and nootropics engineered for deep creative flow. Zero crash. Zero sugar."
-    },
-    {
-      "type": "header",
-      "content": "Hero 4-Pillar Bullets (Void Energy Style)"
-    },
-    {
-      "type": "text",
-      "id": "pillar1_title",
-      "label": "Pillar 1 Title",
-      "default": "Calm Focus"
-    },
-    {
-      "type": "text",
-      "id": "pillar1_desc",
-      "label": "Pillar 1 Description",
-      "default": "Mental energy with a calm & relaxed body."
-    },
-    {
-      "type": "text",
-      "id": "pillar2_title",
-      "label": "Pillar 2 Title",
-      "default": "Enhanced Mood"
-    },
-    {
-      "type": "text",
-      "id": "pillar2_desc",
-      "label": "Pillar 2 Description",
-      "default": "Nootropics that balance stress and boost flow state."
-    },
-    {
-      "type": "text",
-      "id": "pillar3_title",
-      "label": "Pillar 3 Title",
-      "default": "Clean Energy"
-    },
-    {
-      "type": "text",
-      "id": "pillar3_desc",
-      "label": "Pillar 3 Description",
-      "default": "The energy curve designed for longevity, not burnout."
-    },
-    {
-      "type": "text",
-      "id": "pillar4_title",
-      "label": "Pillar 4 Title",
-      "default": "Creative Flow"
-    },
-    {
-      "type": "text",
-      "id": "pillar4_desc",
-      "label": "Pillar 4 Description",
-      "default": "Built for long hours of deep, creative work."
-    },
-    {
-      "type": "header",
-      "content": "Hero Call-to-Action Buttons"
-    },
-    {
-      "type": "text",
-      "id": "hero_cta_text",
-      "label": "Hero Primary CTA Text",
-      "default": "Shop Now"
-    },
-    {
-      "type": "url",
-      "id": "hero_cta_url",
-      "label": "Hero Primary CTA URL"
-    },
-    {
-      "type": "text",
-      "id": "hero_secondary_text",
-      "label": "Hero Secondary CTA Text",
-      "default": "Explore Science"
-    },
     {
       "type": "header",
       "content": "SEO & Stage Hero"
