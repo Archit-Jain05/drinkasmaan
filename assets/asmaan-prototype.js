@@ -360,6 +360,100 @@
     }
   };
 
+  // Chilled Condensation Normal Map Generator for Three.js
+  var cachedCondensationTexture = null;
+  function getChilledCondensationTexture(THREE) {
+    if (cachedCondensationTexture) return cachedCondensationTexture;
+    try {
+      var size = 512;
+      var cvs = document.createElement('canvas');
+      cvs.width = size;
+      cvs.height = size;
+      var ctx = cvs.getContext('2d');
+      var imgData = ctx.createImageData(size, size);
+      var data = imgData.data;
+
+      // Base neutral normal facing viewer: (128, 128, 255, 255)
+      for (var i = 0; i < data.length; i += 4) {
+        data[i] = 128;
+        data[i + 1] = 128;
+        data[i + 2] = 255;
+        data[i + 3] = 255;
+      }
+
+      var seed = 12345;
+      function rnd() {
+        seed = (seed * 16807) % 2147483647;
+        return (seed - 1) / 2147483646;
+      }
+
+      function addDroplet(cx, cy, r, strength) {
+        var r2 = r * r;
+        var minX = Math.max(0, Math.floor(cx - r));
+        var maxX = Math.min(size - 1, Math.ceil(cx + r));
+        var minY = Math.max(0, Math.floor(cy - r));
+        var maxY = Math.min(size - 1, Math.ceil(cy + r));
+
+        for (var py = minY; py <= maxY; py++) {
+          var dy = py - cy;
+          var dy2 = dy * dy;
+          for (var px = minX; px <= maxX; px++) {
+            var dx = px - cx;
+            var d2 = dx * dx + dy2;
+            if (d2 < r2) {
+              var nx = (dx / r) * strength;
+              var ny = (dy / r) * strength;
+              var nz = Math.sqrt(Math.max(0, 1 - (nx * nx + ny * ny)));
+              var idx = (py * size + px) * 4;
+              data[idx] = Math.min(255, Math.max(0, Math.round(128 + nx * 127)));
+              data[idx + 1] = Math.min(255, Math.max(0, Math.round(128 + ny * 127)));
+              data[idx + 2] = Math.min(255, Math.max(0, Math.round(nz * 255)));
+            }
+          }
+        }
+      }
+
+      // Micro condensation droplets (fine frosty sheen)
+      for (var m = 0; m < 2800; m++) {
+        var mx = Math.floor(rnd() * size);
+        var my = Math.floor(rnd() * size);
+        var mr = 1.0 + rnd() * 2.0;
+        addDroplet(mx, my, mr, 0.75);
+      }
+
+      // Medium chilled beads
+      for (var b = 0; b < 380; b++) {
+        var bx = Math.floor(rnd() * size);
+        var by = Math.floor(rnd() * size);
+        var br = 2.5 + rnd() * 4.5;
+        addDroplet(bx, by, br, 1.0);
+      }
+
+      // Large dripping condensation droplets
+      for (var d = 0; d < 50; d++) {
+        var dx0 = Math.floor(rnd() * size);
+        var dy0 = Math.floor(rnd() * size);
+        var dr0 = 5.0 + rnd() * 6.5;
+        addDroplet(dx0, dy0, dr0, 1.2);
+        if (rnd() > 0.4) {
+          addDroplet(dx0, Math.min(size - 1, dy0 + dr0 * 0.85), dr0 * 0.5, 0.9);
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+
+      var tex = new THREE.CanvasTexture(cvs);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(2.5, 5);
+      cachedCondensationTexture = tex;
+      return tex;
+    } catch (e) {
+      console.warn('[Asmaan 3D] Failed to create condensation normal map:', e);
+      return null;
+    }
+  }
+
   var stage3DInitialized = false;
   function initStage3D() {
     var canHost = document.querySelector('[data-asmaan-stage-can]');
@@ -400,11 +494,16 @@
     var shellGeo = new THREE.LatheGeometry(shellProfile(THREE), segments);
     var labelGeo = sleeveGeometry(THREE, segments);
 
+    // Chilled Condensation Normal Texture
+    var condensationNormalMap = getChilledCondensationTexture(THREE);
+
     var shellMat = new THREE.MeshStandardMaterial({
       color: 0xcfd5dc,
       metalness: 0.95,
-      roughness: 0.24,
-      envMapIntensity: 1.0
+      roughness: 0.28,
+      envMapIntensity: 1.0,
+      normalMap: condensationNormalMap,
+      normalScale: condensationNormalMap ? new THREE.Vector2(0.45, 0.45) : undefined
     });
     stage3D.shellMat = shellMat;
 
@@ -423,8 +522,10 @@
         var shellMesh = new THREE.Mesh(shellGeo, shellMat);
         var labelMat = new THREE.MeshStandardMaterial({
           metalness: 0.1,
-          roughness: 0.34,
-          envMapIntensity: 0.4
+          roughness: 0.38,
+          envMapIntensity: 0.45,
+          normalMap: condensationNormalMap,
+          normalScale: condensationNormalMap ? new THREE.Vector2(0.7, 0.7) : undefined
         });
         var labelMesh = new THREE.Mesh(labelGeo, labelMat);
         var tabMesh = createTabGroup(THREE, tabMat);
@@ -1147,18 +1248,168 @@
 
     if (motionToggle && !motionToggle.dataset.bound) {
       motionToggle.dataset.bound = 'true';
-      motionToggle.addEventListener('click', function () {
+      motionToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         motionMuted = !motionMuted;
-        motionToggle.setAttribute('aria-pressed', String(!motionMuted));
+        document.querySelectorAll('.navbar_toggle, [data-motion-toggle]').forEach(function (btn) {
+          btn.setAttribute('aria-pressed', String(!motionMuted));
+        });
         document.documentElement.dataset.motion = motionMuted ? 'off' : 'on';
       });
     }
+
+    var header = document.querySelector('.navbar');
+    if (header && !header.dataset.hoverBound) {
+      header.dataset.hoverBound = 'true';
+      header.addEventListener('mouseenter', function () {
+        header.classList.add('is-hovered');
+      });
+      header.addEventListener('mouseleave', function () {
+        header.classList.remove('is-hovered');
+      });
+    }
+
+    if (!window.__asmaanScrollBound) {
+      window.__asmaanScrollBound = true;
+      window.addEventListener('scroll', function () {
+        var nav = document.querySelector('.navbar');
+        if (nav) {
+          if (window.scrollY > 30) {
+            nav.classList.add('is-scrolled');
+          } else {
+            nav.classList.remove('is-scrolled');
+          }
+        }
+      }, { passive: true });
+    }
   }
 
-  // Delegated event listener for menu toggle and smooth anchor scroll
+  // Cosmic Space Starfield with Mouse Interactive Ambient Parallax
+  function initCosmicStarfield() {
+    var canvas = document.getElementById('asmaan-starfield');
+    if (!canvas) return;
+    if (canvas.dataset.starfieldBound) return;
+    canvas.dataset.starfieldBound = 'true';
+
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    var width = 0;
+    var height = 0;
+    var stars = [];
+    var starCount = 240;
+
+    var mouseX = 0;
+    var mouseY = 0;
+    var targetMouseX = 0;
+    var targetMouseY = 0;
+
+    function resize() {
+      width = window.innerWidth || document.documentElement.clientWidth;
+      height = window.innerHeight || document.documentElement.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    function initStars() {
+      stars = [];
+      var colors = [
+        'rgba(255, 255, 255, ',
+        'rgba(255, 255, 255, ',
+        'rgba(215, 210, 255, ',
+        'rgba(255, 240, 215, '
+      ];
+      for (var i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * (width || 1200),
+          y: Math.random() * (height || 800),
+          z: 0.15 + Math.random() * 0.85,
+          r: 0.5 + Math.random() * 1.5,
+          baseAlpha: 0.2 + Math.random() * 0.75,
+          twinkleSpeed: 0.015 + Math.random() * 0.035,
+          twinklePhase: Math.random() * Math.PI * 2,
+          colorPrefix: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
+    }
+
+    resize();
+    initStars();
+
+    window.addEventListener('resize', function () {
+      resize();
+      initStars();
+    }, { passive: true });
+
+    window.addEventListener('mousemove', function (e) {
+      targetMouseX = (e.clientX / (width || 1) - 0.5) * 2;
+      targetMouseY = (e.clientY / (height || 1) - 0.5) * 2;
+    }, { passive: true });
+
+    function animateStarfield() {
+      requestAnimationFrame(animateStarfield);
+
+      var isMotionOff = document.documentElement.dataset.motion === 'off';
+
+      mouseX += (targetMouseX - mouseX) * 0.05;
+      mouseY += (targetMouseY - mouseY) * 0.05;
+
+      ctx.clearRect(0, 0, width, height);
+
+      for (var i = 0; i < stars.length; i++) {
+        var s = stars[i];
+
+        if (!isMotionOff) {
+          s.y -= (0.12 * s.z);
+          if (s.y < -10) s.y = height + 10;
+          s.twinklePhase += s.twinkleSpeed;
+        }
+
+        var px = s.x - (mouseX * 38 * s.z);
+        var py = s.y - (mouseY * 38 * s.z);
+
+        if (px < -10) px += width + 20;
+        else if (px > width + 10) px -= width + 20;
+
+        if (py < -10) py += height + 20;
+        else if (py > height + 10) py -= height + 20;
+
+        var currentAlpha = s.baseAlpha * (0.65 + 0.35 * Math.sin(s.twinklePhase));
+        ctx.fillStyle = s.colorPrefix + currentAlpha + ')';
+
+        ctx.beginPath();
+        ctx.arc(px, py, s.r * s.z, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (s.r * s.z > 1.3 && currentAlpha > 0.6) {
+          ctx.fillStyle = s.colorPrefix + (currentAlpha * 0.25) + ')';
+          ctx.beginPath();
+          ctx.arc(px, py, s.r * s.z * 2.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    requestAnimationFrame(animateStarfield);
+  }
+
+  // Delegated event listener for menu toggle, motion toggle, top button, and smooth anchor scroll
   if (!window.__asmaanDelegatedBound) {
     window.__asmaanDelegatedBound = true;
     document.addEventListener('click', function (e) {
+      var motionBtn = e.target.closest('.navbar_toggle, [data-motion-toggle]');
+      if (motionBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        motionMuted = !motionMuted;
+        document.querySelectorAll('.navbar_toggle, [data-motion-toggle]').forEach(function (btn) {
+          btn.setAttribute('aria-pressed', String(!motionMuted));
+        });
+        document.documentElement.dataset.motion = motionMuted ? 'off' : 'on';
+        return;
+      }
+
       var toggleBtn = e.target.closest('.navbar_menu-button, [data-menu-toggle]');
       if (toggleBtn) {
         e.preventDefault();
@@ -1168,6 +1419,7 @@
         }
         return;
       }
+
       var closeBtn = e.target.closest('[data-menu-close], .navbar_menu-close-btn');
       if (closeBtn) {
         e.preventDefault();
@@ -1175,6 +1427,13 @@
         if (window.__asmaanSetMenuState) {
           window.__asmaanSetMenuState(false);
         }
+        return;
+      }
+
+      var topBtn = e.target.closest('[data-back-to-top], a[href="#top"]');
+      if (topBtn) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
 
@@ -1244,6 +1503,7 @@
     waitForThree(function () {
       initStage3D();
     });
+    initCosmicStarfield();
     initTasteInteractions();
     initScrollHub();
     initNavbarAndMenu();

@@ -1,33 +1,112 @@
-<section class="asmaan-subpage-section">
+<section class="asmaan-subpage-section pt-24 pb-20">
   <div class="padding-global">
     <div class="container-large max-w-6xl mx-auto px-4">
-      <div class="asmaan-subpage-hero text-left !mb-12">
-        <span class="asmaan-subpage-tag">Curated Catalog</span>
-        <h1 class="asmaan-subpage-title">{{ collection.title }}</h1>
+      <div class="asmaan-subpage-hero text-left mb-12">
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Curated Catalog &bull; All Batches</span>
+        <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white mb-4">
+          {% if collection.title != blank %}{{ collection.title }}{% else %}All Products{% endif %}
+        </h1>
+        <p class="text-white/60 text-sm max-w-lg">
+          Cognitive focus tonics and architectural studio apparel. Pure functional botanical formulations.
+        </p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-16">
-        {%- for product in collection.products -%}
-          <a href="{{ product.url }}" class="group block text-center border border-white/10 rounded-2xl p-8 bg-white/[0.03] hover:border-white/30 hover:bg-white/[0.05] transition-all">
-            <div class="h-64 flex items-center justify-center mb-6">
-              {%- if product.featured_image -%}
-                <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title | escape }}" class="max-h-full w-auto object-contain group-hover:-translate-y-2 transition-transform duration-500">
-              {%- else -%}
-                <img src="{{ 'can-asmaan.png' | asset_url }}" alt="{{ product.title | escape }}" class="max-h-full w-auto object-contain group-hover:-translate-y-2 transition-transform duration-500">
-              {%- endif -%}
+        {%- if collection.products.size > 0 -%}
+          {%- for product in collection.products -%}
+            <div class="shop-product-card group">
+              <div class="shop-card-badge">Catalog</div>
+              <div class="shop-card-image-wrap">
+                {%- if product.featured_image -%}
+                  <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" class="shop-card-img">
+                {%- else -%}
+                  <img src="{{ 'can-asmaan.png' | asset_url }}" alt="{{ product.title | escape }}" class="shop-card-img">
+                {%- endif -%}
+              </div>
+              <div class="shop-card-details">
+                <span class="shop-card-tag">Asmaan Collection</span>
+                <h3 class="shop-card-title">{{ product.title }}</h3>
+                <p class="shop-card-desc">{{ product.description | strip_html | truncate: 90 }}</p>
+                <div class="shop-card-meta">
+                  <div class="shop-card-price">{{ product.price | money }}</div>
+                </div>
+                <div class="mt-4 flex gap-2">
+                  <a href="{{ product.url }}" class="button is-small is-primary w-full !text-xs">View Details</a>
+                </div>
+              </div>
             </div>
-            <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-1">Ambition Tonic</span>
-            <h3 class="text-xl font-bold uppercase tracking-tight text-white mb-2">{{ product.title }}</h3>
-            <p class="font-mono text-white/80">{{ product.price | money }}</p>
-          </a>
+          {%- endfor -%}
         {%- else -%}
-          <div class="col-span-3 text-center py-12 p-8 rounded-2xl bg-white/[0.02] border border-white/10">
-            <p class="text-white/60 mb-6 text-sm">No products currently listed in this collection. Explore the flagship range on our home stage.</p>
-            <a href="/#range" class="button is-hero is-primary">
-              View Flagship Range
-            </a>
+          <!-- Flagship Cans & Packs Showcase -->
+          <div class="shop-product-card group">
+            <div class="shop-card-badge">Flagship 01</div>
+            <div class="shop-card-image-wrap">
+              <img src="{{ 'jamun-front.webp' | asset_url }}" alt="Kala Jamun Tonic" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+            </div>
+            <div class="shop-card-details">
+              <span class="shop-card-tag">Ambition Tonic &bull; 250ml</span>
+              <h3 class="shop-card-title">Kala Jamun</h3>
+              <p class="shop-card-desc">Tart Indian blackberry, green coffee caffeine &amp; L-theanine. Zero sugar.</p>
+              <div class="shop-card-meta">
+                <div class="shop-card-price">&#8377;2,160 <span class="text-xs text-white/50 font-normal">/ 12 cans</span></div>
+                <span class="shop-card-spec text-emerald-400">In Stock</span>
+              </div>
+              <div class="mt-4 flex gap-2">
+                <a href="/#range" class="button is-small is-secondary flex-1 !text-xs">Explore</a>
+                <form action="/cart/add" method="post" class="flex-1">
+                  <input type="hidden" name="id" value="jamun-12pack">
+                  <button type="submit" class="button is-small is-primary w-full !text-xs">Add to Cart</button>
+                </form>
+              </div>
+            </div>
           </div>
-        {%- endfor -%}
+
+          <div class="shop-product-card group">
+            <div class="shop-card-badge">Flagship 02</div>
+            <div class="shop-card-image-wrap">
+              <img src="{{ 'mango-front.webp' | asset_url }}" alt="Alphonso Mango Tonic" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+            </div>
+            <div class="shop-card-details">
+              <span class="shop-card-tag">Ambition Tonic &bull; 250ml</span>
+              <h3 class="shop-card-title">Alphonso Mango</h3>
+              <p class="shop-card-desc">Burnt amber finish with green tea botanicals. Clean focus curve.</p>
+              <div class="shop-card-meta">
+                <div class="shop-card-price">&#8377;2,160 <span class="text-xs text-white/50 font-normal">/ 12 cans</span></div>
+                <span class="shop-card-spec text-emerald-400">In Stock</span>
+              </div>
+              <div class="mt-4 flex gap-2">
+                <a href="/#range" class="button is-small is-secondary flex-1 !text-xs">Explore</a>
+                <form action="/cart/add" method="post" class="flex-1">
+                  <input type="hidden" name="id" value="mango-12pack">
+                  <button type="submit" class="button is-small is-primary w-full !text-xs">Add to Cart</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="shop-product-card group">
+            <div class="shop-card-badge">Flagship 03</div>
+            <div class="shop-card-image-wrap">
+              <img src="{{ 'print-front.webp' | asset_url }}" alt="Wild Magenta Tonic" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+            </div>
+            <div class="shop-card-details">
+              <span class="shop-card-tag">Ambition Tonic &bull; 250ml</span>
+              <h3 class="shop-card-title">Wild Magenta</h3>
+              <p class="shop-card-desc">Rose and pink guava notes with crisp citrus bite. 10 calories.</p>
+              <div class="shop-card-meta">
+                <div class="shop-card-price">&#8377;2,160 <span class="text-xs text-white/50 font-normal">/ 12 cans</span></div>
+                <span class="shop-card-spec text-emerald-400">In Stock</span>
+              </div>
+              <div class="mt-4 flex gap-2">
+                <a href="/#range" class="button is-small is-secondary flex-1 !text-xs">Explore</a>
+                <form action="/cart/add" method="post" class="flex-1">
+                  <input type="hidden" name="id" value="magenta-12pack">
+                  <button type="submit" class="button is-small is-primary w-full !text-xs">Add to Cart</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
       </div>
     </div>
   </div>

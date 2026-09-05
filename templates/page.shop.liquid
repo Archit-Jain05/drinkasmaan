@@ -1,0 +1,244 @@
+<section class="asmaan-subpage-section pt-24 pb-20">
+  <div class="padding-global">
+    <div class="container-large max-w-6xl mx-auto px-4">
+      <div class="asmaan-subpage-hero text-center mb-12">
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Direct Allocation &bull; Founders Run</span>
+        <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white mb-4">Complete Shop</h1>
+        <p class="max-w-xl mx-auto text-white/70 text-sm leading-relaxed">
+          Elevated botanical tonics formulated with raw green coffee bean caffeine, L-theanine, and KSM-66 ashwagandha. Zero sugar. Zero jitters.
+        </p>
+      </div>
+
+      <!-- Shop Category Filter Tabs -->
+      <div class="flex items-center justify-center gap-2 mb-12 flex-wrap" data-shop-filters>
+        <button type="button" class="shop-filter-btn is-active" data-filter="all">All Products (8)</button>
+        <button type="button" class="shop-filter-btn" data-filter="tonic">Ambition Tonics (4)</button>
+        <button type="button" class="shop-filter-btn" data-filter="wear">Studio Wear (4)</button>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-16" id="shop-catalog-grid">
+        <!-- 1. Kala Jamun -->
+        <div class="shop-product-card group" data-category="tonic">
+          <div class="shop-card-badge">Flagship</div>
+          <div class="shop-card-image-wrap">
+            <img src="{{ 'jamun-front.webp' | asset_url }}" alt="Kala Jamun Tonic" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Ambition Tonic &bull; 250ml</span>
+            <h3 class="shop-card-title">Kala Jamun</h3>
+            <p class="shop-card-desc">Tart Indian blackberry, green coffee caffeine &amp; L-theanine. Zero sugar.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;180 <span class="text-xs text-white/50 font-normal">/ can</span></div>
+              <span class="shop-card-spec">0g Sugar &bull; 100mg Caffeine</span>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <a href="/#range" class="button is-small is-secondary flex-1 !text-xs">Explore</a>
+              <form action="/cart/add" method="post" class="flex-1">
+                <input type="hidden" name="id" value="jamun-12pack">
+                <button type="submit" class="button is-small is-primary w-full !text-xs">Add 12-Pack (&#8377;2,160)</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Alphonso Mango -->
+        <div class="shop-product-card group" data-category="tonic">
+          <div class="shop-card-badge">Limited</div>
+          <div class="shop-card-image-wrap">
+            <img src="{{ 'mango-front.webp' | asset_url }}" alt="Alphonso Mango Tonic" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Ambition Tonic &bull; 250ml</span>
+            <h3 class="shop-card-title">Alphonso Mango</h3>
+            <p class="shop-card-desc">Burnt amber citrus finish, nootropics &amp; green tea botanicals. Zero syrup.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;180 <span class="text-xs text-white/50 font-normal">/ can</span></div>
+              <span class="shop-card-spec">0g Sugar &bull; 100mg Caffeine</span>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <a href="/#range" class="button is-small is-secondary flex-1 !text-xs">Explore</a>
+              <form action="/cart/add" method="post" class="flex-1">
+                <input type="hidden" name="id" value="mango-12pack">
+                <button type="submit" class="button is-small is-primary w-full !text-xs">Add 12-Pack (&#8377;2,160)</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Wild Magenta -->
+        <div class="shop-product-card group" data-category="tonic">
+          <div class="shop-card-badge">New Formula</div>
+          <div class="shop-card-image-wrap">
+            <img src="{{ 'print-front.webp' | asset_url }}" alt="Wild Magenta Tonic" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Ambition Tonic &bull; 250ml</span>
+            <h3 class="shop-card-title">Wild Magenta</h3>
+            <p class="shop-card-desc">Rose and pink guava notes with crisp citrus bite. 10 calories.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;180 <span class="text-xs text-white/50 font-normal">/ can</span></div>
+              <span class="shop-card-spec">0g Sugar &bull; 100mg Caffeine</span>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <a href="/#range" class="button is-small is-secondary flex-1 !text-xs">Explore</a>
+              <form action="/cart/add" method="post" class="flex-1">
+                <input type="hidden" name="id" value="magenta-12pack">
+                <button type="submit" class="button is-small is-primary w-full !text-xs">Add 12-Pack (&#8377;2,160)</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Founders Sampler Pack -->
+        <div class="shop-product-card group" data-category="tonic">
+          <div class="shop-card-badge !border-emerald-400/40 !text-emerald-300">Bestseller</div>
+          <div class="shop-card-image-wrap">
+            <img src="{{ 'can-asmaan.png' | asset_url }}" alt="Founders Sampler" class="shop-card-img">
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Tasting Collection &bull; 12-Pack</span>
+            <h3 class="shop-card-title">The Founders Sampler</h3>
+            <p class="shop-card-desc">4x Kala Jamun, 4x Alphonso Mango, 4x Wild Magenta. Free shipping included.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;2,160 <span class="text-xs text-white/50 font-normal">/ 12 cans</span></div>
+              <span class="shop-card-spec text-emerald-400">Free Express Delivery</span>
+            </div>
+            <div class="mt-4">
+              <form action="/cart/add" method="post">
+                <input type="hidden" name="id" value="sampler-12pack">
+                <button type="submit" class="button is-small is-primary w-full !text-xs">Quick Add to Cart</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Studio Heavyweight Tee -->
+        <div class="shop-product-card group" data-category="wear">
+          <div class="shop-card-badge">Studio Wear</div>
+          <div class="shop-card-image-wrap flex items-center justify-center p-8">
+            <div class="w-full h-48 rounded-xl bg-white/[0.02] border border-white/10 flex items-center justify-center font-mono text-xs uppercase tracking-widest text-white/50 group-hover:border-white/30 transition-all">
+              280 GSM &bull; Mineral Black
+            </div>
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Studio Wear &bull; Drop 01</span>
+            <h3 class="shop-card-title">Studio Heavyweight Tee</h3>
+            <p class="shop-card-desc">100% pre-shrunk organic combed cotton with architectural boxy cut.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;2,499</div>
+              <span class="shop-card-spec">Sizes S, M, L, XL</span>
+            </div>
+            <div class="mt-4">
+              <a href="/pages/wear" class="button is-small is-secondary w-full !text-xs">View Lookbook</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Creative Flow Hoodie -->
+        <div class="shop-product-card group" data-category="wear">
+          <div class="shop-card-badge">Studio Wear</div>
+          <div class="shop-card-image-wrap flex items-center justify-center p-8">
+            <div class="w-full h-48 rounded-xl bg-white/[0.02] border border-white/10 flex items-center justify-center font-mono text-xs uppercase tracking-widest text-white/50 group-hover:border-white/30 transition-all">
+              450 GSM &bull; French Terry
+            </div>
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Studio Wear &bull; Drop 01</span>
+            <h3 class="shop-card-title">Creative Flow Hoodie</h3>
+            <p class="shop-card-desc">High-density heavyweight loopback fleece with seamless double hood.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;4,999</div>
+              <span class="shop-card-spec">Heavyweight Cut</span>
+            </div>
+            <div class="mt-4">
+              <a href="/pages/wear" class="button is-small is-secondary w-full !text-xs">View Lookbook</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Matte Field Cap -->
+        <div class="shop-product-card group" data-category="wear">
+          <div class="shop-card-badge">Accessory</div>
+          <div class="shop-card-image-wrap flex items-center justify-center p-8">
+            <div class="w-full h-48 rounded-xl bg-white/[0.02] border border-white/10 flex items-center justify-center font-mono text-xs uppercase tracking-widest text-white/50 group-hover:border-white/30 transition-all">
+              Matte Nylon &bull; Water-Repellent
+            </div>
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Studio Wear &bull; Gear</span>
+            <h3 class="shop-card-title">Matte Field Cap</h3>
+            <p class="shop-card-desc">Structured 6-panel low-profile cap with tonal embroidered wordmark.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;1,899</div>
+              <span class="shop-card-spec">One Size &bull; Adjustable</span>
+            </div>
+            <div class="mt-4">
+              <a href="/pages/wear" class="button is-small is-secondary w-full !text-xs">View Lookbook</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Studio Aluminum Tote -->
+        <div class="shop-product-card group" data-category="wear">
+          <div class="shop-card-badge">Accessory</div>
+          <div class="shop-card-image-wrap flex items-center justify-center p-8">
+            <div class="w-full h-48 rounded-xl bg-white/[0.02] border border-white/10 flex items-center justify-center font-mono text-xs uppercase tracking-widest text-white/50 group-hover:border-white/30 transition-all">
+              Reflective Tyvek &bull; Insulated
+            </div>
+          </div>
+          <div class="shop-card-details">
+            <span class="shop-card-tag">Studio Wear &bull; Gear</span>
+            <h3 class="shop-card-title">Studio Chilled Tote</h3>
+            <p class="shop-card-desc">Thermal insulated lining keeps 12 cans ice-cold for 8 hours.</p>
+            <div class="shop-card-meta">
+              <div class="shop-card-price">&#8377;1,499</div>
+              <span class="shop-card-spec">Holds 12 Cans</span>
+            </div>
+            <div class="mt-4">
+              <a href="/pages/wear" class="button is-small is-secondary w-full !text-xs">View Lookbook</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free Shipping Banner -->
+      <div class="p-6 sm:p-8 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+        <div>
+          <span class="font-mono text-xs uppercase tracking-widest text-emerald-400 block mb-1">Direct from Bengaluru Studio</span>
+          <h3 class="text-xl font-bold uppercase tracking-tight text-white">Free Nationwide Shipping Over &#8377;999</h3>
+          <p class="text-white/60 text-xs mt-1">Dispatched chilled in custom-insulated recyclable corrugated packs.</p>
+        </div>
+        <a href="/#range" class="button is-primary is-small whitespace-nowrap">
+          Order Cans
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    var filterBtns = document.querySelectorAll('[data-shop-filters] .shop-filter-btn');
+    var cards = document.querySelectorAll('#shop-catalog-grid .shop-product-card');
+
+    filterBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var filter = btn.getAttribute('data-filter');
+        filterBtns.forEach(function(b) { b.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+
+        cards.forEach(function(card) {
+          var cat = card.getAttribute('data-category');
+          if (filter === 'all' || cat === filter) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  })();
+</script>
+
+{% section 'asmaan-newsletter' %}

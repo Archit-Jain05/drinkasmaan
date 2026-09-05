@@ -46,6 +46,20 @@
       <rect x="16" y="1.5" width="2.4" height="13" rx="1.2" fill="currentColor" style="transition: y 0.3s ease, height 0.3s ease" />
     </svg>
 
+  {%- when 'bars-off' -%}
+    <svg viewBox="0 0 20 16" class="{{ class }}" aria-hidden="true">
+      <rect x="1" y="6.5" width="2.4" height="3" rx="1.2" fill="currentColor" opacity="0.35" />
+      <rect x="6" y="6.5" width="2.4" height="3" rx="1.2" fill="currentColor" opacity="0.35" />
+      <rect x="11" y="6.5" width="2.4" height="3" rx="1.2" fill="currentColor" opacity="0.35" />
+      <rect x="16" y="6.5" width="2.4" height="3" rx="1.2" fill="currentColor" opacity="0.35" />
+      <line x1="2" y1="14" x2="18" y2="2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+    </svg>
+
+  {%- when 'arrow-up' -%}
+    <svg viewBox="0 0 24 24" class="{{ class }}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+
   {%- when 'menu-dots' -%}
     <svg viewBox="0 0 12 12" class="{{ class }}" aria-hidden="true">
       <circle cx="2" cy="2" r="1.2" fill="currentColor" />

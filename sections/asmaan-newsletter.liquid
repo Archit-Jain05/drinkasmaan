@@ -74,8 +74,8 @@
               <a href="{{ section.settings.privacy_link | default: '#' }}" class="footer_link">Privacy policy</a>
             </div>
 
-            <a href="#top" class="button is-secondary is-social">
-              Top
+            <a href="#top" class="button is-secondary is-social !w-11 !h-11 !p-0 inline-flex items-center justify-center rounded-full" aria-label="Back to top" data-back-to-top>
+              {% render 'asmaan-icons', name: 'arrow-up', class: 'h-4 w-4' %}
             </a>
           </div>
         </div>

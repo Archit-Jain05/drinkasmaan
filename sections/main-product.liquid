@@ -1,65 +1,171 @@
-<section class="asmaan-subpage-section">
+<section class="asmaan-subpage-section pt-24 pb-20">
   <div class="padding-global">
-    <div class="container-large max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div class="flex justify-center p-8 rounded-2xl bg-white/[0.02] border border-white/10">
-        {%- if product.featured_image -%}
-          <img
-            src="{{ product.featured_image | image_url: width: 800 }}"
-            alt="{{ product.title | escape }}"
-            class="max-h-[55vh] w-auto object-contain"
-            loading="eager"
-          >
-        {%- else -%}
-          <img
-            src="{{ 'can-asmaan.png' | asset_url }}"
-            alt="{{ product.title | escape }}"
-            class="max-h-[55vh] w-auto object-contain"
-          >
-        {%- endif -%}
-      </div>
-      <div>
-        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Ambition Tonic &bull; 250ml</span>
-        <h1 class="text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-white mb-3">{{ product.title }}</h1>
-        <div class="text-2xl font-mono text-white/90 mb-6">{{ product.price | money }}</div>
-        
-        <div class="text-white/70 leading-relaxed text-sm space-y-4 mb-8">
-          {%- if product.description != blank -%}
-            {{ product.description }}
+    <div class="container-large max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      <!-- Product Visual Gallery -->
+      <div class="p-8 sm:p-12 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col items-center justify-center relative sticky top-28">
+        <div class="absolute top-4 left-4 z-10">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.08] border border-white/20 text-[11px] font-mono uppercase tracking-widest text-[#9089D3]">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Chilled Serving
+          </span>
+        </div>
+
+        <div class="h-80 sm:h-96 w-full flex items-center justify-center my-4">
+          {%- if product.featured_image -%}
+            <img
+              src="{{ product.featured_image | image_url: width: 800 }}"
+              alt="{{ product.title | escape }}"
+              class="max-h-full w-auto object-contain transition-transform duration-500 hover:scale-105"
+              id="main-product-image"
+              loading="eager"
+            >
           {%- else -%}
-            <p>Formulated with 100mg of raw green coffee bean caffeine, 200mg L-theanine, 300mg KSM-66 ashwagandha, and Himalayan botanicals. Designed for deep creative discipline without anxiety, jitters, or crashes.</p>
+            <img
+              src="{{ 'jamun-front.webp' | asset_url }}"
+              alt="Asmaan Ambition Tonic"
+              class="max-h-full w-auto object-contain transition-transform duration-500 hover:scale-105"
+              id="main-product-image"
+              onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'"
+            >
           {%- endif -%}
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-8 text-xs font-mono text-white/60">
-          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
-            <span class="text-white block font-bold">0g Sugar</span> 10 Calories
-          </div>
-          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
-            <span class="text-white block font-bold">100mg Caffeine</span> Raw Green Coffee
-          </div>
-          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
-            <span class="text-white block font-bold">L-Theanine 200mg</span> Clean Focus Curve
-          </div>
-          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
-            <span class="text-white block font-bold">100% Vegan</span> No Synthetic Dyes
+        <div class="w-full text-center pt-4 border-t border-white/10">
+          <span class="font-mono text-xs text-white/50 uppercase tracking-widest">
+            100% Recyclable Matte Aluminum Can &bull; 250ml
+          </span>
+        </div>
+      </div>
+
+      <!-- Product Information & Purchase Flow -->
+      <div>
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Ambition Tonic &bull; Direct Batch</span>
+        <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white mb-3">
+          {% if product.title != blank %}{{ product.title }}{% else %}Asmaan Ambition Tonic{% endif %}
+        </h1>
+        
+        <div class="text-2xl font-mono text-white mb-6 flex items-baseline gap-3">
+          <span id="product-price-display">{% if product.price > 0 %}{{ product.price | money }}{% else %}&#8377;2,160{% endif %}</span>
+          <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">&bull; Free shipping across India</span>
+        </div>
+
+        <div class="text-white/70 leading-relaxed text-sm space-y-3 mb-8">
+          {%- if product.description != blank -%}
+            {{ product.description }}
+          {%- else -%}
+            <p>Formulated for deep creative work, late-night architecture, and cognitive stamina. Engineered with raw green coffee bean caffeine, L-theanine, KSM-66 ashwagandha, and mountain botanicals.</p>
+          {%- endif -%}
+        </div>
+
+        <!-- Pack Size Selector -->
+        <div class="mb-8">
+          <label class="block font-mono text-xs uppercase tracking-widest text-white/60 mb-3">Select Pack Allocation</label>
+          <div class="grid grid-cols-3 gap-3" id="pack-selector">
+            <button type="button" class="pack-opt-btn is-selected" data-price="&#8377;2,160" data-pack="12">
+              <span class="block text-xs font-bold text-white uppercase">12-Pack</span>
+              <span class="block text-[10px] text-emerald-400 font-mono mt-0.5">Most Popular</span>
+            </button>
+            <button type="button" class="pack-opt-btn" data-price="&#8377;4,100" data-pack="24">
+              <span class="block text-xs font-bold text-white uppercase">24-Pack</span>
+              <span class="block text-[10px] text-white/50 font-mono mt-0.5">Studio Box</span>
+            </button>
+            <button type="button" class="pack-opt-btn" data-price="&#8377;1,140" data-pack="6">
+              <span class="block text-xs font-bold text-white uppercase">6-Pack</span>
+              <span class="block text-[10px] text-white/50 font-mono mt-0.5">Sampler</span>
+            </button>
           </div>
         </div>
 
-        {%- form 'product', product -%}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-          <button
-            type="submit"
-            name="add"
-            class="button is-hero is-primary is-full"
-            {% unless product.available %}disabled{% endunless %}
-          >
-            {% if product.available %}Add to Cart &bull; Free Shipping{% else %}Sold Out &bull; Notify Next Batch{% endif %}
-          </button>
+        <!-- Core Specs Pills -->
+        <div class="grid grid-cols-2 gap-3 mb-8 text-xs font-mono text-white/70">
+          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+            <span class="text-white block font-bold text-sm">0g Sugar</span> 10 Calories per can
+          </div>
+          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+            <span class="text-white block font-bold text-sm">100mg Caffeine</span> Raw Green Coffee
+          </div>
+          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+            <span class="text-white block font-bold text-sm">L-Theanine 200mg</span> Smooth Focus Curve
+          </div>
+          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+            <span class="text-white block font-bold text-sm">KSM-66 300mg</span> Cortisol Modulation
+          </div>
+        </div>
+
+        <!-- Add To Cart Form -->
+        {%- form 'product', product, class: 'space-y-4' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id | default: 'flagship-12pack' }}">
+          
+          <div class="flex gap-3">
+            <div class="flex items-center rounded-xl bg-white/[0.06] border border-white/15 px-3">
+              <button type="button" class="text-white/60 hover:text-white px-2 py-1" onclick="var q=document.getElementById('product-qty'); if(q.value>1) q.value--;">&minus;</button>
+              <input type="number" id="product-qty" name="quantity" value="1" min="1" class="w-10 text-center font-mono text-white bg-transparent border-none focus:outline-none">
+              <button type="button" class="text-white/60 hover:text-white px-2 py-1" onclick="var q=document.getElementById('product-qty'); q.value++;">&plus;</button>
+            </div>
+            <button
+              type="submit"
+              name="add"
+              class="button is-hero is-primary flex-1"
+            >
+              Add to Cart &bull; Free Shipping
+            </button>
+          </div>
         {%- endform -%}
+
+        <!-- Botanical Accordion -->
+        <div class="mt-10 pt-8 border-t border-white/10 space-y-4">
+          <div class="faq_item border-b border-white/10 pb-4">
+            <button type="button" class="faq_question !py-2 text-sm font-bold uppercase text-white flex justify-between items-center w-full" aria-expanded="false" aria-controls="spec-science">
+              <span>Scientific Formulation</span>
+              <span class="text-lg font-mono">&plus;</span>
+            </button>
+            <div id="spec-science" class="faq_answer !pt-2 text-xs text-white/70 leading-relaxed" data-open="false">
+              Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.
+            </div>
+          </div>
+
+          <div class="faq_item border-b border-white/10 pb-4">
+            <button type="button" class="faq_question !py-2 text-sm font-bold uppercase text-white flex justify-between items-center w-full" aria-expanded="false" aria-controls="spec-nutrition">
+              <span>Full Nutrition Facts (250ml)</span>
+              <span class="text-lg font-mono">&plus;</span>
+            </button>
+            <div id="spec-nutrition" class="faq_answer !pt-2 text-xs text-white/70 leading-relaxed font-mono" data-open="false">
+              Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.
+            </div>
+          </div>
+
+          <div class="faq_item border-b border-white/10 pb-4">
+            <button type="button" class="faq_question !py-2 text-sm font-bold uppercase text-white flex justify-between items-center w-full" aria-expanded="false" aria-controls="spec-shipping">
+              <span>Shipping &amp; Freshness Guarantee</span>
+              <span class="text-lg font-mono">&plus;</span>
+            </button>
+            <div id="spec-shipping" class="faq_answer !pt-2 text-xs text-white/70 leading-relaxed" data-open="false">
+              All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  (function() {
+    var packBtns = document.querySelectorAll('#pack-selector .pack-opt-btn');
+    var priceDisplay = document.getElementById('product-price-display');
+
+    packBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        packBtns.forEach(function(b) { b.classList.remove('is-selected'); });
+        btn.classList.add('is-selected');
+        var price = btn.getAttribute('data-price');
+        if (priceDisplay && price) {
+          priceDisplay.innerHTML = price;
+        }
+      });
+    });
+  })();
+</script>
 
 {% section 'asmaan-newsletter' %}
 
