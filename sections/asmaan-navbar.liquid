@@ -1,4 +1,4 @@
-{%- if section.settings.show_announcement -%}
+{%- if section.settings.show_announcement != false -%}
   <aside class="asmaan-announcement-bar" aria-label="Store Announcement">
     <a href="{{ section.settings.announcement_link | default: '/#range' }}" class="asmaan-announcement-track block text-inherit">
       <div class="asmaan-announcement-content">
@@ -73,7 +73,7 @@
         {{ section.settings.wordmark | default: 'ASMAAN' }} &bull; MENU
       </span>
     </div>
-    <button type="button" class="navbar_menu-close-btn" data-menu-close aria-label="Close menu">
+    <button type="button" class="navbar_menu-close-btn" data-menu-close aria-label="Close navigation menu">
       <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
@@ -82,16 +82,17 @@
   </div>
 
   <nav class="navbar_link-list" aria-label="Primary">
-    {%- if section.settings.menu != blank -%}
+    {%- if section.settings.use_custom_menu and section.settings.menu != blank -%}
       {%- for link in linklists[section.settings.menu].links -%}
         <a class="navbar_link" href="{{ link.url }}">{{ link.title }}</a>
       {%- endfor -%}
     {%- else -%}
       <a class="navbar_link" href="/#range">Drink / Range</a>
-      <a class="navbar_link" href="/pages/benefits">The Science</a>
-      <a class="navbar_link" href="/pages/wear">Studio Wear</a>
+      <a class="navbar_link" href="/#benefits">The Science</a>
+      <a class="navbar_link" href="/#wear">Studio Wear</a>
       <a class="navbar_link" href="/#faq">FAQ</a>
       <a class="navbar_link" href="/pages/contact">Contact</a>
+      <a class="navbar_link" href="/cart">Cart ({{ cart.item_count }})</a>
     {%- endif -%}
   </nav>
 
@@ -143,8 +144,7 @@
     {
       "type": "url",
       "id": "announcement_link",
-      "label": "Announcement Link",
-      "default": "/#range"
+      "label": "Announcement Link"
     },
     {
       "type": "header",
@@ -165,8 +165,7 @@
     {
       "type": "url",
       "id": "cta_link",
-      "label": "CTA Button Link",
-      "default": "/#range"
+      "label": "CTA Button Link"
     },
     {
       "type": "header",
@@ -185,15 +184,20 @@
       "default": "Menu"
     },
     {
+      "type": "checkbox",
+      "id": "use_custom_menu",
+      "label": "Use Custom Menu from Shopify Navigation",
+      "default": false
+    },
+    {
       "type": "link_list",
       "id": "menu",
-      "label": "Menu (optional custom menu)"
+      "label": "Custom Menu (if enabled above)"
     },
     {
       "type": "url",
       "id": "instagram_url",
-      "label": "Instagram URL",
-      "default": "https://www.instagram.com/drinkasmaan"
+      "label": "Instagram URL"
     }
   ],
   "presets": [
