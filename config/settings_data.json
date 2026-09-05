@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "brand_name": "ASMAAN",
@@ -15,25 +24,43 @@
       "asmaan-navbar": {
         "type": "asmaan-navbar",
         "settings": {
+          "show_announcement": false,
+          "announcement_text": "FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • FREE SHIPPING OVER ₹999 • ZERO SUGAR • ZERO JITTERS",
+          "announcement_link": "",
           "wordmark": "ASMAAN",
           "cta_text": "Order Now",
           "cta_link": "/#range",
+          "motion_text": "Motion",
+          "menu_text": "Menu",
+          "use_custom_menu": false,
           "menu": "main-menu",
-          "instagram_url": "",
-          "show_announcement": true,
-          "announcement_text": "FOUNDERS BATCH NOW LIVE \u2022 100% BOTANICAL FOCUS TONIC \u2022 FREE SHIPPING OVER \u20b9999 \u2022 ZERO SUGAR \u2022 ZERO JITTERS",
-          "use_custom_menu": false
+          "instagram_url": ""
         }
       },
       "asmaan-stage": {
         "type": "asmaan-stage",
         "settings": {
-          "seo_h1": "Asmaan \u2014 the ambition tonic",
+          "hero_pill_text": "DRINK ASMAAN",
+          "hero_pill_url": "/#range",
+          "hero_title": "",
+          "hero_subtitle": "",
+          "pillar1_title": "",
+          "pillar1_desc": "",
+          "pillar2_title": "",
+          "pillar2_desc": "",
+          "pillar3_title": "",
+          "pillar3_desc": "",
+          "pillar4_title": "",
+          "pillar4_desc": "",
+          "hero_cta_text": "",
+          "hero_cta_url": "/#range",
+          "hero_secondary_text": "",
+          "seo_h1": "Asmaan — the ambition tonic",
           "discover_text": "Scroll to discover",
           "jamun_line1": "Kala",
           "jamun_line2": "Jamun",
           "jamun_tag": "The original",
-          "jamun_blurb": "The one the brand started on. Deep Indian blackberry \u2014 tart at the front, dark and round underneath, and dry enough to drink for four hours straight.",
+          "jamun_blurb": "The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.",
           "mango_line1": "Alphonso",
           "mango_line2": "Mango",
           "mango_tag": "Gold into burnt amber",
@@ -44,7 +71,7 @@
           "print_blurb": "The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.",
           "b1_struck": "Sugar",
           "b1_title": "Zero sugar",
-          "b1_body": "Ten calories a can. Nothing is sweetened up to cover a flat recipe \u2014 the fruit is doing the work, so there is nothing to hide behind.",
+          "b1_body": "Ten calories a can. Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
           "b1_note": "10 kcal per 250 ml",
           "b2_struck": "Synthetic caffeine",
           "b2_title": "Caffeine from green coffee",
@@ -53,29 +80,14 @@
           "b3_struck": "The crash",
           "b3_title": "L-theanine and ashwagandha",
           "b3_body": "200 mg of L-theanine to take the edge off the caffeine, and 300 mg of KSM-66 ashwagandha under it. The curve climbs instead of spiking, then comes down flat.",
-          "b3_note": "200 mg L-theanine \u00b7 300 mg KSM-66",
+          "b3_note": "200 mg L-theanine · 300 mg KSM-66",
           "b4_struck": "Artificial colour",
           "b4_title": "Colour from food",
           "b4_body": "No synthetic dyes and no proprietary blend. Every milligram in the can is printed on the can, and the colour comes from what is already in it.",
-          "b4_note": "Vegan \u00b7 no artificial colour",
+          "b4_note": "Vegan · no artificial colour",
           "manifesto_line1": "Nothing",
           "manifesto_line2": "Hidden",
-          "manifesto_label": "Nothing hidden \u2014 every milligram is printed on the can.",
-          "hero_pill_text": "DRINK ASMAAN",
-          "hero_pill_url": "/#range",
-          "hero_title": "THE WORLD\u2019S FIRST ELEVATED BOTANICAL TONIC DESIGNED FOR CREATIVES",
-          "hero_subtitle": "Clean energy, adaptogens, and nootropics engineered for deep creative flow. Zero crash. Zero sugar.",
-          "pillar1_title": "Calm Focus",
-          "pillar1_desc": "Mental energy with a calm & relaxed body.",
-          "pillar2_title": "Enhanced Mood",
-          "pillar2_desc": "Nootropics that balance stress and boost flow state.",
-          "pillar3_title": "Clean Energy",
-          "pillar3_desc": "The energy curve designed for longevity, not burnout.",
-          "pillar4_title": "Creative Flow",
-          "pillar4_desc": "Built for long hours of deep, creative work.",
-          "hero_cta_text": "Shop Now",
-          "hero_cta_url": "/#range",
-          "hero_secondary_text": "Explore Science"
+          "manifesto_label": "Nothing hidden — every milligram is printed on the can."
         }
       },
       "asmaan-range": {
@@ -104,7 +116,7 @@
         "settings": {
           "brand_name": "ASMAAN",
           "title": "Join the first batch",
-          "body": "The first run is limited and goes out to the list before anywhere else. No spam \u2014 one mail when the cans land.",
+          "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
           "placeholder": "Your email address",
           "cta_text": "Sign up",
           "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
@@ -119,7 +131,24 @@
         "settings": {
           "tag": "Studio Uniform",
           "title": "Asmaan Studio Wear",
-          "subtitle": "Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts."
+          "subtitle": "Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts.",
+          "item1_title": "Studio Heavyweight Tee",
+          "item1_price": "₹2,499",
+          "item1_desc": "300 GSM combed loopback cotton, relaxed drop-shoulder cut, tonal insignia print.",
+          "item1_badge": "DROP 01",
+          "item2_title": "Creative Flow Hoodie",
+          "item2_price": "₹4,999",
+          "item2_desc": "480 GSM dense French terry, double-layered architectural hood, hidden tech pocket.",
+          "item2_badge": "DROP 01",
+          "item3_title": "Matte Field Cap",
+          "item3_price": "₹1,899",
+          "item3_desc": "Weatherproof matte nylon, FIDLOCK magnetic buckle, anti-sweat internal headband.",
+          "item3_badge": "DROP 01",
+          "item4_title": "Studio Aluminum Tote",
+          "item4_price": "₹1,499",
+          "item4_desc": "Reinforced 24oz waxed canvas with custom anodized aluminum hardware clip.",
+          "item4_badge": "DROP 01",
+          "item_cta": "Join Drop Waitlist"
         }
       }
     },
