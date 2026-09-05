@@ -1450,7 +1450,6 @@
     function setMenuState(open) {
       menuOverlay.setAttribute('data-open', String(open));
       menuOverlay.setAttribute('aria-hidden', String(!open));
-      document.body.style.overflow = open ? 'hidden' : '';
       if (menuBtn) {
         menuBtn.setAttribute('aria-expanded', String(open));
         menuBtn.classList.toggle('is-active', open);
