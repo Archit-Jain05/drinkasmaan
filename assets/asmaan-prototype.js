@@ -1,6 +1,6 @@
 /**
- * Asmaan Interactive Experience Engine (Shopify Online Store 2.0)
- * Exact port of https://asmaan-one.vercel.app/
+ * Asmaan Interactive Experience Engine & 3D WebGL Can Stage
+ * Complete port of https://asmaan-one.vercel.app/ for Shopify
  */
 
 (function () {
@@ -13,10 +13,8 @@
       line2: 'Jamun',
       primary: '#2A1D4A',
       secondary: '#9089D3',
-      label: 'jamun-label.jpg',
-      poster: 'jamun-front.webp',
+      labelAttr: 'data-label-jamun',
       tag: 'The original',
-      blurb: 'The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.',
       cx: 22
     },
     {
@@ -25,10 +23,8 @@
       line2: 'Mango',
       primary: '#5A2A00',
       secondary: '#EFB36B',
-      label: 'mango-label.jpg',
-      poster: 'mango-front.webp',
+      labelAttr: 'data-label-mango',
       tag: 'Gold into burnt amber',
-      blurb: 'A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.',
       cx: 120
     },
     {
@@ -37,13 +33,37 @@
       line2: 'Magenta',
       primary: '#4E0749',
       secondary: '#E6A0E8',
-      label: 'print-label.jpg',
-      poster: 'print-front.webp',
+      labelAttr: 'data-label-print',
       tag: 'Rose and pink guava',
-      blurb: 'The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.',
       cx: 218
     }
   ];
+
+  var PROFILE = [
+    [0.842, 0.0], [0.8804, 0.0547], [0.9265, 0.1094], [0.9608, 0.164], [0.9837, 0.2187],
+    [0.9937, 0.2734], [0.9956, 0.3281], [0.9956, 0.3828], [0.9956, 0.4375], [0.9956, 0.4921],
+    [0.9956, 0.5468], [0.9956, 0.6015], [0.9956, 0.6562], [0.9956, 0.7109], [0.9956, 0.7655],
+    [0.9956, 0.8202], [0.9956, 0.8749], [0.9956, 0.9296], [0.9956, 0.9843], [0.9956, 1.0389],
+    [0.9956, 1.0936], [0.9956, 1.1483], [0.9956, 1.203], [0.9956, 1.2577], [0.9956, 1.3124],
+    [0.9956, 1.367], [0.9958, 1.4217], [0.9966, 1.4764], [0.9981, 1.5311], [0.9995, 1.5858],
+    [1.0, 1.6404], [1.0, 1.6951], [1.0, 1.7498], [1.0, 1.8045], [1.0, 1.8592],
+    [1.0, 1.9139], [1.0, 1.9685], [1.0, 2.0232], [1.0, 2.0779], [1.0, 2.1326],
+    [1.0, 2.1873], [1.0, 2.2419], [1.0, 2.2966], [1.0, 2.3513], [1.0, 2.406],
+    [1.0, 2.4607], [1.0, 2.5154], [1.0, 2.57], [1.0, 2.6247], [1.0, 2.6794],
+    [1.0, 2.7341], [1.0, 2.7888], [1.0, 2.8434], [1.0, 2.8981], [1.0, 2.9528],
+    [1.0, 3.0075], [1.0, 3.0622], [1.0, 3.1168], [1.0, 3.1715], [1.0, 3.2262],
+    [1.0, 3.2809], [1.0, 3.3356], [1.0, 3.3903], [0.9997, 3.4449], [0.9986, 3.4996],
+    [0.997, 3.5543], [0.9959, 3.609], [0.9956, 3.6637], [0.9956, 3.7183], [0.9956, 3.773],
+    [0.9956, 3.8277], [0.9956, 3.8824], [0.9956, 3.9371], [0.9956, 3.9918], [0.9956, 4.0464],
+    [0.9956, 4.1011], [0.9956, 4.1558], [0.9956, 4.2105], [0.9956, 4.2652], [0.9956, 4.3198],
+    [0.9956, 4.3745], [0.9956, 4.4292], [0.9956, 4.4839], [0.9956, 4.5386], [0.9956, 4.5933],
+    [0.9956, 4.6479], [0.9956, 4.7026], [0.9955, 4.7573], [0.9939, 4.812], [0.9865, 4.8667],
+    [0.9711, 4.9213], [0.9551, 4.976], [0.9501, 5.0307], [0.9479, 5.0854], [0.9195, 5.1401],
+    [0.8803, 5.1947]
+  ];
+  var HEIGHT = 5.1947;
+  var LABEL = { bottom: 0.2057, top: 5.0022 };
+  var SLEEVE_OFFSET = 0.004;
 
   var KEYFRAMES = [
     { at: 0, spin: -0.25, pitch: 0.16, roll: 0, x: 0, y: 0.07, scale: 0.86 },
@@ -99,6 +119,395 @@
     return -rect.top / travel;
   }
 
+  // --- Three.js 3D Model Construction -------------------------------------
+  function shellProfile(THREE) {
+    var points = [
+      new THREE.Vector2(0.0, 0.168),
+      new THREE.Vector2(0.26, 0.162),
+      new THREE.Vector2(0.46, 0.138),
+      new THREE.Vector2(0.61, 0.083),
+      new THREE.Vector2(0.72, 0.026)
+    ];
+    for (var i = 0; i < PROFILE.length; i++) {
+      points.push(new THREE.Vector2(PROFILE[i][0], PROFILE[i][1]));
+    }
+    points.push(
+      new THREE.Vector2(0.892, HEIGHT + 0.012),
+      new THREE.Vector2(0.901, HEIGHT + 0.03),
+      new THREE.Vector2(0.895, HEIGHT + 0.048),
+      new THREE.Vector2(0.871, HEIGHT + 0.056),
+      new THREE.Vector2(0.847, HEIGHT + 0.044),
+      new THREE.Vector2(0.83, HEIGHT + 0.018),
+      new THREE.Vector2(0.74, HEIGHT + 0.002),
+      new THREE.Vector2(0.45, HEIGHT - 0.006),
+      new THREE.Vector2(0.2, HEIGHT - 0.001),
+      new THREE.Vector2(0.0, HEIGHT + 0.004)
+    );
+    return points;
+  }
+
+  function radiusAt(y) {
+    for (var i = 1; i < PROFILE.length; i++) {
+      var r0 = PROFILE[i - 1][0], y0 = PROFILE[i - 1][1];
+      var r1 = PROFILE[i][0], y1 = PROFILE[i][1];
+      if (y <= y1) return r0 + ((r1 - r0) * (y - y0)) / (y1 - y0);
+    }
+    return PROFILE[PROFILE.length - 1][0];
+  }
+
+  function sleeveGeometry(THREE, segments) {
+    var rings = [[radiusAt(LABEL.bottom), LABEL.bottom]];
+    for (var i = 0; i < PROFILE.length; i++) {
+      var r = PROFILE[i][0], y = PROFILE[i][1];
+      if (y > LABEL.bottom && y < LABEL.top) rings.push([r, y]);
+    }
+    rings.push([radiusAt(LABEL.top), LABEL.top]);
+
+    var positions = [];
+    var uvs = [];
+    var indices = [];
+    var span = LABEL.top - LABEL.bottom;
+
+    for (var ri = 0; ri < rings.length; ri++) {
+      var cr = rings[ri][0], cy = rings[ri][1];
+      for (var s = 0; s <= segments; s++) {
+        var u = s / segments;
+        var theta = (u - 0.5) * Math.PI * 2;
+        var radius = cr + SLEEVE_OFFSET;
+        positions.push(radius * Math.sin(theta), cy, radius * Math.cos(theta));
+        uvs.push(u, (cy - LABEL.bottom) / span);
+      }
+    }
+
+    var stride = segments + 1;
+    for (var rj = 0; rj < rings.length - 1; rj++) {
+      for (var sj = 0; sj < segments; sj++) {
+        var a = rj * stride + sj;
+        var b = a + 1;
+        var c = a + stride;
+        var d = c + 1;
+        indices.push(a, b, c, b, d, c);
+      }
+    }
+
+    var geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    return geometry;
+  }
+
+  function createTabGroup(THREE, metal) {
+    var group = new THREE.Group();
+    var ring = new THREE.Mesh(new THREE.TorusGeometry(0.21, 0.029, 10, 40), metal);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.set(0, HEIGHT + 0.022, 0.25);
+    ring.scale.set(1, 0.62, 1);
+
+    var neck = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.022, 0.21), metal);
+    neck.position.set(0, HEIGHT + 0.02, 0.05);
+
+    var rivet = new THREE.Mesh(new THREE.CylinderGeometry(0.057, 0.052, 0.03, 16), metal);
+    rivet.position.set(0, HEIGHT + 0.018, -0.02);
+
+    group.add(ring, neck, rivet);
+    return group;
+  }
+
+  function createEnvironmentTexture(THREE, tint, ground) {
+    ground = ground || '#07070c';
+    var canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 256;
+    var ctx = canvas.getContext('2d');
+
+    var sky = ctx.createLinearGradient(0, 0, 0, 256);
+    sky.addColorStop(0, '#f2f2f6');
+    sky.addColorStop(0.36, '#aeb0c0');
+    sky.addColorStop(0.54, tint);
+    sky.addColorStop(1, ground);
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, 512, 256);
+
+    ctx.filter = 'blur(9px)';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(44, 18, 92, 152);
+    ctx.globalAlpha = 0.7;
+    ctx.fillRect(322, 34, 52, 124);
+    ctx.globalAlpha = 1;
+    ctx.filter = 'none';
+
+    var texture = new THREE.CanvasTexture(canvas);
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    return texture;
+  }
+
+  function createSpotMaskTexture(THREE) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 256;
+    var ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, 256, 256);
+
+    ctx.filter = 'blur(12px)';
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(128, 116, 96, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.arc(128, 76, 97, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.filter = 'none';
+
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  var stage3D = {
+    renderer: null,
+    scene: null,
+    camera: null,
+    canModel: null,
+    textures: {},
+    activeTaste: 0,
+    drag: 0,
+    velocity: 0,
+    isDragging: false,
+    pmrem: null,
+    unit: 1,
+    closeDistance: 1,
+    applyTint: null,
+    setLabel: null
+  };
+
+  function initStage3D() {
+    var canHost = document.querySelector('[data-asmaan-stage-can]');
+    if (!canHost || !window.THREE) return;
+
+    var canvas = canHost.querySelector('canvas');
+    var posterImg = canHost.querySelector('img');
+    if (!canvas) return;
+
+    var THREE = window.THREE;
+
+    var renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+    } catch (e) {
+      console.warn('[Asmaan 3D] WebGL not supported, keeping fallback poster');
+      return;
+    }
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.22;
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100);
+
+    // Build Can
+    var segments = 144;
+    var shellGeo = new THREE.LatheGeometry(shellProfile(THREE), segments);
+    var labelGeo = sleeveGeometry(THREE, segments);
+
+    var shellMat = new THREE.MeshStandardMaterial({
+      color: 0xcfd5dc,
+      metalness: 0.95,
+      roughness: 0.24
+    });
+    var tabMat = new THREE.MeshStandardMaterial({
+      color: 0xb9c0c8,
+      metalness: 0.95,
+      roughness: 0.33
+    });
+    var labelMat = new THREE.MeshStandardMaterial({
+      metalness: 0.1,
+      roughness: 0.34,
+      envMapIntensity: 0.4
+    });
+
+    var shellMesh = new THREE.Mesh(shellGeo, shellMat);
+    var labelMesh = new THREE.Mesh(labelGeo, labelMat);
+    var tabGroupMesh = createTabGroup(THREE, tabMat);
+
+    var inner = new THREE.Group();
+    inner.add(shellMesh, labelMesh, tabGroupMesh);
+    inner.position.y = -HEIGHT / 2;
+
+    var group = new THREE.Group();
+    group.add(inner);
+    scene.add(group);
+
+    // Lighting
+    var keyLight = new THREE.DirectionalLight(0xfffdf8, 1.25);
+    keyLight.position.set(-3.5, 4, 5);
+    var fillLight = new THREE.DirectionalLight(0xc8d2ff, 0.26);
+    fillLight.position.set(4, -1, 3);
+    var rimLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    rimLight.position.set(2.5, 3, -5);
+    var bounceLight = new THREE.DirectionalLight(0xb9b4d8, 0.34);
+    bounceLight.position.set(0, -4, 2.5);
+    var ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    scene.add(keyLight, fillLight, rimLight, bounceLight, ambientLight);
+
+    var studioLights = [
+      { light: keyLight, intensity: 1.25 },
+      { light: fillLight, intensity: 0.26 },
+      { light: rimLight, intensity: 0.7 },
+      { light: bounceLight, intensity: 0.34 },
+      { light: ambientLight, intensity: 0.3 }
+    ];
+
+    // Crescent close-up spot
+    var spotMask = createSpotMaskTexture(THREE);
+    var spot = new THREE.SpotLight(0xfff6ec, 0, 26, Math.PI / 8, 0.35, 0.2);
+    spot.map = spotMask;
+    scene.add(spot, spot.target);
+
+    // Environment map
+    var pmrem = new THREE.PMREMGenerator(renderer);
+    var envSource = createEnvironmentTexture(THREE, TASTES[0].primary);
+    var envTarget = pmrem.fromEquirectangular(envSource);
+    envSource.dispose();
+    scene.environment = envTarget.texture;
+
+    stage3D.applyTint = function (color) {
+      var nextSrc = createEnvironmentTexture(THREE, color);
+      var nextEnv = pmrem.fromEquirectangular(nextSrc);
+      nextSrc.dispose();
+      var prev = envTarget;
+      envTarget = nextEnv;
+      scene.environment = nextEnv.texture;
+      prev.dispose();
+    };
+
+    // Textures Loader
+    var textureLoader = new THREE.TextureLoader();
+    var loadedTextures = {};
+
+    function loadTexture(tasteObj) {
+      var url = canHost.getAttribute(tasteObj.labelAttr);
+      if (!url) return Promise.resolve(null);
+      return new Promise(function (resolve) {
+        textureLoader.load(
+          url,
+          function (tex) {
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            loadedTextures[tasteObj.id] = tex;
+            resolve(tex);
+          },
+          undefined,
+          function () {
+            resolve(null);
+          }
+        );
+      });
+    }
+
+    Promise.all(TASTES.map(loadTexture)).then(function () {
+      var initialTex = loadedTextures[TASTES[0].id];
+      if (initialTex) {
+        labelMat.map = initialTex;
+        labelMat.needsUpdate = true;
+      }
+      // Reveal 3D canvas and hide fallback image
+      canvas.style.opacity = '1';
+      if (posterImg) posterImg.style.opacity = '0';
+    });
+
+    stage3D.setLabel = function (tasteIndex) {
+      var taste = TASTES[tasteIndex];
+      var tex = loadedTextures[taste.id];
+      if (tex) {
+        labelMat.map = tex;
+        labelMat.needsUpdate = true;
+      }
+      if (stage3D.applyTint) {
+        stage3D.applyTint(taste.primary);
+      }
+    };
+
+    // Framing & Resize
+    var unit = 1;
+    var closeDistance = 1;
+    function resize() {
+      var w = canHost.clientWidth;
+      var h = canHost.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+
+      var fitHeight = HEIGHT * 1.45;
+      var half = Math.tan((camera.fov * Math.PI) / 360);
+      var distance = fitHeight / 2 / half;
+      var wide = camera.aspect >= 1 ? 4.6 : 2.9;
+      var neededAspect = wide / fitHeight;
+      if (camera.aspect < neededAspect) distance *= neededAspect / camera.aspect;
+
+      camera.updateProjectionMatrix();
+      stage3D.unit = fitHeight;
+      stage3D.closeDistance = distance;
+      unit = fitHeight;
+      closeDistance = distance;
+    }
+
+    var resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(canHost);
+    resize();
+
+    // Drag-to-spin interaction
+    var pointerId = null;
+    var lastX = 0;
+    var lastTime = 0;
+
+    canvas.addEventListener('pointerdown', function (e) {
+      pointerId = e.pointerId;
+      canvas.setPointerCapture(pointerId);
+      stage3D.isDragging = true;
+      lastX = e.clientX;
+      lastTime = performance.now();
+      stage3D.velocity = 0;
+    });
+
+    canvas.addEventListener('pointermove', function (e) {
+      if (e.pointerId !== pointerId) return;
+      var now = performance.now();
+      var dx = e.clientX - lastX;
+      stage3D.drag += dx * 0.012;
+      stage3D.velocity = (dx * 0.012) / (Math.max(now - lastTime, 8) / 1000);
+      lastX = e.clientX;
+      lastTime = now;
+    });
+
+    function endDrag(e) {
+      if (e.pointerId !== pointerId) return;
+      pointerId = null;
+      stage3D.isDragging = false;
+      if (performance.now() - lastTime > 120) stage3D.velocity = 0;
+      stage3D.velocity = Math.max(-14, Math.min(14, stage3D.velocity));
+    }
+
+    canvas.addEventListener('pointerup', endDrag);
+    canvas.addEventListener('pointercancel', endDrag);
+
+    stage3D.renderer = renderer;
+    stage3D.scene = scene;
+    stage3D.camera = camera;
+    stage3D.canModel = group;
+    stage3D.spot = spot;
+    stage3D.studioLights = studioLights;
+  }
+
   function setTaste(index) {
     if (index < 0 || index >= TASTES.length) return;
     currentTasteIndex = index;
@@ -135,14 +544,9 @@
       card.setAttribute('aria-current', String(i === index));
     });
 
-    // 6. Update 3D Stage Can Poster
-    var canEl = document.querySelector('[data-asmaan-stage-can]');
-    if (canEl) {
-      var posterImg = canEl.querySelector('img');
-      if (posterImg) {
-        var imgSrc = canEl.getAttribute('data-img-' + taste.id);
-        if (imgSrc) posterImg.src = imgSrc;
-      }
+    // 6. Update 3D Stage Can texture and lighting
+    if (stage3D.setLabel) {
+      stage3D.setLabel(index);
     }
 
     // 7. Update Manifesto wash background
@@ -151,7 +555,7 @@
       wash.style.background = 'radial-gradient(115% 95% at 50% 54%, ' + taste.secondary + ' 0%, ' + taste.secondary + ' 10%, ' + taste.primary + ' 72%, #07050f 100%)';
     }
     var manifestoField = document.querySelector('.manifesto_field');
-    if (manifestofield) {
+    if (manifestoField) {
       manifestoField.style.setProperty('--blob', taste.secondary);
       manifestoField.style.setProperty('--blob-dark', taste.primary);
     }
@@ -162,7 +566,6 @@
   function initTasteInteractions() {
     setTaste(0);
 
-    // Prev / Next Arrows
     var prevBtn = document.querySelector('[data-carousel-prev]');
     var nextBtn = document.querySelector('[data-carousel-next]');
 
@@ -180,7 +583,6 @@
       });
     }
 
-    // Liquid Pagination drag / click
     var paginationSvg = document.querySelector('.carousel_pagination svg');
     if (paginationSvg) {
       var isDragging = false;
@@ -201,7 +603,7 @@
       paginationSvg.addEventListener('pointermove', function (e) {
         if (isDragging) pick(e.clientX);
       });
-      paginationSvg.addEventListener('pointerup', function (e) {
+      paginationSvg.addEventListener('pointerup', function () {
         isDragging = false;
       });
       paginationSvg.addEventListener('pointercancel', function () {
@@ -209,7 +611,6 @@
       });
     }
 
-    // Range section card clicks
     document.querySelectorAll('[data-range-card]').forEach(function (card, i) {
       card.addEventListener('click', function () {
         setTaste(i);
@@ -227,8 +628,6 @@
     var benefitsNav = document.querySelector('.benefits_nav');
     var manifestoLayer = document.querySelector('.manifesto_layer');
     var canStageHost = document.querySelector('[data-asmaan-stage-can]') ? document.querySelector('[data-asmaan-stage-can]').closest('.fixed') : null;
-    var canContainer = document.querySelector('[data-asmaan-stage-can]');
-    var canImg = canContainer ? canContainer.querySelector('img') : null;
 
     var benefitSections = [
       document.getElementById('benefit-sugar'),
@@ -269,7 +668,7 @@
         scrollIndicator.style.setProperty('--p', scrollProgress);
       }
 
-      // 2. Stage scroll progress
+      // 2. Stage scroll progress & 3D WebGL render
       if (stage) {
         var targetProgress = Math.min(Math.max(progressThrough(stage, scrollY, windowH), 0), 1);
         var isMotionOff = document.documentElement.dataset.motion === 'off' || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -294,10 +693,44 @@
           pose.y += 0.06 * (1 - spread);
         }
 
-        // Apply pose to 2D / 3D Can container
-        if (canImg) {
-          var transformStr = 'translate3d(' + (pose.x * 100) + '%, ' + (pose.y * 100) + '%, 0) scale(' + pose.scale + ') rotate(' + (pose.roll * 57.2958) + 'deg)';
-          canImg.style.transform = transformStr;
+        // Apply 3D WebGL Transform
+        if (stage3D.canModel && stage3D.renderer && stage3D.camera) {
+          if (!stage3D.isDragging) {
+            stage3D.velocity *= Math.exp(-2.4 * dt);
+            if (!isMotionOff && Math.abs(stage3D.velocity) < 0.001) {
+              stage3D.velocity = 0.08;
+            }
+            stage3D.drag += stage3D.velocity * dt;
+          }
+
+          var u = stage3D.unit || 1;
+          stage3D.canModel.position.set(pose.x * u, pose.y * u, 0);
+          stage3D.canModel.rotation.set(pose.pitch, pose.spin + stage3D.drag, pose.roll);
+          stage3D.canModel.scale.setScalar(pose.scale);
+
+          // Close-up camera dolly
+          var cDist = stage3D.closeDistance || 1;
+          stage3D.camera.position.set(0, closeUp * -0.7, cDist * (1 - closeUp * (1 - 0.53)));
+          stage3D.camera.rotation.set(closeUp * 0.16, 0, 0);
+
+          // Close-up spot
+          if (stage3D.spot) {
+            stage3D.spot.intensity = closeUp * 7;
+            stage3D.spot.visible = closeUp > 0.001;
+            var canX = pose.x * u;
+            var canY = pose.y * u;
+            stage3D.spot.position.set(canX, canY + 3.2, 3);
+            stage3D.spot.target.position.set(canX, canY + 0.9, 0);
+          }
+
+          if (stage3D.studioLights) {
+            for (var si = 0; si < stage3D.studioLights.length; si++) {
+              var sItem = stage3D.studioLights[si];
+              sItem.light.intensity = sItem.intensity * (1 - closeUp * 0.98);
+            }
+          }
+
+          stage3D.renderer.render(stage3D.scene, stage3D.camera);
         }
 
         // Fixed stage opacity & exit dive
@@ -440,7 +873,6 @@
         var isExpanded = button.getAttribute('aria-expanded') === 'true';
         var answer = document.getElementById(button.getAttribute('aria-controls'));
 
-        // Close all other accordions
         document.querySelectorAll('.faq_question').forEach(function (otherBtn) {
           if (otherBtn !== button) {
             otherBtn.setAttribute('aria-expanded', 'false');
@@ -458,6 +890,7 @@
   }
 
   function init() {
+    initStage3D();
     initTasteInteractions();
     initScrollHub();
     initNavbarAndMenu();
