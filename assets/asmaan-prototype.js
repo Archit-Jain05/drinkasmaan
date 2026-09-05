@@ -66,7 +66,7 @@
   var SLEEVE_OFFSET = 0.004;
 
   var KEYFRAMES = [
-    { at: 0, spin: -0.25, pitch: 0.16, roll: 0, x: 0, y: 0.07, scale: 0.86 },
+    { at: 0, spin: -0.25, pitch: 0.16, roll: 0, x: 0, y: -0.05, scale: 0.86 },
     { at: 0.186, spin: 1.1, pitch: 0.1, roll: -0.05, x: 0.2, y: 0.01, scale: 0.94 },
     { at: 0.341, spin: 2.05, pitch: 0.04, roll: 0.05, x: 0.18, y: -0.02, scale: 0.92 },
     { at: 0.495, spin: 3.0, pitch: -0.02, roll: -0.06, x: 0.18, y: -0.02, scale: 0.94 },

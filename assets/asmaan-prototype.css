@@ -693,11 +693,10 @@ input:focus-visible {
 
 /* --- Hero / The Range --- */
 
-/* Push the 3D can viewport down so it clears the navbar */
+/* Push the 3D can viewport with feathering mask */
 [data-asmaan-stage-can] {
   -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
   mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
-  padding-top: calc(var(--nav-height) + 1.5rem); /* clear navbar + extra gap */
 }
 
 .gamme_container {
@@ -709,7 +708,7 @@ input:focus-visible {
   width: 100%;
   height: 100svh;
   text-align: center;
-  padding-bottom: var(--pad-m); /* extra breathing room above the bottom UI */
+  padding-bottom: var(--pad-s);
 }
 
 .gamme_gradient-wrapper {
@@ -748,26 +747,21 @@ input:focus-visible {
 }
 
 /* -----------------------------------------------------------------------
-   Carousel — wrapper grid overlay
-   Both carousel_stack (title) and carousel_nav share the same grid cell,
-   so the nav arrows are perfectly centred to the title text height.
+   Carousel — Perfectly Symmetrical Title & Nav Layout
 ----------------------------------------------------------------------- */
-.carousel_wrapper {
+.carousel_container {
   position: relative;
-  display: grid;       /* grid overlay: stack + nav share the same cell */
   width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* carousel_stack and carousel_nav overlap in the same grid cell */
-.carousel_wrapper > .carousel_stack,
-.carousel_wrapper > .carousel_nav {
-  grid-area: 1 / 1;
-}
-
-/* carousel_stack: standard grid for cross-fading title slides */
 .carousel_stack {
+  position: relative;
   display: grid;
   width: 100%;
+  text-align: center;
 }
 
 .carousel_stack > * {
@@ -789,39 +783,48 @@ input:focus-visible {
   transform: translateY(0);
 }
 
-/* carousel_nav: spans the exact same grid cell as the title,
-   flexes left/right arrows to opposing edges, centred vertically */
+/* Nav is anchored to the exact center of the title block and spans evenly */
 .carousel_nav {
-  display: flex;
-  align-items: center;         /* vertically centred to title height */
-  justify-content: space-between;
-  pointer-events: none;        /* pass clicks through to title */
-  z-index: 10;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
-  /* Extend arrows beyond the constrained title width so they clear the text */
-  margin-left: calc(var(--carousel-arrow-offset, -2.75rem));
-  margin-right: calc(var(--carousel-arrow-offset, -2.75rem));
-  width: calc(100% + var(--carousel-arrow-offset, 2.75rem) * 2);
+  max-width: clamp(25rem, 42vw, 38rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .carousel_arrow {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   border: none;
-  background: none;
+  background: transparent;
   color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
   pointer-events: auto;
-  transition: color 0.3s;
+  transition: color 0.3s ease, transform 0.25s ease;
   flex-shrink: 0;
 }
 
 .carousel_arrow:hover {
   color: #fff;
+  transform: scale(1.2);
+}
+
+.carousel_arrow.is-prev {
+  margin-left: -0.75rem;
+}
+
+.carousel_arrow.is-next {
+  margin-right: -0.75rem;
 }
 
 .carousel_pagination {
