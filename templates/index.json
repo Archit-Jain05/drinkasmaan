@@ -3,12 +3,10 @@
     "asmaan_splash": {
       "type": "asmaan-splash",
       "settings": {
-        "media_source": "can",
-        "can_flavour": "mango",
-        "frequency": "session",
-        "min_duration": 1400,
-        "max_duration": 7000,
-        "reveal_duration": 900
+        "wordmark": "ASMAAN",
+        "tagline": "AMBITION TONIC",
+        "duration": 1700,
+        "frequency": "always"
       }
     },
     "asmaan_navbar": {
