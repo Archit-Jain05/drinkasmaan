@@ -1,0 +1,35 @@
+<section class="section relative bg-black text-white min-h-[70vh] py-16">
+  <div class="padding-global">
+    <div class="container-large max-w-4xl mx-auto px-4">
+      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-8">Search</h1>
+      <form action="/search" method="get" class="mb-12 flex gap-4">
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="Search products..."
+          class="flex-1 bg-white/10 border border-white/20 rounded-full px-6 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white"
+        >
+        <button type="submit" class="button">Search</button>
+      </form>
+      {%- if search.performed -%}
+        <p class="text-white/60 mb-6">{{ search.results_count }} results found for "{{ search.terms }}"</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {%- for item in search.results -%}
+            <a href="{{ item.url }}" class="block p-4 border border-white/10 rounded-xl hover:border-white/30">
+              <h3 class="font-bold text-lg mb-2">{{ item.title }}</h3>
+              <p class="text-sm text-white/60 line-clamp-2">{{ item.content | strip_html | truncate: 120 }}</p>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Search Results",
+  "settings": []
+}
+{% endschema %}

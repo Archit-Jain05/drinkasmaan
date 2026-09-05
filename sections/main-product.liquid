@@ -1,0 +1,46 @@
+<section class="section relative bg-black text-white min-h-[70vh] py-16">
+  <div class="padding-global">
+    <div class="container-large max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <div class="flex justify-center">
+        {%- if product.featured_image -%}
+          <img
+            src="{{ product.featured_image | image_url: width: 800 }}"
+            alt="{{ product.title | escape }}"
+            class="max-h-[60vh] w-auto object-contain"
+            loading="eager"
+          >
+        {%- else -%}
+          <img
+            src="{{ 'can-asmaan.png' | asset_url }}"
+            alt="{{ product.title | escape }}"
+            class="max-h-[60vh] w-auto object-contain"
+          >
+        {%- endif -%}
+      </div>
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-white/50 mb-2">Ambition Tonic</p>
+        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-4">{{ product.title }}</h1>
+        <div class="text-xl text-white/90 mb-6">{{ product.price | money }}</div>
+        <div class="text-white/70 leading-relaxed mb-8">{{ product.description }}</div>
+        {%- form 'product', product -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <button
+            type="submit"
+            name="add"
+            class="button is-full"
+            {% unless product.available %}disabled{% endunless %}
+          >
+            {% if product.available %}Add to cart{% else %}Sold out{% endif %}
+          </button>
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Details",
+  "settings": []
+}
+{% endschema %}
