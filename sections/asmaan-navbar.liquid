@@ -71,105 +71,80 @@
   </div>
 </header>
 
-<div id="site-menu" class="navbar_menu" data-open="false" aria-hidden="true">
-  <div class="navbar_menu-backdrop" data-menu-close></div>
-  <div class="navbar_menu-container">
-    <div class="navbar_menu-header">
-      <div class="flex items-center gap-2.5">
+<div id="site-menu" class="navbar_dropdown" data-open="false" aria-hidden="true">
+  <div class="navbar_dropdown-backdrop" data-menu-close></div>
+  <div class="navbar_dropdown-menu">
+    <div class="navbar_dropdown-header">
+      <div class="flex items-center gap-2">
         <span class="ve-pill-glow"></span>
-        <span class="font-mono text-[11px] uppercase tracking-[0.25em] text-white/70">
-          {{ section.settings.wordmark | default: 'ASMAAN' }} &bull; DIRECTORY &amp; SHOP
+        <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/60">
+          Directory &bull; Shop
         </span>
       </div>
-      <button type="button" class="navbar_menu-close-btn" data-menu-close aria-label="Close navigation menu">
-        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button type="button" class="navbar_dropdown-close" data-menu-close aria-label="Close menu">
+        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
-        <span>Close</span>
       </button>
     </div>
 
-    <div class="navbar_menu-body">
-      <nav class="navbar_link-list" aria-label="Primary">
-        {%- if section.settings.use_custom_menu and section.settings.menu != blank -%}
-          {%- for link in linklists[section.settings.menu].links -%}
-            <a class="navbar_link" href="{{ link.url }}">
-              <span class="navbar_link-index">0{{ forloop.index }}</span>
-              <span class="navbar_link-text">{{ link.title }}</span>
-            </a>
-          {%- endfor -%}
-        {%- else -%}
-          <a class="navbar_link" href="/#range">
-            <span class="navbar_link-index">01</span>
-            <span class="navbar_link-text">Flagship Range</span>
-            <span class="navbar_link-tag">3 Flavors</span>
+    <nav class="navbar_dropdown-links" aria-label="Primary">
+      {%- if section.settings.use_custom_menu and section.settings.menu != blank -%}
+        {%- for link in linklists[section.settings.menu].links -%}
+          <a class="navbar_dropdown-link" href="{{ link.url }}">
+            <span class="navbar_dropdown-index">0{{ forloop.index }}</span>
+            <span class="navbar_dropdown-text">{{ link.title }}</span>
           </a>
-          <a class="navbar_link" href="/collections/all">
-            <span class="navbar_link-index">02</span>
-            <span class="navbar_link-text">Complete Shop</span>
-            <span class="navbar_link-tag">Cans + Packs</span>
-          </a>
-          <a class="navbar_link" href="/#benefits">
-            <span class="navbar_link-index">03</span>
-            <span class="navbar_link-text">The Science</span>
-            <span class="navbar_link-tag">Adaptogens</span>
-          </a>
-          <a class="navbar_link" href="/#wear">
-            <span class="navbar_link-index">04</span>
-            <span class="navbar_link-text">Studio Wear</span>
-            <span class="navbar_link-tag">Lookbook</span>
-          </a>
-          <a class="navbar_link" href="/#faq">
-            <span class="navbar_link-index">05</span>
-            <span class="navbar_link-text">FAQ</span>
-            <span class="navbar_link-tag">Answers</span>
-          </a>
-          <a class="navbar_link" href="/pages/contact">
-            <span class="navbar_link-index">06</span>
-            <span class="navbar_link-text">Contact</span>
-            <span class="navbar_link-tag">Support</span>
-          </a>
-        {%- endif -%}
-      </nav>
+        {%- endfor -%}
+      {%- else -%}
+        <a class="navbar_dropdown-link" href="/#range">
+          <span class="navbar_dropdown-index">01</span>
+          <span class="navbar_dropdown-text">The Range</span>
+          <span class="navbar_dropdown-tag">3 Flavors</span>
+        </a>
+        <a class="navbar_dropdown-link" href="/collections/all">
+          <span class="navbar_dropdown-index">02</span>
+          <span class="navbar_dropdown-text">Complete Shop</span>
+          <span class="navbar_dropdown-tag">Cans &bull; Packs</span>
+        </a>
+        <a class="navbar_dropdown-link" href="/#benefits">
+          <span class="navbar_dropdown-index">03</span>
+          <span class="navbar_dropdown-text">The Science</span>
+          <span class="navbar_dropdown-tag">Nootropics</span>
+        </a>
+        <a class="navbar_dropdown-link" href="/#wear">
+          <span class="navbar_dropdown-index">04</span>
+          <span class="navbar_dropdown-text">Studio Wear</span>
+          <span class="navbar_dropdown-tag">Drop 01</span>
+        </a>
+        <a class="navbar_dropdown-link" href="/#faq">
+          <span class="navbar_dropdown-index">05</span>
+          <span class="navbar_dropdown-text">FAQ</span>
+          <span class="navbar_dropdown-tag">Answers</span>
+        </a>
+        <a class="navbar_dropdown-link" href="/pages/contact">
+          <span class="navbar_dropdown-index">06</span>
+          <span class="navbar_dropdown-text">Contact</span>
+          <span class="navbar_dropdown-tag">Inquiries</span>
+        </a>
+      {%- endif -%}
+    </nav>
 
-      <div class="navbar_menu-side-panel">
-        <div class="navbar_menu-promo">
-          <span class="font-mono text-[10px] uppercase tracking-widest text-[#9089D3] block mb-1">Direct Batch</span>
-          <h4 class="text-sm font-bold uppercase tracking-tight text-white mb-1">Founders Allocation</h4>
-          <p class="text-xs text-white/60 leading-relaxed mb-4">Crafted with raw green coffee bean caffeine, L-theanine, and KSM-66 ashwagandha. Zero sugar. Free shipping over ₹999.</p>
-          <a class="button is-small is-primary is-full" href="{{ section.settings.cta_link | default: '/#range' }}">
-            {{ section.settings.cta_text | default: 'Get Early Access' }}
-          </a>
-        </div>
-
-        <div class="navbar_menu-quicklinks">
-          <a href="/cart" class="navbar_menu-quicklink">
-            <span>Your Cart</span>
-            <span class="font-mono text-xs text-white/60">({{ cart.item_count }})</span>
-          </a>
-          <a href="/collections/all" class="navbar_menu-quicklink">
-            <span>Browse All Packs</span>
-            <span class="font-mono text-xs text-white/60">&rarr;</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="navbar_menu-footer">
-      <div class="flex items-center gap-3">
-        {%- if section.settings.instagram_url != blank -%}
-          <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noreferrer" class="button is-secondary is-social !w-auto px-3 py-1.5" aria-label="Instagram">
-            {% render 'asmaan-icons', name: 'instagram', class: 'h-3.5 w-3.5' %}
-            <span class="text-xs ml-1 font-mono">Instagram</span>
-          </a>
-        {%- endif -%}
-        <div class="text-[11px] font-mono text-white/40 tracking-wider">
-          &copy; {{ 'now' | date: '%Y' }} {{ section.settings.wordmark | default: 'ASMAAN' }} &bull; AMBITION TONIC
-        </div>
-      </div>
-      <a class="button is-secondary is-social !w-auto px-3 py-1.5 text-xs font-mono" href="/pages/contact">
-        Get In Touch
+    <div class="navbar_dropdown-footer">
+      <a href="/cart" class="navbar_dropdown-cart">
+        <span class="flex items-center gap-1.5">
+          <svg class="h-3.5 w-3.5 text-[#9089D3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <span>Shopping Cart</span>
+        </span>
+        <span class="font-mono text-xs text-white/70">({{ cart.item_count }})</span>
       </a>
+      {%- if section.settings.cta_text != blank -%}
+        <a class="button is-small is-primary is-full !py-2 !text-xs mt-2" href="{{ section.settings.cta_link | default: '/#range' }}">
+          {{ section.settings.cta_text | default: 'Get Early Access' }}
+        </a>
+      {%- endif -%}
     </div>
   </div>
 </div>
