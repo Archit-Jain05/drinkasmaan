@@ -1,21 +1,39 @@
-<section class="section relative bg-black text-white min-h-[70vh] py-16">
+<section class="asmaan-subpage-section">
   <div class="padding-global">
     <div class="container-large max-w-6xl mx-auto px-4">
-      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-12">{{ collection.title }}</h1>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+      <div class="asmaan-subpage-hero text-left !mb-12">
+        <span class="asmaan-subpage-tag">Curated Catalog</span>
+        <h1 class="asmaan-subpage-title">{{ collection.title }}</h1>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-16">
         {%- for product in collection.products -%}
-          <a href="{{ product.url }}" class="group block text-center border border-white/10 rounded-2xl p-6 bg-white/[0.03] hover:border-white/30 transition-colors">
-            {%- if product.featured_image -%}
-              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title | escape }}" class="h-64 mx-auto object-contain mb-4 group-hover:-translate-y-2 transition-transform">
-            {%- endif -%}
-            <h3 class="text-xl font-bold">{{ product.title }}</h3>
-            <p class="text-white/60 mt-2">{{ product.price | money }}</p>
+          <a href="{{ product.url }}" class="group block text-center border border-white/10 rounded-2xl p-8 bg-white/[0.03] hover:border-white/30 hover:bg-white/[0.05] transition-all">
+            <div class="h-64 flex items-center justify-center mb-6">
+              {%- if product.featured_image -%}
+                <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title | escape }}" class="max-h-full w-auto object-contain group-hover:-translate-y-2 transition-transform duration-500">
+              {%- else -%}
+                <img src="{{ 'can-asmaan.png' | asset_url }}" alt="{{ product.title | escape }}" class="max-h-full w-auto object-contain group-hover:-translate-y-2 transition-transform duration-500">
+              {%- endif -%}
+            </div>
+            <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-1">Ambition Tonic</span>
+            <h3 class="text-xl font-bold uppercase tracking-tight text-white mb-2">{{ product.title }}</h3>
+            <p class="font-mono text-white/80">{{ product.price | money }}</p>
           </a>
+        {%- else -%}
+          <div class="col-span-3 text-center py-12 p-8 rounded-2xl bg-white/[0.02] border border-white/10">
+            <p class="text-white/60 mb-6 text-sm">No products currently listed in this collection. Explore the flagship range on our home stage.</p>
+            <a href="/#range" class="button is-hero is-primary">
+              View Flagship Range
+            </a>
+          </div>
         {%- endfor -%}
       </div>
     </div>
   </div>
 </section>
+
+{% section 'asmaan-newsletter' %}
 
 {% schema %}
 {

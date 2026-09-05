@@ -1,32 +1,56 @@
-<section class="section relative bg-black text-white min-h-[70vh] py-16">
+<section class="asmaan-subpage-section">
   <div class="padding-global">
     <div class="container-large max-w-4xl mx-auto px-4">
-      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-8">Your cart</h1>
+      <div class="asmaan-subpage-hero !mb-8 text-left">
+        <span class="asmaan-subpage-tag">Your Selection</span>
+        <h1 class="asmaan-subpage-title">Shopping Cart</h1>
+      </div>
+
       {%- if cart.item_count > 0 -%}
-        <form action="/cart" method="post">
+        <form action="/cart" method="post" class="p-6 sm:p-8 rounded-2xl bg-white/[0.02] border border-white/10">
           <div class="divide-y divide-white/10 mb-8">
             {%- for item in cart.items -%}
-              <div class="py-6 flex items-center justify-between">
-                <div>
-                  <h3 class="font-bold">{{ item.product.title }}</h3>
-                  <p class="text-white/60 text-sm">{{ item.variant.title }} &times; {{ item.quantity }}</p>
+              <div class="py-6 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                  {%- if item.image -%}
+                    <img src="{{ item.image | image_url: width: 120 }}" alt="{{ item.title | escape }}" class="h-16 w-auto object-contain">
+                  {%- endif -%}
+                  <div>
+                    <h3 class="font-bold text-white text-base">{{ item.product.title }}</h3>
+                    <p class="text-white/60 text-xs mt-1">{{ item.variant.title }} &times; {{ item.quantity }}</p>
+                  </div>
                 </div>
-                <div class="font-mono">{{ item.final_line_price | money }}</div>
+                <div class="font-mono text-white text-right">
+                  {{ item.final_line_price | money }}
+                </div>
               </div>
             {%- endfor -%}
           </div>
-          <div class="text-right">
-            <p class="text-xl mb-4 font-mono">Subtotal: {{ cart.total_price | money }}</p>
-            <button type="submit" name="checkout" class="button">Checkout</button>
+          <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div>
+              <p class="text-xs font-mono uppercase tracking-wider text-emerald-400">&bull; Free shipping included on orders over &#8377;999</p>
+            </div>
+            <div class="text-right flex items-center gap-4">
+              <span class="font-mono text-lg text-white">Subtotal: {{ cart.total_price | money }}</span>
+              <button type="submit" name="checkout" class="button is-hero is-primary">
+                Checkout Now
+              </button>
+            </div>
           </div>
         </form>
       {%- else -%}
-        <p class="text-white/70 mb-8">Your cart is currently empty.</p>
-        <a href="/" class="button">Continue shopping</a>
+        <div class="p-12 text-center rounded-2xl bg-white/[0.02] border border-white/10">
+          <p class="text-white/70 mb-6 text-sm">Your cart is currently empty. Ready to experience elevated flow state?</p>
+          <a href="/#range" class="button is-hero is-primary">
+            Explore the Range
+          </a>
+        </div>
       {%- endif -%}
     </div>
   </div>
 </section>
+
+{% section 'asmaan-newsletter' %}
 
 {% schema %}
 {

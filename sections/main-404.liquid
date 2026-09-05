@@ -1,11 +1,20 @@
-<div class="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-20 bg-black text-white">
-  <p class="font-mono text-xs uppercase tracking-[0.25em] text-white/50 mb-4">404 &mdash; Not Found</p>
-  <h1 class="text-4xl sm:text-6xl font-black tracking-tight mb-6">Page not found</h1>
-  <p class="text-white/70 max-w-md mb-8">The link you followed may be broken, or the page may have been removed.</p>
-  <a href="/" class="inline-flex items-center justify-center rounded-full bg-white text-black px-8 py-3 text-sm font-semibold hover:bg-white/90 transition-colors">
-    Return to Home
-  </a>
+<div class="asmaan-subpage-section min-h-[75vh] flex flex-col items-center justify-center text-center px-4 bg-black text-white">
+  <div class="max-w-md mx-auto">
+    <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-3">Error 404</span>
+    <h1 class="text-4xl sm:text-6xl font-black tracking-tight uppercase mb-4">Off Course</h1>
+    <p class="text-white/70 text-sm mb-8 leading-relaxed">The coordinate you followed does not exist on our botanical radar. Return to the stage or explore our available range.</p>
+    <div class="flex items-center justify-center gap-4">
+      <a href="/" class="button is-hero is-primary">
+        Return Home
+      </a>
+      <a href="/#range" class="button is-hero is-secondary">
+        Explore Range
+      </a>
+    </div>
+  </div>
 </div>
+
+{% section 'asmaan-newsletter' %}
 
 {% schema %}
 {

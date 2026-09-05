@@ -1,13 +1,25 @@
-<section class="section relative bg-black text-white min-h-[60vh] py-16">
+<section class="asmaan-subpage-section">
   <div class="padding-global">
     <div class="container-large max-w-4xl mx-auto px-4">
-      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-8">{{ page.title }}</h1>
-      <div class="prose prose-invert max-w-none text-white/80 leading-relaxed space-y-4">
-        {{ page.content }}
+      <div class="asmaan-subpage-hero !mb-10 text-left">
+        <span class="asmaan-subpage-tag">Asmaan Documentation</span>
+        <h1 class="asmaan-subpage-title">{{ page.title }}</h1>
+      </div>
+
+      <div class="p-8 sm:p-12 rounded-2xl bg-white/[0.02] border border-white/10 text-white/80 leading-relaxed text-sm sm:text-base space-y-6">
+        {%- if page.content != blank -%}
+          {{ page.content }}
+        {%- else -%}
+          <p class="text-white/60 italic">
+            This document outlines the operational standards and guidelines for Asmaan Botanical Labs. For specific inquiries regarding customer orders, privacy compliance, or shipping updates, please contact our support team at <a href="mailto:hello@drinkasmaan.com" class="text-white underline">hello@drinkasmaan.com</a>.
+          </p>
+        {%- endif -%}
       </div>
     </div>
   </div>
 </section>
+
+{% section 'asmaan-newsletter' %}
 
 {% schema %}
 {

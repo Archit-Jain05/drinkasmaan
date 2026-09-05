@@ -1,42 +1,67 @@
-<section class="section relative bg-black text-white min-h-[70vh] py-16">
+<section class="asmaan-subpage-section">
   <div class="padding-global">
     <div class="container-large max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div class="flex justify-center">
+      <div class="flex justify-center p-8 rounded-2xl bg-white/[0.02] border border-white/10">
         {%- if product.featured_image -%}
           <img
             src="{{ product.featured_image | image_url: width: 800 }}"
             alt="{{ product.title | escape }}"
-            class="max-h-[60vh] w-auto object-contain"
+            class="max-h-[55vh] w-auto object-contain"
             loading="eager"
           >
         {%- else -%}
           <img
             src="{{ 'can-asmaan.png' | asset_url }}"
             alt="{{ product.title | escape }}"
-            class="max-h-[60vh] w-auto object-contain"
+            class="max-h-[55vh] w-auto object-contain"
           >
         {%- endif -%}
       </div>
       <div>
-        <p class="font-mono text-xs uppercase tracking-[0.25em] text-white/50 mb-2">Ambition Tonic</p>
-        <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-4">{{ product.title }}</h1>
-        <div class="text-xl text-white/90 mb-6">{{ product.price | money }}</div>
-        <div class="text-white/70 leading-relaxed mb-8">{{ product.description }}</div>
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Ambition Tonic &bull; 250ml</span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-white mb-3">{{ product.title }}</h1>
+        <div class="text-2xl font-mono text-white/90 mb-6">{{ product.price | money }}</div>
+        
+        <div class="text-white/70 leading-relaxed text-sm space-y-4 mb-8">
+          {%- if product.description != blank -%}
+            {{ product.description }}
+          {%- else -%}
+            <p>Formulated with 100mg of raw green coffee bean caffeine, 200mg L-theanine, 300mg KSM-66 ashwagandha, and Himalayan botanicals. Designed for deep creative discipline without anxiety, jitters, or crashes.</p>
+          {%- endif -%}
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-8 text-xs font-mono text-white/60">
+          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
+            <span class="text-white block font-bold">0g Sugar</span> 10 Calories
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
+            <span class="text-white block font-bold">100mg Caffeine</span> Raw Green Coffee
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
+            <span class="text-white block font-bold">L-Theanine 200mg</span> Clean Focus Curve
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.04] border border-white/10">
+            <span class="text-white block font-bold">100% Vegan</span> No Synthetic Dyes
+          </div>
+        </div>
+
         {%- form 'product', product -%}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
           <button
             type="submit"
             name="add"
-            class="button is-full"
+            class="button is-hero is-primary is-full"
             {% unless product.available %}disabled{% endunless %}
           >
-            {% if product.available %}Add to cart{% else %}Sold out{% endif %}
+            {% if product.available %}Add to Cart &bull; Free Shipping{% else %}Sold Out &bull; Notify Next Batch{% endif %}
           </button>
         {%- endform -%}
       </div>
     </div>
   </div>
 </section>
+
+{% section 'asmaan-newsletter' %}
 
 {% schema %}
 {
