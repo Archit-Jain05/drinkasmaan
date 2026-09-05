@@ -121,6 +121,10 @@
     return (folded < 0 ? folded + size : folded) + min;
   }
 
+  function wrapAngle(radians) {
+    return radians - Math.PI * 2 * Math.round(radians / (Math.PI * 2));
+  }
+
   function poseAt(progress) {
     var clamped = Math.min(Math.max(progress, 0), 1);
     var index = 0;
@@ -327,6 +331,8 @@
     renderer: null,
     scene: null,
     camera: null,
+    spot: null,
+    studioLights: null,
     cans: [],
     shellMat: null,
     slots: 6,
@@ -335,14 +341,22 @@
     track: { position: 0, target: 0, spread: 1 },
     drag: 0,
     velocity: 0,
+    spinTarget: null,
     isDragging: false,
     scrubbing: false,
-    lastInput: 0,
+    lastInput: performance.now(),
     unit: 1,
     closeDistance: 1,
     applyTint: null,
     goTo: function (idx) {
-      this.track.target = idx;
+      var count = TASTES.length;
+      var diff = idx - this.track.target;
+      var wrapped = count > 0 ? diff - count * Math.round(diff / count) : diff;
+      this.track.target += wrapped;
+    },
+    setSpinTarget: function (rad) {
+      this.spinTarget = rad;
+      this.lastInput = performance.now();
     }
   };
 
@@ -552,20 +566,20 @@
 
     // Pointer Drag Handling
     var pointerId = null;
-    var startX = 0;
     var lastX = 0;
     var lastTime = 0;
 
     canvas.addEventListener('pointerdown', function (e) {
+      if (pointerId !== null) return;
       pointerId = e.pointerId;
       canvas.setPointerCapture(pointerId);
       stage3D.isDragging = true;
-      startX = e.clientX;
       lastX = e.clientX;
       lastTime = performance.now();
       stage3D.lastInput = lastTime;
       stage3D.velocity = 0;
-      stage3D.scrubbing = stage3D.track.spread > 0.4;
+      stage3D.spinTarget = null;
+      stage3D.scrubbing = stage3D.slots > 1 && stage3D.track.spread > 0.4;
     });
 
     canvas.addEventListener('pointermove', function (e) {
@@ -576,8 +590,7 @@
       stage3D.lastInput = now;
 
       if (stage3D.scrubbing) {
-        var deltaSlots = -(dx / stage3D.slotWidth) * 0.0042 * stage3D.unit;
-        stage3D.track.target += deltaSlots;
+        stage3D.track.target -= dx * 0.0042;
       } else {
         stage3D.drag += dx * 0.012;
         stage3D.velocity = (dx * 0.012) / (Math.max(now - lastTime, 8) / 1000);
@@ -589,16 +602,17 @@
       if (e.pointerId !== pointerId) return;
       pointerId = null;
       stage3D.isDragging = false;
+      stage3D.lastInput = performance.now();
       if (stage3D.scrubbing) {
         stage3D.scrubbing = false;
         var nearest = Math.round(stage3D.track.target);
         stage3D.track.target = nearest;
         var wrappedIdx = ((nearest % TASTES.length) + TASTES.length) % TASTES.length;
         setTaste(wrappedIdx);
-      } else {
-        if (performance.now() - lastTime > 120) stage3D.velocity = 0;
-        stage3D.velocity = Math.max(-14, Math.min(14, stage3D.velocity));
+        return;
       }
+      if (performance.now() - lastTime > 120) stage3D.velocity = 0;
+      stage3D.velocity = Math.max(-14, Math.min(14, stage3D.velocity));
     }
 
     canvas.addEventListener('pointerup', endDrag);
@@ -735,10 +749,41 @@
     var canStageHost = document.querySelector('[data-asmaan-stage-can]') ? document.querySelector('[data-asmaan-stage-can]').closest('.fixed') : null;
 
     var pinnedSections = document.querySelectorAll('.section.is-pinned');
+    var pinnedCache = [];
+    pinnedSections.forEach(function (sec) {
+      var fade = sec.querySelector('.pin_fade');
+      if (fade) {
+        pinnedCache.push({
+          sec: sec,
+          fade: fade,
+          isManifesto: sec.classList.contains('is-manifesto'),
+          lastAmount: -1,
+          lastEnter: -1,
+          lastExit: -1,
+          enter: 0,
+          exit: 0,
+          amount: 0
+        });
+      }
+    });
 
     var benefitIds = ['benefit-sugar', 'benefit-caffeine', 'benefit-crash', 'benefit-colour'];
     var benefitsNav = document.querySelector('.benefits_nav');
+    var bIcons = benefitsNav ? benefitsNav.querySelectorAll('.benefits_icon-wrapper') : [];
     var profileSection = document.querySelector('.profile_container') ? document.querySelector('.profile_container').closest('.section') : null;
+
+    var benefitCache = [];
+    for (var bi = 0; bi < benefitIds.length; bi++) {
+      var bEl = document.getElementById(benefitIds[bi]);
+      if (bEl) {
+        benefitCache.push({
+          el: bEl,
+          box: bEl.querySelector('.benefits_max-width'),
+          lastLine: -1,
+          amount: 0
+        });
+      }
+    }
 
     var SPREAD_FROM = 0.02;
     var SPREAD_TO = 0.14;
@@ -754,20 +799,35 @@
     var eased = 0;
     var seeded = false;
     var lastTime = performance.now();
+    var lastScrollProgress = -1;
+    var lastHostLit = -1;
+    var lastTasteActive = false;
+    var lastTasteDim = false;
+    var lastShowNav = null;
+    var lastPeakBenefit = -1;
+    var lastActiveBenefitIdx = -1;
+
+    var windowH = window.innerHeight;
+    var windowW = window.innerWidth;
+    var docHeight = document.documentElement.scrollHeight - windowH;
+
+    window.addEventListener('resize', function () {
+      windowH = window.innerHeight;
+      windowW = window.innerWidth;
+      docHeight = document.documentElement.scrollHeight - windowH;
+    }, { passive: true });
 
     function onFrame(now) {
       var dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
 
-      var windowH = window.innerHeight;
-      var windowW = window.innerWidth;
       var scrollY = window.scrollY || document.documentElement.scrollTop;
-      var docHeight = document.documentElement.scrollHeight - windowH;
       var scrollProgress = docHeight > 0 ? Math.min(1, Math.max(0, scrollY / docHeight)) : 0;
 
-      // 1. Hairline scroll indicator in navbar
-      if (scrollIndicator) {
+      // 1. Hairline scroll indicator in navbar (dirty checked)
+      if (scrollIndicator && Math.abs(scrollProgress - lastScrollProgress) > 0.001) {
         scrollIndicator.style.setProperty('--p', scrollProgress);
+        lastScrollProgress = scrollProgress;
       }
 
       // 2. Stage scroll progress & 3D WebGL render
@@ -779,7 +839,7 @@
           eased = targetProgress;
           seeded = true;
         } else {
-          eased += (targetProgress - eased) * (1 - Math.exp(-7.5 * dt));
+          eased += (targetProgress - eased) * (1 - Math.exp(-11.0 * dt));
         }
 
         var spread = 1 - range(eased, SPREAD_FROM, SPREAD_TO);
@@ -803,13 +863,19 @@
           var followSpeed = stage3D.scrubbing ? TRACK_FOLLOW * 3 : TRACK_FOLLOW;
           stage3D.track.position += (stage3D.track.target - stage3D.track.position) * (isMotionOff ? 1 : 1 - Math.exp(-followSpeed * dt));
 
-          // Drag / Drift
+          // Drag / Ambient Idle Drift (Continuous Butter-Smooth Rotation)
           if (!stage3D.isDragging) {
-            stage3D.velocity *= Math.exp(-FRICTION * dt);
-            if (!isMotionOff && Math.abs(stage3D.velocity) < 0.001 && (now - stage3D.lastInput > IDLE_DELAY_MS)) {
-              stage3D.velocity += (0.12 - stage3D.velocity) * (1 - Math.exp(-1.6 * dt));
+            if (stage3D.spinTarget !== null && stage3D.spinTarget !== undefined) {
+              var delta = wrapAngle(stage3D.spinTarget - stage3D.drag);
+              stage3D.drag += delta * (isMotionOff ? 1 : 1 - Math.exp(-6 * dt));
+              stage3D.velocity = 0;
+            } else {
+              stage3D.velocity *= Math.exp(-FRICTION * dt);
+              if (!isMotionOff && (now - stage3D.lastInput > IDLE_DELAY_MS)) {
+                stage3D.velocity += (0.15 - stage3D.velocity) * (1 - Math.exp(-1.6 * dt));
+              }
+              stage3D.drag += stage3D.velocity * dt;
             }
-            stage3D.drag += stage3D.velocity * dt;
           }
 
           var u = stage3D.unit || 1;
@@ -893,88 +959,106 @@
           stage3D.renderer.render(stage3D.scene, stage3D.camera);
         }
 
-        // Fixed stage opacity & exit dive
+        // Fixed stage opacity & exit dive (dirty checked)
         if (canStageHost) {
           var lit = 1 - range(eased, 0.99, 1);
-          canStageHost.style.opacity = String(lit);
-          canStageHost.style.transform = lit < 0.01 ? 'translateY(130%)' : 'none';
+          if (Math.abs(lit - lastHostLit) > 0.002) {
+            lastHostLit = lit;
+            canStageHost.style.opacity = String(lit);
+            canStageHost.style.transform = lit < 0.01 ? 'translateY(130%)' : 'none';
+          }
         }
       }
 
-      // 3. Pinned sections cross-fade calculation
-      pinnedSections.forEach(function (sec) {
-        var fade = sec.querySelector('.pin_fade');
-        if (!fade) return;
+      // 3. READ PASS: Batch all getBoundingClientRect measurements together (No layout thrashing)
+      for (var pi = 0; pi < pinnedCache.length; pi++) {
+        var pItem = pinnedCache[pi];
+        var rect = pItem.sec.getBoundingClientRect();
+        pItem.enter = range(rect.top, windowH * 0.4, 0);
+        pItem.exit = range(rect.bottom - windowH, 0, windowH * 0.3);
+        pItem.amount = pItem.enter * pItem.exit;
+      }
 
-        var rect = sec.getBoundingClientRect();
-        var enter = range(rect.top, windowH * 0.4, 0);
-        var exit = range(rect.bottom - windowH, 0, windowH * 0.3);
-        var amount = enter * exit;
+      var pRect = profileSection ? profileSection.getBoundingClientRect() : null;
 
-        fade.style.setProperty('--pin-o', String(amount));
-        fade.style.setProperty('--pin-y', ((1 - enter) * 30 - (1 - exit) * 30) + 'px');
-        fade.style.visibility = amount < 0.01 ? 'hidden' : 'visible';
+      for (var bi = 0; bi < benefitCache.length; bi++) {
+        var bRect = benefitCache[bi].el.getBoundingClientRect();
+        var bEnter = range(bRect.top, windowH * 0.4, 0);
+        var bExit = range(bRect.bottom - windowH, 0, windowH * 0.3);
+        benefitCache[bi].amount = bEnter * bExit;
+      }
 
-        if (sec.classList.contains('is-manifesto')) {
-          if (manifestoLayer) {
-            var showM = amount > 0.01;
-            manifestoLayer.style.opacity = String(amount);
+      // 4. WRITE PASS: Update styles/classes with zero forced synchronous layout
+      for (var pi2 = 0; pi2 < pinnedCache.length; pi2++) {
+        var pItem2 = pinnedCache[pi2];
+        if (Math.abs(pItem2.amount - pItem2.lastAmount) > 0.002) {
+          pItem2.lastAmount = pItem2.amount;
+          pItem2.fade.style.setProperty('--pin-o', String(pItem2.amount));
+          pItem2.fade.style.setProperty('--pin-y', ((1 - pItem2.enter) * 30 - (1 - pItem2.exit) * 30) + 'px');
+          pItem2.fade.style.visibility = pItem2.amount < 0.01 ? 'hidden' : 'visible';
+
+          if (pItem2.isManifesto && manifestoLayer) {
+            var showM = pItem2.amount > 0.01;
+            manifestoLayer.style.opacity = String(pItem2.amount);
             manifestoLayer.style.visibility = showM ? 'visible' : 'hidden';
             manifestoLayer.setAttribute('data-active', String(showM));
           }
         }
-      });
+      }
 
-      // 4. Tasting notes ambient wash toggle (is-taste-active)
-      if (profileSection) {
-        var pRect = profileSection.getBoundingClientRect();
+      if (pRect) {
         var pEnter = range(pRect.top, windowH * 0.4, 0);
         var pExit = range(pRect.bottom - windowH, 0, windowH * 0.3);
         var pAmount = pEnter * pExit;
-        document.body.classList.toggle('is-taste-active', pAmount > 0.25);
-      }
-
-      // 5. Benefits ambient wash (is-taste-dim) & Benefits Floating Nav
-      var benefitAmounts = [];
-      for (var bi = 0; bi < benefitIds.length; bi++) {
-        var bEl = document.getElementById(benefitIds[bi]);
-        if (bEl) {
-          var bRect = bEl.getBoundingClientRect();
-          var bEnter = range(bRect.top, windowH * 0.4, 0);
-          var bExit = range(bRect.bottom - windowH, 0, windowH * 0.3);
-          benefitAmounts.push(bEnter * bExit);
-        } else {
-          benefitAmounts.push(0);
+        var isTasteActive = pAmount > 0.25;
+        if (isTasteActive !== lastTasteActive) {
+          lastTasteActive = isTasteActive;
+          document.body.classList.toggle('is-taste-active', isTasteActive);
         }
       }
 
-      var peakBenefit = Math.max.apply(null, benefitAmounts);
-      var activeBenefitIdx = peakBenefit > 0.02 ? benefitAmounts.indexOf(peakBenefit) : 0;
+      var peakBenefit = 0;
+      var activeBenefitIdx = 0;
+      for (var bi2 = 0; bi2 < benefitCache.length; bi2++) {
+        if (benefitCache[bi2].amount > peakBenefit) {
+          peakBenefit = benefitCache[bi2].amount;
+          activeBenefitIdx = bi2;
+        }
+      }
 
-      // Toggle purple wash behind the close-up can!
-      document.body.classList.toggle('is-taste-dim', peakBenefit > 0.25);
+      var isTasteDim = peakBenefit > 0.25;
+      if (isTasteDim !== lastTasteDim) {
+        lastTasteDim = isTasteDim;
+        document.body.classList.toggle('is-taste-dim', isTasteDim);
+      }
 
-      // Benefits Floating Nav on right edge
       if (benefitsNav) {
-        benefitsNav.style.opacity = String(peakBenefit);
-        benefitsNav.style.visibility = peakBenefit > 0.02 ? 'visible' : 'hidden';
-        benefitsNav.setAttribute('aria-hidden', String(peakBenefit <= 0.02));
+        var showNav = peakBenefit > 0.02;
+        if (showNav !== lastShowNav || Math.abs(peakBenefit - lastPeakBenefit) > 0.01) {
+          lastShowNav = showNav;
+          lastPeakBenefit = peakBenefit;
+          benefitsNav.style.opacity = String(peakBenefit);
+          benefitsNav.style.visibility = showNav ? 'visible' : 'hidden';
+          benefitsNav.setAttribute('aria-hidden', String(!showNav));
+        }
 
-        var bIcons = benefitsNav.querySelectorAll('.benefits_icon-wrapper');
-        for (var bii = 0; bii < bIcons.length; bii++) {
-          var isCurrent = bii === activeBenefitIdx && peakBenefit > 0.02;
-          bIcons[bii].classList.toggle('is-active', isCurrent);
-          bIcons[bii].setAttribute('aria-current', String(isCurrent));
+        if (showNav && activeBenefitIdx !== lastActiveBenefitIdx) {
+          lastActiveBenefitIdx = activeBenefitIdx;
+          for (var bii = 0; bii < bIcons.length; bii++) {
+            var isCurrent = bii === activeBenefitIdx;
+            bIcons[bii].classList.toggle('is-active', isCurrent);
+            bIcons[bii].setAttribute('aria-current', String(isCurrent));
+          }
         }
       }
 
-      // Strikethrough lines on benefits
-      for (var bi3 = 0; bi3 < benefitIds.length; bi3++) {
-        var bEl3 = document.getElementById(benefitIds[bi3]);
-        if (bEl3) {
-          var bBox = bEl3.querySelector('.benefits_max-width');
-          if (bBox) {
-            bBox.style.setProperty('--benefits-line', String(bi3 === activeBenefitIdx && peakBenefit > 0.02 ? 1 : 0));
+      for (var bi3 = 0; bi3 < benefitCache.length; bi3++) {
+        var bItem = benefitCache[bi3];
+        if (bItem.box) {
+          var lineVal = (bi3 === activeBenefitIdx && peakBenefit > 0.02) ? 1 : 0;
+          if (lineVal !== bItem.lastLine) {
+            bItem.lastLine = lineVal;
+            bItem.box.style.setProperty('--benefits-line', String(lineVal));
           }
         }
       }

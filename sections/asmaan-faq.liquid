@@ -12,37 +12,301 @@
 
           <div class="max-width-large align-center">
             <div class="faq_list">
-              {%- for block in section.blocks -%}
-                <div {{ block.shopify_attributes }}>
+              {%- if section.blocks.size > 0 -%}
+                {%- for block in section.blocks -%}
+                  <div {{ block.shopify_attributes }}>
+                    <div class="faq_separator"></div>
+                    <div class="faq_accordion">
+                      <button
+                        type="button"
+                        class="faq_question"
+                        aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                        aria-controls="faq-answer-{{ block.id }}"
+                      >
+                        <span class="heading-style-h5">{{ block.settings.question }}</span>
+                        <span class="faq_icon-wrapper">
+                          {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                        </span>
+                      </button>
+
+                      <div
+                        id="faq-answer-{{ block.id }}"
+                        class="faq_answer"
+                        data-open="{% if forloop.first %}true{% else %}false{% endif %}"
+                        role="region"
+                      >
+                        <div>
+                          <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                            {{ block.settings.answer }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%- endfor -%}
+              {%- else -%}
+                {%- comment -%} Default all 9 FAQ items from prototype {%- endcomment -%}
+                <div>
                   <div class="faq_separator"></div>
                   <div class="faq_accordion">
                     <button
                       type="button"
                       class="faq_question"
-                      aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
-                      aria-controls="faq-answer-{{ block.id }}"
+                      aria-expanded="true"
+                      aria-controls="faq-answer-0"
                     >
-                      <span class="heading-style-h5">{{ block.settings.question }}</span>
+                      <span class="heading-style-h5">What makes Asmaan different from other energy drinks?</span>
                       <span class="faq_icon-wrapper">
                         {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
                       </span>
                     </button>
-
                     <div
-                      id="faq-answer-{{ block.id }}"
+                      id="faq-answer-0"
                       class="faq_answer"
-                      data-open="{% if forloop.first %}true{% else %}false{% endif %}"
+                      data-open="true"
                       role="region"
                     >
                       <div>
                         <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
-                          {{ block.settings.answer }}
+                          Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, it is paired with L-theanine and KSM-66 ashwagandha so the lift climbs instead of spiking, and there is no sugar to crash off. Everything in it is printed on the can — no proprietary blend.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-              {%- endfor -%}
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-1"
+                    >
+                      <span class="heading-style-h5">How much caffeine is in a can?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-1"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          100 mg per 250 ml can — about the same as a strong cup of coffee, and roughly a third less than a standard energy drink of the same size.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-2"
+                    >
+                      <span class="heading-style-h5">What is actually in it?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-2"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          300 mg KSM-66 ashwagandha root extract, 200 mg L-theanine from green tea, 100 mg natural caffeine from green coffee, 60 mg magnesium bisglycinate, and 1.4 mg B6 with 2.5 µg B12 for normal energy metabolism.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-3"
+                    >
+                      <span class="heading-style-h5">Is Asmaan sugar free?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-3"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          Yes. Zero sugar and ten calories a can. There are no artificial colours either — the colour comes from food, not from dye.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-4"
+                    >
+                      <span class="heading-style-h5">Why ashwagandha in an energy drink?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-4"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          KSM-66 takes the edge off the push. Caffeine on its own arrives as pressure; with ashwagandha and L-theanine underneath it, the drive shows up without the jitter that usually comes with it.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-5"
+                    >
+                      <span class="heading-style-h5">When should I drink it?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-5"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          Open it when the work starts. The curve peaks around forty minutes in and holds for about four hours, so it is worth spending those hours on one thing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-6"
+                    >
+                      <span class="heading-style-h5">Is it vegan?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-6"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          Yes. Vegan, with no artificial colour and no animal-derived ingredients anywhere in the recipe.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-7"
+                    >
+                      <span class="heading-style-h5">Can anyone drink it?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-7"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          It contains caffeine at 40 mg per 100 ml, so it is not suitable for children, or for people who are pregnant or breastfeeding.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="false"
+                      aria-controls="faq-answer-8"
+                    >
+                      <span class="heading-style-h5">How should I keep it?</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+                    <div
+                      id="faq-answer-8"
+                      class="faq_answer"
+                      data-open="false"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          Store it at room temperature, out of direct light and heat. Chill it before drinking — cold enough that the first sip is a decision, not a habit. Once open, keep it refrigerated and finish it the same day.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%- endif -%}
               <div class="faq_separator"></div>
             </div>
           </div>
