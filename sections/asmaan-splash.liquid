@@ -257,7 +257,7 @@
     {
       "type": "select",
       "id": "can_flavour",
-      "label": "Can",
+      "label": "Can flavour",
       "options": [
         {
           "value": "mango",
@@ -272,20 +272,17 @@
           "label": "Magenta"
         }
       ],
-      "default": "mango",
-      "visible_if": "{{ section.settings.media_source == 'can' }}"
+      "default": "mango"
     },
     {
       "type": "image_picker",
       "id": "image",
-      "label": "Image",
-      "visible_if": "{{ section.settings.media_source == 'image' }}"
+      "label": "Custom image"
     },
     {
       "type": "video",
       "id": "video",
-      "label": "Video",
-      "visible_if": "{{ section.settings.media_source == 'video' }}"
+      "label": "Video"
     },
     {
       "type": "header",
@@ -383,8 +380,7 @@
       "type": "color",
       "id": "accent_color",
       "label": "Second panel",
-      "default": "#17161a",
-      "visible_if": "{{ section.settings.show_accent }}"
+      "default": "#17161a"
     },
     {
       "type": "header",
@@ -393,32 +389,29 @@
     {
       "type": "range",
       "id": "min_duration",
-      "label": "Minimum on screen",
+      "label": "Minimum on screen (ms)",
       "min": 400,
       "max": 4000,
       "step": 100,
-      "unit": "ms",
       "default": 1400
     },
     {
       "type": "range",
       "id": "max_duration",
-      "label": "Give up waiting after",
+      "label": "Give up waiting after (ms)",
       "min": 2000,
-      "max": 12000,
+      "max": 9000,
       "step": 500,
-      "unit": "ms",
       "default": 7000,
       "info": "The counter releases to 100% even if the page is still loading."
     },
     {
       "type": "range",
       "id": "reveal_duration",
-      "label": "Wipe duration",
+      "label": "Wipe duration (ms)",
       "min": 400,
       "max": 2000,
       "step": 100,
-      "unit": "ms",
       "default": 900
     },
     {
@@ -449,8 +442,7 @@
   ],
   "presets": [
     {
-      "name": "Asmaan splash",
-      "category": "Asmaan"
+      "name": "Asmaan splash"
     }
   ]
 }

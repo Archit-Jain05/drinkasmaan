@@ -1,0 +1,159 @@
+{{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-prototype.js' | asset_url }}" defer></script>
+
+<section id="faq" class="section relative bg-black">
+  <div class="faq_container">
+    <div class="padding-global">
+      <div class="container-large">
+        <div class="padding-section-large">
+          <div class="mb-[var(--pad-xxl)]">
+            <h2 class="heading-style-display whitespace-pre-line">{{ section.settings.title | default: 'Frequently asked<br>questions' }}</h2>
+          </div>
+
+          <div class="max-width-large align-center">
+            <div class="faq_list">
+              {%- for block in section.blocks -%}
+                <div {{ block.shopify_attributes }}>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button
+                      type="button"
+                      class="faq_question"
+                      aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-controls="faq-answer-{{ block.id }}"
+                    >
+                      <span class="heading-style-h5">{{ block.settings.question }}</span>
+                      <span class="faq_icon-wrapper">
+                        {% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}
+                      </span>
+                    </button>
+
+                    <div
+                      id="faq-answer-{{ block.id }}"
+                      class="faq_answer"
+                      data-open="{% if forloop.first %}true{% else %}false{% endif %}"
+                      role="region"
+                    >
+                      <div>
+                        <p class="text-size-medium pb-[var(--pad-s)] text-white/70">
+                          {{ block.settings.answer }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {%- endfor -%}
+              <div class="faq_separator"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Asmaan FAQ",
+  "tag": "div",
+  "class": "asmaan-faq-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Frequently asked\nquestions"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "What makes Asmaan different from other energy drinks?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, it is paired with L-theanine and KSM-66 ashwagandha so the lift climbs instead of spiking, and there is no sugar to crash off. Everything in it is printed on the can — no proprietary blend."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Asmaan FAQ",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What makes Asmaan different from other energy drinks?",
+            "answer": "Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, it is paired with L-theanine and KSM-66 ashwagandha so the lift climbs instead of spiking, and there is no sugar to crash off. Everything in it is printed on the can — no proprietary blend."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How much caffeine is in a can?",
+            "answer": "100 mg per 250 ml can — about the same as a strong cup of coffee, and roughly a third less than a standard energy drink of the same size."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is actually in it?",
+            "answer": "300 mg KSM-66 ashwagandha root extract, 200 mg L-theanine from green tea, 100 mg natural caffeine from green coffee, 60 mg magnesium bisglycinate, and 1.4 mg B6 with 2.5 µg B12 for normal energy metabolism."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Is Asmaan sugar free?",
+            "answer": "Yes. Zero sugar and ten calories a can. There are no artificial colours either — the colour comes from food, not from dye."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Why ashwagandha in an energy drink?",
+            "answer": "KSM-66 takes the edge off the push. Caffeine on its own arrives as pressure; with ashwagandha and L-theanine underneath it, the drive shows up without the jitter that usually comes with it."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "When should I drink it?",
+            "answer": "Open it when the work starts. The curve peaks around forty minutes in and holds for about four hours, so it is worth spending those hours on one thing."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Is it vegan?",
+            "answer": "Yes. Vegan, with no artificial colour and no animal-derived ingredients anywhere in the recipe."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can anyone drink it?",
+            "answer": "It contains caffeine at 40 mg per 100 ml, so it is not suitable for children, or for people who are pregnant or breastfeeding."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How should I keep it?",
+            "answer": "Store it at room temperature, out of direct light and heat. Chill it before drinking — cold enough that the first sip is a decision, not a habit. Once open, keep it refrigerated and finish it the same day."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

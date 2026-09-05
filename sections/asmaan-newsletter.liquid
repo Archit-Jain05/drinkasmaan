@@ -1,0 +1,159 @@
+{{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-prototype.js' | asset_url }}" defer></script>
+
+<section id="newsletter" class="section relative bg-black">
+  <div class="newsletter_container">
+    <div class="padding-global">
+      <div class="container-large">
+        <div class="padding-section-large">
+          <div class="max-width-medium align-center text-center">
+            <h2 class="heading-style-h2 whitespace-pre-line">{{ section.settings.title | default: 'Join<br>the first batch' }}</h2>
+            <p class="mt-[var(--pad-s)] text-white/70">{{ section.settings.body | default: 'The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.' }}</p>
+
+            {% form 'customer', class: 'mt-[var(--pad-l)] text-left' %}
+              {%- if form.posted_successfully? -%}
+                <p class="mt-[var(--pad-l)] text-size-medium text-center text-white" role="status">
+                  You're on the list. We'll write once, when the cans land.
+                </p>
+              {%- else -%}
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <div class="newsletter_field relative">
+                  <input
+                    id="newsletter-email"
+                    type="email"
+                    name="contact[email]"
+                    value="{{ form.email }}"
+                    required
+                    autocomplete="email"
+                    placeholder=" "
+                    class="newsletter_input"
+                    aria-invalid="{% if form.errors %}true{% else %}false{% endif %}"
+                  >
+                  <label for="newsletter-email" class="newsletter_label">
+                    {{ section.settings.placeholder | default: 'Your email address' }}
+                  </label>
+                </div>
+
+                {%- if form.errors -%}
+                  <p class="mt-[var(--pad-xxs)] text-size-small text-[#ff7676]" role="alert">
+                    {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+                  </p>
+                {%- endif -%}
+
+                <button type="submit" class="button is-full mt-[var(--pad-m)]">
+                  {{ section.settings.cta_text | default: 'Sign up' }}
+                </button>
+
+                <p class="mt-[var(--pad-m)] text-center text-size-small text-white/50">
+                  By signing up you accept our <a href="{{ section.settings.privacy_link | default: '#' }}" class="underline">privacy policy</a>
+                </p>
+              {%- endif -%}
+            {% endform %}
+          </div>
+
+          <div class="my-[var(--pad-xh)] text-center">
+            <p class="text-size-tiny mx-auto max-width-medium text-white/40">
+              {{ section.settings.warning_note | default: 'Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.' }}
+            </p>
+          </div>
+
+          <div class="footer_container">
+            {%- if section.settings.instagram_url != blank -%}
+              <a
+                href="{{ section.settings.instagram_url }}"
+                target="_blank"
+                rel="noreferrer"
+                class="button is-secondary is-social"
+                aria-label="Asmaan on Instagram"
+              >
+                {% render 'asmaan-icons', name: 'instagram', class: 'h-4 w-4' %}
+              </a>
+            {%- endif -%}
+
+            <div class="footer_link-list">
+              <span class="footer_link">&copy; {{ 'now' | date: '%Y' }} {{ section.settings.brand_name | default: 'ASMAAN' }}</span>
+              <a href="{{ section.settings.legal_link | default: '#' }}" class="footer_link">Legal</a>
+              <a href="{{ section.settings.terms_link | default: '#' }}" class="footer_link">Terms</a>
+              <a href="{{ section.settings.privacy_link | default: '#' }}" class="footer_link">Privacy policy</a>
+            </div>
+
+            <a href="#top" class="button is-secondary is-social">
+              Top
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Asmaan Newsletter & Footer",
+  "tag": "div",
+  "class": "asmaan-newsletter-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name",
+      "default": "ASMAAN"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Join\nthe first batch"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body text",
+      "default": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Input Placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button Text",
+      "default": "Sign up"
+    },
+    {
+      "type": "text",
+      "id": "warning_note",
+      "label": "Warning Note",
+      "default": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine."
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram Link"
+    },
+    {
+      "type": "url",
+      "id": "legal_link",
+      "label": "Legal Link"
+    },
+    {
+      "type": "url",
+      "id": "terms_link",
+      "label": "Terms Link"
+    },
+    {
+      "type": "url",
+      "id": "privacy_link",
+      "label": "Privacy Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Asmaan Newsletter & Footer"
+    }
+  ]
+}
+{% endschema %}

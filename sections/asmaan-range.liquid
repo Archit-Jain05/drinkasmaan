@@ -1,0 +1,120 @@
+{{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-prototype.js' | asset_url }}" defer></script>
+
+<div class="relative z-10 bg-black before:absolute before:inset-x-0 before:bottom-full before:h-[30svh] before:bg-gradient-to-b before:from-transparent before:to-black before:content-['']">
+  <section id="range-section" class="section relative bg-black">
+    <div class="padding-global">
+      <div class="container-large">
+        <div class="padding-section-large">
+          <h2 class="heading-style-display mb-[var(--pad-xxl)]">
+            {{ section.settings.title | default: 'The<br>range' }}
+          </h2>
+
+          <ul class="grid grid-cols-1 gap-[var(--pad-l)] sm:grid-cols-3">
+            <!-- 1. Kala Jamun -->
+            <li>
+              <button
+                type="button"
+                data-range-card="0"
+                aria-current="true"
+                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40"
+              >
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
+                  style="background: radial-gradient(circle at 50% 100%, #9089D3, #2A1D4A 55%, transparent 75%);"
+                ></span>
+                <img
+                  alt="The Kala Jamun can"
+                  loading="lazy"
+                  width="520"
+                  height="1040"
+                  decoding="async"
+                  class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                  src="{{ 'jamun-front.webp' | asset_url }}"
+                >
+                <span class="relative heading-style-h3">Kala Jamun</span>
+                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">The original</span>
+              </button>
+            </li>
+
+            <!-- 2. Alphonso Mango -->
+            <li>
+              <button
+                type="button"
+                data-range-card="1"
+                aria-current="false"
+                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40"
+              >
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
+                  style="background: radial-gradient(circle at 50% 100%, #EFB36B, #5A2A00 55%, transparent 75%);"
+                ></span>
+                <img
+                  alt="The Alphonso Mango can"
+                  loading="lazy"
+                  width="520"
+                  height="1040"
+                  decoding="async"
+                  class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                  src="{{ 'mango-front.webp' | asset_url }}"
+                >
+                <span class="relative heading-style-h3">Alphonso Mango</span>
+                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">Gold into burnt amber</span>
+              </button>
+            </li>
+
+            <!-- 3. Wild Magenta -->
+            <li>
+              <button
+                type="button"
+                data-range-card="2"
+                aria-current="false"
+                class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40"
+              >
+                <span
+                  aria-hidden="true"
+                  class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
+                  style="background: radial-gradient(circle at 50% 100%, #E6A0E8, #4E0749 55%, transparent 75%);"
+                ></span>
+                <img
+                  alt="The Wild Magenta can"
+                  loading="lazy"
+                  width="520"
+                  height="1040"
+                  decoding="async"
+                  class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                  src="{{ 'print-front.webp' | asset_url }}"
+                >
+                <span class="relative heading-style-h3">Wild Magenta</span>
+                <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">Rose and pink guava</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "Asmaan The Range",
+  "tag": "div",
+  "class": "asmaan-range-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "The range"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Asmaan The Range"
+    }
+  ]
+}
+{% endschema %}
