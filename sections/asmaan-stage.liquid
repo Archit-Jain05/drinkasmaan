@@ -43,25 +43,28 @@
 
                 <h1 class="sr-only">{{ section.settings.seo_h1 | default: 'Asmaan — the ambition tonic' }}</h1>
 
-                <div class="carousel_stack" data-taste-stack>
-                  <div class="carousel_slide" data-active="true">
-                    <div class="heading-style-h2">
-                      <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
-                      <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
+                <div class="carousel_wrapper">
+                  <div class="carousel_stack" data-taste-stack>
+                    <div class="carousel_slide" data-active="true">
+                      <div class="heading-style-h2">
+                        <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
+                        <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
+                      </div>
+                    </div>
+                    <div class="carousel_slide" data-active="false">
+                      <div class="heading-style-h2">
+                        <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
+                        <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
+                      </div>
+                    </div>
+                    <div class="carousel_slide" data-active="false">
+                      <div class="heading-style-h2">
+                        <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
+                        <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
+                      </div>
                     </div>
                   </div>
-                  <div class="carousel_slide" data-active="false">
-                    <div class="heading-style-h2">
-                      <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
-                      <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
-                    </div>
-                  </div>
-                  <div class="carousel_slide" data-active="false">
-                    <div class="heading-style-h2">
-                      <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
-                      <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
-                    </div>
-                  </div>
+
                   <div class="carousel_nav pointer-events-auto">
                     <button type="button" class="carousel_arrow is-prev" data-carousel-prev aria-label="Previous colourway">
                       {% render 'asmaan-icons', name: 'arrow', direction: 'left', class: 'h-5 w-5' %}

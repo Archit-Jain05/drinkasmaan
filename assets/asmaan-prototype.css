@@ -692,6 +692,14 @@ input:focus-visible {
 }
 
 /* --- Hero / The Range --- */
+
+/* Push the 3D can viewport down so it clears the navbar */
+[data-asmaan-stage-can] {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
+  padding-top: calc(var(--nav-height) + 1.5rem); /* clear navbar + extra gap */
+}
+
 .gamme_container {
   position: sticky;
   top: 0;
@@ -701,6 +709,7 @@ input:focus-visible {
   width: 100%;
   height: 100svh;
   text-align: center;
+  padding-bottom: var(--pad-m); /* extra breathing room above the bottom UI */
 }
 
 .gamme_gradient-wrapper {
@@ -738,6 +747,33 @@ input:focus-visible {
   display: none !important;
 }
 
+/* -----------------------------------------------------------------------
+   Carousel — wrapper grid overlay
+   Both carousel_stack (title) and carousel_nav share the same grid cell,
+   so the nav arrows are perfectly centred to the title text height.
+----------------------------------------------------------------------- */
+.carousel_wrapper {
+  position: relative;
+  display: grid;       /* grid overlay: stack + nav share the same cell */
+  width: 100%;
+}
+
+/* carousel_stack and carousel_nav overlap in the same grid cell */
+.carousel_wrapper > .carousel_stack,
+.carousel_wrapper > .carousel_nav {
+  grid-area: 1 / 1;
+}
+
+/* carousel_stack: standard grid for cross-fading title slides */
+.carousel_stack {
+  display: grid;
+  width: 100%;
+}
+
+.carousel_stack > * {
+  grid-area: 1 / 1;
+}
+
 .carousel_slide {
   width: 100%;
   opacity: 0;
@@ -753,31 +789,22 @@ input:focus-visible {
   transform: translateY(0);
 }
 
-/* Title grid — position:relative so arrows can be anchored to it */
-.carousel_stack {
-  position: relative;
-  display: grid;
-}
-
-/* All children stack in the same grid cell */
-.carousel_stack > * {
-  grid-area: 1 / 1;
-}
-
-/* Nav overlays the title, absolutely positioned to match its bounds */
+/* carousel_nav: spans the exact same grid cell as the title,
+   flexes left/right arrows to opposing edges, centred vertically */
 .carousel_nav {
-  position: absolute;
-  inset: 0;
-  z-index: 10;
   display: flex;
-  align-items: center;           /* vertically centre arrows to title height */
+  align-items: center;         /* vertically centred to title height */
   justify-content: space-between;
-  pointer-events: none;          /* let clicks pass through to title */
+  pointer-events: none;        /* pass clicks through to title */
+  z-index: 10;
   width: 100%;
+  /* Extend arrows beyond the constrained title width so they clear the text */
+  margin-left: calc(var(--carousel-arrow-offset, -2.75rem));
+  margin-right: calc(var(--carousel-arrow-offset, -2.75rem));
+  width: calc(100% + var(--carousel-arrow-offset, 2.75rem) * 2);
 }
 
 .carousel_arrow {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -796,9 +823,6 @@ input:focus-visible {
 .carousel_arrow:hover {
   color: #fff;
 }
-
-.carousel_arrow.is-prev { }
-.carousel_arrow.is-next { }
 
 .carousel_pagination {
   position: relative;
@@ -1870,11 +1894,7 @@ input:focus-visible {
   transition: opacity 0.5s ease !important;
 }
 
-/* 3D Stage Carousel Smooth Corner Feathering */
-[data-asmaan-stage-can] {
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.5) 3%, #000 12%, #000 88%, rgba(0, 0, 0, 0.5) 97%, transparent 100%);
-}
+
 
 /* ==========================================================================
    Vercel Prototype Menu & Fullscreen Dropdown Architecture
