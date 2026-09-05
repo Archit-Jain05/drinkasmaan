@@ -753,31 +753,31 @@ input:focus-visible {
   transform: translateY(0);
 }
 
+/* Title grid — position:relative so arrows can be anchored to it */
 .carousel_stack {
   position: relative;
   display: grid;
 }
 
+/* All children stack in the same grid cell */
 .carousel_stack > * {
   grid-area: 1 / 1;
 }
 
+/* Nav overlays the title, absolutely positioned to match its bounds */
 .carousel_nav {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  inset: 0;
   z-index: 10;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  align-items: center;           /* vertically centre arrows to title height */
+  justify-content: space-between;
+  pointer-events: none;          /* let clicks pass through to title */
   width: 100%;
-  max-width: 35vh;
-  transform: translateX(-50%);
 }
 
 .carousel_arrow {
-  position: absolute;
-  bottom: 0;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -790,14 +790,15 @@ input:focus-visible {
   cursor: pointer;
   pointer-events: auto;
   transition: color 0.3s;
+  flex-shrink: 0;
 }
 
 .carousel_arrow:hover {
   color: #fff;
 }
 
-.carousel_arrow.is-prev { left: 0; }
-.carousel_arrow.is-next { right: 0; }
+.carousel_arrow.is-prev { }
+.carousel_arrow.is-next { }
 
 .carousel_pagination {
   position: relative;
@@ -811,6 +812,7 @@ input:focus-visible {
 .carousel_pagination:active {
   cursor: grabbing;
 }
+
 
 .scroll_discover {
   position: relative;
@@ -1428,9 +1430,8 @@ input:focus-visible {
     gap: var(--pad-s);
   }
 
-  .carousel_nav {
-    max-width: 78vw;
-  }
+  /* carousel_nav now spans full carousel_stack width; no max-width needed */
+
 }
 
 /* --- Tailwind Core Utility Polyfills --- */

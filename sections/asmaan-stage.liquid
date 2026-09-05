@@ -62,16 +62,16 @@
                       <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
                     </div>
                   </div>
+                  <div class="carousel_nav pointer-events-auto">
+                    <button type="button" class="carousel_arrow is-prev" data-carousel-prev aria-label="Previous colourway">
+                      {% render 'asmaan-icons', name: 'arrow', direction: 'left', class: 'h-5 w-5' %}
+                    </button>
+                    <button type="button" class="carousel_arrow is-next" data-carousel-next aria-label="Next colourway">
+                      {% render 'asmaan-icons', name: 'arrow', direction: 'right', class: 'h-5 w-5' %}
+                    </button>
+                  </div>
                 </div>
 
-                <div class="carousel_nav pointer-events-auto">
-                  <button type="button" class="carousel_arrow is-prev" data-carousel-prev aria-label="Previous colourway">
-                    {% render 'asmaan-icons', name: 'arrow', direction: 'left', class: 'h-5 w-5' %}
-                  </button>
-                  <button type="button" class="carousel_arrow is-next" data-carousel-next aria-label="Next colourway">
-                    {% render 'asmaan-icons', name: 'arrow', direction: 'right', class: 'h-5 w-5' %}
-                  </button>
-                </div>
 
                 <div class="carousel_pagination pointer-events-auto mx-auto w-[15rem] max-w-full">
                   <svg viewBox="0 0 240 44" class="h-auto w-full overflow-visible" role="group" aria-label="Choose a colourway">
