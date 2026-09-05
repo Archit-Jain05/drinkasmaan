@@ -1,4 +1,4 @@
-<footer class="asmaan-footer" role="contentinfo">
+<div class="asmaan-footer" role="contentinfo">
   <div class="padding-global">
     <div class="container-large">
       <div class="asmaan-footer-main">
@@ -58,12 +58,12 @@
       </div>
     </div>
   </div>
-</footer>
+</div>
 
 {% schema %}
 {
   "name": "Asmaan Footer",
-  "tag": "section",
+  "tag": "div",
   "class": "asmaan-footer-section",
   "settings": [
     {
@@ -228,6 +228,10 @@
       "default": "https://www.instagram.com/drinkasmaan"
     }
   ],
-  "limit": 1
+  "presets": [
+    {
+      "name": "Asmaan Footer"
+    }
+  ]
 }
 {% endschema %}

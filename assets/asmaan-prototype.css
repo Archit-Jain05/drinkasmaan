@@ -564,14 +564,18 @@ input:focus-visible {
   background-color: #000;
   opacity: 0;
   visibility: hidden;
+  transform: translateY(-100%);
+  will-change: transform, opacity;
   transition:
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.4s ease,
-    visibility 0.4s;
+    visibility 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .navbar_menu[data-open="true"] {
   opacity: 1;
   visibility: visible;
+  transform: translateY(0);
 }
 
 .navbar_link-list {
@@ -595,7 +599,33 @@ input:focus-visible {
   line-height: 1;
   color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
-  transition: color 0.3s;
+  transform: translateY(-12px);
+  opacity: 0;
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s ease,
+    color 0.3s;
+}
+
+.navbar_menu[data-open="true"] .navbar_link {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.navbar_link-list li:nth-child(1) .navbar_link {
+  transition-delay: 0.12s, 0.12s, 0s;
+}
+.navbar_link-list li:nth-child(2) .navbar_link {
+  transition-delay: 0.18s, 0.18s, 0s;
+}
+.navbar_link-list li:nth-child(3) .navbar_link {
+  transition-delay: 0.24s, 0.24s, 0s;
+}
+.navbar_link-list li:nth-child(4) .navbar_link {
+  transition-delay: 0.30s, 0.30s, 0s;
+}
+.navbar_link-list li:nth-child(5) .navbar_link {
+  transition-delay: 0.36s, 0.36s, 0s;
 }
 
 .navbar_link:hover {
