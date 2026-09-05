@@ -630,10 +630,11 @@ input:focus-visible {
 
 .gamme_gradient-wrapper {
   position: absolute;
-  inset: 0;
+  inset: -15% -20% -30% -20%;
   filter: blur(6rem);
   will-change: opacity;
   pointer-events: none;
+  overflow: visible;
 }
 
 .gamme_gradient-position {
@@ -659,13 +660,7 @@ input:focus-visible {
 }
 
 .gamme_gradient-blur {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 100vw;
-  height: 3rem;
-  backdrop-filter: blur(15rem);
-  transform: translateX(-50%);
+  display: none !important;
 }
 
 .carousel_slide {
@@ -1622,7 +1617,8 @@ input:focus-visible {
 .navbar_menu-button {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 0.5rem !important;
+  justify-content: center !important;
+  gap: 0.65rem !important;
   background: rgba(255, 255, 255, 0.08) !important;
   border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 9999px !important;
@@ -1630,10 +1626,11 @@ input:focus-visible {
   font-size: 0.8125rem !important;
   font-weight: 500 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.1em !important;
+  letter-spacing: 0.12em !important;
   cursor: pointer !important;
-  padding: 0.5rem 1rem !important;
+  padding: 0.5rem 1.15rem !important;
   min-height: 40px !important;
+  line-height: 1 !important;
   font-family: inherit !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   touch-action: manipulation !important;
@@ -1642,6 +1639,8 @@ input:focus-visible {
   backdrop-filter: blur(12px) !important;
   -webkit-backdrop-filter: blur(12px) !important;
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
 }
 .navbar_menu-button:hover {
   background: rgba(255, 255, 255, 0.16) !important;
@@ -1650,11 +1649,22 @@ input:focus-visible {
 }
 .navbar_menu-button:active,
 .navbar_menu-button.is-active {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(255, 255, 255, 0.6) !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
 }
-.navbar_menu-button svg {
+.navbar_menu-button svg,
+.navbar_menu-button .menu-button-icon {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+  overflow: visible !important;
   pointer-events: none !important;
+  display: block !important;
+}
+.navbar_menu-button .menu-button-text {
+  display: inline-block !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
 }
 
 /* Header & Hover Background Slide-down from absolute top */
@@ -1793,20 +1803,6 @@ input:focus-visible {
 /* ==========================================================================
    Vercel Prototype Menu & Fullscreen Dropdown Architecture
    ========================================================================== */
-.navbar_menu-button {
-  align-items: center !important;
-  gap: var(--pad-xs, 0.75rem) !important;
-  color: inherit !important;
-  text-transform: uppercase !important;
-  cursor: pointer !important;
-  background: 0 0 !important;
-  border: none !important;
-  padding: 0 !important;
-  font-family: inherit !important;
-  font-size: 0.875rem !important;
-  display: flex !important;
-}
-
 .navbar_menu {
   z-index: 55 !important;
   width: 100vw !important;
@@ -2346,4 +2342,151 @@ input:focus-visible {
   background: rgba(255, 255, 255, 0.12);
   border-color: #9089d3;
   box-shadow: 0 0 20px rgba(144, 137, 211, 0.25);
+}
+
+/* ==========================================================================
+   Luxury Void Energy Style Footer
+   ========================================================================== */
+.asmaan-footer {
+  position: relative;
+  background-color: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5.5rem 0 3.5rem;
+  color: #fff;
+  z-index: 10;
+  width: 100%;
+}
+.asmaan-footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4rem;
+  flex-wrap: wrap;
+  padding-bottom: 4.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.asmaan-footer-brand {
+  flex: 1 1 320px;
+  max-width: 480px;
+}
+.asmaan-footer-logo {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(3.25rem, 6vw, 6.5rem);
+  letter-spacing: -0.035em;
+  line-height: 0.88;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  transition: opacity 0.3s ease;
+}
+.asmaan-footer-logo:hover {
+  opacity: 0.85;
+}
+.asmaan-footer-tagline {
+  margin-top: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+.asmaan-footer-columns {
+  display: flex;
+  gap: clamp(3rem, 6vw, 7.5rem);
+  flex-wrap: wrap;
+}
+.asmaan-footer-nav-col {
+  min-width: 140px;
+}
+.asmaan-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.asmaan-footer-link {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.65);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+.asmaan-footer-link:hover {
+  color: #fff;
+  transform: translateX(2px);
+}
+.asmaan-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2.75rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.asmaan-footer-copyright {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+}
+.asmaan-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.asmaan-footer-social-btn,
+.asmaan-footer-top-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.asmaan-footer-social-btn:hover,
+.asmaan-footer-top-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: translateY(-2px);
+}
+@media (max-width: 991px) {
+  .asmaan-footer {
+    padding: 4rem 0 2.5rem;
+  }
+  .asmaan-footer-main {
+    flex-direction: column;
+    gap: 3rem;
+    padding-bottom: 3rem;
+  }
+  .asmaan-footer-columns {
+    gap: 2.5rem;
+    width: 100%;
+  }
+}
+@media (max-width: 640px) {
+  .asmaan-footer-columns {
+    flex-direction: column;
+    gap: 2.25rem;
+  }
+  .asmaan-footer-bottom {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
 }

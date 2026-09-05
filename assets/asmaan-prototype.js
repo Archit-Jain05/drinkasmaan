@@ -1459,7 +1459,7 @@
         var centerDot = menuBtn.querySelector('.menu-button-center-dot') || menuBtn.querySelector('svg circle:nth-child(5)');
         if (centerDot) {
           centerDot.style.transform = open ? 'scale(2.1)' : 'scale(1)';
-          centerDot.style.transformOrigin = '6px 6px';
+          centerDot.style.transformOrigin = '8px 8px';
           centerDot.style.transition = 'transform 0.35s ease';
         }
       }
@@ -1808,13 +1808,11 @@
     }
   });
 
-  document.addEventListener('shopify:block:deselect', function (e) {
-    var blockId = e.detail.blockId;
-    var btn = document.querySelector('[aria-controls="faq-answer-' + blockId + '"]');
-    var ans = document.getElementById('faq-answer-' + blockId);
-    if (btn && ans) {
-      btn.setAttribute('aria-expanded', 'false');
-      ans.setAttribute('data-open', 'false');
+  document.addEventListener('click', function (e) {
+    var topBtn = e.target.closest('[data-back-to-top], a[href="#top"]');
+    if (topBtn) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
 })();

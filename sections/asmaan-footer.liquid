@@ -1,0 +1,237 @@
+<footer class="asmaan-footer" role="contentinfo">
+  <div class="padding-global">
+    <div class="container-large">
+      <div class="asmaan-footer-main">
+        <!-- Brand Wordmark Logo Column -->
+        <div class="asmaan-footer-brand">
+          <a href="/" class="asmaan-footer-logo" aria-label="{{ section.settings.brand_name | default: 'ASMAAN' }} — Home">
+            {{ section.settings.brand_name | default: 'ASMAAN' }}
+          </a>
+          {%- if section.settings.tagline != blank -%}
+            <p class="asmaan-footer-tagline">{{ section.settings.tagline }}</p>
+          {%- endif -%}
+        </div>
+
+        <!-- Navigation Columns -->
+        <div class="asmaan-footer-columns">
+          <!-- Column 1: Primary Navigation -->
+          <nav class="asmaan-footer-nav-col" aria-label="Footer Primary Navigation">
+            <ul class="asmaan-footer-links">
+              <li><a href="{{ section.settings.link_1_url | default: '/' }}" class="asmaan-footer-link">{{ section.settings.link_1_label | default: 'HOME' }}</a></li>
+              <li><a href="{{ section.settings.link_2_url | default: '/#range' }}" class="asmaan-footer-link">{{ section.settings.link_2_label | default: 'DRINK' }}</a></li>
+              <li><a href="{{ section.settings.link_3_url | default: '/pages/wear' }}" class="asmaan-footer-link">{{ section.settings.link_3_label | default: 'WEAR' }}</a></li>
+              <li><a href="{{ section.settings.link_4_url | default: '/#newsletter' }}" class="asmaan-footer-link">{{ section.settings.link_4_label | default: 'JOIN' }}</a></li>
+              <li><a href="{{ section.settings.link_5_url | default: '/pages/contact' }}" class="asmaan-footer-link">{{ section.settings.link_5_label | default: 'SUPPORT' }}</a></li>
+            </ul>
+          </nav>
+
+          <!-- Column 2: Legal and Policies -->
+          <nav class="asmaan-footer-nav-col" aria-label="Footer Policies and Legal">
+            <ul class="asmaan-footer-links">
+              <li><a href="{{ section.settings.pol_1_url | default: '/policies/privacy-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_1_label | default: 'PRIVACY POLICY' }}</a></li>
+              <li><a href="{{ section.settings.pol_2_url | default: '/policies/refund-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_2_label | default: 'RETURN POLICY' }}</a></li>
+              <li><a href="{{ section.settings.pol_3_url | default: '/policies/shipping-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_3_label | default: 'SHIPPING POLICY' }}</a></li>
+              <li><a href="{{ section.settings.pol_4_url | default: '/policies/terms-of-service' }}" class="asmaan-footer-link">{{ section.settings.pol_4_label | default: 'TERMS OF SERVICE' }}</a></li>
+              <li><a href="{{ section.settings.pol_5_url | default: '/policies/subscription-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_5_label | default: 'SUBSCRIPTION POLICY' }}</a></li>
+              <li><a href="{{ section.settings.pol_6_url | default: '/pages/contact' }}" class="asmaan-footer-link">{{ section.settings.pol_6_label | default: 'AMBASSADOR PROGRAM' }}</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="asmaan-footer-bottom">
+        <p class="asmaan-footer-copyright">
+          {{ section.settings.copyright_text | default: 'Copyright © 2026 Asmaan. All rights reserved.' }}
+        </p>
+
+        <div class="asmaan-footer-actions">
+          {%- if section.settings.instagram_url != blank -%}
+            <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noreferrer" class="asmaan-footer-social-btn" aria-label="Instagram">
+              {% render 'asmaan-icons', name: 'instagram', class: 'h-4 w-4' %}
+            </a>
+          {%- endif -%}
+          <a href="#top" class="asmaan-footer-top-btn" aria-label="Back to top" data-back-to-top>
+            {% render 'asmaan-icons', name: 'arrow-up', class: 'h-4 w-4' %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Asmaan Footer",
+  "tag": "section",
+  "class": "asmaan-footer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand Branding"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name Wordmark",
+      "default": "ASMAAN"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "THE AMBITION TONIC"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Column 1"
+    },
+    {
+      "type": "text",
+      "id": "link_1_label",
+      "label": "Link 1 Label",
+      "default": "HOME"
+    },
+    {
+      "type": "url",
+      "id": "link_1_url",
+      "label": "Link 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "link_2_label",
+      "label": "Link 2 Label",
+      "default": "DRINK"
+    },
+    {
+      "type": "url",
+      "id": "link_2_url",
+      "label": "Link 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "link_3_label",
+      "label": "Link 3 Label",
+      "default": "WEAR"
+    },
+    {
+      "type": "url",
+      "id": "link_3_url",
+      "label": "Link 3 URL"
+    },
+    {
+      "type": "text",
+      "id": "link_4_label",
+      "label": "Link 4 Label",
+      "default": "JOIN"
+    },
+    {
+      "type": "url",
+      "id": "link_4_url",
+      "label": "Link 4 URL"
+    },
+    {
+      "type": "text",
+      "id": "link_5_label",
+      "label": "Link 5 Label",
+      "default": "SUPPORT"
+    },
+    {
+      "type": "url",
+      "id": "link_5_url",
+      "label": "Link 5 URL"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Column 2"
+    },
+    {
+      "type": "text",
+      "id": "pol_1_label",
+      "label": "Policy 1 Label",
+      "default": "PRIVACY POLICY"
+    },
+    {
+      "type": "url",
+      "id": "pol_1_url",
+      "label": "Policy 1 URL"
+    },
+    {
+      "type": "text",
+      "id": "pol_2_label",
+      "label": "Policy 2 Label",
+      "default": "RETURN POLICY"
+    },
+    {
+      "type": "url",
+      "id": "pol_2_url",
+      "label": "Policy 2 URL"
+    },
+    {
+      "type": "text",
+      "id": "pol_3_label",
+      "label": "Policy 3 Label",
+      "default": "SHIPPING POLICY"
+    },
+    {
+      "type": "url",
+      "id": "pol_3_url",
+      "label": "Policy 3 URL"
+    },
+    {
+      "type": "text",
+      "id": "pol_4_label",
+      "label": "Policy 4 Label",
+      "default": "TERMS OF SERVICE"
+    },
+    {
+      "type": "url",
+      "id": "pol_4_url",
+      "label": "Policy 4 URL"
+    },
+    {
+      "type": "text",
+      "id": "pol_5_label",
+      "label": "Policy 5 Label",
+      "default": "SUBSCRIPTION POLICY"
+    },
+    {
+      "type": "url",
+      "id": "pol_5_url",
+      "label": "Policy 5 URL"
+    },
+    {
+      "type": "text",
+      "id": "pol_6_label",
+      "label": "Policy 6 Label",
+      "default": "AMBASSADOR PROGRAM"
+    },
+    {
+      "type": "url",
+      "id": "pol_6_url",
+      "label": "Policy 6 URL"
+    },
+    {
+      "type": "header",
+      "content": "Bottom Bar"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright Text",
+      "default": "Copyright © 2026 Asmaan. All rights reserved."
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL",
+      "default": "https://www.instagram.com/drinkasmaan"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Asmaan Footer"
+    }
+  ]
+}
+{% endschema %}
