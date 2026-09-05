@@ -76,10 +76,9 @@
     { at: 1, spin: 5.9, pitch: 0.12, roll: -0.1, x: 0.02, y: -0.34, scale: 0.8 }
   ];
 
-  // Carousel Layout Constants
+  // Carousel & Lighting Constants
   var SLOT_OF_HALF_WIDTH = 0.78;
   var MIN_SLOT = 2.2;
-  var RING_SLOTS = 6;
   var DEPTH = 1.5;
   var WAVE_HEIGHT = 0.3;
   var WAVE_PER_SLOT = 2.27;
@@ -92,10 +91,10 @@
   var CLOSE_UP_CAM_Y = -0.7;
   var CLOSE_UP_CAM_PITCH = 0.16;
   var STUDIO_DIM = 0.98;
-  var SPOT_INTENSITY = 7;
+  var SPOT_INTENSITY = 8.5;
   var CLOSE_UP_ENV = 0.06;
   var SPOT_HEIGHT = 3.2;
-  var SPOT_DEPTH = 3;
+  var SPOT_DEPTH = 3.0;
   var SPOT_AIM = 0.9;
   var FRICTION = 2.4;
   var IDLE_DELAY_MS = 1800;
@@ -114,10 +113,6 @@
   function range(value, from, to) {
     if (to === from) return value >= to ? 1 : 0;
     return Math.min(Math.max((value - from) / (to - from), 0), 1);
-  }
-
-  function wrapAngle(radians) {
-    return radians - Math.PI * 2 * Math.round(radians / (Math.PI * 2));
   }
 
   function wrapRange(value, min, max) {
@@ -296,7 +291,8 @@
 
     var tex = new THREE.CanvasTexture(canvas);
     tex.mapping = THREE.EquirectangularReflectionMapping;
-    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+    else if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
     return tex;
   }
 
@@ -322,7 +318,8 @@
     ctx.filter = 'none';
 
     var tex = new THREE.CanvasTexture(canvas);
-    if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+    if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+    else if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
     return tex;
   }
 
@@ -331,6 +328,7 @@
     scene: null,
     camera: null,
     cans: [],
+    shellMat: null,
     slots: 6,
     slotWidth: 2.2,
     ringHalf: 6.6,
@@ -374,7 +372,8 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.22;
-    if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
+    if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
+    else if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100);
@@ -387,15 +386,18 @@
     var shellMat = new THREE.MeshStandardMaterial({
       color: 0xcfd5dc,
       metalness: 0.95,
-      roughness: 0.24
+      roughness: 0.24,
+      envMapIntensity: 1.0
     });
+    stage3D.shellMat = shellMat;
+
     var tabMat = new THREE.MeshStandardMaterial({
       color: 0xb9c0c8,
       metalness: 0.95,
       roughness: 0.33
     });
 
-    // Build 6 cans (2 copies of the 3 colourways: Jamun, Mango, Magenta)
+    // Build 6 cans (2 sets of Jamun, Mango, Magenta)
     var copies = 2;
     var cans = [];
     for (var c = 0; c < copies; c++) {
@@ -451,7 +453,8 @@
     var spotMask = createSpotMaskTexture(THREE);
     var spot = new THREE.SpotLight(0xfff6ec, 0, 26, Math.PI / 8, 0.35, 0.2);
     spot.map = spotMask;
-    scene.add(spot, spot.target);
+    scene.add(spot);
+    scene.add(spot.target);
 
     // Environment map
     var pmrem = new THREE.PMREMGenerator(renderer);
@@ -489,7 +492,8 @@
           url,
           function (tex) {
             tex.wrapS = THREE.RepeatWrapping;
-            if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
+            if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+            else if (THREE.sRGBEncoding) tex.encoding = THREE.sRGBEncoding;
             tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
             loadedTextures[tasteObj.id] = tex;
             resolve(tex);
@@ -512,12 +516,10 @@
           cItem.labelMaterial.needsUpdate = true;
         }
       }
-      // Reveal 3D Canvas smoothly
       canvas.style.opacity = '1';
       if (posterImg) posterImg.style.opacity = '0';
     });
 
-    // Make canvas visible immediately so aluminium geometry renders
     canvas.style.opacity = '1';
 
     // Resize and Framing
@@ -574,11 +576,9 @@
       stage3D.lastInput = now;
 
       if (stage3D.scrubbing) {
-        // Drag carousel
         var deltaSlots = -(dx / stage3D.slotWidth) * 0.0042 * stage3D.unit;
         stage3D.track.target += deltaSlots;
       } else {
-        // Drag rotate
         stage3D.drag += dx * 0.012;
         stage3D.velocity = (dx * 0.012) / (Math.max(now - lastTime, 8) / 1000);
       }
@@ -736,6 +736,10 @@
 
     var pinnedSections = document.querySelectorAll('.section.is-pinned');
 
+    var benefitIds = ['benefit-sugar', 'benefit-caffeine', 'benefit-crash', 'benefit-colour'];
+    var benefitsNav = document.querySelector('.benefits_nav');
+    var profileSection = document.querySelector('.profile_container') ? document.querySelector('.profile_container').closest('.section') : null;
+
     var SPREAD_FROM = 0.02;
     var SPREAD_TO = 0.14;
     var CLOSE_UP_IN_FROM = 0.23;
@@ -791,7 +795,7 @@
           pose.y += 0.06 * (1 - spread);
         }
 
-        // Apply 3D WebGL Multi-Can Transform
+        // Apply 3D WebGL Multi-Can Transform & Dramatic Lighting
         if (stage3D.renderer && stage3D.camera && stage3D.cans && stage3D.cans.length > 0) {
           stage3D.track.spread = spread;
 
@@ -819,16 +823,20 @@
           );
           stage3D.camera.rotation.set(closeUp * CLOSE_UP_CAM_PITCH, 0, 0);
 
-          // Close-up spot
-          if (stage3D.spot) {
-            stage3D.spot.intensity = closeUp * SPOT_INTENSITY;
-            stage3D.spot.visible = closeUp > 0.001;
-            var canX = pose.x * u;
-            var canY = pose.y * u;
-            stage3D.spot.position.set(canX, canY + SPOT_HEIGHT, SPOT_DEPTH);
-            stage3D.spot.target.position.set(canX, canY + SPOT_AIM, 0);
+          // Dramatic Close-Up Lighting:
+          // 1. Dims environment reflections by 94% so metal doesn't fill shadows back in
+          var envMult = 1 - closeUp * (1 - CLOSE_UP_ENV);
+          if (stage3D.shellMat) {
+            stage3D.shellMat.envMapIntensity = 1.0 * envMult;
+          }
+          for (var ci = 0; ci < stage3D.cans.length; ci++) {
+            var cObj = stage3D.cans[ci];
+            if (cObj.labelMaterial) {
+              cObj.labelMaterial.envMapIntensity = 0.4 * envMult;
+            }
           }
 
+          // 2. Dims studio lights by 98%
           if (stage3D.studioLights) {
             for (var si = 0; si < stage3D.studioLights.length; si++) {
               var sItem = stage3D.studioLights[si];
@@ -836,16 +844,27 @@
             }
           }
 
+          // 3. Raking crescent spotlight shines down front of the can
+          if (stage3D.spot) {
+            stage3D.spot.intensity = closeUp * SPOT_INTENSITY;
+            stage3D.spot.visible = closeUp > 0.001;
+            var canX = pose.x * u;
+            var canY = pose.y * u;
+            stage3D.spot.position.set(canX, canY + SPOT_HEIGHT, SPOT_DEPTH);
+            stage3D.spot.target.position.set(canX, canY + SPOT_AIM, 0);
+            stage3D.spot.target.updateMatrixWorld();
+          }
+
           // Multi-can row positions
           var slots = stage3D.slots;
           var slotWidth = stage3D.slotWidth;
           var ringHalf = stage3D.ringHalf;
 
-          for (var ci = 0; ci < slots; ci++) {
-            var canObj = stage3D.cans[ci];
+          for (var cj = 0; cj < slots; cj++) {
+            var canObj = stage3D.cans[cj];
             var grp = canObj.group;
 
-            var offset = (ci - stage3D.track.position) * slotWidth;
+            var offset = (cj - stage3D.track.position) * slotWidth;
             var x = slots > 1 ? wrapRange(offset, -ringHalf, ringHalf) : 0;
             var slot = x / slotWidth;
             var focus = Math.max(0, 1 - Math.abs(slot));
@@ -905,6 +924,60 @@
           }
         }
       });
+
+      // 4. Tasting notes ambient wash toggle (is-taste-active)
+      if (profileSection) {
+        var pRect = profileSection.getBoundingClientRect();
+        var pEnter = range(pRect.top, windowH * 0.4, 0);
+        var pExit = range(pRect.bottom - windowH, 0, windowH * 0.3);
+        var pAmount = pEnter * pExit;
+        document.body.classList.toggle('is-taste-active', pAmount > 0.25);
+      }
+
+      // 5. Benefits ambient wash (is-taste-dim) & Benefits Floating Nav
+      var benefitAmounts = [];
+      for (var bi = 0; bi < benefitIds.length; bi++) {
+        var bEl = document.getElementById(benefitIds[bi]);
+        if (bEl) {
+          var bRect = bEl.getBoundingClientRect();
+          var bEnter = range(bRect.top, windowH * 0.4, 0);
+          var bExit = range(bRect.bottom - windowH, 0, windowH * 0.3);
+          benefitAmounts.push(bEnter * bExit);
+        } else {
+          benefitAmounts.push(0);
+        }
+      }
+
+      var peakBenefit = Math.max.apply(null, benefitAmounts);
+      var activeBenefitIdx = peakBenefit > 0.02 ? benefitAmounts.indexOf(peakBenefit) : 0;
+
+      // Toggle purple wash behind the close-up can!
+      document.body.classList.toggle('is-taste-dim', peakBenefit > 0.25);
+
+      // Benefits Floating Nav on right edge
+      if (benefitsNav) {
+        benefitsNav.style.opacity = String(peakBenefit);
+        benefitsNav.style.visibility = peakBenefit > 0.02 ? 'visible' : 'hidden';
+        benefitsNav.setAttribute('aria-hidden', String(peakBenefit <= 0.02));
+
+        var bIcons = benefitsNav.querySelectorAll('.benefits_icon-wrapper');
+        for (var bii = 0; bii < bIcons.length; bii++) {
+          var isCurrent = bii === activeBenefitIdx && peakBenefit > 0.02;
+          bIcons[bii].classList.toggle('is-active', isCurrent);
+          bIcons[bii].setAttribute('aria-current', String(isCurrent));
+        }
+      }
+
+      // Strikethrough lines on benefits
+      for (var bi3 = 0; bi3 < benefitIds.length; bi3++) {
+        var bEl3 = document.getElementById(benefitIds[bi3]);
+        if (bEl3) {
+          var bBox = bEl3.querySelector('.benefits_max-width');
+          if (bBox) {
+            bBox.style.setProperty('--benefits-line', String(bi3 === activeBenefitIdx && peakBenefit > 0.02 ? 1 : 0));
+          }
+        }
+      }
 
       requestAnimationFrame(onFrame);
     }

@@ -76,7 +76,7 @@ html {
 }
 
 body {
-  background: #000;
+  background: transparent;
   color: #fff;
   font-family: var(--font-sans);
   font-weight: 300;
