@@ -3,14 +3,23 @@
   assign title_lower = product.title | downcase
   
   if handle_lower contains 'mango' or title_lower contains 'mango'
+    assign flavour_id = 'mango'
     assign fallback_asset = 'mango-front.webp' | asset_url
+    assign label_asset = 'asmaan-label-mango.jpg' | asset_url
     assign accent_color = '#EFB36B'
+    assign tint_color = '#EFB36B'
   elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
+    assign flavour_id = 'magenta'
     assign fallback_asset = 'print-front.webp' | asset_url
+    assign label_asset = 'asmaan-label-magenta.jpg' | asset_url
     assign accent_color = '#E6A0E8'
+    assign tint_color = '#E6A0E8'
   else
+    assign flavour_id = 'jamun'
     assign fallback_asset = 'jamun-front.webp' | asset_url
+    assign label_asset = 'asmaan-label-jamun.jpg' | asset_url
     assign accent_color = '#9089D3'
+    assign tint_color = '#9089D3'
   endif
 
   assign featured_img = product.selected_or_first_available_variant.featured_media | default: product.featured_media | default: product.featured_image | default: product.images.first
@@ -19,8 +28,9 @@
 <section class="asmaan-subpage-section pt-24 pb-20">
   <div class="padding-global">
     <div class="container-large max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-      <!-- Product Visual Gallery -->
-      <div class="p-8 sm:p-12 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col items-center justify-center relative sticky top-28">
+      <!-- Product Visual Gallery & 3D Interactive Stage -->
+      <div class="p-6 sm:p-10 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col items-center justify-center relative sticky top-28">
+        <!-- Chilled Badge -->
         <div class="absolute top-4 left-4 z-10">
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.08] border border-white/20 text-[11px] font-mono uppercase tracking-widest" style="color: {{ accent_color }};">
             <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -28,37 +38,61 @@
           </span>
         </div>
 
-        <!-- Main Product Image Container -->
-        <div class="h-80 sm:h-96 w-full flex items-center justify-center my-4">
-          {%- if featured_img != blank -%}
+        <!-- 3D / 2D View Mode Switcher (if product has uploaded images) -->
+        {%- if product.images.size > 0 -%}
+          <div class="absolute top-4 right-4 z-10 flex gap-1 bg-white/[0.06] p-0.5 rounded-lg border border-white/10 text-[10px] font-mono uppercase tracking-wider">
+            <button type="button" id="view-mode-3d" class="px-2.5 py-1 rounded-md bg-white/20 text-white font-bold cursor-pointer transition-all">3D Can</button>
+            <button type="button" id="view-mode-photo" class="px-2.5 py-1 rounded-md text-white/60 hover:text-white cursor-pointer transition-all">Photos</button>
+          </div>
+        {%- endif -%}
+
+        <!-- Main 3D Can Viewport -->
+        <div class="h-80 sm:h-96 w-full flex items-center justify-center my-2 relative" id="product-canvas-container">
+          <div
+            id="product-3d-wrap"
+            class="w-full h-full relative cursor-grab active:cursor-grabbing flex items-center justify-center"
+            data-flavour="{{ flavour_id }}"
+            data-label="{{ label_asset }}"
+            data-tint="{{ tint_color }}"
+            data-poster="{{ fallback_asset }}"
+          >
+            <canvas id="product-can-3d-canvas" class="w-full h-full block absolute inset-0 touch-pan-y"></canvas>
+            
+            <!-- Fallback Image (shown while 3D engine mounts or in photo mode) -->
             <img
-              src="{{ featured_img | image_url: width: 800 }}"
-              srcset="{{ featured_img | image_url: width: 400 }} 400w, {{ featured_img | image_url: width: 800 }} 800w, {{ featured_img | image_url: width: 1200 }} 1200w"
-              sizes="(max-width: 768px) 85vw, 40vw"
-              alt="{{ featured_img.alt | default: product.title | escape }}"
-              class="max-h-full w-auto object-contain transition-transform duration-500 hover:scale-105"
-              id="main-product-image"
-              loading="eager"
-            >
-          {%- else -%}
-            <img
-              src="{{ fallback_asset }}"
+              src="{% if featured_img != blank %}{{ featured_img | image_url: width: 800 }}{% else %}{{ fallback_asset }}{% endif %}"
               alt="{{ product.title | default: 'Asmaan Ambition Tonic' | escape }}"
-              class="max-h-full w-auto object-contain transition-transform duration-500 hover:scale-105"
+              class="max-h-full w-auto object-contain transition-opacity duration-500 absolute inset-0 m-auto opacity-0 pointer-events-none"
               id="main-product-image"
-              onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'"
               loading="eager"
             >
-          {%- endif -%}
+
+            <!-- 360 Drag Prompt Overlay -->
+            <div id="drag-hint-pill" class="absolute bottom-1 pointer-events-none text-[10px] font-mono uppercase tracking-widest text-white/50 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1.5 transition-opacity duration-300">
+              <svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 1 1.76 4.24M2 8l2.5-2.5M2 8l2.5 2.5"/></svg>
+              Drag to Rotate 360&deg;
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Angle Preset Buttons -->
+        <div class="flex items-center justify-center gap-1.5 mt-2 mb-2 flex-wrap" id="can-angle-controls">
+          <button type="button" class="can-angle-btn is-active text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/20 bg-white/10 text-white transition-all hover:border-white/40 cursor-pointer" data-spin="0">Front</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="1.57">Botanicals</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="3.14">Nutrition</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="-1.57">Disclaimer</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer flex items-center gap-1" id="can-auto-spin-toggle">
+            <span>&#x21bb;</span> Auto Spin
+          </button>
         </div>
 
         <!-- Multi-Image Thumbnails Gallery (if multiple images uploaded in Shopify) -->
         {%- if product.images.size > 1 -%}
-          <div class="flex items-center justify-center gap-2 mt-4 flex-wrap" id="product-thumbnails">
+          <div class="flex items-center justify-center gap-2 mt-3 flex-wrap" id="product-thumbnails">
             {%- for image in product.images -%}
               <button
                 type="button"
-                class="w-12 h-12 rounded-lg border {% if forloop.first %}border-white/60 bg-white/10{% else %}border-white/15 bg-white/[0.03]{% endif %} overflow-hidden p-1 transition-all hover:border-white/40 cursor-pointer product-thumb-btn"
+                class="w-11 h-11 rounded-lg border border-white/15 bg-white/[0.03] overflow-hidden p-1 transition-all hover:border-white/40 cursor-pointer product-thumb-btn"
                 data-full-img="{{ image | image_url: width: 800 }}"
                 aria-label="View product image {{ forloop.index }}"
               >
@@ -68,8 +102,8 @@
           </div>
         {%- endif -%}
 
-        <div class="w-full text-center pt-4 mt-2 border-t border-white/10">
-          <span class="font-mono text-xs text-white/50 uppercase tracking-widest">
+        <div class="w-full text-center pt-3 mt-2 border-t border-white/10">
+          <span class="font-mono text-[11px] text-white/50 uppercase tracking-widest">
             100% Recyclable Matte Aluminum Can &bull; 250ml
           </span>
         </div>
@@ -187,8 +221,10 @@
   </div>
 </section>
 
+<!-- Interactive Product 3D Can Engine -->
 <script>
   (function() {
+    // 1. Pack size button interactions
     var packBtns = document.querySelectorAll('#pack-selector .pack-opt-btn');
     var priceDisplay = document.getElementById('product-price-display');
 
@@ -203,28 +239,7 @@
       });
     });
 
-    // Gallery thumbnail switcher
-    var thumbBtns = document.querySelectorAll('.product-thumb-btn');
-    var mainImg = document.getElementById('main-product-image');
-    if (thumbBtns.length > 0 && mainImg) {
-      thumbBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          thumbBtns.forEach(function(b) {
-            b.classList.remove('border-white/60', 'bg-white/10');
-            b.classList.add('border-white/15', 'bg-white/[0.03]');
-          });
-          btn.classList.remove('border-white/15', 'bg-white/[0.03]');
-          btn.classList.add('border-white/60', 'bg-white/10');
-          var fullSrc = btn.getAttribute('data-full-img');
-          if (fullSrc) {
-            mainImg.src = fullSrc;
-            mainImg.removeAttribute('srcset');
-          }
-        });
-      });
-    }
-
-    // Botanical accordions
+    // 2. Botanical Accordions
     var faqQuestions = document.querySelectorAll('.faq_question');
     faqQuestions.forEach(function(btn) {
       btn.addEventListener('click', function() {
@@ -238,6 +253,328 @@
         }
       });
     });
+
+    // 3. 3D Can WebGL Scene Setup
+    function initProduct3DCan() {
+      var wrap = document.getElementById('product-3d-wrap');
+      var canvas = document.getElementById('product-can-3d-canvas');
+      var stillImg = document.getElementById('main-product-image');
+      var hintPill = document.getElementById('drag-hint-pill');
+      if (!wrap || !canvas || typeof THREE === 'undefined') {
+        if (stillImg) stillImg.style.opacity = '1';
+        return;
+      }
+
+      var labelUrl = wrap.getAttribute('data-label');
+      var tintHex = wrap.getAttribute('data-tint') || '#9089D3';
+
+      var renderer, scene, camera, canInner, labelMesh, shellMesh, tabMesh;
+      var currentSpin = 0;
+      var targetSpin = null;
+      var spinVelocity = 0;
+      var isDragging = false;
+      var lastX = 0;
+      var lastTime = performance.now();
+      var autoSpin = false;
+      var pointerId = null;
+
+      try {
+        renderer = new THREE.WebGLRenderer({
+          canvas: canvas,
+          alpha: true,
+          antialias: true,
+          powerPreference: 'high-performance'
+        });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        if (renderer.outputColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
+      } catch(e) {
+        console.warn('[Product3D] WebGL not available', e);
+        if (stillImg) stillImg.style.opacity = '1';
+        return;
+      }
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(22, 1, 0.1, 100);
+      camera.position.set(0, 0, 14.5);
+
+      // Environment reflection map
+      var envCanvas = document.createElement('canvas');
+      envCanvas.width = 256;
+      envCanvas.height = 128;
+      var envCtx = envCanvas.getContext('2d');
+      var envGrad = envCtx.createLinearGradient(0, 0, 0, 128);
+      envGrad.addColorStop(0, '#f2f2f6');
+      envGrad.addColorStop(0.35, '#aeb0c0');
+      envGrad.addColorStop(0.55, tintHex);
+      envGrad.addColorStop(1, '#07070c');
+      envCtx.fillStyle = envGrad;
+      envCtx.fillRect(0, 0, 256, 128);
+      var envTexture = new THREE.CanvasTexture(envCanvas);
+      envTexture.mapping = THREE.EquirectangularReflectionMapping;
+
+      // Studio Lighting
+      var ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+      scene.add(ambientLight);
+
+      var keyLight = new THREE.DirectionalLight(0xffffff, 2.6);
+      keyLight.position.set(4, 5, 8);
+      scene.add(keyLight);
+
+      var fillLight = new THREE.DirectionalLight(0xdde4f0, 1.4);
+      fillLight.position.set(-5, 2, 4);
+      scene.add(fillLight);
+
+      var rimLight = new THREE.DirectionalLight(new THREE.Color(tintHex), 2.2);
+      rimLight.position.set(0, -3, -6);
+      scene.add(rimLight);
+
+      // Can Dimensions
+      var HEIGHT = 5.1947;
+      var RADIUS = 1.0;
+
+      // Can Shell Geometry (Lathe profile for bevelled rim and base)
+      var profilePoints = [
+        new THREE.Vector2(0.0, 0.168),
+        new THREE.Vector2(0.72, 0.026),
+        new THREE.Vector2(0.88, 0.055),
+        new THREE.Vector2(0.995, 0.328),
+        new THREE.Vector2(1.0, 1.64),
+        new THREE.Vector2(1.0, 3.39),
+        new THREE.Vector2(0.995, 4.48),
+        new THREE.Vector2(0.955, 4.97),
+        new THREE.Vector2(0.88, 5.19)
+      ];
+      var shellGeo = new THREE.LatheGeometry(profilePoints, 48);
+
+      var shellMat = new THREE.MeshStandardMaterial({
+        color: 0xcfd5dc,
+        metalness: 0.95,
+        roughness: 0.26,
+        envMap: envTexture,
+        envMapIntensity: 1.2
+      });
+
+      // Label Cylinder Geometry
+      var LABEL_TOP = 5.0;
+      var LABEL_BOT = 0.20;
+      var labelHeight = LABEL_TOP - LABEL_BOT;
+      var labelGeo = new THREE.CylinderGeometry(RADIUS + 0.005, RADIUS + 0.005, labelHeight, 48, 1, true);
+
+      var textureLoader = new THREE.TextureLoader();
+      var labelTexture = textureLoader.load(labelUrl, function() {
+        if (renderer) renderer.render(scene, camera);
+      });
+      if (labelTexture) {
+        labelTexture.wrapS = THREE.RepeatWrapping;
+        if (THREE.SRGBColorSpace) labelTexture.colorSpace = THREE.SRGBColorSpace;
+      }
+
+      var labelMat = new THREE.MeshStandardMaterial({
+        map: labelTexture,
+        metalness: 0.08,
+        roughness: 0.38,
+        envMap: envTexture,
+        envMapIntensity: 0.45
+      });
+
+      // Top Pull Tab Group
+      var tabMat = new THREE.MeshStandardMaterial({
+        color: 0xb9c0c8,
+        metalness: 0.95,
+        roughness: 0.3,
+        envMap: envTexture
+      });
+      var tabGroup = new THREE.Group();
+      var ringGeo = new THREE.TorusGeometry(0.21, 0.029, 8, 32);
+      var ring = new THREE.Mesh(ringGeo, tabMat);
+      ring.rotation.x = -Math.PI / 2;
+      ring.position.set(0, HEIGHT + 0.022, 0.25);
+      ring.scale.set(1, 0.62, 1);
+      tabGroup.add(ring);
+
+      canInner = new THREE.Group();
+      shellMesh = new THREE.Mesh(shellGeo, shellMat);
+      labelMesh = new THREE.Mesh(labelGeo, labelMat);
+      labelMesh.position.y = (LABEL_TOP + LABEL_BOT) / 2;
+
+      canInner.add(shellMesh, labelMesh, tabGroup);
+      canInner.position.y = -HEIGHT / 2;
+
+      var canRoot = new THREE.Group();
+      canRoot.add(canInner);
+      canRoot.rotation.x = 0.12; // Slight downward pitch for heroic 3D perspective
+      scene.add(canRoot);
+
+      // Resize & Framing
+      function resize() {
+        var w = wrap.clientWidth;
+        var h = wrap.clientHeight;
+        if (!w || !h) return;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.render(scene, camera);
+      }
+
+      var resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(wrap);
+      resize();
+
+      // Drag / Turn Physics
+      wrap.addEventListener('pointerdown', function(e) {
+        if (pointerId !== null) return;
+        pointerId = e.pointerId;
+        wrap.setPointerCapture(pointerId);
+        isDragging = true;
+        lastX = e.clientX;
+        lastTime = performance.now();
+        spinVelocity = 0;
+        targetSpin = null;
+        autoSpin = false;
+        var autoSpinBtn = document.getElementById('can-auto-spin-toggle');
+        if (autoSpinBtn) autoSpinBtn.classList.remove('is-active', 'border-white/40', 'bg-white/20');
+        if (hintPill) hintPill.style.opacity = '0';
+      });
+
+      wrap.addEventListener('pointermove', function(e) {
+        if (!isDragging || e.pointerId !== pointerId) return;
+        var now = performance.now();
+        var dt = Math.max((now - lastTime) / 1000, 0.001);
+        var dx = e.clientX - lastX;
+        lastX = e.clientX;
+        lastTime = now;
+
+        var delta = dx * 0.008;
+        currentSpin += delta;
+        spinVelocity = delta / dt;
+      });
+
+      function endDrag(e) {
+        if (e.pointerId !== pointerId) return;
+        isDragging = false;
+        pointerId = null;
+      }
+      wrap.addEventListener('pointerup', endDrag);
+      wrap.addEventListener('pointercancel', endDrag);
+
+      // Angle Presets
+      var angleBtns = document.querySelectorAll('.can-angle-btn');
+      angleBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var spinVal = btn.getAttribute('data-spin');
+          if (spinVal !== null) {
+            angleBtns.forEach(function(b) { b.classList.remove('is-active', 'border-white/20', 'bg-white/10'); b.classList.add('border-white/10', 'bg-white/[0.03]'); });
+            btn.classList.add('is-active', 'border-white/20', 'bg-white/10');
+            btn.classList.remove('border-white/10', 'bg-white/[0.03]');
+            
+            var rad = parseFloat(spinVal);
+            var count = Math.PI * 2;
+            var diff = rad - currentSpin;
+            var wrapped = diff - count * Math.round(diff / count);
+            targetSpin = currentSpin + wrapped;
+            spinVelocity = 0;
+            autoSpin = false;
+            var autoSpinBtn = document.getElementById('can-auto-spin-toggle');
+            if (autoSpinBtn) autoSpinBtn.classList.remove('is-active', 'border-white/40', 'bg-white/20');
+            if (hintPill) hintPill.style.opacity = '0';
+          }
+        });
+      });
+
+      // Auto Spin Toggle
+      var autoSpinToggle = document.getElementById('can-auto-spin-toggle');
+      if (autoSpinToggle) {
+        autoSpinToggle.addEventListener('click', function() {
+          autoSpin = !autoSpin;
+          targetSpin = null;
+          if (autoSpin) {
+            autoSpinToggle.classList.add('is-active', 'border-white/40', 'bg-white/20');
+            if (hintPill) hintPill.style.opacity = '0';
+          } else {
+            autoSpinToggle.classList.remove('is-active', 'border-white/40', 'bg-white/20');
+          }
+        });
+      }
+
+      // Animation Loop
+      var prevFrame = performance.now();
+      function renderLoop(now) {
+        requestAnimationFrame(renderLoop);
+        var dt = Math.min((now - prevFrame) / 1000, 0.05);
+        prevFrame = now;
+
+        if (targetSpin !== null) {
+          var delta = targetSpin - currentSpin;
+          currentSpin += delta * (1 - Math.exp(-9.0 * dt));
+          if (Math.abs(delta) < 0.002) {
+            currentSpin = targetSpin;
+            targetSpin = null;
+          }
+        } else if (autoSpin) {
+          currentSpin += 0.75 * dt;
+        } else if (!isDragging) {
+          spinVelocity *= Math.exp(-4.2 * dt);
+          currentSpin += spinVelocity * dt;
+        }
+
+        if (canInner) {
+          canInner.rotation.y = currentSpin;
+        }
+
+        renderer.render(scene, camera);
+      }
+      requestAnimationFrame(renderLoop);
+
+      // Photo vs 3D Mode Toggle
+      var btn3D = document.getElementById('view-mode-3d');
+      var btnPhoto = document.getElementById('view-mode-photo');
+      if (btn3D && btnPhoto && stillImg) {
+        btn3D.addEventListener('click', function() {
+          btn3D.classList.add('bg-white/20', 'text-white', 'font-bold');
+          btn3D.classList.remove('text-white/60');
+          btnPhoto.classList.remove('bg-white/20', 'text-white', 'font-bold');
+          btnPhoto.classList.add('text-white/60');
+          canvas.style.display = 'block';
+          stillImg.style.opacity = '0';
+          var controls = document.getElementById('can-angle-controls');
+          if (controls) controls.style.display = '';
+        });
+
+        btnPhoto.addEventListener('click', function() {
+          btnPhoto.classList.add('bg-white/20', 'text-white', 'font-bold');
+          btnPhoto.classList.remove('text-white/60');
+          btn3D.classList.remove('bg-white/20', 'text-white', 'font-bold');
+          btn3D.classList.add('text-white/60');
+          canvas.style.display = 'none';
+          stillImg.style.opacity = '1';
+          var controls = document.getElementById('can-angle-controls');
+          if (controls) controls.style.display = 'none';
+        });
+      }
+
+      // Thumbnail Click -> Switch to Photo Mode
+      var thumbBtns = document.querySelectorAll('.product-thumb-btn');
+      if (thumbBtns.length > 0 && stillImg) {
+        thumbBtns.forEach(function(btn) {
+          btn.addEventListener('click', function() {
+            if (btnPhoto) btnPhoto.click();
+            var fullSrc = btn.getAttribute('data-full-img');
+            if (fullSrc) {
+              stillImg.src = fullSrc;
+              stillImg.style.opacity = '1';
+            }
+          });
+        });
+      }
+    }
+
+    // Initialize 3D can on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initProduct3DCan);
+    } else {
+      initProduct3DCan();
+    }
   })();
 </script>
 
@@ -249,3 +586,4 @@
   "settings": []
 }
 {% endschema %}
+
