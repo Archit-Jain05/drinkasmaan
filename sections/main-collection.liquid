@@ -20,7 +20,15 @@
                 {%- if product.featured_image -%}
                   <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" class="shop-card-img">
                 {%- else -%}
-                  <img src="{{ 'can-asmaan.png' | asset_url }}" alt="{{ product.title | escape }}" class="shop-card-img">
+                  {%- assign p_handle = product.handle | downcase -%}
+                  {%- assign p_title = product.title | downcase -%}
+                  {%- if p_handle contains 'mango' or p_title contains 'mango' -%}
+                    <img src="{{ 'mango-front.webp' | asset_url }}" alt="{{ product.title | escape }}" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+                  {%- elsif p_handle contains 'magenta' or p_title contains 'magenta' or p_handle contains 'wild' or p_title contains 'wild' -%}
+                    <img src="{{ 'print-front.webp' | asset_url }}" alt="{{ product.title | escape }}" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+                  {%- else -%}
+                    <img src="{{ 'jamun-front.webp' | asset_url }}" alt="{{ product.title | escape }}" class="shop-card-img" onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'">
+                  {%- endif -%}
                 {%- endif -%}
               </div>
               <div class="shop-card-details">

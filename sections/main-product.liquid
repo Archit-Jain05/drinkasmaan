@@ -1,36 +1,74 @@
+{%- liquid
+  assign handle_lower = product.handle | downcase
+  assign title_lower = product.title | downcase
+  
+  if handle_lower contains 'mango' or title_lower contains 'mango'
+    assign fallback_asset = 'mango-front.webp' | asset_url
+    assign accent_color = '#EFB36B'
+  elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
+    assign fallback_asset = 'print-front.webp' | asset_url
+    assign accent_color = '#E6A0E8'
+  else
+    assign fallback_asset = 'jamun-front.webp' | asset_url
+    assign accent_color = '#9089D3'
+  endif
+
+  assign featured_img = product.selected_or_first_available_variant.featured_media | default: product.featured_media | default: product.featured_image | default: product.images.first
+-%}
+
 <section class="asmaan-subpage-section pt-24 pb-20">
   <div class="padding-global">
     <div class="container-large max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
       <!-- Product Visual Gallery -->
       <div class="p-8 sm:p-12 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col items-center justify-center relative sticky top-28">
         <div class="absolute top-4 left-4 z-10">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.08] border border-white/20 text-[11px] font-mono uppercase tracking-widest text-[#9089D3]">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.08] border border-white/20 text-[11px] font-mono uppercase tracking-widest" style="color: {{ accent_color }};">
             <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             Chilled Serving
           </span>
         </div>
 
+        <!-- Main Product Image Container -->
         <div class="h-80 sm:h-96 w-full flex items-center justify-center my-4">
-          {%- if product.featured_image -%}
+          {%- if featured_img != blank -%}
             <img
-              src="{{ product.featured_image | image_url: width: 800 }}"
-              alt="{{ product.title | escape }}"
+              src="{{ featured_img | image_url: width: 800 }}"
+              srcset="{{ featured_img | image_url: width: 400 }} 400w, {{ featured_img | image_url: width: 800 }} 800w, {{ featured_img | image_url: width: 1200 }} 1200w"
+              sizes="(max-width: 768px) 85vw, 40vw"
+              alt="{{ featured_img.alt | default: product.title | escape }}"
               class="max-h-full w-auto object-contain transition-transform duration-500 hover:scale-105"
               id="main-product-image"
               loading="eager"
             >
           {%- else -%}
             <img
-              src="{{ 'jamun-front.webp' | asset_url }}"
-              alt="Asmaan Ambition Tonic"
+              src="{{ fallback_asset }}"
+              alt="{{ product.title | default: 'Asmaan Ambition Tonic' | escape }}"
               class="max-h-full w-auto object-contain transition-transform duration-500 hover:scale-105"
               id="main-product-image"
               onerror="this.src='{{ 'can-asmaan.png' | asset_url }}'"
+              loading="eager"
             >
           {%- endif -%}
         </div>
 
-        <div class="w-full text-center pt-4 border-t border-white/10">
+        <!-- Multi-Image Thumbnails Gallery (if multiple images uploaded in Shopify) -->
+        {%- if product.images.size > 1 -%}
+          <div class="flex items-center justify-center gap-2 mt-4 flex-wrap" id="product-thumbnails">
+            {%- for image in product.images -%}
+              <button
+                type="button"
+                class="w-12 h-12 rounded-lg border {% if forloop.first %}border-white/60 bg-white/10{% else %}border-white/15 bg-white/[0.03]{% endif %} overflow-hidden p-1 transition-all hover:border-white/40 cursor-pointer product-thumb-btn"
+                data-full-img="{{ image | image_url: width: 800 }}"
+                aria-label="View product image {{ forloop.index }}"
+              >
+                <img src="{{ image | image_url: width: 100 }}" alt="{{ image.alt | default: product.title | escape }}" class="w-full h-full object-contain">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <div class="w-full text-center pt-4 mt-2 border-t border-white/10">
           <span class="font-mono text-xs text-white/50 uppercase tracking-widest">
             100% Recyclable Matte Aluminum Can &bull; 250ml
           </span>
@@ -39,7 +77,7 @@
 
       <!-- Product Information & Purchase Flow -->
       <div>
-        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Ambition Tonic &bull; Direct Batch</span>
+        <span class="font-mono text-xs uppercase tracking-[0.25em] block mb-2" style="color: {{ accent_color }};">Ambition Tonic &bull; Direct Batch</span>
         <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white mb-3">
           {% if product.title != blank %}{{ product.title }}{% else %}Asmaan Ambition Tonic{% endif %}
         </h1>
@@ -161,6 +199,42 @@
         var price = btn.getAttribute('data-price');
         if (priceDisplay && price) {
           priceDisplay.innerHTML = price;
+        }
+      });
+    });
+
+    // Gallery thumbnail switcher
+    var thumbBtns = document.querySelectorAll('.product-thumb-btn');
+    var mainImg = document.getElementById('main-product-image');
+    if (thumbBtns.length > 0 && mainImg) {
+      thumbBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          thumbBtns.forEach(function(b) {
+            b.classList.remove('border-white/60', 'bg-white/10');
+            b.classList.add('border-white/15', 'bg-white/[0.03]');
+          });
+          btn.classList.remove('border-white/15', 'bg-white/[0.03]');
+          btn.classList.add('border-white/60', 'bg-white/10');
+          var fullSrc = btn.getAttribute('data-full-img');
+          if (fullSrc) {
+            mainImg.src = fullSrc;
+            mainImg.removeAttribute('srcset');
+          }
+        });
+      });
+    }
+
+    // Botanical accordions
+    var faqQuestions = document.querySelectorAll('.faq_question');
+    faqQuestions.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var ctrlId = btn.getAttribute('aria-controls');
+        var answer = document.getElementById(ctrlId);
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        if (answer) {
+          answer.setAttribute('data-open', !expanded);
+          answer.style.display = !expanded ? 'block' : 'none';
         }
       });
     });
