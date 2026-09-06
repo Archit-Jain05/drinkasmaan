@@ -47,28 +47,29 @@
         {%- endif -%}
 
         <!-- Main 3D Can Viewport -->
-        <div class="h-80 sm:h-96 w-full flex items-center justify-center my-2 relative" id="product-canvas-container">
+        <div class="h-[380px] sm:h-[440px] w-full flex items-center justify-center my-3 relative overflow-hidden" id="product-canvas-container">
           <div
             id="product-3d-wrap"
-            class="w-full h-full relative cursor-grab active:cursor-grabbing flex items-center justify-center"
+            class="w-full h-full relative cursor-grab active:cursor-grabbing flex items-center justify-center select-none"
+            style="touch-action: none;"
             data-flavour="{{ flavour_id }}"
             data-label="{{ label_asset }}"
             data-tint="{{ tint_color }}"
             data-poster="{{ fallback_asset }}"
           >
-            <canvas id="product-can-3d-canvas" class="w-full h-full block absolute inset-0 touch-pan-y"></canvas>
+            <canvas id="product-can-3d-canvas" class="w-full h-full block absolute inset-0 z-0 transition-opacity duration-500 opacity-0"></canvas>
             
             <!-- Fallback Image (shown while 3D engine mounts or in photo mode) -->
             <img
               src="{% if featured_img != blank %}{{ featured_img | image_url: width: 800 }}{% else %}{{ fallback_asset }}{% endif %}"
               alt="{{ product.title | default: 'Asmaan Ambition Tonic' | escape }}"
-              class="max-h-full w-auto object-contain transition-opacity duration-500 absolute inset-0 m-auto opacity-0 pointer-events-none"
+              class="max-h-full max-w-full w-auto object-contain transition-opacity duration-500 absolute inset-0 m-auto z-[1] opacity-100 pointer-events-none"
               id="main-product-image"
               loading="eager"
             >
 
             <!-- 360 Drag Prompt Overlay -->
-            <div id="drag-hint-pill" class="absolute bottom-1 pointer-events-none text-[10px] font-mono uppercase tracking-widest text-white/50 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 flex items-center gap-1.5 transition-opacity duration-300">
+            <div id="drag-hint-pill" class="absolute bottom-2 z-[2] pointer-events-none text-[10px] font-mono uppercase tracking-widest text-white/70 bg-black/60 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/15 flex items-center gap-1.5 transition-opacity duration-300">
               <svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 1 1.76 4.24M2 8l2.5-2.5M2 8l2.5 2.5"/></svg>
               Drag to Rotate 360&deg;
             </div>
@@ -76,12 +77,12 @@
         </div>
 
         <!-- 3D Angle Preset Buttons -->
-        <div class="flex items-center justify-center gap-1.5 mt-2 mb-2 flex-wrap" id="can-angle-controls">
-          <button type="button" class="can-angle-btn is-active text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/20 bg-white/10 text-white transition-all hover:border-white/40 cursor-pointer" data-spin="0">Front</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="1.57">Botanicals</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="3.14">Nutrition</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="-1.57">Disclaimer</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3 py-1 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer flex items-center gap-1" id="can-auto-spin-toggle">
+        <div class="flex items-center justify-center gap-1.5 my-2 flex-wrap relative z-[2]" id="can-angle-controls">
+          <button type="button" class="can-angle-btn is-active text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 text-white transition-all hover:border-white/40 cursor-pointer" data-spin="0">Front</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="1.57">Botanicals</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="3.14">Nutrition</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="-1.57">Disclaimer</button>
+          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer flex items-center gap-1.5" id="can-auto-spin-toggle">
             <span>&#x21bb;</span> Auto Spin
           </button>
         </div>
@@ -363,6 +364,8 @@
       var textureLoader = new THREE.TextureLoader();
       var labelTexture = textureLoader.load(labelUrl, function() {
         if (renderer) renderer.render(scene, camera);
+        canvas.style.opacity = '1';
+        if (stillImg) stillImg.style.opacity = '0';
       });
       if (labelTexture) {
         labelTexture.wrapS = THREE.RepeatWrapping;
@@ -523,6 +526,10 @@
         }
 
         renderer.render(scene, camera);
+        if (canvas.style.opacity !== '1') {
+          canvas.style.opacity = '1';
+          if (stillImg) stillImg.style.opacity = '0';
+        }
       }
       requestAnimationFrame(renderLoop);
 
@@ -535,10 +542,13 @@
           btn3D.classList.remove('text-white/60');
           btnPhoto.classList.remove('bg-white/20', 'text-white', 'font-bold');
           btnPhoto.classList.add('text-white/60');
-          canvas.style.display = 'block';
+          canvas.style.opacity = '1';
+          canvas.style.pointerEvents = 'auto';
           stillImg.style.opacity = '0';
+          stillImg.style.pointerEvents = 'none';
           var controls = document.getElementById('can-angle-controls');
           if (controls) controls.style.display = '';
+          if (hintPill) hintPill.style.display = '';
         });
 
         btnPhoto.addEventListener('click', function() {
@@ -546,10 +556,13 @@
           btnPhoto.classList.remove('text-white/60');
           btn3D.classList.remove('bg-white/20', 'text-white', 'font-bold');
           btn3D.classList.add('text-white/60');
-          canvas.style.display = 'none';
+          canvas.style.opacity = '0';
+          canvas.style.pointerEvents = 'none';
           stillImg.style.opacity = '1';
+          stillImg.style.pointerEvents = 'auto';
           var controls = document.getElementById('can-angle-controls');
           if (controls) controls.style.display = 'none';
+          if (hintPill) hintPill.style.display = 'none';
         });
       }
 
@@ -569,16 +582,35 @@
       }
     }
 
-    // Initialize 3D can on DOM ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initProduct3DCan);
-    } else {
-      initProduct3DCan();
+    // Initialize 3D can robustly
+    function ensureThreeAndInit() {
+      if (typeof THREE !== 'undefined') {
+        initProduct3DCan();
+        return;
+      }
+      var attempts = 0;
+      var timer = setInterval(function() {
+        attempts++;
+        if (typeof THREE !== 'undefined') {
+          clearInterval(timer);
+          initProduct3DCan();
+        } else if (attempts > 50) {
+          clearInterval(timer);
+          console.warn('[Product3D] THREE timed out');
+          var stillImg = document.getElementById('main-product-image');
+          if (stillImg) stillImg.style.opacity = '1';
+        }
+      }, 80);
     }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', ensureThreeAndInit);
+    } else {
+      ensureThreeAndInit();
+    }
+    window.addEventListener('load', ensureThreeAndInit);
   })();
 </script>
-
-{% section 'asmaan-newsletter' %}
 
 {% schema %}
 {

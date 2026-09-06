@@ -40,6 +40,7 @@
 
     {% section 'asmaan-navbar' %}
 
+    <script src="{{ 'three.min.js' | asset_url }}"></script>
     <div id="top">
       <main id="MainContent" role="main" tabindex="-1">
         {{ content_for_layout }}
@@ -48,7 +49,6 @@
 
     {% render 'asmaan-footer' %}
 
-    <script src="{{ 'three.min.js' | asset_url }}"></script>
     <script src="{{ 'asmaan-prototype.js' | asset_url }}" defer></script>
   </body>
 </html>
