@@ -6,38 +6,40 @@
 (function () {
   'use strict';
 
-  var TASTES = [
-    {
-      id: 'jamun',
-      line1: 'Kala',
-      line2: 'Jamun',
-      primary: '#2A1D4A',
-      secondary: '#9089D3',
-      labelAttr: 'data-label-jamun',
-      tag: 'The original',
-      cx: 22
-    },
-    {
-      id: 'mango',
-      line1: 'Alphonso',
-      line2: 'Mango',
-      primary: '#5A2A00',
-      secondary: '#EFB36B',
-      labelAttr: 'data-label-mango',
-      tag: 'Gold into burnt amber',
-      cx: 120
-    },
-    {
-      id: 'print',
-      line1: 'Wild',
-      line2: 'Magenta',
-      primary: '#4E0749',
-      secondary: '#E6A0E8',
-      labelAttr: 'data-label-print',
-      tag: 'Rose and pink guava',
-      cx: 218
-    }
-  ];
+  var TASTES = (window.ASMAAN_TASTES && Array.isArray(window.ASMAAN_TASTES) && window.ASMAAN_TASTES.length > 0)
+    ? window.ASMAAN_TASTES
+    : [
+        {
+          id: 'jamun',
+          line1: 'Kala',
+          line2: 'Jamun',
+          primary: '#2A1D4A',
+          secondary: '#9089D3',
+          labelAttr: 'data-label-jamun',
+          tag: 'The original',
+          cx: 22
+        },
+        {
+          id: 'mango',
+          line1: 'Alphonso',
+          line2: 'Mango',
+          primary: '#5A2A00',
+          secondary: '#EFB36B',
+          labelAttr: 'data-label-mango',
+          tag: 'Gold into burnt amber',
+          cx: 120
+        },
+        {
+          id: 'print',
+          line1: 'Wild',
+          line2: 'Magenta',
+          primary: '#4E0749',
+          secondary: '#E6A0E8',
+          labelAttr: 'data-label-print',
+          tag: 'Rose and pink guava',
+          cx: 218
+        }
+      ];
 
   var PROFILE = [
     [0.842, 0.0], [0.8804, 0.0547], [0.9265, 0.1094], [0.9608, 0.164], [0.9837, 0.2187],
@@ -808,7 +810,7 @@
 
     var loadedTextures = {};
     function loadTexture(tasteObj) {
-      var rawUrl = canHost.getAttribute(tasteObj.labelAttr);
+      var rawUrl = tasteObj.labelUrl || (tasteObj.labelAttr ? canHost.getAttribute(tasteObj.labelAttr) : null);
       if (!rawUrl) return Promise.resolve(null);
       var url = rawUrl;
       if (url.indexOf('//') === 0) {
@@ -1022,7 +1024,7 @@
       var pick = function (clientX) {
         var rect = paginationSvg.getBoundingClientRect();
         var x = ((clientX - rect.left) / rect.width) * 240;
-        var step = (240 - 44) / (TASTES.length - 1);
+        var step = TASTES.length > 1 ? (240 - 44) / (TASTES.length - 1) : 1;
         var nearest = Math.round((x - 22) / step);
         nearest = Math.min(Math.max(nearest, 0), TASTES.length - 1);
         setTaste(nearest);

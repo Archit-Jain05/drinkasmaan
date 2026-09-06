@@ -1,3 +1,273 @@
+<script>
+  window.ASMAAN_TASTES = [
+    {%- if section.blocks.size > 0 -%}
+      {%- assign total_items = section.blocks.size -%}
+      {%- assign max_idx = total_items | minus: 1 -%}
+      {%- for block in section.blocks -%}
+        {%- liquid
+          if total_items > 1
+            assign cx_val = forloop.index0 | times: 196 | divided_by: max_idx | plus: 22
+          else
+            assign cx_val = 120
+          endif
+          assign b_prod = block.settings.product
+          if b_prod != blank
+            assign p_id = b_prod.handle
+            assign p_title = b_prod.title
+            assign words = p_title | split: ' '
+            assign p_line1 = block.settings.line1 | default: words[0]
+            if words.size > 1
+              assign rem = p_title | remove_first: words[0] | strip
+              assign p_line2 = block.settings.line2 | default: rem
+            else
+              assign p_line2 = block.settings.line2 | default: ''
+            endif
+            assign p_url = b_prod.url
+            assign p_tag = block.settings.tag | default: b_prod.metafields.custom.tagline | default: b_prod.type | default: 'Ambition Tonic'
+            assign p_blurb = block.settings.blurb | default: b_prod.metafields.custom.blurb | default: b_prod.description | strip_html | truncate: 160
+
+            assign p_primary = block.settings.primary_color | default: b_prod.metafields.custom.primary_color
+            assign p_secondary = block.settings.secondary_color | default: b_prod.metafields.custom.accent_color
+            if p_secondary == blank
+              assign h_low = b_prod.handle | downcase
+              if h_low contains 'mango'
+                assign p_secondary = '#EFB36B'
+                assign p_primary = '#5A2A00'
+              elsif h_low contains 'magenta' or h_low contains 'wild'
+                assign p_secondary = '#E6A0E8'
+                assign p_primary = '#4E0749'
+              elsif h_low contains 'jamun'
+                assign p_secondary = '#9089D3'
+                assign p_primary = '#2A1D4A'
+              else
+                assign p_secondary = '#34d399'
+                assign p_primary = '#064e3b'
+              endif
+            endif
+            if p_primary == blank
+              assign p_primary = '#0a0a14'
+            endif
+
+            assign p_poster = block.settings.poster | default: b_prod.featured_media
+            if p_poster != blank
+              assign poster_url = p_poster | image_url: width: 1040
+            else
+              assign poster_url = 'can-asmaan.png' | asset_url
+            endif
+
+            assign label_url = ''
+            if block.settings.label_image != blank
+              assign label_url = block.settings.label_image | image_url: width: 2048
+            elsif b_prod.metafields.custom.label_image != blank
+              assign label_url = b_prod.metafields.custom.label_image | image_url: width: 2048
+            elsif b_prod.metafields.custom.label != blank
+              assign label_url = b_prod.metafields.custom.label | image_url: width: 2048
+            elsif b_prod.metafields.custom.label_texture != blank
+              assign label_url = b_prod.metafields.custom.label_texture | image_url: width: 2048
+            endif
+
+            if label_url == blank
+              for media in b_prod.media
+                assign alt_l = media.alt | downcase
+                if alt_l contains 'label' or alt_l contains 'texture' or alt_l contains '3d' or alt_l contains 'wrap'
+                  assign label_url = media | image_url: width: 2048
+                  break
+                endif
+              endfor
+            endif
+
+            if label_url == blank
+              assign h_low = b_prod.handle | downcase
+              if h_low contains 'mango'
+                assign label_url = 'asmaan-label-mango.jpg' | asset_url
+              elsif h_low contains 'magenta' or h_low contains 'wild'
+                assign label_url = 'asmaan-label-magenta.jpg' | asset_url
+              elsif h_low contains 'jamun'
+                assign label_url = 'asmaan-label-jamun.jpg' | asset_url
+              else
+                assign label_url = poster_url
+              endif
+            endif
+
+          else
+            assign p_id = block.id
+            assign p_line1 = block.settings.line1 | default: 'Flavour'
+            assign p_line2 = block.settings.line2 | default: 'Tonic'
+            assign p_primary = block.settings.primary_color | default: '#2A1D4A'
+            assign p_secondary = block.settings.secondary_color | default: '#9089D3'
+            assign p_tag = block.settings.tag | default: 'Ambition Tonic'
+            assign p_blurb = block.settings.blurb | default: 'Pure functional botanical formulation.'
+            assign p_url = '/#range'
+            if block.settings.poster != blank
+              assign poster_url = block.settings.poster | image_url: width: 1040
+            else
+              assign poster_url = 'can-asmaan.png' | asset_url
+            endif
+            if block.settings.label_image != blank
+              assign label_url = block.settings.label_image | image_url: width: 2048
+            else
+              assign label_url = poster_url
+            endif
+          endif
+        -%}
+        {
+          id: {{ p_id | json }},
+          line1: {{ p_line1 | json }},
+          line2: {{ p_line2 | json }},
+          primary: {{ p_primary | json }},
+          secondary: {{ p_secondary | json }},
+          labelUrl: {{ label_url | json }},
+          posterUrl: {{ poster_url | json }},
+          tag: {{ p_tag | json }},
+          blurb: {{ p_blurb | json }},
+          cx: {{ cx_val }},
+          productUrl: {{ p_url | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+
+    {%- elsif section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+      {%- assign total_items = section.settings.collection.products.size -%}
+      {%- assign max_idx = total_items | minus: 1 -%}
+      {%- for product in section.settings.collection.products -%}
+        {%- liquid
+          if total_items > 1
+            assign cx_val = forloop.index0 | times: 196 | divided_by: max_idx | plus: 22
+          else
+            assign cx_val = 120
+          endif
+          assign p_id = product.handle
+          assign p_title = product.title
+          assign words = p_title | split: ' '
+          assign p_line1 = words[0]
+          if words.size > 1
+            assign p_line2 = p_title | remove_first: words[0] | strip
+          else
+            assign p_line2 = ''
+          endif
+          assign p_url = product.url
+          assign p_tag = product.metafields.custom.tagline | default: product.type | default: 'Ambition Tonic'
+          assign p_blurb = product.metafields.custom.blurb | default: product.description | strip_html | truncate: 160
+
+          assign p_primary = product.metafields.custom.primary_color
+          assign p_secondary = product.metafields.custom.accent_color
+          if p_secondary == blank
+            assign h_low = product.handle | downcase
+            if h_low contains 'mango'
+              assign p_secondary = '#EFB36B'
+              assign p_primary = '#5A2A00'
+            elsif h_low contains 'magenta' or h_low contains 'wild'
+              assign p_secondary = '#E6A0E8'
+              assign p_primary = '#4E0749'
+            elsif h_low contains 'jamun'
+              assign p_secondary = '#9089D3'
+              assign p_primary = '#2A1D4A'
+            else
+              assign p_secondary = '#34d399'
+              assign p_primary = '#064e3b'
+            endif
+          endif
+          if p_primary == blank
+            assign p_primary = '#0a0a14'
+          endif
+
+          assign p_poster = product.featured_media | default: product.featured_image
+          if p_poster != blank
+            assign poster_url = p_poster | image_url: width: 1040
+          else
+            assign poster_url = 'can-asmaan.png' | asset_url
+          endif
+
+          assign label_url = ''
+          if product.metafields.custom.label_image != blank
+            assign label_url = product.metafields.custom.label_image | image_url: width: 2048
+          elsif product.metafields.custom.label != blank
+            assign label_url = product.metafields.custom.label | image_url: width: 2048
+          elsif product.metafields.custom.label_texture != blank
+            assign label_url = product.metafields.custom.label_texture | image_url: width: 2048
+          endif
+
+          if label_url == blank
+            for media in product.media
+              assign alt_l = media.alt | downcase
+              if alt_l contains 'label' or alt_l contains 'texture' or alt_l contains '3d' or alt_l contains 'wrap'
+                assign label_url = media | image_url: width: 2048
+                break
+              endif
+            endfor
+          endif
+
+          if label_url == blank
+            assign h_low = product.handle | downcase
+            if h_low contains 'mango'
+              assign label_url = 'asmaan-label-mango.jpg' | asset_url
+            elsif h_low contains 'magenta' or h_low contains 'wild'
+              assign label_url = 'asmaan-label-magenta.jpg' | asset_url
+            elsif h_low contains 'jamun'
+              assign label_url = 'asmaan-label-jamun.jpg' | asset_url
+            else
+              assign label_url = poster_url
+            endif
+          endif
+        -%}
+        {
+          id: {{ p_id | json }},
+          line1: {{ p_line1 | json }},
+          line2: {{ p_line2 | json }},
+          primary: {{ p_primary | json }},
+          secondary: {{ p_secondary | json }},
+          labelUrl: {{ label_url | json }},
+          posterUrl: {{ poster_url | json }},
+          tag: {{ p_tag | json }},
+          blurb: {{ p_blurb | json }},
+          cx: {{ cx_val }},
+          productUrl: {{ p_url | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+
+    {%- else -%}
+      {
+        id: 'jamun',
+        line1: {{ section.settings.jamun_line1 | default: 'Kala' | json }},
+        line2: {{ section.settings.jamun_line2 | default: 'Jamun' | json }},
+        primary: '#2A1D4A',
+        secondary: '#9089D3',
+        labelUrl: {% if section.settings.jamun_label != blank %}{{ section.settings.jamun_label | image_url | json }}{% else %}{{ 'asmaan-label-jamun.jpg' | asset_url | json }}{% endif %},
+        posterUrl: {% if section.settings.jamun_poster != blank %}{{ section.settings.jamun_poster | image_url: width: 1040 | json }}{% else %}{{ 'jamun-front.webp' | asset_url | json }}{% endif %},
+        tag: {{ section.settings.jamun_tag | default: 'The original' | json }},
+        blurb: {{ section.settings.jamun_blurb | default: 'The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.' | json }},
+        cx: 22,
+        productUrl: '/products/kala-jamun'
+      },
+      {
+        id: 'mango',
+        line1: {{ section.settings.mango_line1 | default: 'Alphonso' | json }},
+        line2: {{ section.settings.mango_line2 | default: 'Mango' | json }},
+        primary: '#5A2A00',
+        secondary: '#EFB36B',
+        labelUrl: {% if section.settings.mango_label != blank %}{{ section.settings.mango_label | image_url | json }}{% else %}{{ 'asmaan-label-mango.jpg' | asset_url | json }}{% endif %},
+        posterUrl: {% if section.settings.mango_poster != blank %}{{ section.settings.mango_poster | image_url: width: 1040 | json }}{% else %}{{ 'mango-front.webp' | asset_url | json }}{% endif %},
+        tag: {{ section.settings.mango_tag | default: 'Gold into burnt amber' | json }},
+        blurb: {{ section.settings.mango_blurb | default: 'A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.' | json }},
+        cx: 120,
+        productUrl: '/products/alphonso-mango'
+      },
+      {
+        id: 'print',
+        line1: {{ section.settings.print_line1 | default: 'Wild' | json }},
+        line2: {{ section.settings.print_line2 | default: 'Magenta' | json }},
+        primary: '#4E0749',
+        secondary: '#E6A0E8',
+        labelUrl: {% if section.settings.print_label != blank %}{{ section.settings.print_label | image_url | json }}{% else %}{{ 'asmaan-label-magenta.jpg' | asset_url | json }}{% endif %},
+        posterUrl: {% if section.settings.print_poster != blank %}{{ section.settings.print_poster | image_url: width: 1040 | json }}{% else %}{{ 'print-front.webp' | asset_url | json }}{% endif %},
+        tag: {{ section.settings.print_tag | default: 'Rose and pink guava' | json }},
+        blurb: {{ section.settings.print_blurb | default: 'The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.' | json }},
+        cx: 218,
+        productUrl: '/products/wild-magenta'
+      }
+    {%- endif -%}
+  ];
+</script>
+
 <div id="stage" class="pointer-events-none relative">
   <!-- 3D Can Fixed Viewport Stage -->
   <div class="pointer-events-none fixed inset-0 z-[2]" style="transition: opacity 0.3s linear">
@@ -45,24 +315,71 @@
 
                 <div class="carousel_container">
                   <div class="carousel_stack" data-taste-stack>
-                    <div class="carousel_slide" data-active="true">
-                      <div class="heading-style-h2">
-                        <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
-                        <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
+                    {%- if section.blocks.size > 0 -%}
+                      {%- for block in section.blocks -%}
+                        {%- liquid
+                          assign b_prod = block.settings.product
+                          if b_prod != blank
+                            assign p_title = b_prod.title
+                            assign words = p_title | split: ' '
+                            assign s_line1 = block.settings.line1 | default: words[0]
+                            if words.size > 1
+                              assign rem = p_title | remove_first: words[0] | strip
+                              assign s_line2 = block.settings.line2 | default: rem
+                            else
+                              assign s_line2 = block.settings.line2 | default: ''
+                            endif
+                          else
+                            assign s_line1 = block.settings.line1 | default: 'Flavour'
+                            assign s_line2 = block.settings.line2 | default: 'Tonic'
+                          endif
+                        -%}
+                        <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}" {{ block.shopify_attributes }}>
+                          <div class="heading-style-h2">
+                            <span class="block">{{ s_line1 }}</span>
+                            <span class="block">{{ s_line2 }}</span>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    {%- elsif section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+                      {%- for product in section.settings.collection.products -%}
+                        {%- liquid
+                          assign p_title = product.title
+                          assign words = p_title | split: ' '
+                          assign s_line1 = words[0]
+                          if words.size > 1
+                            assign s_line2 = p_title | remove_first: words[0] | strip
+                          else
+                            assign s_line2 = ''
+                          endif
+                        -%}
+                        <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}">
+                          <div class="heading-style-h2">
+                            <span class="block">{{ s_line1 }}</span>
+                            <span class="block">{{ s_line2 }}</span>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    {%- else -%}
+                      <div class="carousel_slide" data-active="true">
+                        <div class="heading-style-h2">
+                          <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
+                          <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="carousel_slide" data-active="false">
-                      <div class="heading-style-h2">
-                        <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
-                        <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
+                      <div class="carousel_slide" data-active="false">
+                        <div class="heading-style-h2">
+                          <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
+                          <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="carousel_slide" data-active="false">
-                      <div class="heading-style-h2">
-                        <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
-                        <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
+                      <div class="carousel_slide" data-active="false">
+                        <div class="heading-style-h2">
+                          <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
+                          <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
+                        </div>
                       </div>
-                    </div>
+                    {%- endif -%}
                   </div>
 
                   <div class="carousel_nav pointer-events-auto">
@@ -74,7 +391,6 @@
                     </button>
                   </div>
                 </div>
-
 
                 <div class="carousel_pagination pointer-events-auto mx-auto w-[15rem] max-w-full">
                   <svg viewBox="0 0 240 44" class="h-auto w-full overflow-visible" role="group" aria-label="Choose a colourway">
@@ -93,9 +409,43 @@
                       <rect x="16" y="20" width="208" height="4" rx="2" fill="url(#bar-gradient)"></rect>
                       <circle data-liquid-circle cx="22" cy="22" r="8" fill="#fff" style="transition: cx 0.55s cubic-bezier(0.65, 0, 0.35, 1);"></circle>
                     </g>
-                    <circle data-taste-dot cx="22" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.jamun_line1 | default: 'Kala' }} {{ section.settings.jamun_line2 | default: 'Jamun' }}" aria-current="true"></circle>
-                    <circle data-taste-dot cx="120" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.mango_line1 | default: 'Alphonso' }} {{ section.settings.mango_line2 | default: 'Mango' }}" aria-current="false"></circle>
-                    <circle data-taste-dot cx="218" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.print_line1 | default: 'Wild' }} {{ section.settings.print_line2 | default: 'Magenta' }}" aria-current="false"></circle>
+                    {%- if section.blocks.size > 0 -%}
+                      {%- assign total_dots = section.blocks.size -%}
+                      {%- assign max_dot_idx = total_dots | minus: 1 -%}
+                      {%- for block in section.blocks -%}
+                        {%- liquid
+                          if total_dots > 1
+                            assign dot_cx = forloop.index0 | times: 196 | divided_by: max_dot_idx | plus: 22
+                          else
+                            assign dot_cx = 120
+                          endif
+                          assign b_prod = block.settings.product
+                          if b_prod != blank
+                            assign dot_lbl = block.settings.line1 | default: b_prod.title
+                          else
+                            assign dot_lbl = block.settings.line1 | default: 'Flavour'
+                          endif
+                        -%}
+                        <circle data-taste-dot cx="{{ dot_cx }}" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ dot_lbl | escape }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></circle>
+                      {%- endfor -%}
+                    {%- elsif section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+                      {%- assign total_dots = section.settings.collection.products.size -%}
+                      {%- assign max_dot_idx = total_dots | minus: 1 -%}
+                      {%- for product in section.settings.collection.products -%}
+                        {%- liquid
+                          if total_dots > 1
+                            assign dot_cx = forloop.index0 | times: 196 | divided_by: max_dot_idx | plus: 22
+                          else
+                            assign dot_cx = 120
+                          endif
+                        -%}
+                        <circle data-taste-dot cx="{{ dot_cx }}" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ product.title | escape }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></circle>
+                      {%- endfor -%}
+                    {%- else -%}
+                      <circle data-taste-dot cx="22" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.jamun_line1 | default: 'Kala' }} {{ section.settings.jamun_line2 | default: 'Jamun' }}" aria-current="true"></circle>
+                      <circle data-taste-dot cx="120" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.mango_line1 | default: 'Alphonso' }} {{ section.settings.mango_line2 | default: 'Mango' }}" aria-current="false"></circle>
+                      <circle data-taste-dot cx="218" cy="22" r="14" fill="transparent" class="cursor-pointer" role="button" tabindex="0" aria-label="{{ section.settings.print_line1 | default: 'Wild' }} {{ section.settings.print_line2 | default: 'Magenta' }}" aria-current="false"></circle>
+                    {%- endif -%}
                   </svg>
                 </div>
 
@@ -117,42 +467,119 @@
                 <div class="pin_scrim" aria-hidden="true"></div>
                 <div class="mb-[var(--pad-m)] md:mb-[var(--pad-l)]">
                   <div class="carousel_stack" data-taste-stack>
-                    <div class="carousel_slide" data-active="true">
-                      <div class="heading-style-h2">
-                        <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
-                        <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
+                    {%- if section.blocks.size > 0 -%}
+                      {%- for block in section.blocks -%}
+                        {%- liquid
+                          assign b_prod = block.settings.product
+                          if b_prod != blank
+                            assign p_title = b_prod.title
+                            assign words = p_title | split: ' '
+                            assign s_line1 = block.settings.line1 | default: words[0]
+                            if words.size > 1
+                              assign rem = p_title | remove_first: words[0] | strip
+                              assign s_line2 = block.settings.line2 | default: rem
+                            else
+                              assign s_line2 = block.settings.line2 | default: ''
+                            endif
+                          else
+                            assign s_line1 = block.settings.line1 | default: 'Flavour'
+                            assign s_line2 = block.settings.line2 | default: 'Tonic'
+                          endif
+                        -%}
+                        <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}" {{ block.shopify_attributes }}>
+                          <div class="heading-style-h2">
+                            <span class="block">{{ s_line1 }}</span>
+                            <span class="block">{{ s_line2 }}</span>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    {%- elsif section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+                      {%- for product in section.settings.collection.products -%}
+                        {%- liquid
+                          assign p_title = product.title
+                          assign words = p_title | split: ' '
+                          assign s_line1 = words[0]
+                          if words.size > 1
+                            assign s_line2 = p_title | remove_first: words[0] | strip
+                          else
+                            assign s_line2 = ''
+                          endif
+                        -%}
+                        <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}">
+                          <div class="heading-style-h2">
+                            <span class="block">{{ s_line1 }}</span>
+                            <span class="block">{{ s_line2 }}</span>
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    {%- else -%}
+                      <div class="carousel_slide" data-active="true">
+                        <div class="heading-style-h2">
+                          <span class="block">{{ section.settings.jamun_line1 | default: 'Kala' }}</span>
+                          <span class="block">{{ section.settings.jamun_line2 | default: 'Jamun' }}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="carousel_slide" data-active="false">
-                      <div class="heading-style-h2">
-                        <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
-                        <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
+                      <div class="carousel_slide" data-active="false">
+                        <div class="heading-style-h2">
+                          <span class="block">{{ section.settings.mango_line1 | default: 'Alphonso' }}</span>
+                          <span class="block">{{ section.settings.mango_line2 | default: 'Mango' }}</span>
+                        </div>
                       </div>
-                    </div>
-                    <div class="carousel_slide" data-active="false">
-                      <div class="heading-style-h2">
-                        <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
-                        <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
+                      <div class="carousel_slide" data-active="false">
+                        <div class="heading-style-h2">
+                          <span class="block">{{ section.settings.print_line1 | default: 'Wild' }}</span>
+                          <span class="block">{{ section.settings.print_line2 | default: 'Magenta' }}</span>
+                        </div>
                       </div>
-                    </div>
+                    {%- endif -%}
                   </div>
                 </div>
 
                 <div class="profile_desc">
                   {% render 'asmaan-icons', name: 'corner', class: 'corner-left h-2 w-2 text-white/50' %}
                   <div class="carousel_stack" data-taste-stack>
-                    <div class="carousel_slide" data-active="true">
-                      <p class="text-white/80">{{ section.settings.jamun_blurb | default: 'The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.' }}</p>
-                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.jamun_tag | default: 'The original' }}</p>
-                    </div>
-                    <div class="carousel_slide" data-active="false">
-                      <p class="text-white/80">{{ section.settings.mango_blurb | default: 'A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.' }}</p>
-                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.mango_tag | default: 'Gold into burnt amber' }}</p>
-                    </div>
-                    <div class="carousel_slide" data-active="false">
-                      <p class="text-white/80">{{ section.settings.print_blurb | default: 'The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.' }}</p>
-                      <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.print_tag | default: 'Rose and pink guava' }}</p>
-                    </div>
+                    {%- if section.blocks.size > 0 -%}
+                      {%- for block in section.blocks -%}
+                        {%- liquid
+                          assign b_prod = block.settings.product
+                          if b_prod != blank
+                            assign b_blurb = block.settings.blurb | default: b_prod.metafields.custom.blurb | default: b_prod.description | strip_html | truncate: 160
+                            assign b_tag = block.settings.tag | default: b_prod.metafields.custom.tagline | default: b_prod.type | default: 'Ambition Tonic'
+                          else
+                            assign b_blurb = block.settings.blurb | default: 'Formulated for deep creative work and cognitive stamina with pure botanicals.'
+                            assign b_tag = block.settings.tag | default: 'Ambition Tonic'
+                          endif
+                        -%}
+                        <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}" {{ block.shopify_attributes }}>
+                          <p class="text-white/80">{{ b_blurb }}</p>
+                          <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ b_tag }}</p>
+                        </div>
+                      {%- endfor -%}
+                    {%- elsif section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
+                      {%- for product in section.settings.collection.products -%}
+                        {%- liquid
+                          assign b_blurb = product.metafields.custom.blurb | default: product.description | strip_html | truncate: 160
+                          assign b_tag = product.metafields.custom.tagline | default: product.type | default: 'Ambition Tonic'
+                        -%}
+                        <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}">
+                          <p class="text-white/80">{{ b_blurb }}</p>
+                          <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ b_tag }}</p>
+                        </div>
+                      {%- endfor -%}
+                    {%- else -%}
+                      <div class="carousel_slide" data-active="true">
+                        <p class="text-white/80">{{ section.settings.jamun_blurb | default: 'The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.' }}</p>
+                        <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.jamun_tag | default: 'The original' }}</p>
+                      </div>
+                      <div class="carousel_slide" data-active="false">
+                        <p class="text-white/80">{{ section.settings.mango_blurb | default: 'A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.' }}</p>
+                        <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.mango_tag | default: 'Gold into burnt amber' }}</p>
+                      </div>
+                      <div class="carousel_slide" data-active="false">
+                        <p class="text-white/80">{{ section.settings.print_blurb | default: 'The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.' }}</p>
+                        <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.print_tag | default: 'Rose and pink guava' }}</p>
+                      </div>
+                    {%- endif -%}
                   </div>
                   {% render 'asmaan-icons', name: 'corner', flip: true, class: 'corner-right h-2 w-2 text-white/50' %}
                 </div>
@@ -384,6 +811,12 @@
       "id": "discover_text",
       "label": "Discover Prompt",
       "default": "Scroll to discover"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Dynamic Collection Source (optional)",
+      "info": "Automatically populates 3D cans, titles, and tasting notes from this collection. Overridden by custom flavour slide blocks if added below."
     },
     {
       "type": "header",
@@ -634,9 +1067,99 @@
       "default": "Nothing hidden \u2014 every milligram is printed on the can."
     }
   ],
+  "blocks": [
+    {
+      "type": "flavour_slide",
+      "name": "Flavour / Can Slide",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Shopify Product"
+        },
+        {
+          "type": "text",
+          "id": "line1",
+          "label": "Heading Line 1 (e.g. Kala)"
+        },
+        {
+          "type": "text",
+          "id": "line2",
+          "label": "Heading Line 2 (e.g. Jamun)"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tagline / Badge"
+        },
+        {
+          "type": "textarea",
+          "id": "blurb",
+          "label": "Tasting Notes Blurb"
+        },
+        {
+          "type": "color",
+          "id": "primary_color",
+          "label": "Primary Tone (Dark Deep)",
+          "default": "#2A1D4A"
+        },
+        {
+          "type": "color",
+          "id": "secondary_color",
+          "label": "Secondary Tone (Vibrant Accent)",
+          "default": "#9089D3"
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Can Poster / Front Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "label_image",
+          "label": "3D Label Texture (360° Wrap)"
+        }
+      ]
+    }
+  ],
   "presets": [
     {
-      "name": "Asmaan 3D Stage"
+      "name": "Asmaan 3D Stage",
+      "blocks": [
+        {
+          "type": "flavour_slide",
+          "settings": {
+            "line1": "Kala",
+            "line2": "Jamun",
+            "tag": "The original",
+            "blurb": "The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.",
+            "primary_color": "#2A1D4A",
+            "secondary_color": "#9089D3"
+          }
+        },
+        {
+          "type": "flavour_slide",
+          "settings": {
+            "line1": "Alphonso",
+            "line2": "Mango",
+            "tag": "Gold into burnt amber",
+            "blurb": "A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.",
+            "primary_color": "#5A2A00",
+            "secondary_color": "#EFB36B"
+          }
+        },
+        {
+          "type": "flavour_slide",
+          "settings": {
+            "line1": "Wild",
+            "line2": "Magenta",
+            "tag": "Rose and pink guava",
+            "blurb": "The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.",
+            "primary_color": "#4E0749",
+            "secondary_color": "#E6A0E8"
+          }
+        }
+      ]
     }
   ]
 }

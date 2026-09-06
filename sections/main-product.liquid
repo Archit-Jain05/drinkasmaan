@@ -2,44 +2,70 @@
   assign handle_lower = product.handle | downcase
   assign title_lower = product.title | downcase
   
-  if handle_lower contains 'mango' or title_lower contains 'mango'
-    assign flavour_id = 'mango'
-    assign fallback_asset = 'mango-front.webp' | asset_url
-    assign label_asset = 'asmaan-label-mango.jpg' | asset_url
-    assign accent_color = '#EFB36B'
-    assign tint_color = '#EFB36B'
-  elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
-    assign flavour_id = 'magenta'
-    assign fallback_asset = 'print-front.webp' | asset_url
-    assign label_asset = 'asmaan-label-magenta.jpg' | asset_url
-    assign accent_color = '#E6A0E8'
-    assign tint_color = '#E6A0E8'
-  else
-    assign flavour_id = 'jamun'
-    assign fallback_asset = 'jamun-front.webp' | asset_url
-    assign label_asset = 'asmaan-label-jamun.jpg' | asset_url
-    assign accent_color = '#9089D3'
-    assign tint_color = '#9089D3'
+  # 1. Resolve Accent Color (Product Metafield -> Theme Sidebar Setting -> Flavour Keyword -> Default)
+  assign accent_color = product.metafields.custom.accent_color | default: product.metafields.custom.color | default: section.settings.accent_color
+  if accent_color == blank
+    if handle_lower contains 'mango' or title_lower contains 'mango'
+      assign accent_color = '#EFB36B'
+    elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
+      assign accent_color = '#E6A0E8'
+    elsif handle_lower contains 'jamun' or title_lower contains 'jamun'
+      assign accent_color = '#9089D3'
+    else
+      assign accent_color = '#34d399'
+    endif
   endif
+  assign tint_color = accent_color
 
-  if product.metafields.custom.label_image != blank
-    assign label_asset = product.metafields.custom.label_image | image_url: width: 2048
-  elsif product.metafields.custom.label != blank
-    assign label_asset = product.metafields.custom.label | image_url: width: 2048
-  endif
-
-  if product.metafields.custom.accent_color != blank
-    assign accent_color = product.metafields.custom.accent_color
-    assign tint_color = product.metafields.custom.accent_color
-  endif
-
+  # 2. Resolve Active Variant & Poster Image
   assign current_variant = product.selected_or_first_available_variant
   assign featured_img = current_variant.featured_media | default: product.featured_media | default: product.featured_image | default: product.images.first
   if featured_img != blank
     assign poster_asset = featured_img | image_url: width: 800
   else
-    assign poster_asset = fallback_asset
+    if handle_lower contains 'mango' or title_lower contains 'mango'
+      assign poster_asset = 'mango-front.webp' | asset_url
+    elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
+      assign poster_asset = 'print-front.webp' | asset_url
+    else
+      assign poster_asset = 'jamun-front.webp' | asset_url
+    endif
   endif
+
+  # 3. Resolve 3D Label Texture (Metafield -> Product Media Tag -> Theme Asset -> Fallback)
+  assign label_asset = ''
+  if product.metafields.custom.label_image != blank
+    assign label_asset = product.metafields.custom.label_image | image_url: width: 2048
+  elsif product.metafields.custom.label != blank
+    assign label_asset = product.metafields.custom.label | image_url: width: 2048
+  elsif product.metafields.custom.label_texture != blank
+    assign label_asset = product.metafields.custom.label_texture | image_url: width: 2048
+  endif
+
+  if label_asset == blank
+    for media in product.media
+      assign alt_l = media.alt | downcase
+      if alt_l contains 'label' or alt_l contains 'texture' or alt_l contains '3d' or alt_l contains 'wrap'
+        assign label_asset = media | image_url: width: 2048
+        break
+      endif
+    endfor
+  endif
+
+  if label_asset == blank
+    if handle_lower contains 'mango' or title_lower contains 'mango'
+      assign label_asset = 'asmaan-label-mango.jpg' | asset_url
+    elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
+      assign label_asset = 'asmaan-label-magenta.jpg' | asset_url
+    elsif handle_lower contains 'jamun' or title_lower contains 'jamun'
+      assign label_asset = 'asmaan-label-jamun.jpg' | asset_url
+    else
+      assign label_asset = poster_asset
+    endif
+  endif
+
+  assign can_headroom = section.settings.can_headroom | default: 1.18
+  assign can_idle_spin = section.settings.can_idle_spin | default: 0.3
 -%}
 
 <style>
@@ -206,13 +232,15 @@
   <div class="product-grid-layout">
     <!-- Product Visual Gallery & 3D Interactive Stage -->
     <div class="product-gallery-stage" data-asmaan-can-group>
+      {%- if section.settings.show_chilled_badge != false -%}
       <!-- Chilled Badge -->
       <div style="position: absolute; top: 1rem; left: 1rem; z-index: 10;">
         <span style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: 9999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: {{ accent_color }};">
           <span style="height: 6px; width: 6px; border-radius: 50%; background: #34d399; display: inline-block;"></span>
-          Chilled Serving
+          {{ section.settings.chilled_badge_text | default: 'Chilled Serving' }}
         </span>
       </div>
+      {%- endif -%}
 
       <!-- 3D / 2D View Mode Switcher (if product has uploaded images) -->
       {%- if product.images.size > 0 -%}
@@ -232,8 +260,8 @@
           draggable: true,
           view: 'front',
           ratio: '760 / 1950',
-          headroom: 1.18,
-          idle_spin: 0.3
+          headroom: can_headroom,
+          idle_spin: can_idle_spin
         %}
 
         <!-- Fallback / Multi-photo Viewer (hidden during 3D mode) -->
@@ -246,6 +274,7 @@
         >
       </div>
 
+      {%- if section.settings.show_angle_controls != false -%}
       <!-- 3D Angle Preset Buttons -->
       <div class="can-angle-btn-list" id="can-angle-controls">
         <button type="button" class="can-angle-btn is-active" data-asmaan-can-view="front" aria-pressed="true">Front</button>
@@ -253,6 +282,7 @@
         <button type="button" class="can-angle-btn" data-asmaan-can-view="back" aria-pressed="false">Nutrition</button>
         <button type="button" class="can-angle-btn" data-asmaan-can-view="right" aria-pressed="false">Disclaimer</button>
       </div>
+      {%- endif -%}
 
       <!-- Multi-Image Thumbnails Gallery (if multiple images uploaded in Shopify) -->
       {%- if product.images.size > 1 -%}
@@ -273,7 +303,7 @@
 
       <div style="width: 100%; text-align: center; padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
         <span style="font-family: var(--font-mono, monospace); font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em;">
-          100% Recyclable Matte Aluminum Can &bull; 250ml
+          {{ section.settings.can_specs_text | default: '100% Recyclable Matte Aluminum Can &bull; 250ml' }}
         </span>
       </div>
     </div>
@@ -300,7 +330,7 @@
           {% endif %}
         </span>
         <span style="font-size: 12px; font-family: var(--font-mono, monospace); text-transform: uppercase; letter-spacing: 0.1em; color: #34d399;">
-          &bull; Free shipping across India
+          &bull; {{ section.settings.shipping_notice | default: 'Free shipping across India' }}
         </span>
       </div>
 
@@ -360,18 +390,29 @@
 
       <!-- Core Specs Pills -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono, monospace); font-size: 12px; color: rgba(255,255,255,0.7);">
-        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_1_title | default: '0g Sugar' }}</span> {{ product.metafields.custom.spec_1_subtitle | default: '10 Calories per can' }}
-        </div>
-        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_2_title | default: '100mg Caffeine' }}</span> {{ product.metafields.custom.spec_2_subtitle | default: 'Raw Green Coffee' }}
-        </div>
-        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_3_title | default: 'L-Theanine 200mg' }}</span> {{ product.metafields.custom.spec_3_subtitle | default: 'Smooth Focus Curve' }}
-        </div>
-        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_4_title | default: 'KSM-66 300mg' }}</span> {{ product.metafields.custom.spec_4_subtitle | default: 'Cortisol Modulation' }}
-        </div>
+        {%- assign has_spec_blocks = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'spec_pill' -%}
+            {%- assign has_spec_blocks = true -%}
+            <div {{ block.shopify_attributes }} style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+              <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ block.settings.title }}</span> {{ block.settings.subtitle }}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- unless has_spec_blocks -%}
+          <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_1_title | default: '0g Sugar' }}</span> {{ product.metafields.custom.spec_1_subtitle | default: '10 Calories per can' }}
+          </div>
+          <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_2_title | default: '100mg Caffeine' }}</span> {{ product.metafields.custom.spec_2_subtitle | default: 'Raw Green Coffee' }}
+          </div>
+          <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_3_title | default: 'L-Theanine 200mg' }}</span> {{ product.metafields.custom.spec_3_subtitle | default: 'Smooth Focus Curve' }}
+          </div>
+          <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_4_title | default: 'KSM-66 300mg' }}</span> {{ product.metafields.custom.spec_4_subtitle | default: 'Cortisol Modulation' }}
+          </div>
+        {%- endunless -%}
       </div>
 
       <!-- Add To Cart Form -->
@@ -380,7 +421,7 @@
         
         <div style="display: flex; gap: 0.75rem; align-items: stretch; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; border-radius: 0.75rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 0 0.75rem; min-height: 48px;">
-            <button type="button" aria-label="Decrease quantity" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); if(q.value>1) q.value--;">&minus;</button>
+            <button type="button" aria-label="Decrease quantity" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); if(q.value>1) q.value--;">&minus;</button>
             <input type="number" id="product-qty" name="quantity" value="1" min="1" aria-label="Product quantity" style="width: 40px; text-align: center; font-family: var(--font-mono, monospace); color: #fff; background: transparent; border: none; outline: none; font-size: 14px;">
             <button type="button" aria-label="Increase quantity" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); q.value++;">&plus;</button>
           </div>
@@ -403,35 +444,52 @@
 
       <!-- Botanical Accordion -->
       <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
-        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-science">
-            <span>Scientific Formulation</span>
-            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
-          </button>
-          <div id="spec-science" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
-            {{ product.metafields.custom.scientific_formulation | default: 'Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.' }}
+        {%- assign has_accordion_blocks = false -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'accordion' -%}
+            {%- assign has_accordion_blocks = true -%}
+            <div class="faq_item" {{ block.shopify_attributes }} style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
+              <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="accordion-{{ block.id }}">
+                <span>{{ block.settings.heading }}</span>
+                <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+              </button>
+              <div id="accordion-{{ block.id }}" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+                {{ block.settings.content }}
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- unless has_accordion_blocks -%}
+          <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
+            <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-science">
+              <span>Scientific Formulation</span>
+              <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+            </button>
+            <div id="spec-science" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+              {{ product.metafields.custom.scientific_formulation | default: 'Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.' }}
+            </div>
           </div>
-        </div>
 
-        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-nutrition">
-            <span>Full Nutrition Facts (250ml)</span>
-            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
-          </button>
-          <div id="spec-nutrition" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
-            {{ product.metafields.custom.nutrition_facts | default: 'Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.' }}
+          <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
+            <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-nutrition">
+              <span>Full Nutrition Facts (250ml)</span>
+              <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+            </button>
+            <div id="spec-nutrition" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
+              {{ product.metafields.custom.nutrition_facts | default: 'Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.' }}
+            </div>
           </div>
-        </div>
 
-        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-shipping">
-            <span>Shipping &amp; Freshness Guarantee</span>
-            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
-          </button>
-          <div id="spec-shipping" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
-            {{ product.metafields.custom.shipping_details | default: 'All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.' }}
+          <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+            <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-shipping">
+              <span>Shipping &amp; Freshness Guarantee</span>
+              <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+            </button>
+            <div id="spec-shipping" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+              {{ product.metafields.custom.shipping_details | default: 'All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.' }}
+            </div>
           </div>
-        </div>
+        {%- endunless -%}
       </div>
     </div>
   </div>
@@ -578,7 +636,165 @@
 {% schema %}
 {
   "name": "Product Details",
-  "settings": []
+  "settings": [
+    {
+      "type": "header",
+      "content": "Visual & 3D Settings"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Custom Accent Color Override",
+      "info": "Overrides product accent color (defaults to product metafield or flavor tone)"
+    },
+    {
+      "type": "range",
+      "id": "can_headroom",
+      "label": "3D Can Framing Headroom",
+      "min": 1.0,
+      "max": 1.6,
+      "step": 0.02,
+      "default": 1.18,
+      "info": "Adjust to prevent can top/bottom clipping (1.18 recommended)"
+    },
+    {
+      "type": "range",
+      "id": "can_idle_spin",
+      "label": "3D Idle Spin Speed",
+      "min": 0,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_angle_controls",
+      "label": "Show 3D View Angle Controls",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Badges & Notices"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_chilled_badge",
+      "label": "Show Chilled Badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "chilled_badge_text",
+      "label": "Chilled Badge Text",
+      "default": "Chilled Serving"
+    },
+    {
+      "type": "text",
+      "id": "shipping_notice",
+      "label": "Shipping Notice",
+      "default": "Free shipping across India"
+    },
+    {
+      "type": "text",
+      "id": "can_specs_text",
+      "label": "Can Specifications Text",
+      "default": "100% Recyclable Matte Aluminum Can • 250ml"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "spec_pill",
+      "name": "Specification Pill",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Metric / Value",
+          "default": "0g Sugar"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Description",
+          "default": "10 Calories per can"
+        }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Collapsible Tab",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Scientific Formulation"
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "Content",
+          "default": "Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine® L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Details",
+      "blocks": [
+        {
+          "type": "spec_pill",
+          "settings": {
+            "title": "0g Sugar",
+            "subtitle": "10 Calories per can"
+          }
+        },
+        {
+          "type": "spec_pill",
+          "settings": {
+            "title": "100mg Caffeine",
+            "subtitle": "Raw Green Coffee"
+          }
+        },
+        {
+          "type": "spec_pill",
+          "settings": {
+            "title": "L-Theanine 200mg",
+            "subtitle": "Smooth Focus Curve"
+          }
+        },
+        {
+          "type": "spec_pill",
+          "settings": {
+            "title": "KSM-66 300mg",
+            "subtitle": "Cortisol Modulation"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Scientific Formulation",
+            "content": "Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine® L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow."
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Full Nutrition Facts (250ml)",
+            "content": "Energy: 10 kcal • Protein: 0g • Fat: 0g • Total Carbohydrates: 0g • Total Sugars: 0g • Sodium: 14mg • Caffeine: 100mg • L-Theanine: 200mg • KSM-66: 300mg."
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "heading": "Shipping & Freshness Guarantee",
+            "content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over ₹999."
+          }
+        }
+      ]
+    }
+  ]
 }
 {% endschema %}
 
