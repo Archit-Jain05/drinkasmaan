@@ -25,196 +25,375 @@
   assign featured_img = product.selected_or_first_available_variant.featured_media | default: product.featured_media | default: product.featured_image | default: product.images.first
 -%}
 
-<section class="asmaan-subpage-section pt-24 pb-20">
-  <div class="padding-global">
-    <div class="container-large max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-      <!-- Product Visual Gallery & 3D Interactive Stage -->
-      <div class="p-6 sm:p-10 rounded-3xl bg-white/[0.02] border border-white/10 flex flex-col items-center justify-center relative sticky top-28">
-        <!-- Chilled Badge -->
-        <div class="absolute top-4 left-4 z-10">
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.08] border border-white/20 text-[11px] font-mono uppercase tracking-widest" style="color: {{ accent_color }};">
-            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            Chilled Serving
-          </span>
+<style>
+  .product-page-wrap {
+    padding-top: 6rem;
+    padding-bottom: 5rem;
+    min-height: 100vh;
+    background: #000;
+  }
+  .product-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: start;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  @media (min-width: 840px) {
+    .product-grid-layout {
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+    }
+  }
+
+  .product-gallery-stage {
+    position: sticky;
+    top: 6rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+  }
+  @media (min-width: 640px) {
+    .product-gallery-stage {
+      padding: 2rem;
+    }
+  }
+
+  .product-canvas-box {
+    position: relative;
+    width: 100%;
+    height: 440px;
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.75rem 0;
+    overflow: hidden;
+  }
+
+  .product-3d-interactive-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .product-3d-interactive-wrap:active {
+    cursor: grabbing;
+  }
+
+  .product-3d-canvas-element {
+    position: absolute;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .product-static-image {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: 380px;
+    object-fit: contain;
+    z-index: 2;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .product-drag-prompt {
+    position: absolute;
+    bottom: 0.5rem;
+    z-index: 5;
+    pointer-events: none;
+    font-family: var(--font-mono, monospace);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.75);
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: opacity 0.3s ease;
+  }
+
+  .can-angle-btn-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 5;
+  }
+
+  .can-angle-btn {
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.65);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .can-angle-btn:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #fff;
+  }
+  .can-angle-btn.is-active {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .pack-opt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .pack-opt-btn {
+    padding: 0.85rem 0.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  .pack-opt-btn:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .pack-opt-btn.is-selected {
+    border-color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+  }
+</style>
+
+<section class="product-page-wrap">
+  <div class="product-grid-layout">
+    <!-- Product Visual Gallery & 3D Interactive Stage -->
+    <div class="product-gallery-stage">
+      <!-- Chilled Badge -->
+      <div style="position: absolute; top: 1rem; left: 1rem; z-index: 10;">
+        <span style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: 9999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: {{ accent_color }};">
+          <span style="height: 6px; width: 6px; border-radius: 50%; background: #34d399; display: inline-block;"></span>
+          Chilled Serving
+        </span>
+      </div>
+
+      <!-- 3D / 2D View Mode Switcher (if product has uploaded images) -->
+      {%- if product.images.size > 0 -%}
+        <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10; display: flex; gap: 0.25rem; background: rgba(255,255,255,0.06); padding: 2px; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-mono, monospace); font-size: 10px; text-transform: uppercase;">
+          <button type="button" id="view-mode-3d" style="padding: 0.25rem 0.65rem; border-radius: 0.35rem; background: rgba(255,255,255,0.2); color: #fff; font-weight: bold; cursor: pointer; border: none;">3D Can</button>
+          <button type="button" id="view-mode-photo" style="padding: 0.25rem 0.65rem; border-radius: 0.35rem; background: transparent; color: rgba(255,255,255,0.6); cursor: pointer; border: none;">Photos</button>
         </div>
+      {%- endif -%}
 
-        <!-- 3D / 2D View Mode Switcher (if product has uploaded images) -->
-        {%- if product.images.size > 0 -%}
-          <div class="absolute top-4 right-4 z-10 flex gap-1 bg-white/[0.06] p-0.5 rounded-lg border border-white/10 text-[10px] font-mono uppercase tracking-wider">
-            <button type="button" id="view-mode-3d" class="px-2.5 py-1 rounded-md bg-white/20 text-white font-bold cursor-pointer transition-all">3D Can</button>
-            <button type="button" id="view-mode-photo" class="px-2.5 py-1 rounded-md text-white/60 hover:text-white cursor-pointer transition-all">Photos</button>
-          </div>
-        {%- endif -%}
-
-        <!-- Main 3D Can Viewport -->
-        <div class="h-[380px] sm:h-[440px] w-full flex items-center justify-center my-3 relative overflow-hidden" id="product-canvas-container">
-          <div
-            id="product-3d-wrap"
-            class="w-full h-full relative cursor-grab active:cursor-grabbing flex items-center justify-center select-none"
-            style="touch-action: none;"
-            data-flavour="{{ flavour_id }}"
-            data-label="{{ label_asset }}"
-            data-tint="{{ tint_color }}"
-            data-poster="{{ fallback_asset }}"
+      <!-- Main 3D Can Viewport -->
+      <div class="product-canvas-box" id="product-canvas-container">
+        <div
+          id="product-3d-wrap"
+          class="product-3d-interactive-wrap"
+          data-flavour="{{ flavour_id }}"
+          data-label="{{ label_asset }}"
+          data-tint="{{ tint_color }}"
+          data-poster="{{ fallback_asset }}"
+        >
+          <canvas id="product-can-3d-canvas" class="product-3d-canvas-element"></canvas>
+          
+          <!-- Fallback Image (shown while 3D engine mounts or in photo mode) -->
+          <img
+            src="{% if featured_img != blank %}{{ featured_img | image_url: width: 800 }}{% else %}{{ fallback_asset }}{% endif %}"
+            alt="{{ product.title | default: 'Asmaan Ambition Tonic' | escape }}"
+            class="product-static-image"
+            id="main-product-image"
+            loading="eager"
           >
-            <canvas id="product-can-3d-canvas" class="w-full h-full block absolute inset-0 z-0 transition-opacity duration-500 opacity-0"></canvas>
-            
-            <!-- Fallback Image (shown while 3D engine mounts or in photo mode) -->
-            <img
-              src="{% if featured_img != blank %}{{ featured_img | image_url: width: 800 }}{% else %}{{ fallback_asset }}{% endif %}"
-              alt="{{ product.title | default: 'Asmaan Ambition Tonic' | escape }}"
-              class="max-h-full max-w-full w-auto object-contain transition-opacity duration-500 absolute inset-0 m-auto z-[1] opacity-100 pointer-events-none"
-              id="main-product-image"
-              loading="eager"
-            >
 
-            <!-- 360 Drag Prompt Overlay -->
-            <div id="drag-hint-pill" class="absolute bottom-2 z-[2] pointer-events-none text-[10px] font-mono uppercase tracking-widest text-white/70 bg-black/60 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/15 flex items-center gap-1.5 transition-opacity duration-300">
-              <svg viewBox="0 0 16 16" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8a6 6 0 1 1 1.76 4.24M2 8l2.5-2.5M2 8l2.5 2.5"/></svg>
-              Drag to Rotate 360&deg;
-            </div>
+          <!-- 360 Drag Prompt Overlay -->
+          <div id="drag-hint-pill" class="product-drag-prompt">
+            <svg viewBox="0 0 16 16" style="width: 14px; height: 14px; stroke: currentColor;" fill="none" stroke-width="1.5"><path d="M2 8a6 6 0 1 1 1.76 4.24M2 8l2.5-2.5M2 8l2.5 2.5"/></svg>
+            Drag to Rotate 360&deg;
           </div>
-        </div>
-
-        <!-- 3D Angle Preset Buttons -->
-        <div class="flex items-center justify-center gap-1.5 my-2 flex-wrap relative z-[2]" id="can-angle-controls">
-          <button type="button" class="can-angle-btn is-active text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/20 bg-white/10 text-white transition-all hover:border-white/40 cursor-pointer" data-spin="0">Front</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="1.57">Botanicals</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="3.14">Nutrition</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer" data-spin="-1.57">Disclaimer</button>
-          <button type="button" class="can-angle-btn text-[10px] font-mono uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition-all hover:border-white/40 cursor-pointer flex items-center gap-1.5" id="can-auto-spin-toggle">
-            <span>&#x21bb;</span> Auto Spin
-          </button>
-        </div>
-
-        <!-- Multi-Image Thumbnails Gallery (if multiple images uploaded in Shopify) -->
-        {%- if product.images.size > 1 -%}
-          <div class="flex items-center justify-center gap-2 mt-3 flex-wrap" id="product-thumbnails">
-            {%- for image in product.images -%}
-              <button
-                type="button"
-                class="w-11 h-11 rounded-lg border border-white/15 bg-white/[0.03] overflow-hidden p-1 transition-all hover:border-white/40 cursor-pointer product-thumb-btn"
-                data-full-img="{{ image | image_url: width: 800 }}"
-                aria-label="View product image {{ forloop.index }}"
-              >
-                <img src="{{ image | image_url: width: 100 }}" alt="{{ image.alt | default: product.title | escape }}" class="w-full h-full object-contain">
-              </button>
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-
-        <div class="w-full text-center pt-3 mt-2 border-t border-white/10">
-          <span class="font-mono text-[11px] text-white/50 uppercase tracking-widest">
-            100% Recyclable Matte Aluminum Can &bull; 250ml
-          </span>
         </div>
       </div>
 
-      <!-- Product Information & Purchase Flow -->
-      <div>
-        <span class="font-mono text-xs uppercase tracking-[0.25em] block mb-2" style="color: {{ accent_color }};">Ambition Tonic &bull; Direct Batch</span>
-        <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white mb-3">
-          {% if product.title != blank %}{{ product.title }}{% else %}Asmaan Ambition Tonic{% endif %}
-        </h1>
-        
-        <div class="text-2xl font-mono text-white mb-6 flex items-baseline gap-3">
-          <span id="product-price-display">{% if product.price > 0 %}{{ product.price | money }}{% else %}&#8377;2,160{% endif %}</span>
-          <span class="text-xs font-mono uppercase tracking-widest text-emerald-400">&bull; Free shipping across India</span>
-        </div>
+      <!-- 3D Angle Preset Buttons -->
+      <div class="can-angle-btn-list" id="can-angle-controls">
+        <button type="button" class="can-angle-btn is-active" data-spin="0">Front</button>
+        <button type="button" class="can-angle-btn" data-spin="1.57">Botanicals</button>
+        <button type="button" class="can-angle-btn" data-spin="3.14">Nutrition</button>
+        <button type="button" class="can-angle-btn" data-spin="-1.57">Disclaimer</button>
+        <button type="button" class="can-angle-btn" id="can-auto-spin-toggle">
+          <span>&#x21bb;</span> Auto Spin
+        </button>
+      </div>
 
-        <div class="text-white/70 leading-relaxed text-sm space-y-3 mb-8">
-          {%- if product.description != blank -%}
-            {{ product.description }}
-          {%- else -%}
-            <p>Formulated for deep creative work, late-night architecture, and cognitive stamina. Engineered with raw green coffee bean caffeine, L-theanine, KSM-66 ashwagandha, and mountain botanicals.</p>
-          {%- endif -%}
-        </div>
-
-        <!-- Pack Size Selector -->
-        <div class="mb-8">
-          <label class="block font-mono text-xs uppercase tracking-widest text-white/60 mb-3">Select Pack Allocation</label>
-          <div class="grid grid-cols-3 gap-3" id="pack-selector">
-            <button type="button" class="pack-opt-btn is-selected" data-price="&#8377;2,160" data-pack="12">
-              <span class="block text-xs font-bold text-white uppercase">12-Pack</span>
-              <span class="block text-[10px] text-emerald-400 font-mono mt-0.5">Most Popular</span>
-            </button>
-            <button type="button" class="pack-opt-btn" data-price="&#8377;4,100" data-pack="24">
-              <span class="block text-xs font-bold text-white uppercase">24-Pack</span>
-              <span class="block text-[10px] text-white/50 font-mono mt-0.5">Studio Box</span>
-            </button>
-            <button type="button" class="pack-opt-btn" data-price="&#8377;1,140" data-pack="6">
-              <span class="block text-xs font-bold text-white uppercase">6-Pack</span>
-              <span class="block text-[10px] text-white/50 font-mono mt-0.5">Sampler</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Core Specs Pills -->
-        <div class="grid grid-cols-2 gap-3 mb-8 text-xs font-mono text-white/70">
-          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span class="text-white block font-bold text-sm">0g Sugar</span> 10 Calories per can
-          </div>
-          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span class="text-white block font-bold text-sm">100mg Caffeine</span> Raw Green Coffee
-          </div>
-          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span class="text-white block font-bold text-sm">L-Theanine 200mg</span> Smooth Focus Curve
-          </div>
-          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span class="text-white block font-bold text-sm">KSM-66 300mg</span> Cortisol Modulation
-          </div>
-        </div>
-
-        <!-- Add To Cart Form -->
-        {%- form 'product', product, class: 'space-y-4' -%}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id | default: 'flagship-12pack' }}">
-          
-          <div class="flex gap-3">
-            <div class="flex items-center rounded-xl bg-white/[0.06] border border-white/15 px-3">
-              <button type="button" class="text-white/60 hover:text-white px-2 py-1" onclick="var q=document.getElementById('product-qty'); if(q.value>1) q.value--;">&minus;</button>
-              <input type="number" id="product-qty" name="quantity" value="1" min="1" class="w-10 text-center font-mono text-white bg-transparent border-none focus:outline-none">
-              <button type="button" class="text-white/60 hover:text-white px-2 py-1" onclick="var q=document.getElementById('product-qty'); q.value++;">&plus;</button>
-            </div>
+      <!-- Multi-Image Thumbnails Gallery (if multiple images uploaded in Shopify) -->
+      {%- if product.images.size > 1 -%}
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap;" id="product-thumbnails">
+          {%- for image in product.images -%}
             <button
-              type="submit"
-              name="add"
-              class="button is-hero is-primary flex-1"
+              type="button"
+              style="width: 44px; height: 44px; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); overflow: hidden; padding: 2px; cursor: pointer;"
+              class="product-thumb-btn"
+              data-full-img="{{ image | image_url: width: 800 }}"
+              aria-label="View product image {{ forloop.index }}"
             >
-              Add to Cart &bull; Free Shipping
+              <img src="{{ image | image_url: width: 100 }}" alt="{{ image.alt | default: product.title | escape }}" style="width: 100%; height: 100%; object-fit: contain;">
             </button>
-          </div>
-        {%- endform -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
 
-        <!-- Botanical Accordion -->
-        <div class="mt-10 pt-8 border-t border-white/10 space-y-4">
-          <div class="faq_item border-b border-white/10 pb-4">
-            <button type="button" class="faq_question !py-2 text-sm font-bold uppercase text-white flex justify-between items-center w-full" aria-expanded="false" aria-controls="spec-science">
-              <span>Scientific Formulation</span>
-              <span class="text-lg font-mono">&plus;</span>
-            </button>
-            <div id="spec-science" class="faq_answer !pt-2 text-xs text-white/70 leading-relaxed" data-open="false">
-              Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.
-            </div>
-          </div>
+      <div style="width: 100%; text-align: center; padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+        <span style="font-family: var(--font-mono, monospace); font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em;">
+          100% Recyclable Matte Aluminum Can &bull; 250ml
+        </span>
+      </div>
+    </div>
 
-          <div class="faq_item border-b border-white/10 pb-4">
-            <button type="button" class="faq_question !py-2 text-sm font-bold uppercase text-white flex justify-between items-center w-full" aria-expanded="false" aria-controls="spec-nutrition">
-              <span>Full Nutrition Facts (250ml)</span>
-              <span class="text-lg font-mono">&plus;</span>
-            </button>
-            <div id="spec-nutrition" class="faq_answer !pt-2 text-xs text-white/70 leading-relaxed font-mono" data-open="false">
-              Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.
-            </div>
-          </div>
+    <!-- Product Information & Purchase Flow -->
+    <div>
+      <span style="font-family: var(--font-mono, monospace); font-size: 12px; text-transform: uppercase; letter-spacing: 0.25em; display: block; margin-bottom: 0.5rem; color: {{ accent_color }};">Ambition Tonic &bull; Direct Batch</span>
+      <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; color: #fff; margin: 0 0 0.75rem;">
+        {% if product.title != blank %}{{ product.title }}{% else %}Asmaan Ambition Tonic{% endif %}
+      </h1>
+      
+      <div style="font-size: 1.5rem; font-family: var(--font-mono, monospace); color: #fff; margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 0.75rem;">
+        <span id="product-price-display">{% if product.price > 0 %}{{ product.price | money }}{% else %}&#8377;2,160{% endif %}</span>
+        <span style="font-size: 12px; font-family: var(--font-mono, monospace); text-transform: uppercase; letter-spacing: 0.1em; color: #34d399;">&bull; Free shipping across India</span>
+      </div>
 
-          <div class="faq_item border-b border-white/10 pb-4">
-            <button type="button" class="faq_question !py-2 text-sm font-bold uppercase text-white flex justify-between items-center w-full" aria-expanded="false" aria-controls="spec-shipping">
-              <span>Shipping &amp; Freshness Guarantee</span>
-              <span class="text-lg font-mono">&plus;</span>
-            </button>
-            <div id="spec-shipping" class="faq_answer !pt-2 text-xs text-white/70 leading-relaxed" data-open="false">
-              All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.
-            </div>
+      <div style="color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.875rem; margin-bottom: 2rem;">
+        {%- if product.description != blank -%}
+          {{ product.description }}
+        {%- else -%}
+          <p>Formulated for deep creative work, late-night architecture, and cognitive stamina. Engineered with raw green coffee bean caffeine, L-theanine, KSM-66 ashwagandha, and mountain botanicals.</p>
+        {%- endif -%}
+      </div>
+
+      <!-- Pack Size Selector -->
+      <div style="margin-bottom: 2rem;">
+        <label style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.75rem;">Select Pack Allocation</label>
+        <div class="pack-opt-grid" id="pack-selector">
+          <button type="button" class="pack-opt-btn is-selected" data-price="&#8377;2,160" data-pack="12">
+            <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">12-Pack</span>
+            <span style="display: block; font-size: 10px; color: #34d399; font-family: var(--font-mono, monospace); margin-top: 2px;">Most Popular</span>
+          </button>
+          <button type="button" class="pack-opt-btn" data-price="&#8377;4,100" data-pack="24">
+            <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">24-Pack</span>
+            <span style="display: block; font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--font-mono, monospace); margin-top: 2px;">Studio Box</span>
+          </button>
+          <button type="button" class="pack-opt-btn" data-price="&#8377;1,140" data-pack="6">
+            <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">6-Pack</span>
+            <span style="display: block; font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--font-mono, monospace); margin-top: 2px;">Sampler</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Core Specs Pills -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono, monospace); font-size: 12px; color: rgba(255,255,255,0.7);">
+        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">0g Sugar</span> 10 Calories per can
+        </div>
+        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">100mg Caffeine</span> Raw Green Coffee
+        </div>
+        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">L-Theanine 200mg</span> Smooth Focus Curve
+        </div>
+        <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">KSM-66 300mg</span> Cortisol Modulation
+        </div>
+      </div>
+
+      <!-- Add To Cart Form -->
+      {%- form 'product', product, style: 'margin-bottom: 2rem;' -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id | default: 'flagship-12pack' }}">
+        
+        <div style="display: flex; gap: 0.75rem; align-items: stretch;">
+          <div style="display: flex; align-items: center; border-radius: 0.75rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 0 0.75rem;">
+            <button type="button" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); if(q.value>1) q.value--;">&minus;</button>
+            <input type="number" id="product-qty" name="quantity" value="1" min="1" style="width: 40px; text-align: center; font-family: var(--font-mono, monospace); color: #fff; background: transparent; border: none; outline: none; font-size: 14px;">
+            <button type="button" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); q.value++;">&plus;</button>
+          </div>
+          <button
+            type="submit"
+            name="add"
+            class="button is-hero is-primary"
+            style="flex: 1; display: flex; align-items: center; justify-content: center; height: auto; min-height: 48px;"
+          >
+            Add to Cart &bull; Free Shipping
+          </button>
+        </div>
+      {%- endform -%}
+
+      <!-- Botanical Accordion -->
+      <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-science">
+            <span>Scientific Formulation</span>
+            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+          </button>
+          <div id="spec-science" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+            Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.
+          </div>
+        </div>
+
+        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-nutrition">
+            <span>Full Nutrition Facts (250ml)</span>
+            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+          </button>
+          <div id="spec-nutrition" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
+            Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.
+          </div>
+        </div>
+
+        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-shipping">
+            <span>Shipping &amp; Freshness Guarantee</span>
+            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+          </button>
+          <div id="spec-shipping" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+            All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.
           </div>
         </div>
       </div>
@@ -266,7 +445,10 @@
         return;
       }
 
-      var labelUrl = wrap.getAttribute('data-label');
+      var labelUrl = wrap.getAttribute('data-label') || '';
+      if (labelUrl && labelUrl.indexOf('//') === 0) {
+        labelUrl = window.location.protocol + labelUrl;
+      }
       var tintHex = wrap.getAttribute('data-tint') || '#9089D3';
 
       var renderer, scene, camera, canInner, labelMesh, shellMesh, tabMesh;
@@ -278,6 +460,7 @@
       var lastTime = performance.now();
       var autoSpin = false;
       var pointerId = null;
+      var labelTextureLoaded = false;
 
       try {
         renderer = new THREE.WebGLRenderer({
@@ -362,15 +545,27 @@
       var labelGeo = new THREE.CylinderGeometry(RADIUS + 0.005, RADIUS + 0.005, labelHeight, 48, 1, true);
 
       var textureLoader = new THREE.TextureLoader();
-      var labelTexture = textureLoader.load(labelUrl, function() {
-        if (renderer) renderer.render(scene, camera);
-        canvas.style.opacity = '1';
-        if (stillImg) stillImg.style.opacity = '0';
-      });
-      if (labelTexture) {
-        labelTexture.wrapS = THREE.RepeatWrapping;
-        if (THREE.SRGBColorSpace) labelTexture.colorSpace = THREE.SRGBColorSpace;
-      }
+      textureLoader.setCrossOrigin('anonymous');
+
+      var labelTexture = textureLoader.load(
+        labelUrl,
+        function(tex) {
+          if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+          tex.wrapS = THREE.RepeatWrapping;
+          tex.needsUpdate = true;
+          labelTextureLoaded = true;
+          if (renderer && scene && camera) {
+            renderer.render(scene, camera);
+            canvas.style.opacity = '1';
+            if (stillImg) stillImg.style.opacity = '0';
+          }
+        },
+        undefined,
+        function(err) {
+          console.warn('[Product3D] Failed to load label texture:', err);
+          if (stillImg) stillImg.style.opacity = '1';
+        }
+      );
 
       var labelMat = new THREE.MeshStandardMaterial({
         map: labelTexture,
@@ -410,10 +605,9 @@
 
       // Resize & Framing
       function resize() {
-        var w = wrap.clientWidth;
-        var h = wrap.clientHeight;
-        if (!w || !h) return;
-        renderer.setSize(w, h, false);
+        var w = wrap.clientWidth || 360;
+        var h = wrap.clientHeight || 440;
+        renderer.setSize(w, h, true);
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.render(scene, camera);
@@ -435,7 +629,7 @@
         targetSpin = null;
         autoSpin = false;
         var autoSpinBtn = document.getElementById('can-auto-spin-toggle');
-        if (autoSpinBtn) autoSpinBtn.classList.remove('is-active', 'border-white/40', 'bg-white/20');
+        if (autoSpinBtn) autoSpinBtn.classList.remove('is-active');
         if (hintPill) hintPill.style.opacity = '0';
       });
 
@@ -467,9 +661,8 @@
           e.stopPropagation();
           var spinVal = btn.getAttribute('data-spin');
           if (spinVal !== null) {
-            angleBtns.forEach(function(b) { b.classList.remove('is-active', 'border-white/20', 'bg-white/10'); b.classList.add('border-white/10', 'bg-white/[0.03]'); });
-            btn.classList.add('is-active', 'border-white/20', 'bg-white/10');
-            btn.classList.remove('border-white/10', 'bg-white/[0.03]');
+            angleBtns.forEach(function(b) { b.classList.remove('is-active'); });
+            btn.classList.add('is-active');
             
             var rad = parseFloat(spinVal);
             var count = Math.PI * 2;
@@ -479,7 +672,7 @@
             spinVelocity = 0;
             autoSpin = false;
             var autoSpinBtn = document.getElementById('can-auto-spin-toggle');
-            if (autoSpinBtn) autoSpinBtn.classList.remove('is-active', 'border-white/40', 'bg-white/20');
+            if (autoSpinBtn) autoSpinBtn.classList.remove('is-active');
             if (hintPill) hintPill.style.opacity = '0';
           }
         });
@@ -492,10 +685,10 @@
           autoSpin = !autoSpin;
           targetSpin = null;
           if (autoSpin) {
-            autoSpinToggle.classList.add('is-active', 'border-white/40', 'bg-white/20');
+            autoSpinToggle.classList.add('is-active');
             if (hintPill) hintPill.style.opacity = '0';
           } else {
-            autoSpinToggle.classList.remove('is-active', 'border-white/40', 'bg-white/20');
+            autoSpinToggle.classList.remove('is-active');
           }
         });
       }
@@ -526,7 +719,7 @@
         }
 
         renderer.render(scene, camera);
-        if (canvas.style.opacity !== '1') {
+        if (labelTextureLoaded && canvas.style.opacity !== '1') {
           canvas.style.opacity = '1';
           if (stillImg) stillImg.style.opacity = '0';
         }
@@ -538,24 +731,24 @@
       var btnPhoto = document.getElementById('view-mode-photo');
       if (btn3D && btnPhoto && stillImg) {
         btn3D.addEventListener('click', function() {
-          btn3D.classList.add('bg-white/20', 'text-white', 'font-bold');
-          btn3D.classList.remove('text-white/60');
-          btnPhoto.classList.remove('bg-white/20', 'text-white', 'font-bold');
-          btnPhoto.classList.add('text-white/60');
+          btn3D.style.background = 'rgba(255,255,255,0.2)';
+          btn3D.style.color = '#fff';
+          btnPhoto.style.background = 'transparent';
+          btnPhoto.style.color = 'rgba(255,255,255,0.6)';
           canvas.style.opacity = '1';
           canvas.style.pointerEvents = 'auto';
           stillImg.style.opacity = '0';
           stillImg.style.pointerEvents = 'none';
           var controls = document.getElementById('can-angle-controls');
-          if (controls) controls.style.display = '';
-          if (hintPill) hintPill.style.display = '';
+          if (controls) controls.style.display = 'flex';
+          if (hintPill) hintPill.style.display = 'inline-flex';
         });
 
         btnPhoto.addEventListener('click', function() {
-          btnPhoto.classList.add('bg-white/20', 'text-white', 'font-bold');
-          btnPhoto.classList.remove('text-white/60');
-          btn3D.classList.remove('bg-white/20', 'text-white', 'font-bold');
-          btn3D.classList.add('text-white/60');
+          btnPhoto.style.background = 'rgba(255,255,255,0.2)';
+          btnPhoto.style.color = '#fff';
+          btn3D.style.background = 'transparent';
+          btn3D.style.color = 'rgba(255,255,255,0.6)';
           canvas.style.opacity = '0';
           canvas.style.pointerEvents = 'none';
           stillImg.style.opacity = '1';
