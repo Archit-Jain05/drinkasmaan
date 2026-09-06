@@ -22,7 +22,24 @@
     assign tint_color = '#9089D3'
   endif
 
-  assign featured_img = product.selected_or_first_available_variant.featured_media | default: product.featured_media | default: product.featured_image | default: product.images.first
+  if product.metafields.custom.label_image != blank
+    assign label_asset = product.metafields.custom.label_image | image_url: width: 2048
+  elsif product.metafields.custom.label != blank
+    assign label_asset = product.metafields.custom.label | image_url: width: 2048
+  endif
+
+  if product.metafields.custom.accent_color != blank
+    assign accent_color = product.metafields.custom.accent_color
+    assign tint_color = product.metafields.custom.accent_color
+  endif
+
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_img = current_variant.featured_media | default: product.featured_media | default: product.featured_image | default: product.images.first
+  if featured_img != blank
+    assign poster_asset = featured_img | image_url: width: 800
+  else
+    assign poster_asset = fallback_asset
+  endif
 -%}
 
 <style>
@@ -72,77 +89,47 @@
   .product-canvas-box {
     position: relative;
     width: 100%;
-    height: 440px;
+    height: 480px;
     min-height: 380px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0.75rem 0;
+    margin: 0.5rem 0;
     overflow: hidden;
   }
 
-  .product-3d-interactive-wrap {
-    position: relative;
-    width: 100%;
+  .product-canvas-box .asmaan-can {
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: grab;
-    touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .product-3d-interactive-wrap:active {
-    cursor: grabbing;
+    max-height: 420px;
+    width: auto;
+    aspect-ratio: 760 / 1950;
+    max-width: 100%;
+    margin-inline: auto;
   }
 
-  .product-3d-canvas-element {
-    position: absolute;
-    inset: 0;
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+  @media (max-width: 640px) {
+    .product-canvas-box {
+      height: 400px;
+      min-height: 340px;
+    }
+    .product-canvas-box .asmaan-can {
+      max-height: 350px;
+    }
   }
 
   .product-static-image {
     position: absolute;
     inset: 0;
     margin: auto;
-    max-height: 100%;
-    max-width: 100%;
+    max-height: 420px;
+    max-width: 90%;
     width: auto;
-    height: 380px;
+    height: 100%;
     object-fit: contain;
     z-index: 2;
     opacity: 1;
     transition: opacity 0.4s ease;
     pointer-events: none;
-  }
-
-  .product-drag-prompt {
-    position: absolute;
-    bottom: 0.5rem;
-    z-index: 5;
-    pointer-events: none;
-    font-family: var(--font-mono, monospace);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba(255, 255, 255, 0.75);
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 0.35rem 0.85rem;
-    border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    transition: opacity 0.3s ease;
   }
 
   .can-angle-btn-list {
@@ -173,7 +160,8 @@
     border-color: rgba(255, 255, 255, 0.35);
     color: #fff;
   }
-  .can-angle-btn.is-active {
+  .can-angle-btn.is-active,
+  .can-angle-btn[aria-pressed="true"] {
     background: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.35);
     color: #fff;
@@ -182,7 +170,7 @@
 
   .pack-opt-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 0.75rem;
   }
 
@@ -194,6 +182,10 @@
     cursor: pointer;
     text-align: center;
     transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .pack-opt-btn:hover {
     border-color: rgba(255, 255, 255, 0.3);
@@ -202,6 +194,11 @@
   .pack-opt-btn.is-selected {
     border-color: #fff;
     background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.08);
+  }
+  .pack-opt-btn.is-soldout {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 </style>
 
@@ -229,18 +226,19 @@
       <div class="product-canvas-box" id="product-canvas-container">
         {% render 'asmaan-can-3d',
           label: label_asset,
-          poster: fallback_asset,
+          poster: poster_asset,
           alt: product.title,
           tint: tint_color,
           draggable: true,
           view: 'front',
           ratio: '760 / 1950',
+          headroom: 1.18,
           idle_spin: 0.3
         %}
 
         <!-- Fallback / Multi-photo Viewer (hidden during 3D mode) -->
         <img
-          src="{% if featured_img != blank %}{{ featured_img | image_url: width: 800 }}{% else %}{{ fallback_asset }}{% endif %}"
+          src="{{ poster_asset }}"
           alt="{{ product.title | default: 'Asmaan Ambition Tonic' | escape }}"
           class="product-static-image"
           id="main-product-image"
@@ -282,14 +280,28 @@
 
     <!-- Product Information & Purchase Flow -->
     <div>
-      <span style="font-family: var(--font-mono, monospace); font-size: 12px; text-transform: uppercase; letter-spacing: 0.25em; display: block; margin-bottom: 0.5rem; color: {{ accent_color }};">Ambition Tonic &bull; Direct Batch</span>
+      <span style="font-family: var(--font-mono, monospace); font-size: 12px; text-transform: uppercase; letter-spacing: 0.25em; display: block; margin-bottom: 0.5rem; color: {{ accent_color }};">
+        {{ product.type | default: 'Ambition Tonic' }} &bull; {{ product.vendor | default: 'Asmaan' }}
+      </span>
       <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; color: #fff; margin: 0 0 0.75rem;">
-        {% if product.title != blank %}{{ product.title }}{% else %}Asmaan Ambition Tonic{% endif %}
+        {{ product.title | default: 'Asmaan Ambition Tonic' }}
       </h1>
       
-      <div style="font-size: 1.5rem; font-family: var(--font-mono, monospace); color: #fff; margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 0.75rem;">
-        <span id="product-price-display">{% if product.price > 0 %}{{ product.price | money }}{% else %}&#8377;2,160{% endif %}</span>
-        <span style="font-size: 12px; font-family: var(--font-mono, monospace); text-transform: uppercase; letter-spacing: 0.1em; color: #34d399;">&bull; Free shipping across India</span>
+      <div style="font-size: 1.5rem; font-family: var(--font-mono, monospace); color: #fff; margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap;">
+        <span id="product-price-display" style="font-weight: bold;">
+          {{ current_variant.price | money }}
+        </span>
+        <span
+          id="product-compare-price-display"
+          style="font-size: 1.1rem; text-decoration: line-through; color: rgba(255, 255, 255, 0.4);{% unless current_variant.compare_at_price > current_variant.price %} display: none;{% endunless %}"
+        >
+          {% if current_variant.compare_at_price > current_variant.price %}
+            {{ current_variant.compare_at_price | money }}
+          {% endif %}
+        </span>
+        <span style="font-size: 12px; font-family: var(--font-mono, monospace); text-transform: uppercase; letter-spacing: 0.1em; color: #34d399;">
+          &bull; Free shipping across India
+        </span>
       </div>
 
       <div style="color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.875rem; margin-bottom: 2rem;">
@@ -300,58 +312,91 @@
         {%- endif -%}
       </div>
 
-      <!-- Pack Size Selector -->
-      <div style="margin-bottom: 2rem;">
-        <label style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.75rem;">Select Pack Allocation</label>
-        <div class="pack-opt-grid" id="pack-selector">
-          <button type="button" class="pack-opt-btn is-selected" data-price="&#8377;2,160" data-pack="12">
-            <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">12-Pack</span>
-            <span style="display: block; font-size: 10px; color: #34d399; font-family: var(--font-mono, monospace); margin-top: 2px;">Most Popular</span>
-          </button>
-          <button type="button" class="pack-opt-btn" data-price="&#8377;4,100" data-pack="24">
-            <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">24-Pack</span>
-            <span style="display: block; font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--font-mono, monospace); margin-top: 2px;">Studio Box</span>
-          </button>
-          <button type="button" class="pack-opt-btn" data-price="&#8377;1,140" data-pack="6">
-            <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">6-Pack</span>
-            <span style="display: block; font-size: 10px; color: rgba(255,255,255,0.5); font-family: var(--font-mono, monospace); margin-top: 2px;">Sampler</span>
-          </button>
+      <!-- Dynamic Variant / Pack Allocation Selector -->
+      {%- if product.variants.size > 1 or product.has_only_default_variant == false -%}
+        <div style="margin-bottom: 2rem;" id="variant-selection-container">
+          <label style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.75rem;">
+            Select {{ product.options.first | default: 'Pack Allocation' }}
+          </label>
+          <div class="pack-opt-grid" id="pack-selector">
+            {%- for variant in product.variants -%}
+              <button
+                type="button"
+                class="pack-opt-btn{% if variant.id == current_variant.id %} is-selected{% endif %}{% unless variant.available %} is-soldout{% endunless %}"
+                data-variant-id="{{ variant.id }}"
+                data-price="{{ variant.price | money }}"
+                data-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
+                data-available="{{ variant.available }}"
+                data-title="{{ variant.title | escape }}"
+                {% if variant.featured_media %}data-variant-media="{{ variant.featured_media | image_url: width: 800 }}"{% endif %}
+              >
+                <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">
+                  {{ variant.title }}
+                </span>
+                <span style="display: block; font-size: 10px; color: {% if variant.available %}#34d399{% else %}rgba(255,255,255,0.4){% endif %}; font-family: var(--font-mono, monospace); margin-top: 2px;">
+                  {% if variant.available %}
+                    {{ variant.price | money }}
+                  {% else %}
+                    Sold Out
+                  {% endif %}
+                </span>
+              </button>
+            {%- endfor -%}
+          </div>
         </div>
-      </div>
+      {%- else -%}
+        <!-- Single Variant / Direct Batch indicator -->
+        <div style="margin-bottom: 1.75rem;" id="variant-selection-container">
+          <label style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
+            Allocation &bull; Direct Batch
+          </label>
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: 0.75rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); font-family: var(--font-mono, monospace); font-size: 12px; color: rgba(255,255,255,0.85);">
+            <span style="height: 6px; width: 6px; border-radius: 50%; background: #34d399; display: inline-block;"></span>
+            <span>{{ product.variants.first.title | replace: 'Default Title', 'Direct Batch 250ml Can' }}</span>
+            <span style="color: #34d399; margin-left: 0.25rem;">({{ current_variant.price | money }})</span>
+          </div>
+        </div>
+      {%- endif -%}
 
       <!-- Core Specs Pills -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono, monospace); font-size: 12px; color: rgba(255,255,255,0.7);">
         <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">0g Sugar</span> 10 Calories per can
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_1_title | default: '0g Sugar' }}</span> {{ product.metafields.custom.spec_1_subtitle | default: '10 Calories per can' }}
         </div>
         <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">100mg Caffeine</span> Raw Green Coffee
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_2_title | default: '100mg Caffeine' }}</span> {{ product.metafields.custom.spec_2_subtitle | default: 'Raw Green Coffee' }}
         </div>
         <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">L-Theanine 200mg</span> Smooth Focus Curve
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_3_title | default: 'L-Theanine 200mg' }}</span> {{ product.metafields.custom.spec_3_subtitle | default: 'Smooth Focus Curve' }}
         </div>
         <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">KSM-66 300mg</span> Cortisol Modulation
+          <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_4_title | default: 'KSM-66 300mg' }}</span> {{ product.metafields.custom.spec_4_subtitle | default: 'Cortisol Modulation' }}
         </div>
       </div>
 
       <!-- Add To Cart Form -->
-      {%- form 'product', product, style: 'margin-bottom: 2rem;' -%}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id | default: 'flagship-12pack' }}">
+      {%- form 'product', product, id: 'product-form-main', style: 'margin-bottom: 2rem;' -%}
+        <input type="hidden" name="id" id="selected-variant-id" value="{{ current_variant.id }}">
         
-        <div style="display: flex; gap: 0.75rem; align-items: stretch;">
-          <div style="display: flex; align-items: center; border-radius: 0.75rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 0 0.75rem;">
-            <button type="button" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); if(q.value>1) q.value--;">&minus;</button>
-            <input type="number" id="product-qty" name="quantity" value="1" min="1" style="width: 40px; text-align: center; font-family: var(--font-mono, monospace); color: #fff; background: transparent; border: none; outline: none; font-size: 14px;">
-            <button type="button" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); q.value++;">&plus;</button>
+        <div style="display: flex; gap: 0.75rem; align-items: stretch; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; border-radius: 0.75rem; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); padding: 0 0.75rem; min-height: 48px;">
+            <button type="button" aria-label="Decrease quantity" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); if(q.value>1) q.value--;">&minus;</button>
+            <input type="number" id="product-qty" name="quantity" value="1" min="1" aria-label="Product quantity" style="width: 40px; text-align: center; font-family: var(--font-mono, monospace); color: #fff; background: transparent; border: none; outline: none; font-size: 14px;">
+            <button type="button" aria-label="Increase quantity" style="color: rgba(255,255,255,0.6); background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 0.5rem;" onclick="var q=document.getElementById('product-qty'); q.value++;">&plus;</button>
           </div>
           <button
             type="submit"
             name="add"
+            id="add-to-cart-btn"
             class="button is-hero is-primary"
-            style="flex: 1; display: flex; align-items: center; justify-content: center; height: auto; min-height: 48px;"
+            style="flex: 1; display: flex; align-items: center; justify-content: center; height: auto; min-height: 48px; {% unless current_variant.available %}opacity: 0.5; cursor: not-allowed;{% endunless %}"
+            {% unless current_variant.available %}disabled{% endunless %}
           >
-            Add to Cart &bull; Free Shipping
+            {%- if current_variant.available -%}
+              Add to Cart &bull; Free Shipping
+            {%- else -%}
+              Sold Out
+            {%- endif -%}
           </button>
         </div>
       {%- endform -%}
@@ -364,7 +409,7 @@
             <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
           </button>
           <div id="spec-science" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
-            Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.
+            {{ product.metafields.custom.scientific_formulation | default: 'Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.' }}
           </div>
         </div>
 
@@ -374,7 +419,7 @@
             <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
           </button>
           <div id="spec-nutrition" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
-            Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.
+            {{ product.metafields.custom.nutrition_facts | default: 'Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.' }}
           </div>
         </div>
 
@@ -384,7 +429,7 @@
             <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
           </button>
           <div id="spec-shipping" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
-            All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.
+            {{ product.metafields.custom.shipping_details | default: 'All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.' }}
           </div>
         </div>
       </div>
@@ -395,17 +440,61 @@
 <!-- Product Page UI Interactivity -->
 <script>
   (function() {
-    // 1. Pack size button interactions
+    // 1. Pack size / Variant button interactions
     var packBtns = document.querySelectorAll('#pack-selector .pack-opt-btn');
     var priceDisplay = document.getElementById('product-price-display');
+    var comparePriceDisplay = document.getElementById('product-compare-price-display');
+    var variantIdInput = document.getElementById('selected-variant-id');
+    var addToCartBtn = document.getElementById('add-to-cart-btn');
+    var stillImg = document.getElementById('main-product-image');
 
     packBtns.forEach(function(btn) {
       btn.addEventListener('click', function() {
         packBtns.forEach(function(b) { b.classList.remove('is-selected'); });
         btn.classList.add('is-selected');
+
+        var variantId = btn.getAttribute('data-variant-id');
         var price = btn.getAttribute('data-price');
+        var comparePrice = btn.getAttribute('data-compare-price');
+        var isAvailable = btn.getAttribute('data-available') === 'true';
+        var mediaUrl = btn.getAttribute('data-variant-media');
+
+        if (variantIdInput && variantId) {
+          variantIdInput.value = variantId;
+        }
         if (priceDisplay && price) {
           priceDisplay.innerHTML = price;
+        }
+        if (comparePriceDisplay) {
+          if (comparePrice && comparePrice.trim() !== '') {
+            comparePriceDisplay.innerHTML = comparePrice;
+            comparePriceDisplay.style.display = 'inline-block';
+          } else {
+            comparePriceDisplay.style.display = 'none';
+          }
+        }
+        if (addToCartBtn) {
+          if (isAvailable) {
+            addToCartBtn.disabled = false;
+            addToCartBtn.innerHTML = 'Add to Cart &bull; Free Shipping';
+            addToCartBtn.style.opacity = '1';
+            addToCartBtn.style.cursor = 'pointer';
+          } else {
+            addToCartBtn.disabled = true;
+            addToCartBtn.innerHTML = 'Sold Out';
+            addToCartBtn.style.opacity = '0.5';
+            addToCartBtn.style.cursor = 'not-allowed';
+          }
+        }
+        if (mediaUrl && stillImg) {
+          stillImg.src = mediaUrl;
+        }
+
+        // Update URL query string without reloading page
+        if (variantId && window.history && window.history.replaceState) {
+          var url = new URL(window.location.href);
+          url.searchParams.set('variant', variantId);
+          window.history.replaceState({}, '', url.toString());
         }
       });
     });
@@ -422,14 +511,30 @@
           answer.setAttribute('data-open', !expanded);
           answer.style.display = !expanded ? 'block' : 'none';
         }
+        var icon = btn.querySelector('span:last-child');
+        if (icon) {
+          icon.innerHTML = expanded ? '&plus;' : '&minus;';
+        }
       });
     });
 
-    // 3. Photo vs 3D Mode Toggle
+    // 3. 3D Angle Preset Buttons Active state
+    var angleBtns = document.querySelectorAll('.can-angle-btn');
+    angleBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        angleBtns.forEach(function(b) {
+          b.classList.remove('is-active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('is-active');
+        btn.setAttribute('aria-pressed', 'true');
+      });
+    });
+
+    // 4. Photo vs 3D Mode Toggle
     var btn3D = document.getElementById('view-mode-3d');
     var btnPhoto = document.getElementById('view-mode-photo');
     var can3dEl = document.querySelector('.product-canvas-box .asmaan-can');
-    var stillImg = document.getElementById('main-product-image');
     var controls = document.getElementById('can-angle-controls');
 
     if (btn3D && btnPhoto) {
@@ -454,7 +559,7 @@
       });
     }
 
-    // 4. Thumbnail Click -> Switch to Photo Mode
+    // 5. Thumbnail Click -> Switch to Photo Mode
     var thumbBtns = document.querySelectorAll('.product-thumb-btn');
     if (thumbBtns.length > 0 && stillImg) {
       thumbBtns.forEach(function(btn) {
