@@ -24,7 +24,7 @@
       "asmaan-navbar": {
         "type": "asmaan-navbar",
         "settings": {
-          "show_announcement": false,
+          "show_announcement": true,
           "announcement_text": "FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • FREE SHIPPING OVER ₹999 • ZERO SUGAR • ZERO JITTERS",
           "announcement_link": "",
           "wordmark": "ASMAAN",
