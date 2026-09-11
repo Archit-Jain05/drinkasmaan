@@ -273,8 +273,8 @@
             </div>
           </section>
         {%- endfor -%}
-      {%- else -%}
-        {%- comment -%} Static default piece 01 fallback {%- endcomment -%}
+            {%- else -%}
+        {%- comment -%} Static default piece 01: Starfall Tee {%- endcomment -%}
         <section class="merch_piece" data-primary="#2A1D4A" data-secondary="#9089D3" aria-label="Starfall Tee">
           <div class="merch_piece-container">
             <div class="merch_col">
@@ -282,7 +282,7 @@
               <h2 class="heading-style-h2">Starfall<br>Tee</h2>
               <span class="merch_tag">Washed black · raw hem</span>
               <p class="max-width-custom text-white/65">
-                Heavyweight cotton washed until the black went grey at the seams, then torn off at the hem and left there.
+                Heavyweight cotton washed until the black went grey at the seams, then torn off at the hem and left there. Violet and bone piping runs the shoulder and curves down the body. The wordmark is sprayed rather than printed — it drips because it was meant to.
               </p>
             </div>
             <div>
@@ -306,14 +306,102 @@
                 <li>Hem torn off, threads left on</li>
                 <li>Sprayed wordmark front, starburst back</li>
               </ul>
-              <span class="merch_price">₹3,000</span>
+              <span class="merch_price">{{ section.settings.price | default: '₹3,000' }}</span>
               <div class="merch_sizes" role="group" aria-label="Size selection">
                 <button type="button" class="merch_size" aria-pressed="false">S</button>
                 <button type="button" class="merch_size" aria-pressed="false">M</button>
                 <button type="button" class="merch_size" aria-pressed="false">L</button>
               </div>
-              <button type="button" class="button is-small" data-open-drop>Join the drop</button>
-              <p class="text-size-tiny max-width-xsmall text-white/40">Cut oversized. Take the size you always take.</p>
+              <button type="button" class="button is-small" data-open-drop>{{ section.settings.cta_text | default: 'Join the drop' }}</button>
+              <p class="text-size-tiny max-width-xsmall text-white/40">{{ section.settings.fit | default: 'Cut oversized. Take the size you always take.' }}</p>
+            </div>
+          </div>
+        </section>
+
+        {%- comment -%} Static default piece 02: Ambition Hoodie {%- endcomment -%}
+        <section class="merch_piece" data-primary="#4E0749" data-secondary="#E6A0E8" aria-label="Ambition Hoodie">
+          <div class="merch_piece-container">
+            <div class="merch_col">
+              <span class="merch_number">02 / 03</span>
+              <h2 class="heading-style-h2">Ambition<br>Hoodie</h2>
+              <span class="merch_tag">Full zip · faded black</span>
+              <p class="max-width-custom text-white/65">
+                A full-zip hood in faded black, heavy enough to hold its own shape. The joke is set across the chest in pink over a silver star; the wordmark is sprayed across the back, big enough to read from the other side of the room.
+              </p>
+            </div>
+            <div>
+              <div class="merch_stage" style="--stage: 56svh; --stage-small: 36svh;">
+                <span class="merch_glow" style="--glow: #E6A0E8;" aria-hidden="true"></span>
+                <button type="button" class="merch_turn" aria-label="Turn it over — Ambition Hoodie">
+                  <span class="merch_face"><img src="{{ 'hoodie-front.webp' | asset_url }}" alt="Ambition Hoodie, front" width="770" height="764" loading="lazy"></span>
+                  <span class="merch_face is-back"><img src="{{ 'hoodie-back.webp' | asset_url }}" alt="Ambition Hoodie, back" width="770" height="764" loading="lazy"></span>
+                </button>
+                <span class="merch_shadow" aria-hidden="true"></span>
+              </div>
+              <div class="merch_faces">
+                <button type="button" class="merch_face-button" data-face="front" aria-pressed="true">Front</button>
+                <button type="button" class="merch_face-button" data-face="back" aria-pressed="false">Back</button>
+              </div>
+            </div>
+            <div class="merch_col is-end">
+              <ul class="merch_spec">
+                <li>Brushed fleece, heavyweight</li>
+                <li>Full zip, lined hood</li>
+                <li>Dropped shoulder, roomy sleeve</li>
+                <li>Chest print front, wordmark back</li>
+              </ul>
+              <span class="merch_price">{{ section.settings.price | default: '₹3,000' }}</span>
+              <div class="merch_sizes" role="group" aria-label="Size selection">
+                <button type="button" class="merch_size" aria-pressed="false">S</button>
+                <button type="button" class="merch_size" aria-pressed="false">M</button>
+                <button type="button" class="merch_size" aria-pressed="false">L</button>
+              </div>
+              <button type="button" class="button is-small" data-open-drop>{{ section.settings.cta_text | default: 'Join the drop' }}</button>
+              <p class="text-size-tiny max-width-xsmall text-white/40">{{ section.settings.fit | default: 'Cut oversized. Take the size you always take.' }}</p>
+            </div>
+          </div>
+        </section>
+
+        {%- comment -%} Static default piece 03: Ambition Denim {%- endcomment -%}
+        <section class="merch_piece" data-primary="#16233F" data-secondary="#8AA8D8" aria-label="Ambition Denim">
+          <div class="merch_piece-container">
+            <div class="merch_col">
+              <span class="merch_number">03 / 03</span>
+              <h2 class="heading-style-h2">Ambition<br>Denim</h2>
+              <span class="merch_tag">Mid wash · wide leg</span>
+              <p class="max-width-custom text-white/65">
+                Rigid mid-wash denim cut wide from the hip down and left long enough to stack over a shoe. The wordmark is worked into the thigh the way a tour shirt carries it, with sparks, stars and a barcode thrown across the rest of the leg.
+              </p>
+            </div>
+            <div>
+              <div class="merch_stage" style="--stage: 70svh; --stage-small: 44svh;">
+                <span class="merch_glow" style="--glow: #8AA8D8;" aria-hidden="true"></span>
+                <button type="button" class="merch_turn" aria-label="Turn it over — Ambition Denim">
+                  <span class="merch_face"><img src="{{ 'denim-front.webp' | asset_url }}" alt="Ambition Denim, front" width="625" height="1016" loading="lazy"></span>
+                  <span class="merch_face is-back"><img src="{{ 'denim-back.webp' | asset_url }}" alt="Ambition Denim, back" width="625" height="1016" loading="lazy"></span>
+                </button>
+                <span class="merch_shadow" aria-hidden="true"></span>
+              </div>
+              <div class="merch_faces">
+                <button type="button" class="merch_face-button" data-face="front" aria-pressed="true">Front</button>
+                <button type="button" class="merch_face-button" data-face="back" aria-pressed="false">Back</button>
+              </div>
+            </div>
+            <div class="merch_col is-end">
+              <ul class="merch_spec">
+                <li>Rigid denim, mid wash</li>
+                <li>Wide leg, long inseam</li>
+                <li>Print across thigh and back pocket</li>
+                <li>Wordmark at the waistband</li>
+              </ul>
+              <span class="merch_price">{{ section.settings.price | default: '₹3,000' }}</span>
+              <div class="merch_sizes" role="group" aria-label="Size selection">
+                <button type="button" class="merch_size" aria-pressed="false">S</button>
+                <button type="button" class="merch_size" aria-pressed="false">M</button>
+                <button type="button" class="merch_size" aria-pressed="false">L</button>
+              </div>
+              <button type="button" class="button is-small" data-open-drop>{{ section.settings.cta_text | default: 'Join the drop' }}</button>
+              <p class="text-size-tiny max-width-xsmall text-white/40">{{ section.settings.fit | default: 'Cut oversized. Take the size you always take.' }}</p>
             </div>
           </div>
         </section>
