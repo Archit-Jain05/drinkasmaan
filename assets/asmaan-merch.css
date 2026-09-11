@@ -4,12 +4,16 @@
 --------------------------------------------------------------------------- */
 
 /* Ensure all parent containers allow sticky positioning and proper visibility */
+html,
+body,
+#top,
+main#MainContent,
+.shopify-section,
 .merch_page-content,
 #shopify-section-main-merch,
-.section-main-merch,
-#top,
-main#MainContent {
-  overflow: visible !important;
+.section-main-merch {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
   position: relative;
   width: 100%;
 }
@@ -390,7 +394,7 @@ main#MainContent {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: visible;
+  overflow: visible !important;
 }
 
 /* Stacked, not sequenced: two of these are always sitting over the one being
