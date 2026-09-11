@@ -14,7 +14,6 @@
     var heroPieces = heroRail ? Array.from(heroRail.children) : [];
     var marquee = document.querySelector('[data-merch-marquee]');
     var run = document.querySelector('.merch_run');
-    var stickyFrame = run ? run.querySelector('.merch_run-sticky') : null;
     var pieceScreens = run ? Array.from(run.querySelectorAll('.merch_piece')) : [];
     var navItems = run ? Array.from(run.querySelectorAll('.merch_nav-item')) : [];
     var dropModal = document.querySelector('.drop_modal');
@@ -185,6 +184,7 @@
 
     // Continuous Animation & Scroll Loop
     var lastTime = performance.now();
+    var lastHeroTravel = -1;
     var marqueeRunning = true;
 
     function tick(now) {
@@ -194,15 +194,18 @@
       var scrollY = window.scrollY || window.pageYOffset;
       var windowH = window.innerHeight;
 
-      // 1. Merch Hero Parallax Drift
+      // 1. Merch Hero Parallax Drift (dirty checked against scroll changes)
       if (heroRail && heroPieces.length > 0) {
         var heroTravel = Math.min(scrollY, windowH);
-        heroPieces.forEach(function(piece, idx) {
-          var defaultDrift = (HANG[idx] && HANG[idx].drift) ? HANG[idx].drift : 0.1;
-          var driftAttr = piece.getAttribute('data-drift');
-          var drift = driftAttr !== null ? parseFloat(driftAttr) : defaultDrift;
-          piece.style.setProperty('--drop', (-heroTravel * drift) + 'px');
-        });
+        if (Math.abs(heroTravel - lastHeroTravel) > 0.5) {
+          lastHeroTravel = heroTravel;
+          heroPieces.forEach(function(piece, idx) {
+            var defaultDrift = (HANG[idx] && HANG[idx].drift) ? HANG[idx].drift : 0.1;
+            var driftAttr = piece.getAttribute('data-drift');
+            var drift = driftAttr !== null ? parseFloat(driftAttr) : defaultDrift;
+            piece.style.setProperty('--drop', (-heroTravel * drift).toFixed(2) + 'px');
+          });
+        }
       }
 
       // 2. Marquee Off-Screen Pausing
@@ -221,23 +224,6 @@
         var travel = runRect.height - windowH;
         var progress = travel <= 0 ? 0 : Math.min(Math.max(-runRect.top / travel, 0), 1);
 
-        // Hardware pinning fallback if native CSS position: sticky is broken by ancestor containers
-        if (stickyFrame) {
-          if (travel > 0 && runRect.top <= 0 && -runRect.top <= travel) {
-            var stickyTop = stickyFrame.getBoundingClientRect().top;
-            if (Math.abs(stickyTop) > 3) {
-              var offset = Math.min(Math.max(-runRect.top, 0), travel);
-              stickyFrame.style.transform = 'translate3d(0, ' + offset + 'px, 0)';
-            } else {
-              stickyFrame.style.transform = '';
-            }
-          } else if (runRect.top > 0) {
-            stickyFrame.style.transform = '';
-          } else if (-runRect.top > travel) {
-            stickyFrame.style.transform = 'translate3d(0, ' + travel + 'px, 0)';
-          }
-        }
-
         pieceStates.forEach(function(st, i) {
           var through = progress * pieceStates.length - i;
           var last = i === pieceStates.length - 1;
@@ -251,19 +237,22 @@
 
           if (Math.abs(lit - st.lit) > 0.002) {
             st.lit = lit;
-            st.screen.style.setProperty('--lit', String(lit));
+            st.screen.style.setProperty('--lit', lit.toFixed(3));
             st.screen.style.visibility = lit < 0.02 ? 'hidden' : 'visible';
             st.screen.style.pointerEvents = lit > 0.6 ? 'auto' : 'none';
-            if (lit > 0.6) {
-              setActivePiece(i);
-            }
           }
 
           // 3D rotation chasing
           if (st.turnBtn) {
             var target = smooth(range(through, TURN_FROM, TURN_TO)) * 180 + st.turns * 180;
-            st.angle += (target - st.angle) * (1 - Math.exp(-FOLLOW * dt));
-            st.turnBtn.style.setProperty('--turn', st.angle.toFixed(2) + 'deg');
+            var diff = target - st.angle;
+            if (Math.abs(diff) > 0.05) {
+              st.angle += diff * (1 - Math.exp(-FOLLOW * dt));
+              st.turnBtn.style.setProperty('--turn', st.angle.toFixed(2) + 'deg');
+            } else if (st.angle !== target) {
+              st.angle = target;
+              st.turnBtn.style.setProperty('--turn', target.toFixed(2) + 'deg');
+            }
 
             var turned = ((st.angle % 360) + 360) % 360;
             var facing = turned > 90 && turned < 270;
@@ -274,6 +263,12 @@
             }
           }
         });
+
+        // Determine single active piece deterministically without oscillation
+        var activeIdx = Math.min(Math.max(Math.round(progress * (pieceStates.length - 1)), 0), pieceStates.length - 1);
+        if (activeIdx !== activePieceIndex) {
+          setActivePiece(activeIdx);
+        }
       }
 
       requestAnimationFrame(tick);

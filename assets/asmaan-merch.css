@@ -501,10 +501,11 @@ main#MainContent {
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  transform: translateZ(1px);
 }
 
 .merch_face.is-back {
-  transform: rotateY(180deg);
+  transform: rotateY(180deg) translateZ(1px);
 }
 
 .merch_face img {
