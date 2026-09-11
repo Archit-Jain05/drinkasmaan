@@ -32,7 +32,7 @@
           "cta_link": "/#range",
           "motion_text": "Motion",
           "menu_text": "Menu",
-          "use_custom_menu": false,
+          "use_custom_menu": true,
           "menu": "main-menu",
           "instagram_url": ""
         }
