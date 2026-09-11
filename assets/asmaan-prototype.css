@@ -72,7 +72,7 @@ html {
   background: #000;
   scroll-behavior: smooth;
   color-scheme: dark;
-  overflow-y: scroll;
+  overflow-x: clip;
   scrollbar-gutter: stable;
 }
 
@@ -85,9 +85,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-user-select: none;
   user-select: none;
-  overflow-x: hidden;
+  overflow-x: clip;
   margin: 0;
   padding: 0;
+}
+
+#top,
+main#MainContent,
+.shopify-section {
+  overflow: visible;
 }
 
 input,

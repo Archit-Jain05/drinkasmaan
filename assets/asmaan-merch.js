@@ -14,6 +14,7 @@
     var heroPieces = heroRail ? Array.from(heroRail.children) : [];
     var marquee = document.querySelector('[data-merch-marquee]');
     var run = document.querySelector('.merch_run');
+    var stickyFrame = run ? run.querySelector('.merch_run-sticky') : null;
     var pieceScreens = run ? Array.from(run.querySelectorAll('.merch_piece')) : [];
     var navItems = run ? Array.from(run.querySelectorAll('.merch_nav-item')) : [];
     var dropModal = document.querySelector('.drop_modal');
@@ -119,9 +120,13 @@
       });
     }
 
-    // Initialize root colors with piece 0
+    // Initialize root colors and display state with piece 0
     if (pieceStates[0]) {
       setActivePiece(0);
+      pieceStates[0].lit = 1;
+      pieceStates[0].screen.style.setProperty('--lit', '1');
+      pieceStates[0].screen.style.visibility = 'visible';
+      pieceStates[0].screen.style.pointerEvents = 'auto';
     }
 
     // Side nav smooth scroll
@@ -216,6 +221,23 @@
         var travel = runRect.height - windowH;
         var progress = travel <= 0 ? 0 : Math.min(Math.max(-runRect.top / travel, 0), 1);
 
+        // Hardware pinning fallback if native CSS position: sticky is broken by ancestor containers
+        if (stickyFrame) {
+          if (travel > 0 && runRect.top <= 0 && -runRect.top <= travel) {
+            var stickyTop = stickyFrame.getBoundingClientRect().top;
+            if (Math.abs(stickyTop) > 3) {
+              var offset = Math.min(Math.max(-runRect.top, 0), travel);
+              stickyFrame.style.transform = 'translate3d(0, ' + offset + 'px, 0)';
+            } else {
+              stickyFrame.style.transform = '';
+            }
+          } else if (runRect.top > 0) {
+            stickyFrame.style.transform = '';
+          } else if (-runRect.top > travel) {
+            stickyFrame.style.transform = 'translate3d(0, ' + travel + 'px, 0)';
+          }
+        }
+
         pieceStates.forEach(function(st, i) {
           var through = progress * pieceStates.length - i;
           var last = i === pieceStates.length - 1;
@@ -223,6 +245,9 @@
           // Compute lit opacity
           var dim = last ? 0 : range(through, DIM_FROM, DIM_TO);
           var lit = range(through, LIT_FROM, LIT_TO) * (1 - dim);
+          if (i === 0 && progress < 0.08) {
+            lit = Math.max(lit, 1 - range(through, DIM_FROM, DIM_TO));
+          }
 
           if (Math.abs(lit - st.lit) > 0.002) {
             st.lit = lit;

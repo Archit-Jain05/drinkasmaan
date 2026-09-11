@@ -3,6 +3,17 @@
    Exact match of Next.js /merch page styles
 --------------------------------------------------------------------------- */
 
+/* Ensure all parent containers allow sticky positioning and proper visibility */
+.merch_page-content,
+#shopify-section-main-merch,
+.section-main-merch,
+#top,
+main#MainContent {
+  overflow: visible !important;
+  position: relative;
+  width: 100%;
+}
+
 .wear_cta {
   position: relative;
   display: inline-flex;
@@ -188,12 +199,13 @@
 
 .merch_hero {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: var(--pad-l);
   min-height: 100svh;
+  min-height: 100vh;
   padding: calc(var(--nav-height) + var(--pad-s)) var(--page-padding) var(--pad-xl);
   overflow: hidden;
 }
@@ -253,9 +265,10 @@
 
 .merch_hero-piece {
   position: relative;
-  height: var(--h);
+  height: 38svh;
+  height: var(--h, 38svh);
   margin-inline: var(--lap, -3%);
-  transform: rotate(var(--tilt, 0deg)) translateY(var(--drop, 0));
+  transform: rotate(var(--tilt, 0deg)) translateY(var(--drop, 0px));
   will-change: transform;
 }
 
@@ -363,13 +376,21 @@
    the frame inside it is a single screen the pieces are stacked in. */
 .merch_run {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  width: 100%;
 }
 
 .merch_run-sticky {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   height: 100svh;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: visible;
 }
 
 /* Stacked, not sequenced: two of these are always sitting over the one being
@@ -382,6 +403,11 @@
   opacity: var(--lit, 0);
   transform: translateY(calc((1 - var(--lit, 0)) * 1.75rem));
   will-change: opacity, transform;
+}
+
+.merch_piece:first-child {
+  opacity: var(--lit, 1);
+  transform: translateY(calc((1 - var(--lit, 1)) * 1.75rem));
 }
 
 .merch_piece-container {
@@ -444,7 +470,9 @@
   width: 100%;
   align-items: center;
   justify-content: center;
+  height: 32rem;
   height: min(var(--stage, 56svh), 44rem);
+  -webkit-perspective: 2200px;
   perspective: 2200px;
 }
 
@@ -462,6 +490,7 @@
   border: none;
   background: none;
   transform: rotateY(var(--turn, 0deg));
+  -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
   cursor: pointer;
   will-change: transform;
