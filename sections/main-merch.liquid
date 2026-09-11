@@ -1,0 +1,735 @@
+{{ 'asmaan-merch.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%}
+  Fixed ambient background wash driven by active piece colors
+{%- endcomment -%}
+<div class="merch_wash" style="--wash: 0.55;" aria-hidden="true"></div>
+
+<div class="merch_page-content">
+  {%- comment -%}
+    1. Hero Section
+  {%- endcomment -%}
+  <section class="merch_hero" aria-label="{{ shop.name }} — {{ section.settings.kicker | default: 'Capsule 01' }}">
+    <div class="merch_meta">
+      <span>{{ section.settings.kicker | default: 'Capsule 01' }}</span>
+      <span aria-hidden="true">/</span>
+      <span>{{ section.settings.tagline | default: 'Ambition Tonic' }}</span>
+    </div>
+
+    <div class="merch_hero-stack">
+      <div class="merch_hero-type" aria-hidden="true">
+        <span>{{ section.settings.headline_line1 | default: 'Too much' }}</span>
+        <span>{{ section.settings.headline_line2 | default: 'Ambition' }}</span>
+      </div>
+
+      <div class="merch_hero-rail" data-merch-rail>
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign default_height = '34svh'
+              assign default_tilt = '-7deg'
+              assign default_lap = '-3%'
+              assign default_drift = '0.16'
+              if forloop.index == 2
+                assign default_height = '42svh'
+                assign default_tilt = '0deg'
+                assign default_lap = '-1%'
+                assign default_drift = '0.06'
+              elsif forloop.index == 3
+                assign default_height = '47svh'
+                assign default_tilt = '6deg'
+                assign default_lap = '-3%'
+                assign default_drift = '0.2'
+              endif
+
+              assign h_val = block.settings.hero_height | default: default_height
+              assign t_val = block.settings.hero_tilt | default: default_tilt
+              assign l_val = block.settings.hero_lap | default: default_lap
+              assign d_val = block.settings.hero_drift | default: default_drift
+              assign sec_color = block.settings.secondary_color | default: '#9089D3'
+
+              assign fallback_front = 'tee-front.webp'
+              if forloop.index == 2
+                assign fallback_front = 'hoodie-front.webp'
+              elsif forloop.index == 3
+                assign fallback_front = 'denim-front.webp'
+              endif
+            -%}
+            <div
+              class="merch_hero-piece"
+              style="--h: {{ h_val }}; --tilt: {{ t_val }}; --lap: {{ l_val }};"
+              data-drift="{{ d_val }}"
+              {{ block.shopify_attributes }}
+            >
+              <span class="merch_glow" style="--glow: {{ sec_color }};" aria-hidden="true"></span>
+              {%- if block.settings.front_image != blank -%}
+                {{ block.settings.front_image | image_url: width: 1200 | image_tag: 
+                  class: 'w-auto h-full object-contain',
+                  alt: block.settings.line1 | append: ' ' | append: block.settings.line2 | append: ', front',
+                  loading: forloop.first ? 'eager' : 'lazy'
+                }}
+              {%- else -%}
+                <img
+                  src="{{ fallback_front | asset_url }}"
+                  alt="{{ block.settings.line1 | default: 'Asmaan Piece' }} {{ block.settings.line2 }}, front"
+                  width="764"
+                  height="742"
+                  {% if forloop.index == 2 %}loading="eager"{% else %}loading="lazy"{% endif %}
+                >
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%} Static default fallback if no blocks configured {%- endcomment -%}
+          <div class="merch_hero-piece" style="--h: 34svh; --tilt: -7deg; --lap: -3%;" data-drift="0.16">
+            <span class="merch_glow" style="--glow: #9089D3;" aria-hidden="true"></span>
+            <img src="{{ 'tee-front.webp' | asset_url }}" alt="Starfall Tee, front" width="764" height="742" loading="lazy">
+          </div>
+          <div class="merch_hero-piece" style="--h: 42svh; --tilt: 0deg; --lap: -1%;" data-drift="0.06">
+            <span class="merch_glow" style="--glow: #E6A0E8;" aria-hidden="true"></span>
+            <img src="{{ 'hoodie-front.webp' | asset_url }}" alt="Ambition Hoodie, front" width="770" height="764" loading="eager">
+          </div>
+          <div class="merch_hero-piece" style="--h: 47svh; --tilt: 6deg; --lap: -3%;" data-drift="0.2">
+            <span class="merch_glow" style="--glow: #8AA8D8;" aria-hidden="true"></span>
+            <img src="{{ 'denim-front.webp' | asset_url }}" alt="Ambition Denim, front" width="625" height="1016" loading="lazy">
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="merch_hero-row">
+      <h1 class="sr-only">{{ shop.name }} — {{ section.settings.kicker | default: 'Capsule 01' }}</h1>
+      <p class="max-width-medium text-size-medium text-white/70">{{ section.settings.sub | default: 'For a t-shirt. For a hoodie. For a pair of jeans.' }}</p>
+
+      <div class="merch_meta">
+        <span><b>{{ section.blocks.size | default: 3 }}</b> pieces</span>
+        <span aria-hidden="true">·</span>
+        <span><b>{{ section.settings.price | default: '₹3,000' }}</b> each</span>
+        <span aria-hidden="true">·</span>
+        <span>{{ section.settings.sizes | default: 'S · M · L' }}</span>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%}
+    2. Marquee Ticker
+  {%- endcomment -%}
+  <div class="merch_marquee" data-merch-marquee data-running="true" aria-label="{{ section.settings.kicker | default: 'Capsule 01' }}">
+    <div class="merch_marquee-track">
+      <span class="merch_marquee-item">{{ section.settings.kicker | default: 'Capsule 01' }} {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Washed black {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Cut oversized {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Torn, not finished {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">{{ section.settings.sizes | default: 'S · M · L' }} {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">{{ section.settings.price | default: '₹3,000' }} {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Limited run {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+    </div>
+    <div class="merch_marquee-track" aria-hidden="true">
+      <span class="merch_marquee-item">{{ section.settings.kicker | default: 'Capsule 01' }} {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Washed black {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Cut oversized {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Torn, not finished {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">{{ section.settings.sizes | default: 'S · M · L' }} {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">{{ section.settings.price | default: '₹3,000' }} {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+      <span class="merch_marquee-item">Limited run {% render 'asmaan-icons', name: 'star', class: 'w-3 h-3' %}</span>
+    </div>
+  </div>
+
+  {%- comment -%}
+    3. Sticky Stage Run
+  {%- endcomment -%}
+  {%- assign piece_count = section.blocks.size | default: 3 -%}
+  {%- if piece_count == 0 -%}{%- assign piece_count = 3 -%}{%- endif -%}
+  {%- assign hold_multiplier = piece_count | times: 1.9 -%}
+  <div class="merch_run" style="height: {{ hold_multiplier | times: 100 }}svh; height: {{ hold_multiplier | times: 100 }}vh;">
+    <div class="merch_run-sticky">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign is_tall = block.settings.is_tall
+            assign fallback_front = 'tee-front.webp'
+            assign fallback_back = 'tee-back.webp'
+            assign default_num = '01'
+            if forloop.index == 2
+              assign fallback_front = 'hoodie-front.webp'
+              assign fallback_back = 'hoodie-back.webp'
+              assign default_num = '02'
+            elsif forloop.index == 3
+              assign fallback_front = 'denim-front.webp'
+              assign fallback_back = 'denim-back.webp'
+              assign default_num = '03'
+            endif
+
+            assign pri_color = block.settings.primary_color | default: '#2A1D4A'
+            assign sec_color = block.settings.secondary_color | default: '#9089D3'
+          -%}
+          <section
+            class="merch_piece"
+            data-primary="{{ pri_color }}"
+            data-secondary="{{ sec_color }}"
+            aria-label="{{ block.settings.line1 | default: 'Starfall' }} {{ block.settings.line2 | default: 'Tee' }}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="merch_piece-container">
+              <div class="merch_col">
+                <span class="merch_number">
+                  {{ block.settings.number | default: default_num }} / {{ section.blocks.size | prepend: '0' | slice: -2, 2 }}
+                </span>
+
+                <h2 class="heading-style-h2">
+                  {{ block.settings.line1 | default: 'Starfall' }}<br>
+                  {{ block.settings.line2 | default: 'Tee' }}
+                </h2>
+
+                <span class="merch_tag">{{ block.settings.tag | default: 'Washed black · raw hem' }}</span>
+                <p class="max-width-custom text-white/65">
+                  {{ block.settings.blurb | default: 'Heavyweight cotton washed until the black went grey at the seams, then torn off at the hem and left there.' }}
+                </p>
+              </div>
+
+              <div>
+                <div
+                  class="merch_stage"
+                  style="--stage: {% if is_tall %}70svh{% else %}56svh{% endif %}; --stage-small: {% if is_tall %}44svh{% else %}36svh{% endif %};"
+                >
+                  <span class="merch_glow" style="--glow: {{ sec_color }};" aria-hidden="true"></span>
+
+                  <button
+                    type="button"
+                    class="merch_turn"
+                    aria-label="Turn it over — {{ block.settings.line1 }} {{ block.settings.line2 }}"
+                  >
+                    <span class="merch_face">
+                      {%- if block.settings.front_image != blank -%}
+                        {{ block.settings.front_image | image_url: width: 1200 | image_tag: 
+                          class: 'w-full h-full object-contain',
+                          alt: block.settings.line1 | append: ' ' | append: block.settings.line2 | append: ', front',
+                          loading: 'lazy'
+                        }}
+                      {%- else -%}
+                        <img src="{{ fallback_front | asset_url }}" alt="{{ block.settings.line1 }} {{ block.settings.line2 }}, front" width="764" height="742" loading="lazy">
+                      {%- endif -%}
+                    </span>
+                    <span class="merch_face is-back">
+                      {%- if block.settings.back_image != blank -%}
+                        {{ block.settings.back_image | image_url: width: 1200 | image_tag: 
+                          class: 'w-full h-full object-contain',
+                          alt: block.settings.line1 | append: ' ' | append: block.settings.line2 | append: ', back',
+                          loading: 'lazy'
+                        }}
+                      {%- else -%}
+                        <img src="{{ fallback_back | asset_url }}" alt="{{ block.settings.line1 }} {{ block.settings.line2 }}, back" width="764" height="742" loading="lazy">
+                      {%- endif -%}
+                    </span>
+                  </button>
+
+                  <span class="merch_shadow" aria-hidden="true"></span>
+                </div>
+
+                <div class="merch_faces">
+                  <button type="button" class="merch_face-button" data-face="front" aria-pressed="true">
+                    Front
+                  </button>
+                  <button type="button" class="merch_face-button" data-face="back" aria-pressed="false">
+                    Back
+                  </button>
+                </div>
+              </div>
+
+              <div class="merch_col is-end">
+                <ul class="merch_spec">
+                  {%- if block.settings.spec != blank -%}
+                    {%- assign specs = block.settings.spec | newline_to_br | split: '<br />' -%}
+                    {%- for s in specs -%}
+                      {%- assign s_clean = s | strip -%}
+                      {%- if s_clean != blank -%}
+                        <li>{{ s_clean }}</li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    <li>Heavyweight cotton, stone washed</li>
+                    <li>Boxy body, dropped shoulder</li>
+                    <li>Hem torn off, threads left on</li>
+                    <li>Sprayed wordmark front, starburst back</li>
+                  {%- endif -%}
+                </ul>
+
+                <span class="merch_price">{{ block.settings.price | default: section.settings.price | default: '₹3,000' }}</span>
+
+                <div class="merch_sizes" role="group" aria-label="Size selection">
+                  <button type="button" class="merch_size" aria-pressed="false">S</button>
+                  <button type="button" class="merch_size" aria-pressed="false">M</button>
+                  <button type="button" class="merch_size" aria-pressed="false">L</button>
+                </div>
+
+                <button type="button" class="button is-small" data-open-drop>
+                  {{ section.settings.cta_text | default: 'Join the drop' }}
+                </button>
+
+                <p class="text-size-tiny max-width-xsmall text-white/40">
+                  {{ section.settings.fit | default: 'Cut oversized. Take the size you always take.' }}
+                </p>
+              </div>
+            </div>
+          </section>
+        {%- endfor -%}
+      {%- else -%}
+        {%- comment -%} Static default piece 01 fallback {%- endcomment -%}
+        <section class="merch_piece" data-primary="#2A1D4A" data-secondary="#9089D3" aria-label="Starfall Tee">
+          <div class="merch_piece-container">
+            <div class="merch_col">
+              <span class="merch_number">01 / 03</span>
+              <h2 class="heading-style-h2">Starfall<br>Tee</h2>
+              <span class="merch_tag">Washed black · raw hem</span>
+              <p class="max-width-custom text-white/65">
+                Heavyweight cotton washed until the black went grey at the seams, then torn off at the hem and left there.
+              </p>
+            </div>
+            <div>
+              <div class="merch_stage" style="--stage: 56svh; --stage-small: 36svh;">
+                <span class="merch_glow" style="--glow: #9089D3;" aria-hidden="true"></span>
+                <button type="button" class="merch_turn" aria-label="Turn it over — Starfall Tee">
+                  <span class="merch_face"><img src="{{ 'tee-front.webp' | asset_url }}" alt="Starfall Tee, front" width="764" height="742" loading="lazy"></span>
+                  <span class="merch_face is-back"><img src="{{ 'tee-back.webp' | asset_url }}" alt="Starfall Tee, back" width="764" height="742" loading="lazy"></span>
+                </button>
+                <span class="merch_shadow" aria-hidden="true"></span>
+              </div>
+              <div class="merch_faces">
+                <button type="button" class="merch_face-button" data-face="front" aria-pressed="true">Front</button>
+                <button type="button" class="merch_face-button" data-face="back" aria-pressed="false">Back</button>
+              </div>
+            </div>
+            <div class="merch_col is-end">
+              <ul class="merch_spec">
+                <li>Heavyweight cotton, stone washed</li>
+                <li>Boxy body, dropped shoulder</li>
+                <li>Hem torn off, threads left on</li>
+                <li>Sprayed wordmark front, starburst back</li>
+              </ul>
+              <span class="merch_price">₹3,000</span>
+              <div class="merch_sizes" role="group" aria-label="Size selection">
+                <button type="button" class="merch_size" aria-pressed="false">S</button>
+                <button type="button" class="merch_size" aria-pressed="false">M</button>
+                <button type="button" class="merch_size" aria-pressed="false">L</button>
+              </div>
+              <button type="button" class="button is-small" data-open-drop>Join the drop</button>
+              <p class="text-size-tiny max-width-xsmall text-white/40">Cut oversized. Take the size you always take.</p>
+            </div>
+          </div>
+        </section>
+      {%- endif -%}
+
+      <nav class="merch_nav" aria-label="{{ section.settings.kicker | default: 'Capsule 01' }}">
+        {%- if section.blocks.size > 0 -%}
+          {%- for block in section.blocks -%}
+            {%- assign def_num = forloop.index | prepend: '0' | slice: -2, 2 -%}
+            <button
+              type="button"
+              class="merch_nav-item {% if forloop.first %}is-active{% endif %}"
+              {% if forloop.first %}aria-current="true"{% endif %}
+            >
+              {{ block.settings.number | default: def_num }}
+              <span class="sr-only">{{ block.settings.line1 }} {{ block.settings.line2 }}</span>
+            </button>
+          {%- endfor -%}
+        {%- else -%}
+          <button type="button" class="merch_nav-item is-active" aria-current="true">01<span class="sr-only">Starfall Tee</span></button>
+          <button type="button" class="merch_nav-item">02<span class="sr-only">Ambition Hoodie</span></button>
+          <button type="button" class="merch_nav-item">03<span class="sr-only">Ambition Denim</span></button>
+        {%- endif -%}
+      </nav>
+    </div>
+  </div>
+
+  {%- comment -%}
+    4. Closing Drop Section
+  {%- endcomment -%}
+  <div class="merch_drop-wrapper">
+    <section id="drop" class="merch_drop">
+      <h2 class="heading-style-h3">{{ section.settings.drop_title | default: 'The drop' }}</h2>
+
+      <p class="merch_drop-price">{{ section.settings.price | default: '₹3,000' }}</p>
+      <p class="merch_meta">{{ section.settings.price_note | default: 'One price, whichever one you take.' }}</p>
+
+      <button type="button" class="wear_cta pointer-events-on" data-open-drop>
+        {{ section.settings.cta_text | default: 'Join the drop' }}
+        <svg viewBox="0 0 24 24" class="wear_cta-star" aria-hidden="true">
+          <path d="M12 0c.6 6.2 5.2 10.8 12 12-6.8 1.2-11.4 5.8-12 12-.6-6.2-5.2-10.8-12-12C6.8 10.8 11.4 6.2 12 0z" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <p class="max-width-medium text-white/60">
+        {{ section.settings.drop_body | default: 'Three pieces, made once. When the run is gone there is no second one — the list gets the morning it lands, and nobody else gets told.' }}
+      </p>
+
+      <dl class="merch_strip">
+        <div>
+          <dt>Fit</dt>
+          <dd>{{ section.settings.fit | default: 'Cut oversized. Take the size you always take.' }}</dd>
+        </div>
+        <div>
+          <dt>Sizes</dt>
+          <dd>{{ section.settings.sizes | default: 'S · M · L' }}</dd>
+        </div>
+        <div>
+          <dt>The drop</dt>
+          <dd>{{ section.settings.drop_line | default: 'Drops land without warning. If you are not on the list, you will miss it.' }}</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+</div>
+
+{%- comment -%}
+  5. Drop Waitlist Modal
+{%- endcomment -%}
+<div class="drop_modal" data-open="false" aria-hidden="true">
+  <div class="drop_sheet" role="dialog" aria-modal="true" aria-labelledby="drop-title">
+    <button type="button" class="drop_close" aria-label="Close modal">
+      <svg viewBox="0 0 12 12" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M2.5 2.5 9.5 9.5M9.5 2.5 2.5 9.5"/>
+      </svg>
+    </button>
+
+    <h2 id="drop-title" class="heading-style-h2">
+      {{ section.settings.modal_title | default: 'On the list' }}
+    </h2>
+    <p class="mt-[var(--pad-s)] text-white/70">
+      {{ section.settings.modal_body | default: 'One mail, the morning the drop goes live. Nothing else, ever.' }}
+    </p>
+
+    {% form 'customer', class: 'mt-[var(--pad-l)] text-left' %}
+      <input type="hidden" name="contact[tags]" value="merch_waitlist">
+      {%- if form.posted_successfully? -%}
+        <p class="mt-[var(--pad-l)] text-size-medium text-emerald-400 font-mono text-center" role="status">
+          {{ section.settings.modal_success | default: "You're on. Watch your inbox the morning it lands." }}
+        </p>
+      {%- else -%}
+        <div class="newsletter_field relative">
+          <input
+            id="drop-email"
+            type="email"
+            name="contact[email]"
+            required
+            autocomplete="email"
+            placeholder=" "
+            class="newsletter_input"
+          >
+          <label for="drop-email" class="newsletter_label">
+            {{ section.settings.modal_placeholder | default: 'Your email address' }}
+          </label>
+        </div>
+
+        {%- if form.errors -%}
+          <p class="mt-[var(--pad-xxs)] text-size-small text-[#ff7676]" role="alert">
+            {{ section.settings.modal_error | default: "That address didn't look right. Try again?" }}
+          </p>
+        {%- endif -%}
+
+        <button type="submit" class="button is-full mt-[var(--pad-m)]">
+          {{ section.settings.modal_cta | default: 'Notify me' }}
+        </button>
+      {%- endif -%}
+    {% endform %}
+  </div>
+</div>
+
+<script src="{{ 'asmaan-merch.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Merchandise Capsule",
+  "tag": "section",
+  "class": "section-main-merch",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Capsule Kicker",
+      "default": "Capsule 01"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Ambition Tonic"
+    },
+    {
+      "type": "text",
+      "id": "headline_line1",
+      "label": "Hero Headline (Line 1)",
+      "default": "Too much"
+    },
+    {
+      "type": "text",
+      "id": "headline_line2",
+      "label": "Hero Headline (Line 2)",
+      "default": "Ambition"
+    },
+    {
+      "type": "text",
+      "id": "sub",
+      "label": "Subtitle",
+      "default": "For a t-shirt. For a hoodie. For a pair of jeans."
+    },
+    {
+      "type": "text",
+      "id": "price",
+      "label": "Universal Capsule Price",
+      "default": "₹3,000"
+    },
+    {
+      "type": "text",
+      "id": "price_note",
+      "label": "Price Note",
+      "default": "One price, whichever one you take."
+    },
+    {
+      "type": "text",
+      "id": "sizes",
+      "label": "Sizes Available",
+      "default": "S · M · L"
+    },
+    {
+      "type": "text",
+      "id": "fit",
+      "label": "Fit Recommendation",
+      "default": "Cut oversized. Take the size you always take."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Call to Action Text",
+      "default": "Join the drop"
+    },
+    {
+      "type": "header",
+      "content": "Closing Drop Section"
+    },
+    {
+      "type": "text",
+      "id": "drop_title",
+      "label": "Drop Title",
+      "default": "The drop"
+    },
+    {
+      "type": "textarea",
+      "id": "drop_body",
+      "label": "Drop Description",
+      "default": "Three pieces, made once. When the run is gone there is no second one — the list gets the morning it lands, and nobody else gets told."
+    },
+    {
+      "type": "text",
+      "id": "drop_line",
+      "label": "Drop Urgency Note",
+      "default": "Drops land without warning. If you are not on the list, you will miss it."
+    },
+    {
+      "type": "header",
+      "content": "Waitlist Modal"
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Modal Title",
+      "default": "On the list"
+    },
+    {
+      "type": "textarea",
+      "id": "modal_body",
+      "label": "Modal Subtitle",
+      "default": "One mail, the morning the drop goes live. Nothing else, ever."
+    },
+    {
+      "type": "text",
+      "id": "modal_placeholder",
+      "label": "Input Placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "modal_cta",
+      "label": "Submit Button Text",
+      "default": "Notify me"
+    },
+    {
+      "type": "text",
+      "id": "modal_success",
+      "label": "Success Message",
+      "default": "You're on. Watch your inbox the morning it lands."
+    },
+    {
+      "type": "text",
+      "id": "modal_error",
+      "label": "Error Message",
+      "default": "That address didn't look right. Try again?"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "piece",
+      "name": "Garment Piece",
+      "settings": [
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Piece Number",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "line1",
+          "label": "Title Line 1",
+          "default": "Starfall"
+        },
+        {
+          "type": "text",
+          "id": "line2",
+          "label": "Title Line 2",
+          "default": "Tee"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tagline / Details",
+          "default": "Washed black · raw hem"
+        },
+        {
+          "type": "textarea",
+          "id": "blurb",
+          "label": "Description",
+          "default": "Heavyweight cotton washed until the black went grey at the seams, then torn off at the hem and left there. Violet and bone piping runs the shoulder and curves down the body. The wordmark is sprayed rather than printed — it drips because it was meant to."
+        },
+        {
+          "type": "textarea",
+          "id": "spec",
+          "label": "Specifications (one per line)",
+          "default": "Heavyweight cotton, stone washed\nBoxy body, dropped shoulder\nHem torn off, threads left on\nSprayed wordmark front, starburst back"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price (leave blank to inherit capsule price)"
+        },
+        {
+          "type": "image_picker",
+          "id": "front_image",
+          "label": "Front Image Cutout"
+        },
+        {
+          "type": "image_picker",
+          "id": "back_image",
+          "label": "Back Image Cutout"
+        },
+        {
+          "type": "color",
+          "id": "primary_color",
+          "label": "Primary Accent Color",
+          "default": "#2A1D4A"
+        },
+        {
+          "type": "color",
+          "id": "secondary_color",
+          "label": "Secondary Accent Color",
+          "default": "#9089D3"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_tall",
+          "label": "Tall Garment Proportion (e.g. Denim)",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Hero Position & Parallax"
+        },
+        {
+          "type": "text",
+          "id": "hero_height",
+          "label": "Hero Height (e.g. 34svh, 42svh)",
+          "default": "34svh"
+        },
+        {
+          "type": "text",
+          "id": "hero_tilt",
+          "label": "Hero Tilt (e.g. -7deg, 0deg, 6deg)",
+          "default": "-7deg"
+        },
+        {
+          "type": "text",
+          "id": "hero_lap",
+          "label": "Hero Overlap (e.g. -3%, -1%)",
+          "default": "-3%"
+        },
+        {
+          "type": "text",
+          "id": "hero_drift",
+          "label": "Parallax Drift Factor (0.0 to 0.5)",
+          "default": "0.16"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Capsule 01",
+      "blocks": [
+        {
+          "type": "piece",
+          "settings": {
+            "number": "01",
+            "line1": "Starfall",
+            "line2": "Tee",
+            "tag": "Washed black · raw hem",
+            "blurb": "Heavyweight cotton washed until the black went grey at the seams, then torn off at the hem and left there. Violet and bone piping runs the shoulder and curves down the body. The wordmark is sprayed rather than printed — it drips because it was meant to.",
+            "spec": "Heavyweight cotton, stone washed\nBoxy body, dropped shoulder\nHem torn off, threads left on\nSprayed wordmark front, starburst back",
+            "primary_color": "#2A1D4A",
+            "secondary_color": "#9089D3",
+            "is_tall": false,
+            "hero_height": "34svh",
+            "hero_tilt": "-7deg",
+            "hero_lap": "-3%",
+            "hero_drift": "0.16"
+          }
+        },
+        {
+          "type": "piece",
+          "settings": {
+            "number": "02",
+            "line1": "Ambition",
+            "line2": "Hoodie",
+            "tag": "Full zip · faded black",
+            "blurb": "A full-zip hood in faded black, heavy enough to hold its own shape. The joke is set across the chest in pink over a silver star; the wordmark is sprayed across the back, big enough to read from the other side of the room.",
+            "spec": "Brushed fleece, heavyweight\nFull zip, lined hood\nDropped shoulder, roomy sleeve\nChest print front, wordmark back",
+            "primary_color": "#4E0749",
+            "secondary_color": "#E6A0E8",
+            "is_tall": false,
+            "hero_height": "42svh",
+            "hero_tilt": "0deg",
+            "hero_lap": "-1%",
+            "hero_drift": "0.06"
+          }
+        },
+        {
+          "type": "piece",
+          "settings": {
+            "number": "03",
+            "line1": "Ambition",
+            "line2": "Denim",
+            "tag": "Mid wash · wide leg",
+            "blurb": "Rigid mid-wash denim cut wide from the hip down and left long enough to stack over a shoe. The wordmark is worked into the thigh the way a tour shirt carries it, with sparks, stars and a barcode thrown across the rest of the leg.",
+            "spec": "Rigid denim, mid wash\nWide leg, long inseam\nPrint across thigh and back pocket\nWordmark at the waistband",
+            "primary_color": "#16233F",
+            "secondary_color": "#8AA8D8",
+            "is_tall": true,
+            "hero_height": "47svh",
+            "hero_tilt": "6deg",
+            "hero_lap": "-3%",
+            "hero_drift": "0.2"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

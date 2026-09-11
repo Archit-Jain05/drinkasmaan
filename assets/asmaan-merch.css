@@ -1,0 +1,795 @@
+/* ---------------------------------------------------------------------------
+   Asmaan — Merchandise Capsule Page Styles (assets/asmaan-merch.css)
+   Exact match of Next.js /merch page styles
+--------------------------------------------------------------------------- */
+
+.wear_cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.15rem 3.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50vw;
+  background: rgba(10, 10, 14, 0.55);
+  backdrop-filter: blur(0.75rem);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    0 0 40px -12px rgba(0, 0, 0, 0.9);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.35s,
+    background-color 0.35s,
+    transform 0.35s;
+}
+
+.wear_cta:hover {
+  border-color: rgba(255, 255, 255, 0.65);
+  background: rgba(20, 20, 26, 0.72);
+  transform: translateY(-1px);
+}
+
+.wear_cta-star {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.4rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #fff;
+  transition: transform 0.4s ease;
+}
+
+.wear_cta:hover .wear_cta-star {
+  transform: rotate(90deg) scale(1.12);
+}
+
+.wear_line {
+  max-width: 46rem;
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* --- the drop sheet -------------------------------------------------------- */
+
+.drop_modal {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--page-padding);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(0.5rem);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s;
+}
+
+.drop_modal[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drop_sheet {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+  padding: var(--pad-xl);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-medium);
+  background: #0a0810;
+  text-align: center;
+  transform: translateY(1rem);
+  transition: transform 0.3s ease;
+}
+
+.drop_modal[data-open="true"] .drop_sheet {
+  transform: translateY(0);
+}
+
+.drop_close {
+  position: absolute;
+  top: var(--pad-s);
+  right: var(--pad-s);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--line);
+  border-radius: 50vw;
+  background: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.drop_close:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 767px) {
+  .wear_hero {
+    padding-bottom: var(--pad-xh);
+  }
+
+  .wear_cta {
+    padding: 1rem 2.25rem;
+    font-size: 1rem;
+  }
+
+  .wear_line {
+    font-size: 0.8125rem;
+  }
+}
+
+
+/* --- merch ----------------------------------------------------------------- */
+
+/*
+ * The light the whole capsule page is lit by. Fixed, so it stays put while the
+ * screens scroll over it, and driven from whichever piece is being read: the
+ * accent pair is registered as colour, so moving from one piece to the next
+ * washes the page rather than cutting it.
+ */
+.merch_wash {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: var(--wash, 0);
+  transition: opacity 0.7s ease;
+  background:
+    radial-gradient(
+      78% 54% at 50% 112%,
+      var(--taste-secondary) 0%,
+      var(--taste-primary) 44%,
+      transparent 78%
+    ),
+    radial-gradient(58% 40% at 50% -12%, var(--taste-primary) 0%, transparent 74%);
+  pointer-events: none;
+}
+
+/* The pool of accent a garment stands in. Every piece is near-black — without
+   its own light under it there is nothing on the page but a silhouette. */
+.merch_glow {
+  position: absolute;
+  left: 50%;
+  bottom: -12%;
+  width: 92%;
+  aspect-ratio: 1.35;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--glow, #fff) 0%,
+    color-mix(in srgb, var(--glow, #fff) 45%, transparent) 38%,
+    transparent 72%
+  );
+  opacity: 0.62;
+  filter: blur(2.25rem);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* --- the hero ------------------------------------------------------------- */
+
+.merch_hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--pad-l);
+  min-height: 100svh;
+  padding: calc(var(--nav-height) + var(--pad-s)) var(--page-padding) var(--pad-xl);
+  overflow: hidden;
+}
+
+.merch_hero-stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  flex: 1;
+}
+
+.merch_hero-stack > * {
+  grid-area: 1 / 1;
+}
+
+/*
+ * Set as large as the screen will take it and stood behind the clothes, the way
+ * the ghost titles sit behind the can. The two lines are pushed to the top and
+ * the bottom of the frame rather than set solid, so the line-up hangs in the
+ * gap between them and covers the middle of each word rather than the whole of
+ * either — layered, and still readable.
+ */
+.merch_hero-type {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(2.75rem, 12vw, 13.5rem);
+  line-height: 0.78;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fff;
+}
+
+/* The second line is drawn rather than filled — two solid lines of the same
+   face read as a stamp, and this reads as a layout. */
+.merch_hero-type > span:last-child {
+  color: rgba(255, 255, 255, 0.05);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.55);
+  transform: translateX(0.05em);
+}
+
+/* The three pieces straddle the gap between the two lines of type. */
+.merch_hero-rail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.merch_hero-piece {
+  position: relative;
+  height: var(--h);
+  margin-inline: var(--lap, -3%);
+  transform: rotate(var(--tilt, 0deg)) translateY(var(--drop, 0));
+  will-change: transform;
+}
+
+.merch_hero-piece img {
+  position: relative;
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+.merch_hero-piece .merch_glow {
+  opacity: 0.55;
+}
+
+.merch_hero-rail > .merch_hero-piece:nth-child(2) {
+  z-index: 2;
+}
+
+.merch_hero-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--pad-m);
+  width: 100%;
+}
+
+.merch_meta {
+  display: flex;
+  align-items: center;
+  gap: var(--pad-s);
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.merch_meta b {
+  font-weight: 400;
+  color: #fff;
+}
+
+/* --- the running strip ---------------------------------------------------- */
+
+.merch_marquee {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding-block: var(--pad-s);
+  background: rgba(0, 0, 0, 0.5);
+  /* faded at both ends, so it reads as passing through rather than starting */
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  user-select: none;
+}
+
+/* Two identical tracks side by side, each sliding a full track width: the
+   second is exactly where the first was when the loop restarts. */
+.merch_marquee-track {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--pad-l);
+  padding-right: var(--pad-l);
+  white-space: nowrap;
+  animation: merch-marquee 42s linear infinite;
+  will-change: transform;
+}
+
+.merch_marquee-item {
+  display: flex;
+  align-items: center;
+  gap: var(--pad-l);
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(1rem, 1.6vw, 1.5rem);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.merch_marquee-item svg {
+  width: 0.7em;
+  height: 0.7em;
+  color: var(--taste-secondary);
+}
+
+/* Off screen, and so not worth a frame. */
+.merch_marquee[data-running="false"] .merch_marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes merch-marquee {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+/* --- one piece ------------------------------------------------------------ */
+
+/* One held frame for all three pieces. The run is as tall as the reading takes;
+   the frame inside it is a single screen the pieces are stacked in. */
+.merch_run {
+  position: relative;
+  z-index: 1;
+}
+
+.merch_run-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+}
+
+/* Stacked, not sequenced: two of these are always sitting over the one being
+   read, which is what lets the hand-over be a dissolve. `--lit` is written from
+   the scroll; the rise is small on purpose, so it reads as a fade with a bit of
+   weight rather than as a slide. */
+.merch_piece {
+  position: absolute;
+  inset: 0;
+  opacity: var(--lit, 0);
+  transform: translateY(calc((1 - var(--lit, 0)) * 1.75rem));
+  will-change: opacity, transform;
+}
+
+.merch_piece-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--pad-xl);
+  height: 100%;
+  /* extra room on the end side: the piece rail lives out there */
+  padding: var(--pad-xl) calc(var(--page-padding) + 8rem) var(--pad-xl) var(--page-padding);
+}
+
+.merch_col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-s);
+}
+
+.merch_col.is-end {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.merch_number {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.merch_tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--taste-secondary);
+}
+
+.merch_spec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-xxs);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.merch_spec li {
+  padding-top: var(--pad-xxs);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* --- the garment, and turning it over ------------------------------------- */
+
+/* `--stage` is set per piece: a pair of jeans is worth more of the screen's
+   height than a t-shirt is, and letting one box serve both would leave the
+   shirt swimming in it. */
+.merch_stage {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: min(var(--stage, 56svh), 44rem);
+  perspective: 2200px;
+}
+
+/*
+ * Both faces are cut onto one canvas by `build_merch_assets.py`, so the piece
+ * turns on the spot instead of jumping sideways at the halfway point. The angle
+ * is written from the scroll loop; `preserve-3d` plus a hidden backface is what
+ * makes the far side disappear as it goes past edge-on.
+ */
+.merch_turn {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  transform: rotateY(var(--turn, 0deg));
+  transform-style: preserve-3d;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.merch_face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.merch_face.is-back {
+  transform: rotateY(180deg);
+}
+
+.merch_face img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* The garment is lit from under; this is what it is standing on. */
+.merch_shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  width: 46%;
+  height: 3.5%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.85), transparent);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.merch_faces {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pad-xs);
+  margin-top: var(--pad-s);
+}
+
+.merch_face-button {
+  display: flex;
+  align-items: center;
+  gap: var(--pad-xxs);
+  padding: 0.4rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 50vw;
+  background: none;
+  color: rgba(255, 255, 255, 0.42);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color 0.3s,
+    border-color 0.3s;
+}
+
+.merch_face-button::before {
+  content: "";
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.merch_face-button[aria-pressed="true"] {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+/* --- price, size, and the way in ------------------------------------------ */
+
+.merch_price {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(2rem, 3.4vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.merch_sizes {
+  display: flex;
+  gap: var(--pad-xxs);
+}
+
+.merch_size {
+  min-width: 3rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-xsmall);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.72);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition:
+    border-color 0.25s,
+    background-color 0.25s,
+    color 0.25s;
+}
+
+.merch_size:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.merch_size[aria-pressed="true"] {
+  border-color: #fff;
+  background: #fff;
+  color: #000;
+}
+
+/* Which piece is on screen, and a way to jump between them. Sits where the
+   benefits nav sits on the home page, so the site keeps one furniture. */
+/* Absolute inside the held frame rather than fixed to the window, so it is on
+   screen for exactly as long as there is a piece to point at. */
+.merch_nav {
+  position: absolute;
+  top: 50%;
+  right: var(--page-padding);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pad-s);
+  transform: translateY(-50%);
+}
+
+.merch_nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--pad-xs);
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.merch_nav-item::after {
+  content: "";
+  width: 1.5rem;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.35s ease;
+}
+
+.merch_nav-item:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.merch_nav-item.is-active {
+  color: #fff;
+}
+
+.merch_nav-item.is-active::after {
+  width: 3rem;
+  background: var(--taste-secondary);
+}
+
+/* --- the drop ------------------------------------------------------------- */
+
+.merch_drop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pad-l);
+  padding: var(--pad-xxh) var(--page-padding);
+  text-align: center;
+}
+
+.merch_drop-price {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-style: italic;
+  font-size: clamp(3.5rem, 13vw, 14rem);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+}
+
+.merch_strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--pad-l);
+  width: 100%;
+  max-width: 56rem;
+  margin-top: var(--pad-l);
+  padding-top: var(--pad-l);
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+
+.merch_strip dt {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.merch_strip dd {
+  margin-top: var(--pad-xxs);
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 991px) {
+  /* One column, and the screen is exactly one screen — nothing here scrolls,
+     so the padding has to clear the bar at the top and the rail at the foot. */
+  .merch_piece-container {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: var(--pad-s);
+    padding: calc(var(--nav-height) * 0.72) var(--pad-l) 8svh;
+    text-align: center;
+  }
+
+  .merch_col,
+  .merch_col.is-end {
+    align-items: center;
+    gap: var(--pad-xs);
+    text-align: center;
+  }
+
+  .merch_col p {
+    font-size: 0.875rem;
+  }
+
+  .merch_stage {
+    height: min(var(--stage-small, 34svh), 34rem);
+  }
+
+  .merch_faces {
+    margin-top: var(--pad-xs);
+  }
+
+  /* Both of these are said again, in full, on the closing screen. */
+  .merch_spec,
+  .merch_col.is-end > p {
+    display: none;
+  }
+
+  .merch_nav {
+    top: auto;
+    right: 50%;
+    bottom: 2svh;
+    flex-direction: row;
+    transform: translateX(50%);
+  }
+
+  .merch_nav-item::after {
+    width: 0.75rem;
+  }
+
+  .merch_nav-item.is-active::after {
+    width: 1.5rem;
+  }
+
+  .merch_strip {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--pad-m);
+    text-align: center;
+  }
+}
+
+/* A short phone cannot take the description as well as the garment, and the
+   garment is what the screen is for. */
+@media (max-width: 991px) and (max-height: 780px) {
+  .merch_col > p {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Three pieces overlapping is a line-up on a desktop and a pile on a phone. */
+  .merch_hero-rail > .merch_hero-piece:not(:nth-child(2)) {
+    display: none;
+  }
+
+  .merch_hero-row {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--pad-s);
+    text-align: center;
+  }
+
+  .merch_meta {
+    justify-content: center;
+    gap: var(--pad-xs);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+  }
+}
+
+
+/* --- helper utilities for merch ------------------------------------------- */
+.text-white\/65 {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.merch_drop-wrapper {
+  position: relative;
+  z-index: 10;
+  background-color: #000;
+}
+
+.merch_drop-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 40svh;
+  height: 40vh;
+  background: linear-gradient(to bottom, transparent, #000);
+  pointer-events: none;
+}
