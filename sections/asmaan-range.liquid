@@ -8,7 +8,78 @@
           </h2>
 
           <ul class="grid grid-cols-1 gap-[var(--pad-l)] sm:grid-cols-2 lg:grid-cols-3">
-            {%- if section.blocks.size > 0 -%}
+            {%- assign range_collection = section.settings.collection | default: settings.featured_can_collection -%}
+            {%- if range_collection != blank and range_collection.products.size > 0 -%}
+              {%- for product in range_collection.products -%}
+                {%- liquid
+                  assign c_title = product.title
+                  assign c_tag = product.metafields.custom.tagline | default: product.type | default: 'Ambition Tonic'
+                  assign c_img = product.featured_media | default: product.featured_image
+                  assign c_url = product.url
+                  assign c_handle = product.handle | downcase
+
+                  assign c_color_sec = product.metafields.custom.accent_color
+                  assign c_color_pri = product.metafields.custom.primary_color
+                  if c_color_sec == blank
+                    if c_handle contains 'mango'
+                      assign c_color_sec = '#EFB36B'
+                      assign c_color_pri = '#5A2A00'
+                    elsif c_handle contains 'magenta' or c_handle contains 'wild'
+                      assign c_color_sec = '#E6A0E8'
+                      assign c_color_pri = '#4E0749'
+                    elsif c_handle contains 'jamun'
+                      assign c_color_sec = '#9089D3'
+                      assign c_color_pri = '#2A1D4A'
+                    else
+                      assign c_color_sec = '#34d399'
+                      assign c_color_pri = '#064e3b'
+                    endif
+                  endif
+                  if c_color_pri == blank
+                    assign c_color_pri = '#0a0a14'
+                  endif
+                -%}
+                <li>
+                  <button
+                    type="button"
+                    data-range-card="{{ forloop.index0 }}"
+                    data-href="{{ c_url }}"
+                    aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                    class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
+                      style="background: radial-gradient(circle at 50% 100%, {{ c_color_sec }}, {{ c_color_pri }} 55%, transparent 75%);"
+                    ></span>
+                    {%- if c_img != blank -%}
+                      <img
+                        alt="{{ c_title | escape }} can"
+                        loading="lazy"
+                        width="520"
+                        height="1040"
+                        decoding="async"
+                        class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                        src="{{ c_img | image_url: width: 520 }}"
+                      >
+                    {%- else -%}
+                      <img
+                        alt="{{ c_title | escape }} can"
+                        loading="lazy"
+                        width="520"
+                        height="1040"
+                        decoding="async"
+                        class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                        src="{{ 'can-asmaan.png' | asset_url }}"
+                      >
+                    {%- endif -%}
+                    <span class="relative heading-style-h3">{{ c_title }}</span>
+                    <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ c_tag }}</span>
+                  </button>
+                </li>
+              {%- endfor -%}
+
+            {%- elsif section.blocks.size > 0 -%}
               {%- for block in section.blocks -%}
                 {%- liquid
                   assign b_prod = block.settings.product
@@ -53,76 +124,6 @@
                     type="button"
                     data-range-card="{{ forloop.index0 }}"
                     {% if c_url != blank %}data-href="{{ c_url }}"{% endif %}
-                    aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
-                    class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
-                  >
-                    <span
-                      aria-hidden="true"
-                      class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
-                      style="background: radial-gradient(circle at 50% 100%, {{ c_color_sec }}, {{ c_color_pri }} 55%, transparent 75%);"
-                    ></span>
-                    {%- if c_img != blank -%}
-                      <img
-                        alt="{{ c_title | escape }} can"
-                        loading="lazy"
-                        width="520"
-                        height="1040"
-                        decoding="async"
-                        class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                        src="{{ c_img | image_url: width: 520 }}"
-                      >
-                    {%- else -%}
-                      <img
-                        alt="{{ c_title | escape }} can"
-                        loading="lazy"
-                        width="520"
-                        height="1040"
-                        decoding="async"
-                        class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                        src="{{ 'can-asmaan.png' | asset_url }}"
-                      >
-                    {%- endif -%}
-                    <span class="relative heading-style-h3">{{ c_title }}</span>
-                    <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ c_tag }}</span>
-                  </button>
-                </li>
-              {%- endfor -%}
-
-            {%- elsif section.settings.collection != blank and section.settings.collection.products.size > 0 -%}
-              {%- for product in section.settings.collection.products -%}
-                {%- liquid
-                  assign c_title = product.title
-                  assign c_tag = product.metafields.custom.tagline | default: product.type | default: 'Ambition Tonic'
-                  assign c_img = product.featured_media | default: product.featured_image
-                  assign c_url = product.url
-                  assign c_handle = product.handle | downcase
-
-                  assign c_color_sec = product.metafields.custom.accent_color
-                  assign c_color_pri = product.metafields.custom.primary_color
-                  if c_color_sec == blank
-                    if c_handle contains 'mango'
-                      assign c_color_sec = '#EFB36B'
-                      assign c_color_pri = '#5A2A00'
-                    elsif c_handle contains 'magenta' or c_handle contains 'wild'
-                      assign c_color_sec = '#E6A0E8'
-                      assign c_color_pri = '#4E0749'
-                    elsif c_handle contains 'jamun'
-                      assign c_color_sec = '#9089D3'
-                      assign c_color_pri = '#2A1D4A'
-                    else
-                      assign c_color_sec = '#34d399'
-                      assign c_color_pri = '#064e3b'
-                    endif
-                  endif
-                  if c_color_pri == blank
-                    assign c_color_pri = '#0a0a14'
-                  endif
-                -%}
-                <li>
-                  <button
-                    type="button"
-                    data-range-card="{{ forloop.index0 }}"
-                    data-href="{{ c_url }}"
                     aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
                     class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
                   >
@@ -263,8 +264,8 @@
     {
       "type": "collection",
       "id": "collection",
-      "label": "Dynamic Collection Source (optional)",
-      "info": "Automatically displays products from this collection. Overridden by custom blocks if any are added below."
+      "label": "Featured Can Collection",
+      "info": "Select the collection to feature in The Range cards grid. (If left blank, inherits from Theme Settings or default fallback cards)."
     },
     {
       "type": "header",

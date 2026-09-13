@@ -705,8 +705,8 @@
       };
     }
 
-    // Build 6 cans (2 sets of Jamun, Mango, Magenta)
-    var copies = 2;
+    // Build cans (ensure enough cans for smooth orbital ring)
+    var copies = TASTES.length <= 1 ? 4 : (TASTES.length === 2 ? 3 : 2);
     var cans = [];
     for (var c = 0; c < copies; c++) {
       for (var t = 0; t < TASTES.length; t++) {
@@ -977,6 +977,12 @@
     document.querySelectorAll('[data-range-card]').forEach(function (card, i) {
       card.setAttribute('aria-current', String(i === index));
     });
+
+    // Update Poster Fallback if present
+    var posterImg = document.querySelector('[data-asmaan-stage-can] img');
+    if (posterImg && taste.posterUrl) {
+      posterImg.src = taste.posterUrl;
+    }
 
     // 6. Update 3D Stage Can
     stage3D.goTo(index);

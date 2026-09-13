@@ -37,5 +37,16 @@
         "label": "X / Twitter"
       }
     ]
+  },
+  {
+    "name": "Homepage Products",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "featured_can_collection",
+        "label": "Homepage Can Collection",
+        "info": "Select the collection to feature on the homepage 3D Stage and The Range. Products in this collection will be rendered in 3D using each product's LAST image as its 360° label texture, and front image for cards and posters."
+      }
+    ]
   }
 ]
