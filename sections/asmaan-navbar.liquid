@@ -30,7 +30,25 @@
     </div>
 
     <div class="navbar_container">
-      <div class="navbar_side">
+      <div class="navbar_side flex items-center gap-2">
+        <button
+          type="button"
+          class="navbar_menu-button"
+          aria-expanded="false"
+          aria-controls="site-menu"
+          data-menu-toggle
+          aria-label="Toggle site navigation menu"
+        >
+          <svg viewBox="0 0 16 16" class="menu-button-icon" aria-hidden="true">
+            <circle cx="3.2" cy="3.2" r="1.35" fill="currentColor"></circle>
+            <circle cx="12.8" cy="3.2" r="1.35" fill="currentColor"></circle>
+            <circle cx="3.2" cy="12.8" r="1.35" fill="currentColor"></circle>
+            <circle cx="12.8" cy="12.8" r="1.35" fill="currentColor"></circle>
+            <circle cx="8" cy="8" r="1.35" fill="currentColor" class="menu-button-center-dot" style="transform:scale(1);transform-origin:8px 8px;transition:transform 0.35s ease"></circle>
+          </svg>
+          <span class="menu-button-text">{{ section.settings.menu_text | default: 'Menu' }}</span>
+        </button>
+
         <button type="button" class="navbar_toggle" aria-pressed="true" aria-label="Toggle motion effects" data-motion-toggle>
           <span class="navbar_toggle-icon-on flex items-center">
             {% render 'asmaan-icons', name: 'bars', class: 'h-4 w-5' %}
@@ -54,17 +72,17 @@
             data-search-modal-open
             aria-label="{{ 'general.search.search' | t | default: 'Search' }}"
           >
-            {% render 'asmaan-icons', name: 'search', class: 'h-4 w-4' %}
+            {% render 'asmaan-icons', name: 'search', class: 'h-5 w-5' %}
           </button>
         {%- endif -%}
 
         {%- if shop.customer_accounts_enabled -%}
           <a
             href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
-            class="navbar_icon-button hidden sm:flex text-white/80 hover:text-white p-2 rounded-full transition-colors items-center justify-center"
+            class="navbar_icon-button flex text-white/80 hover:text-white p-2 rounded-full transition-colors items-center justify-center"
             aria-label="{{ 'customer.account_fallback' | t | default: 'Account' }}"
           >
-            {% render 'asmaan-icons', name: 'user', class: 'h-4 w-4' %}
+            {% render 'asmaan-icons', name: 'user', class: 'h-5 w-5' %}
           </a>
         {%- endif -%}
 
@@ -74,31 +92,13 @@
           data-cart-drawer-toggle
           aria-label="{{ 'general.cart.view' | t | default: 'Cart' }}"
         >
-          {% render 'asmaan-icons', name: 'bag', class: 'h-4 w-4' %}
+          {% render 'asmaan-icons', name: 'bag', class: 'h-5 w-5' %}
           <span
             id="cart-icon-bubble"
             class="cart-count-badge absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-white text-black font-mono text-[10px] font-bold flex items-center justify-center transition-transform {%- if cart.item_count == 0 %} hidden{%- endif -%}"
           >
             {{ cart.item_count }}
           </span>
-        </button>
-
-        <button
-          type="button"
-          class="navbar_menu-button"
-          aria-expanded="false"
-          aria-controls="site-menu"
-          data-menu-toggle
-          aria-label="Toggle site navigation menu"
-        >
-          <svg viewBox="0 0 16 16" class="menu-button-icon" aria-hidden="true">
-            <circle cx="3.2" cy="3.2" r="1.35" fill="currentColor"></circle>
-            <circle cx="12.8" cy="3.2" r="1.35" fill="currentColor"></circle>
-            <circle cx="3.2" cy="12.8" r="1.35" fill="currentColor"></circle>
-            <circle cx="12.8" cy="12.8" r="1.35" fill="currentColor"></circle>
-            <circle cx="8" cy="8" r="1.35" fill="currentColor" class="menu-button-center-dot" style="transform:scale(1);transform-origin:8px 8px;transition:transform 0.35s ease"></circle>
-          </svg>
-          <span class="menu-button-text">{{ section.settings.menu_text | default: 'Menu' }}</span>
         </button>
 
         {%- if section.settings.cta_text != blank -%}
@@ -124,11 +124,6 @@
       <a class="navbar_link" tabindex="-1" href="/pages/merch">Merch</a>
       <a class="navbar_link" tabindex="-1" href="/#faq">FAQ</a>
       <a class="navbar_link" tabindex="-1" href="{{ section.settings.cta_link | default: '/#range' }}">Newsletter</a>
-    {%- endif -%}
-    {%- if shop.customer_accounts_enabled -%}
-      <a class="navbar_link" tabindex="-1" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}">
-        {%- if customer -%}{{ 'customer.account.title' | t | default: 'Account' }}{%- else -%}{{ 'customer.log_in' | t | default: 'Log in' }}{%- endif -%}
-      </a>
     {%- endif -%}
   </nav>
 
