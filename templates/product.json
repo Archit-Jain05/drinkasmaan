@@ -1,12 +1,61 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-product",
-      "settings": {}
+      "settings": {
+        "enable_sticky_gallery": true,
+        "show_badge": true,
+        "badge_text": "Chilled Serving",
+        "show_3d_toggle": true,
+        "show_angle_controls": true,
+        "show_thumbnails": true,
+        "material_note": "100% Recyclable Matte Aluminum Can • 250ml",
+        "show_vendor": true,
+        "show_shipping_notice": true,
+        "shipping_notice_text": "Free shipping across India",
+        "show_quantity_selector": true,
+        "add_to_cart_text": "Add to Cart",
+        "show_spec_pills": true,
+        "spec_1_title": "0g Sugar",
+        "spec_1_subtitle": "10 Calories per can",
+        "spec_2_title": "100mg Caffeine",
+        "spec_2_subtitle": "Raw Green Coffee",
+        "spec_3_title": "L-Theanine 200mg",
+        "spec_3_subtitle": "Smooth Focus Curve",
+        "spec_4_title": "KSM-66 300mg",
+        "spec_4_subtitle": "Cortisol Modulation",
+        "show_accordions": true,
+        "acc_1_title": "Scientific Formulation",
+        "acc_1_content": "Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine® L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.",
+        "acc_2_title": "Full Nutrition Facts (250ml)",
+        "acc_2_content": "Energy: 10 kcal • Protein: 0g • Fat: 0g • Total Carbohydrates: 0g • Total Sugars: 0g • Sodium: 14mg • Caffeine: 100mg • L-Theanine: 200mg • KSM-66: 300mg.",
+        "acc_3_title": "Shipping & Freshness Guarantee",
+        "acc_3_content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over ₹999."
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
-      "settings": {}
+      "settings": {
+        "brand_name": "ASMAAN",
+        "title": "Join the first batch",
+        "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
+        "placeholder": "Your email address",
+        "cta_text": "Sign up",
+        "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
+        "instagram_url": "",
+        "legal_link": "",
+        "terms_link": "",
+        "privacy_link": ""
+      }
     }
   },
   "order": [
