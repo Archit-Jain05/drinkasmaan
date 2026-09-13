@@ -159,9 +159,11 @@ body::before {
   display: flex;
   align-items: flex-end;
   gap: 0;
-  overflow: hidden;   /* clips each letter as it drops in from above */
+  overflow: hidden; /* clips each letter as it drops in from above */
   line-height: 0.88;
+  padding-right: 0.22em; /* provides room for italic slant so N is not clipped */
   padding-bottom: 0.08em; /* give descenders room */
+  padding-left: 0.04em;
 }
 
 /* Individual letter — sits above the clip boundary by default */
