@@ -1,5 +1,96 @@
 {%- assign products_per_page = section.settings.products_per_page | default: 12 -%}
 {%- paginate collection.products by products_per_page -%}
+<style>
+  .collection-filters-form {
+    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .filter-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .filter-dropdown summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  .filter-dropdown summary::-webkit-details-marker {
+    display: none;
+  }
+  .filter-dropdown summary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .filter-dropdown[open] summary {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+  }
+  .filter-dropdown[open] summary svg {
+    transform: rotate(180deg);
+  }
+  .filter-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    z-index: 60;
+    padding: 1rem;
+    min-width: 250px;
+    max-width: 320px;
+    background: #121214 !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(24px);
+  }
+  .filter-panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 14rem;
+    overflow-y: auto;
+  }
+  .filter-panel label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    padding: 0.35rem 0;
+    transition: color 0.15s;
+  }
+  .filter-panel label:hover {
+    color: #ffffff;
+  }
+  .filter-panel input[type="checkbox"] {
+    accent-color: #ffffff;
+    cursor: pointer;
+  }
+  .collection-sort-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    padding: 0.45rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+</style>
+
 <section class="asmaan-subpage-section pt-24 pb-20 bg-black text-white min-h-[80vh]">
   <div class="padding-global max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     
@@ -29,14 +120,14 @@
 
         <!-- Product Count -->
         <span class="text-xs font-mono text-white/40 uppercase tracking-widest self-start sm:self-end">
-          {{ 'collections.general.items_with_count' | t: count: collection.products_count | default: collection.products_count }} {{ 'products.facets.product_count_simple.other' | t | default: 'products' }}
+          {{ 'collections.general.product_count' | t: count: collection.products_count }}
         </span>
       </div>
     </div>
 
     <!-- Filter & Sort Bar -->
     {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
-      <form id="CollectionFiltersForm" class="mb-8 p-4 rounded-2xl bg-white/[0.02] border border-white/10" method="get">
+      <form id="CollectionFiltersForm" class="collection-filters-form mb-8 p-4 rounded-2xl bg-white/[0.02] border border-white/10" method="get">
         <div class="flex flex-wrap items-center justify-between gap-4">
           
           <!-- Filters Group -->
@@ -310,6 +401,16 @@
   </div>
 </section>
 {%- endpaginate -%}
+
+<script>
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.filter-dropdown')) {
+      document.querySelectorAll('.filter-dropdown[open]').forEach(function(el) {
+        el.removeAttribute('open');
+      });
+    }
+  });
+</script>
 
 {% schema %}
 {

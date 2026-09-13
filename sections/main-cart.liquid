@@ -1,60 +1,304 @@
+<style>
+  .main-cart-wrap {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  .main-cart-hero {
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+  .main-cart-hero-tag {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: #9089d3;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .main-cart-hero-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 0 0 0.5rem;
+  }
+  .main-cart-form {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  @media (min-width: 640px) {
+    .main-cart-form {
+      padding: 2rem;
+    }
+  }
+  .main-cart-shipping-bar {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-family: var(--font-mono, monospace);
+  }
+  .main-cart-items {
+    margin-bottom: 2rem;
+  }
+  .main-cart-item {
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  @media (min-width: 640px) {
+    .main-cart-item {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+  }
+  .main-cart-item-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .main-cart-item-img {
+    width: 5rem;
+    height: 5rem;
+    object-fit: contain;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .main-cart-item-title {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 1rem;
+    margin: 0;
+  }
+  .main-cart-item-variant {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    font-family: var(--font-mono, monospace);
+  }
+  .main-cart-item-remove {
+    font-size: 0.75rem;
+    color: rgba(251, 113, 133, 0.8);
+    text-decoration: none;
+    font-family: var(--font-mono, monospace);
+    margin-top: 0.5rem;
+    display: inline-block;
+  }
+  .main-cart-item-remove:hover {
+    color: #fb7185;
+  }
+  .main-cart-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .main-cart-item-actions {
+      justify-content: flex-end;
+    }
+  }
+  .main-cart-qty-wrap {
+    display: flex;
+    align-items: center;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 0.25rem 0.5rem;
+  }
+  .main-cart-qty-input {
+    width: 3rem;
+    text-align: center;
+    font-family: var(--font-mono, monospace);
+    color: #ffffff;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 0.75rem;
+  }
+  .main-cart-item-price {
+    font-family: var(--font-mono, monospace);
+    color: #ffffff;
+    text-align: right;
+    font-weight: 700;
+    font-size: 1rem;
+    min-width: 5rem;
+  }
+  .main-cart-note-wrap {
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .main-cart-note-label {
+    font-size: 0.75rem;
+    font-family: var(--font-mono, monospace);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .main-cart-note-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    font-size: 0.75rem;
+    color: #ffffff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .main-cart-note-input:focus {
+    border-color: #ffffff;
+  }
+  .main-cart-footer {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .main-cart-footer {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  .main-cart-footer-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .main-cart-footer-checkout {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  @media (min-width: 640px) {
+    .main-cart-footer-checkout {
+      flex-direction: row;
+      align-items: center;
+      text-align: right;
+    }
+  }
+  .main-cart-empty-box {
+    padding: 4rem 2rem;
+    text-align: center;
+    border-radius: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 32rem;
+    margin: 0 auto;
+  }
+  .main-cart-empty-icon {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin: 0 auto 1.5rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .main-cart-empty-icon svg {
+    width: 1.75rem;
+    height: 1.75rem;
+    display: block;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .main-cart-empty-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+  }
+  .main-cart-empty-desc {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+</style>
+
 <section class="asmaan-subpage-section pt-24 pb-20">
   <div class="padding-global">
-    <div class="container-large max-w-4xl mx-auto px-4">
-      <div class="asmaan-subpage-hero mb-8 text-left">
-        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Checkout Pipeline</span>
-        <h1 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-white mb-2">Shopping Cart</h1>
+    <div class="main-cart-wrap">
+      <div class="main-cart-hero">
+        <span class="main-cart-hero-tag">Checkout Pipeline</span>
+        <h1 class="main-cart-hero-title">Shopping Cart</h1>
       </div>
 
       {%- if cart.item_count > 0 -%}
-        <form action="/cart" method="post" class="p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/10">
+        <form action="/cart" method="post" class="main-cart-form">
           <!-- Free shipping bar -->
           {%- if settings.show_free_shipping_bar != false -%}
             {%- assign threshold = settings.free_shipping_threshold | default: 99900 -%}
-            <div class="p-4 rounded-xl bg-white/[0.03] border border-white/10 mb-6 flex items-center justify-between text-xs font-mono">
+            <div class="main-cart-shipping-bar">
               {%- if cart.total_price >= threshold -%}
-                <span class="text-emerald-400 font-bold">&check; {{ 'cart.general.free_shipping_unlocked' | t | default: 'You have unlocked Free Shipping!' }}</span>
-                <span class="text-white/60">Dispatched in Insulated Box</span>
+                <span style="color: #34d399; font-weight: bold;">&check; {{ 'cart.general.free_shipping_unlocked' | t | default: 'You have unlocked Free Shipping!' }}</span>
+                <span style="color: rgba(255,255,255,0.6);">Dispatched in Insulated Box</span>
               {%- else -%}
                 {%- assign remaining = threshold | minus: cart.total_price -%}
-                <span class="text-white/80">Add <strong class="text-white">{{ remaining | money }}</strong> more to unlock Free Shipping!</span>
-                <a href="/collections/all" class="text-emerald-400 underline">Add Items</a>
+                <span style="color: rgba(255,255,255,0.8);">Add <strong style="color: #fff;">{{ remaining | money }}</strong> more to unlock Free Shipping!</span>
+                <a href="/collections/all" style="color: #34d399; text-decoration: underline;">Add Items</a>
               {%- endif -%}
             </div>
           {%- endif -%}
 
-          <div class="divide-y divide-white/10 mb-8">
+          <div class="main-cart-items">
             {%- for item in cart.items -%}
-              <div class="py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-4">
+              <div class="main-cart-item">
+                <div class="main-cart-item-info">
                   {%- if item.image -%}
-                    <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="h-20 w-auto object-contain rounded-xl bg-white/[0.02] p-2 border border-white/10">
+                    <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="main-cart-item-img">
                   {%- elsif item.product.featured_image -%}
-                    <img src="{{ item.product.featured_image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="h-20 w-auto object-contain rounded-xl bg-white/[0.02] p-2 border border-white/10">
+                    <img src="{{ item.product.featured_image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="main-cart-item-img">
                   {%- endif -%}
                   <div>
-                    <h3 class="font-bold text-white text-base">{{ item.product.title }}</h3>
+                    <h3 class="main-cart-item-title">{{ item.product.title }}</h3>
                     {%- unless item.product.has_only_default_variant -%}
-                      <p class="text-white/50 text-xs mt-0.5 font-mono">{{ item.variant.title }}</p>
+                      <p class="main-cart-item-variant">{{ item.variant.title }}</p>
                     {%- endunless -%}
-                    <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="text-xs text-rose-400/80 hover:text-rose-400 font-mono mt-2 inline-block">
+                    <a href="/cart/change?line={{ forloop.index }}&quantity=0" class="main-cart-item-remove">
                       &times; {{ 'cart.general.remove' | t | default: 'Remove' }}
                     </a>
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between sm:justify-end gap-6">
-                  <div class="flex items-center rounded-lg bg-white/[0.06] border border-white/15 px-2 py-1">
+                <div class="main-cart-item-actions">
+                  <div class="main-cart-qty-wrap">
                     <input
                       type="number"
                       name="updates[]"
                       value="{{ item.quantity }}"
                       min="0"
-                      class="w-12 text-center font-mono text-white bg-transparent border-none focus:outline-none text-xs"
+                      class="main-cart-qty-input"
                       aria-label="Quantity for {{ item.title | escape }}"
                     >
                   </div>
-                  <div class="font-mono text-white text-right font-bold text-base min-w-[5rem]">
+                  <div class="main-cart-item-price">
                     {{ item.final_line_price | money }}
                   </div>
                 </div>
@@ -63,23 +307,23 @@
           </div>
 
           {%- if settings.enable_order_notes != false -%}
-            <div class="mb-8 pt-4 border-t border-white/10">
-              <label for="CartPageNote" class="text-xs font-mono uppercase tracking-wider text-white/60 block mb-2">{{ 'cart.general.note' | t | default: 'Add order note' }}</label>
-              <textarea name="note" id="CartPageNote" rows="3" class="w-full bg-white/5 border border-white/15 rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-white" placeholder="{{ 'cart.general.note_placeholder' | t | default: 'How can we help with your order?' }}">{{ cart.note }}</textarea>
+            <div class="main-cart-note-wrap">
+              <label for="CartPageNote" class="main-cart-note-label">{{ 'cart.general.note' | t | default: 'Add order note' }}</label>
+              <textarea name="note" id="CartPageNote" rows="3" class="main-cart-note-input" placeholder="{{ 'cart.general.note_placeholder' | t | default: 'How can we help with your order?' }}">{{ cart.note }}</textarea>
             </div>
           {%- endif -%}
 
-          <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div class="flex gap-3">
-              <button type="submit" name="update" class="button is-secondary is-small !text-xs">
+          <div class="main-cart-footer">
+            <div class="main-cart-footer-buttons">
+              <button type="submit" name="update" class="button is-secondary is-small">
                 Update Quantities
               </button>
-              <a href="/collections/all" class="button is-secondary is-small !text-xs">
+              <a href="/collections/all" class="button is-secondary is-small">
                 {{ 'cart.general.continue_shopping' | t | default: 'Continue Shopping' }}
               </a>
             </div>
-            <div class="text-right flex flex-col sm:flex-row items-center gap-4">
-              <span class="font-mono text-lg text-white">{{ 'cart.general.subtotal' | t | default: 'Subtotal' }}: <strong>{{ cart.total_price | money }}</strong></span>
+            <div class="main-cart-footer-checkout">
+              <span style="font-family: var(--font-mono, monospace); font-size: 1.125rem; color: #fff;">{{ 'cart.general.subtotal' | t | default: 'Subtotal' }}: <strong>{{ cart.total_price | money }}</strong></span>
               <button type="submit" name="checkout" class="button is-hero is-primary">
                 {{ 'cart.general.checkout' | t | default: 'Check Out' }}
               </button>
@@ -87,14 +331,14 @@
           </div>
         </form>
       {%- else -%}
-        <div class="p-16 text-center rounded-3xl bg-white/[0.02] border border-white/10 max-w-lg mx-auto">
-          <div class="h-16 w-16 mx-auto mb-6 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center">
-            <svg class="h-7 w-7 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="main-cart-empty-box">
+          <div class="main-cart-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
-          <h2 class="text-xl font-bold uppercase text-white mb-2">Your Cart Is Empty</h2>
-          <p class="text-white/60 mb-8 text-sm leading-relaxed">Ready to experience elevated focus? Select a flagship 12-pack sampler or choose individual flavors.</p>
+          <h2 class="main-cart-empty-title">Your Cart Is Empty</h2>
+          <p class="main-cart-empty-desc">Ready to experience elevated focus? Select a flagship 12-pack sampler or choose individual flavors.</p>
           <a href="/collections/all" class="button is-hero is-primary">
             Explore The Shop
           </a>
