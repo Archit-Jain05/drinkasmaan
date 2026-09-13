@@ -1,95 +1,87 @@
 {%- assign stage_collection = section.settings.collection | default: settings.featured_can_collection -%}
 <script>
+  window.ASMAAN_USE_COLLECTION = {{ section.settings.use_collection_cans | default: false | json }};
   window.ASMAAN_TASTES = [
-    {%- if stage_collection != blank and stage_collection.products.size > 0 -%}
-      {%- assign total_items = stage_collection.products.size -%}
-      {%- assign max_idx = total_items | minus: 1 -%}
-      {%- for product in stage_collection.products -%}
-        {%- liquid
-          if total_items > 1
-            assign cx_val = forloop.index0 | times: 196 | divided_by: max_idx | plus: 22
-          else
-            assign cx_val = 120
-          endif
-          assign p_id = product.handle
-          assign p_title = product.title
-          assign words = p_title | split: ' '
-          assign p_line1 = words[0]
-          if words.size > 1
-            assign p_line2 = p_title | remove_first: words[0] | strip
-          else
-            assign p_line2 = ''
-          endif
-          assign p_url = product.url
-          assign p_tag = product.metafields.custom.tagline | default: product.type | default: 'Ambition Tonic'
-          assign p_blurb = product.metafields.custom.blurb | default: product.description | strip_html | truncate: 160
-
-          assign p_primary = product.metafields.custom.primary_color
-          assign p_secondary = product.metafields.custom.accent_color
-          if p_secondary == blank
-            assign h_low = product.handle | downcase
-            if h_low contains 'mango'
-              assign p_secondary = '#EFB36B'
-              assign p_primary = '#5A2A00'
-            elsif h_low contains 'magenta' or h_low contains 'wild'
-              assign p_secondary = '#E6A0E8'
-              assign p_primary = '#4E0749'
-            elsif h_low contains 'jamun'
-              assign p_secondary = '#9089D3'
-              assign p_primary = '#2A1D4A'
+    {%- if section.settings.use_collection_cans -%}
+      {%- if stage_collection != blank and stage_collection.products.size > 0 -%}
+        {%- assign total_items = stage_collection.products.size -%}
+        {%- assign max_idx = total_items | minus: 1 -%}
+        {%- for product in stage_collection.products -%}
+          {%- liquid
+            if total_items > 1
+              assign cx_val = forloop.index0 | times: 196 | divided_by: max_idx | plus: 22
             else
-              assign p_secondary = '#34d399'
-              assign p_primary = '#064e3b'
+              assign cx_val = 120
             endif
-          endif
-          if p_primary == blank
-            assign p_primary = '#0a0a14'
-          endif
-
-          assign p_poster = product.featured_media | default: product.featured_image
-          if p_poster != blank
-            assign poster_url = p_poster | image_url: width: 1040
-          else
-            assign poster_url = 'can-asmaan.png' | asset_url
-          endif
-
-          # Take the LAST image from the product in Shopify backend as requested
-          assign label_url = ''
-          if product.images.size > 0
-            assign label_url = product.images.last | image_url: width: 2048
-          elsif product.media.size > 0
-            assign label_url = product.media.last | image_url: width: 2048
-          elsif product.metafields.custom.label_image != blank
-            assign label_url = product.metafields.custom.label_image | image_url: width: 2048
-          endif
-
-          if label_url == blank
-            assign h_low = product.handle | downcase
-            if h_low contains 'mango'
-              assign label_url = 'asmaan-label-mango.jpg' | asset_url
-            elsif h_low contains 'magenta' or h_low contains 'wild'
-              assign label_url = 'asmaan-label-magenta.jpg' | asset_url
-            elsif h_low contains 'jamun'
-              assign label_url = 'asmaan-label-jamun.jpg' | asset_url
+            assign p_id = product.handle
+            assign p_title = product.title
+            assign words = p_title | split: ' '
+            assign p_line1 = words[0]
+            if words.size > 1
+              assign p_line2 = p_title | remove_first: words[0] | strip
             else
-              assign label_url = poster_url
+              assign p_line2 = ''
             endif
-          endif
-        -%}
-        {
-          id: {{ p_id | json }},
-          line1: {{ p_line1 | json }},
-          line2: {{ p_line2 | json }},
-          primary: {{ p_primary | json }},
-          secondary: {{ p_secondary | json }},
-          labelUrl: {{ label_url | json }},
-          posterUrl: {{ poster_url | json }},
-          tag: {{ p_tag | json }},
-          blurb: {{ p_blurb | json }},
-          cx: {{ cx_val }},
-          productUrl: {{ p_url | json }}
-        }{%- unless forloop.last -%},{%- endunless -%}
-      {%- endfor -%}
+            assign p_url = product.url
+            assign p_tag = product.metafields.custom.tagline | default: product.type | default: 'Ambition Tonic'
+            assign p_blurb = product.metafields.custom.blurb | default: product.description | strip_html | truncate: 160
+
+            assign p_primary = product.metafields.custom.primary_color
+            assign p_secondary = product.metafields.custom.accent_color
+            if p_secondary == blank
+              assign h_low = product.handle | downcase
+              if h_low contains 'mango'
+                assign p_secondary = '#EFB36B'
+                assign p_primary = '#5A2A00'
+              elsif h_low contains 'magenta' or h_low contains 'wild'
+                assign p_secondary = '#E6A0E8'
+                assign p_primary = '#4E0749'
+              elsif h_low contains 'jamun'
+                assign p_secondary = '#9089D3'
+                assign p_primary = '#2A1D4A'
+              else
+                assign p_secondary = '#34d399'
+                assign p_primary = '#064e3b'
+              endif
+            endif
+            if p_primary == blank
+              assign p_primary = '#0a0a14'
+            endif
+
+            assign p_poster = product.featured_media | default: product.featured_image
+            if p_poster != blank
+              assign poster_url = p_poster | image_url: width: 1040
+            else
+              assign poster_url = ''
+            endif
+
+            # Take the LAST image from the product in Shopify backend as requested
+            assign label_url = ''
+            if product.images.size > 0
+              assign label_url = product.images.last | image_url: width: 2048
+            elsif product.media.size > 0
+              assign label_url = product.media.last | image_url: width: 2048
+            elsif product.metafields.custom.label_image != blank
+              assign label_url = product.metafields.custom.label_image | image_url: width: 2048
+            endif
+
+            # STRICT NO-FALLBACK: When toggle is enabled, if product has no label, keep blank
+          -%}
+          {
+            id: {{ p_id | json }},
+            line1: {{ p_line1 | json }},
+            line2: {{ p_line2 | json }},
+            primary: {{ p_primary | json }},
+            secondary: {{ p_secondary | json }},
+            labelUrl: {{ label_url | json }},
+            posterUrl: {{ poster_url | json }},
+            tag: {{ p_tag | json }},
+            blurb: {{ p_blurb | json }},
+            cx: {{ cx_val }},
+            productUrl: {{ p_url | json }}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      {%- endif -%}
 
     {%- elsif section.blocks.size > 0 -%}
       {%- assign total_items = section.blocks.size -%}
@@ -266,13 +258,34 @@
       data-label-mango="{% if section.settings.mango_label != blank %}{{ section.settings.mango_label | image_url }}{% else %}{{ 'asmaan-label-mango.jpg' | asset_url }}{% endif %}"
       data-label-print="{% if section.settings.print_label != blank %}{{ section.settings.print_label | image_url }}{% else %}{{ 'asmaan-label-magenta.jpg' | asset_url }}{% endif %}"
     >
-      <img
-        alt="A 250 ml can of Asmaan Ambition Tonic"
-        decoding="async"
-        class="object-contain transition-opacity duration-700 opacity-100"
-        style="position: absolute; height: 100%; width: 100%; left: 0; top: 0; right: 0; bottom: 0; color: transparent;"
-        src="{% if stage_collection != blank and stage_collection.products.size > 0 %}{{ stage_collection.products.first.featured_media | default: stage_collection.products.first.featured_image | image_url: width: 1040 }}{% else %}{{ 'can-asmaan.png' | asset_url }}{% endif %}"
-      >
+      {%- liquid
+        assign first_poster = ''
+        if section.settings.use_collection_cans
+          if stage_collection != blank and stage_collection.products.size > 0
+            assign first_prod = stage_collection.products.first
+            if first_prod.featured_media != blank
+              assign first_poster = first_prod.featured_media | image_url: width: 1040
+            elsif first_prod.featured_image != blank
+              assign first_poster = first_prod.featured_image | image_url: width: 1040
+            endif
+          endif
+        else
+          if section.settings.jamun_poster != blank
+            assign first_poster = section.settings.jamun_poster | image_url: width: 1040
+          else
+            assign first_poster = 'can-asmaan.png' | asset_url
+          endif
+        endif
+      -%}
+      {%- if first_poster != blank -%}
+        <img
+          alt="A 250 ml can of Asmaan Ambition Tonic"
+          decoding="async"
+          class="object-contain transition-opacity duration-700 opacity-100"
+          style="position: absolute; height: 100%; width: 100%; left: 0; top: 0; right: 0; bottom: 0; color: transparent;"
+          src="{{ first_poster }}"
+        >
+      {%- endif -%}
       <canvas class="absolute inset-0 h-full w-full transition-opacity duration-700 opacity-0 cursor-grab touch-pan-y active:cursor-grabbing"></canvas>
     </div>
   </div>
@@ -298,25 +311,27 @@
 
                 <div class="carousel_container">
                   <div class="carousel_stack" data-taste-stack>
-                    {%- if stage_collection != blank and stage_collection.products.size > 0 -%}
-                      {%- for product in stage_collection.products -%}
-                        {%- liquid
-                          assign p_title = product.title
-                          assign words = p_title | split: ' '
-                          assign s_line1 = words[0]
-                          if words.size > 1
-                            assign s_line2 = p_title | remove_first: words[0] | strip
-                          else
-                            assign s_line2 = ''
-                          endif
-                        -%}
-                        <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}">
-                          <div class="heading-style-h2">
-                            <span class="block">{{ s_line1 }}</span>
-                            <span class="block">{{ s_line2 }}</span>
+                    {%- if section.settings.use_collection_cans -%}
+                      {%- if stage_collection != blank and stage_collection.products.size > 0 -%}
+                        {%- for product in stage_collection.products -%}
+                          {%- liquid
+                            assign p_title = product.title
+                            assign words = p_title | split: ' '
+                            assign s_line1 = words[0]
+                            if words.size > 1
+                              assign s_line2 = p_title | remove_first: words[0] | strip
+                            else
+                              assign s_line2 = ''
+                            endif
+                          -%}
+                          <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}">
+                            <div class="heading-style-h2">
+                              <span class="block">{{ s_line1 }}</span>
+                              <span class="block">{{ s_line2 }}</span>
+                            </div>
                           </div>
-                        </div>
-                      {%- endfor -%}
+                        {%- endfor -%}
+                      {%- endif -%}
                     {%- elsif section.blocks.size > 0 -%}
                       {%- for block in section.blocks -%}
                         {%- liquid
@@ -782,6 +797,13 @@
     {
       "type": "header",
       "content": "Homepage Collection & 3D Products"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_collection_cans",
+      "label": "Render 3D Cans from Collection",
+      "default": false,
+      "info": "When checked, cans and 3D labels are rendered strictly from the selected Collection. When unchecked, default demo cans are displayed."
     },
     {
       "type": "collection",

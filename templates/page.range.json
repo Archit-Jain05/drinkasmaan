@@ -15,7 +15,43 @@
     },
     "range": {
       "type": "asmaan-range",
-      "settings": {}
+      "blocks": {
+        "range_card_1": {
+          "type": "product_card",
+          "settings": {
+            "title": "Kala Jamun",
+            "tag": "The original",
+            "accent_secondary": "#9089D3",
+            "accent_primary": "#2A1D4A"
+          }
+        },
+        "range_card_2": {
+          "type": "product_card",
+          "settings": {
+            "title": "Alphonso Mango",
+            "tag": "Gold into burnt amber",
+            "accent_secondary": "#EFB36B",
+            "accent_primary": "#5A2A00"
+          }
+        },
+        "range_card_3": {
+          "type": "product_card",
+          "settings": {
+            "title": "Wild Magenta",
+            "tag": "Rose and pink guava",
+            "accent_secondary": "#E6A0E8",
+            "accent_primary": "#4E0749"
+          }
+        }
+      },
+      "block_order": [
+        "range_card_1",
+        "range_card_2",
+        "range_card_3"
+      ],
+      "settings": {
+        "card_source": "blocks"
+      }
     },
     "callout": {
       "type": "main-range-callout",

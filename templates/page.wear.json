@@ -11,6 +11,50 @@
   "sections": {
     "main": {
       "type": "main-wear",
+      "blocks": {
+        "wear_item_1": {
+          "type": "wear_item",
+          "settings": {
+            "badge": "DROP 01",
+            "title": "Studio Heavyweight Tee",
+            "price": "₹2,499",
+            "description": "300 GSM combed loopback cotton, relaxed drop-shoulder cut, tonal insignia print."
+          }
+        },
+        "wear_item_2": {
+          "type": "wear_item",
+          "settings": {
+            "badge": "DROP 01",
+            "title": "Creative Flow Hoodie",
+            "price": "₹4,999",
+            "description": "480 GSM dense French terry, double-layered architectural hood, hidden tech pocket."
+          }
+        },
+        "wear_item_3": {
+          "type": "wear_item",
+          "settings": {
+            "badge": "DROP 01",
+            "title": "Matte Field Cap",
+            "price": "₹1,899",
+            "description": "Weatherproof matte nylon, FIDLOCK magnetic buckle, anti-sweat internal headband."
+          }
+        },
+        "wear_item_4": {
+          "type": "wear_item",
+          "settings": {
+            "badge": "DROP 01",
+            "title": "Studio Aluminum Tote",
+            "price": "₹1,499",
+            "description": "Reinforced 24oz waxed canvas with custom anodized aluminum hardware clip."
+          }
+        }
+      },
+      "block_order": [
+        "wear_item_1",
+        "wear_item_2",
+        "wear_item_3",
+        "wear_item_4"
+      ],
       "settings": {}
     },
     "newsletter": {

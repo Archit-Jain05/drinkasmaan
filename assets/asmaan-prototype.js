@@ -6,40 +6,46 @@
 (function () {
   'use strict';
 
-  var TASTES = (window.ASMAAN_TASTES && Array.isArray(window.ASMAAN_TASTES) && window.ASMAAN_TASTES.length > 0)
-    ? window.ASMAAN_TASTES
-    : [
-        {
-          id: 'jamun',
-          line1: 'Kala',
-          line2: 'Jamun',
-          primary: '#2A1D4A',
-          secondary: '#9089D3',
-          labelAttr: 'data-label-jamun',
-          tag: 'The original',
-          cx: 22
-        },
-        {
-          id: 'mango',
-          line1: 'Alphonso',
-          line2: 'Mango',
-          primary: '#5A2A00',
-          secondary: '#EFB36B',
-          labelAttr: 'data-label-mango',
-          tag: 'Gold into burnt amber',
-          cx: 120
-        },
-        {
-          id: 'print',
-          line1: 'Wild',
-          line2: 'Magenta',
-          primary: '#4E0749',
-          secondary: '#E6A0E8',
-          labelAttr: 'data-label-print',
-          tag: 'Rose and pink guava',
-          cx: 218
-        }
-      ];
+  var useCollectionMode = !!window.ASMAAN_USE_COLLECTION;
+  var TASTES;
+  if (useCollectionMode) {
+    TASTES = (window.ASMAAN_TASTES && Array.isArray(window.ASMAAN_TASTES)) ? window.ASMAAN_TASTES : [];
+  } else {
+    TASTES = (window.ASMAAN_TASTES && Array.isArray(window.ASMAAN_TASTES) && window.ASMAAN_TASTES.length > 0)
+      ? window.ASMAAN_TASTES
+      : [
+          {
+            id: 'jamun',
+            line1: 'Kala',
+            line2: 'Jamun',
+            primary: '#2A1D4A',
+            secondary: '#9089D3',
+            labelAttr: 'data-label-jamun',
+            tag: 'The original',
+            cx: 22
+          },
+          {
+            id: 'mango',
+            line1: 'Alphonso',
+            line2: 'Mango',
+            primary: '#5A2A00',
+            secondary: '#EFB36B',
+            labelAttr: 'data-label-mango',
+            tag: 'Gold into burnt amber',
+            cx: 120
+          },
+          {
+            id: 'print',
+            line1: 'Wild',
+            line2: 'Magenta',
+            primary: '#4E0749',
+            secondary: '#E6A0E8',
+            labelAttr: 'data-label-print',
+            tag: 'Rose and pink guava',
+            cx: 218
+          }
+        ];
+  }
 
   var PROFILE = [
     [0.842, 0.0], [0.8804, 0.0547], [0.9265, 0.1094], [0.9608, 0.164], [0.9837, 0.2187],
@@ -469,6 +475,12 @@
     var posterImg = canHost.querySelector('img');
     if (!canvas) return;
 
+    if (TASTES.length === 0) {
+      if (canvas) canvas.style.display = 'none';
+      if (posterImg) posterImg.style.display = 'none';
+      return;
+    }
+
     var renderer;
     try {
       renderer = new THREE.WebGLRenderer({
@@ -843,6 +855,9 @@
         if (tex) {
           cItem.labelMaterial.map = tex;
           cItem.labelMaterial.needsUpdate = true;
+        } else {
+          cItem.labelMaterial.map = null;
+          cItem.labelMaterial.needsUpdate = true;
         }
       }
       canvas.style.opacity = '1';
@@ -1005,6 +1020,7 @@
   }
 
   function initTasteInteractions() {
+    if (TASTES.length === 0) return;
     setTaste(0);
 
     var prevBtn = document.querySelector('[data-carousel-prev]');

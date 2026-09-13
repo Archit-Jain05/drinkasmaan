@@ -9,7 +9,7 @@
 
           <ul class="grid grid-cols-1 gap-[var(--pad-l)] sm:grid-cols-2 lg:grid-cols-3">
             {%- assign range_collection = section.settings.collection | default: settings.featured_can_collection -%}
-            {%- if range_collection != blank and range_collection.products.size > 0 -%}
+            {%- if section.settings.card_source == 'collection' and range_collection != blank and range_collection.products.size > 0 -%}
               {%- for product in range_collection.products -%}
                 {%- liquid
                   assign c_title = product.title
@@ -260,6 +260,23 @@
       "id": "title",
       "label": "Heading",
       "default": "The range"
+    },
+    {
+      "type": "select",
+      "id": "card_source",
+      "label": "Card Source",
+      "options": [
+        {
+          "value": "blocks",
+          "label": "Custom Blocks (Add / Edit Cards Below)"
+        },
+        {
+          "value": "collection",
+          "label": "Collection"
+        }
+      ],
+      "default": "blocks",
+      "info": "Choose whether cards are populated from dynamic blocks or a collection."
     },
     {
       "type": "collection",
