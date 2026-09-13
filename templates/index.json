@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "splash": {
@@ -12,7 +21,7 @@
     "stage": {
       "type": "asmaan-stage",
       "settings": {
-        "use_collection_cans": false,
+        "use_collection_cans": true,
         "collection": "frontpage",
         "seo_h1": "Asmaan — the ambition tonic",
         "discover_text": "Scroll to discover",
@@ -51,91 +60,21 @@
     },
     "range": {
       "type": "asmaan-range",
-      "blocks": {
-        "range_card_1": {
-          "type": "product_card",
-          "settings": {
-            "title": "Kala Jamun",
-            "tag": "The original",
-            "accent_secondary": "#9089D3",
-            "accent_primary": "#2A1D4A"
-          }
-        },
-        "range_card_2": {
-          "type": "product_card",
-          "settings": {
-            "title": "Alphonso Mango",
-            "tag": "Gold into burnt amber",
-            "accent_secondary": "#EFB36B",
-            "accent_primary": "#5A2A00"
-          }
-        },
-        "range_card_3": {
-          "type": "product_card",
-          "settings": {
-            "title": "Wild Magenta",
-            "tag": "Rose and pink guava",
-            "accent_secondary": "#E6A0E8",
-            "accent_primary": "#4E0749"
-          }
-        }
-      },
-      "block_order": [
-        "range_card_1",
-        "range_card_2",
-        "range_card_3"
-      ],
       "settings": {
         "title": "The range",
-        "card_source": "blocks"
+        "card1_title": "Kala Jamun",
+        "card1_tag": "The original",
+        "card1_url": "",
+        "card2_title": "Alphonso Mango",
+        "card2_tag": "Gold into burnt amber",
+        "card2_url": "",
+        "card3_title": "Wild Magenta",
+        "card3_tag": "Rose and pink guava",
+        "card3_url": ""
       }
     },
     "wear": {
       "type": "asmaan-wear",
-      "blocks": {
-        "wear_item_1": {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Studio Heavyweight Tee",
-            "price": "₹2,499",
-            "description": "300 GSM combed loopback cotton, relaxed drop-shoulder cut, tonal insignia print."
-          }
-        },
-        "wear_item_2": {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Creative Flow Hoodie",
-            "price": "₹4,999",
-            "description": "480 GSM dense French terry, double-layered architectural hood, hidden tech pocket."
-          }
-        },
-        "wear_item_3": {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Matte Field Cap",
-            "price": "₹1,899",
-            "description": "Weatherproof matte nylon, FIDLOCK magnetic buckle, anti-sweat internal headband."
-          }
-        },
-        "wear_item_4": {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Studio Aluminum Tote",
-            "price": "₹1,499",
-            "description": "Reinforced 24oz waxed canvas with custom anodized aluminum hardware clip."
-          }
-        }
-      },
-      "block_order": [
-        "wear_item_1",
-        "wear_item_2",
-        "wear_item_3",
-        "wear_item_4"
-      ],
       "settings": {
         "tag": "Studio Uniform",
         "title": "Asmaan Studio Wear",
