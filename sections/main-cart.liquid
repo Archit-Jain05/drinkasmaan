@@ -27,8 +27,8 @@
                 <div class="flex items-center gap-4">
                   {%- if item.image -%}
                     <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="h-20 w-auto object-contain rounded-xl bg-white/[0.02] p-2 border border-white/10">
-                  {%- else -%}
-                    <img src="{{ 'can-asmaan.png' | asset_url }}" alt="{{ item.title | escape }}" class="h-20 w-auto object-contain rounded-xl bg-white/[0.02] p-2 border border-white/10">
+                  {%- elsif item.product.featured_image -%}
+                    <img src="{{ item.product.featured_image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="h-20 w-auto object-contain rounded-xl bg-white/[0.02] p-2 border border-white/10">
                   {%- endif -%}
                   <div>
                     <h3 class="font-bold text-white text-base">{{ item.product.title }}</h3>

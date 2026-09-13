@@ -4,28 +4,16 @@
   
   if handle_lower contains 'mango' or title_lower contains 'mango'
     assign flavour_id = 'mango'
-    assign fallback_asset = 'mango-front.webp' | asset_url
-    assign label_asset = 'asmaan-label-mango.jpg' | asset_url
     assign accent_color = '#EFB36B'
     assign tint_color = '#EFB36B'
   elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
     assign flavour_id = 'magenta'
-    assign fallback_asset = 'print-front.webp' | asset_url
-    assign label_asset = 'asmaan-label-magenta.jpg' | asset_url
     assign accent_color = '#E6A0E8'
     assign tint_color = '#E6A0E8'
   else
     assign flavour_id = 'jamun'
-    assign fallback_asset = 'jamun-front.webp' | asset_url
-    assign label_asset = 'asmaan-label-jamun.jpg' | asset_url
     assign accent_color = '#9089D3'
     assign tint_color = '#9089D3'
-  endif
-
-  if product.metafields.custom.label_image != blank
-    assign label_asset = product.metafields.custom.label_image | image_url: width: 2048
-  elsif product.metafields.custom.label != blank
-    assign label_asset = product.metafields.custom.label | image_url: width: 2048
   endif
 
   if product.metafields.custom.accent_color != blank
@@ -33,12 +21,22 @@
     assign tint_color = product.metafields.custom.accent_color
   endif
 
+  assign label_asset = ''
+  if product.images.size > 0
+    assign label_asset = product.images.last | image_url: width: 2048
+  elsif product.media.size > 0
+    assign label_asset = product.media.last | image_url: width: 2048
+  elsif product.metafields.custom.label_image != blank
+    assign label_asset = product.metafields.custom.label_image | image_url: width: 2048
+  elsif product.metafields.custom.label != blank
+    assign label_asset = product.metafields.custom.label | image_url: width: 2048
+  endif
+
   assign current_variant = product.selected_or_first_available_variant
   assign featured_img = current_variant.featured_media | default: product.featured_media | default: product.featured_image | default: product.images.first
+  assign poster_asset = ''
   if featured_img != blank
     assign poster_asset = featured_img | image_url: width: 800
-  else
-    assign poster_asset = fallback_asset
   endif
 -%}
 

@@ -6,46 +6,7 @@
 (function () {
   'use strict';
 
-  var useCollectionMode = !!window.ASMAAN_USE_COLLECTION;
-  var TASTES;
-  if (useCollectionMode) {
-    TASTES = (window.ASMAAN_TASTES && Array.isArray(window.ASMAAN_TASTES)) ? window.ASMAAN_TASTES : [];
-  } else {
-    TASTES = (window.ASMAAN_TASTES && Array.isArray(window.ASMAAN_TASTES) && window.ASMAAN_TASTES.length > 0)
-      ? window.ASMAAN_TASTES
-      : [
-          {
-            id: 'jamun',
-            line1: 'Kala',
-            line2: 'Jamun',
-            primary: '#2A1D4A',
-            secondary: '#9089D3',
-            labelAttr: 'data-label-jamun',
-            tag: 'The original',
-            cx: 22
-          },
-          {
-            id: 'mango',
-            line1: 'Alphonso',
-            line2: 'Mango',
-            primary: '#5A2A00',
-            secondary: '#EFB36B',
-            labelAttr: 'data-label-mango',
-            tag: 'Gold into burnt amber',
-            cx: 120
-          },
-          {
-            id: 'print',
-            line1: 'Wild',
-            line2: 'Magenta',
-            primary: '#4E0749',
-            secondary: '#E6A0E8',
-            labelAttr: 'data-label-print',
-            tag: 'Rose and pink guava',
-            cx: 218
-          }
-        ];
-  }
+  var TASTES = (window.ASMAAN_TASTES && Array.isArray(window.ASMAAN_TASTES)) ? window.ASMAAN_TASTES : [];
 
   var PROFILE = [
     [0.842, 0.0], [0.8804, 0.0547], [0.9265, 0.1094], [0.9608, 0.164], [0.9837, 0.2187],

@@ -31,20 +31,26 @@
   assign can_detail = detail | default: 'high'
   assign can_view = view | default: 'front'
 
-  if label.src
-    assign label_url = label | image_url: width: 2048
-  elsif label contains '//'
-    assign label_url = label
-  else
-    assign label_url = label | asset_url
+  assign label_url = ''
+  if label != blank
+    if label.src
+      assign label_url = label | image_url: width: 2048
+    elsif label contains '//'
+      assign label_url = label
+    else
+      assign label_url = label | asset_url
+    endif
   endif
 
-  if poster.src
-    assign poster_url = poster | image_url: width: 760
-  elsif poster contains '//'
-    assign poster_url = poster
-  elsif poster != blank
-    assign poster_url = poster | asset_url
+  assign poster_url = ''
+  if poster != blank
+    if poster.src
+      assign poster_url = poster | image_url: width: 760
+    elsif poster contains '//'
+      assign poster_url = poster
+    else
+      assign poster_url = poster | asset_url
+    endif
   endif
 
   case can_view

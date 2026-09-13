@@ -62,16 +62,6 @@
                         class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
                         src="{{ c_img | image_url: width: 520 }}"
                       >
-                    {%- else -%}
-                      <img
-                        alt="{{ c_title | escape }} can"
-                        loading="lazy"
-                        width="520"
-                        height="1040"
-                        decoding="async"
-                        class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                        src="{{ 'can-asmaan.png' | asset_url }}"
-                      >
                     {%- endif -%}
                     <span class="relative heading-style-h3">{{ c_title }}</span>
                     <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ c_tag }}</span>
@@ -83,10 +73,16 @@
               {%- for block in section.blocks -%}
                 {%- liquid
                   assign b_prod = block.settings.product
+                  if b_prod == blank and block.settings.title != blank
+                    assign b_handle = block.settings.title | handleize
+                    if all_products[b_handle] != blank
+                      assign b_prod = all_products[b_handle]
+                    endif
+                  endif
                   if b_prod != blank
                     assign c_title = block.settings.title | default: b_prod.title
                     assign c_tag = block.settings.tag | default: b_prod.metafields.custom.tagline | default: b_prod.type | default: 'Ambition Tonic'
-                    assign c_img = block.settings.image | default: b_prod.featured_media
+                    assign c_img = block.settings.image | default: b_prod.featured_media | default: b_prod.featured_image
                     assign c_url = block.settings.url | default: b_prod.url
                     assign c_color_sec = block.settings.accent_secondary | default: b_prod.metafields.custom.accent_color
                     assign c_color_pri = block.settings.accent_primary | default: b_prod.metafields.custom.primary_color
@@ -142,16 +138,6 @@
                         class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
                         src="{{ c_img | image_url: width: 520 }}"
                       >
-                    {%- else -%}
-                      <img
-                        alt="{{ c_title | escape }} can"
-                        loading="lazy"
-                        width="520"
-                        height="1040"
-                        decoding="async"
-                        class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                        src="{{ 'can-asmaan.png' | asset_url }}"
-                      >
                     {%- endif -%}
                     <span class="relative heading-style-h3">{{ c_title }}</span>
                     <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ c_tag }}</span>
@@ -160,12 +146,14 @@
               {%- endfor -%}
 
             {%- else -%}
-              <!-- Default Fallback Cards (Kala Jamun, Alphonso Mango, Wild Magenta) -->
+              <!-- Fallback Cards (Dynamic Product Lookup) -->
+              {%- assign p1 = all_products['kala-jamun'] -%}
+              {%- assign img1 = section.settings.card1_image | default: p1.featured_media | default: p1.featured_image -%}
               <li>
                 <button
                   type="button"
                   data-range-card="0"
-                  {% if section.settings.card1_url != blank %}data-href="{{ section.settings.card1_url }}"{% endif %}
+                  {% if section.settings.card1_url != blank or p1.url != blank %}data-href="{{ section.settings.card1_url | default: p1.url }}"{% endif %}
                   aria-current="true"
                   class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
                 >
@@ -174,25 +162,29 @@
                     class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
                     style="background: radial-gradient(circle at 50% 100%, #9089D3, #2A1D4A 55%, transparent 75%);"
                   ></span>
-                  <img
-                    alt="{{ section.settings.card1_title | default: 'Kala Jamun' }} can"
-                    loading="lazy"
-                    width="520"
-                    height="1040"
-                    decoding="async"
-                    class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                    src="{% if section.settings.card1_image != blank %}{{ section.settings.card1_image | image_url: width: 520 }}{% else %}{{ 'jamun-front.webp' | asset_url }}{% endif %}"
-                  >
-                  <span class="relative heading-style-h3">{{ section.settings.card1_title | default: 'Kala Jamun' }}</span>
+                  {%- if img1 != blank -%}
+                    <img
+                      alt="{{ section.settings.card1_title | default: p1.title | default: 'Kala Jamun' }} can"
+                      loading="lazy"
+                      width="520"
+                      height="1040"
+                      decoding="async"
+                      class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                      src="{{ img1 | image_url: width: 520 }}"
+                    >
+                  {%- endif -%}
+                  <span class="relative heading-style-h3">{{ section.settings.card1_title | default: p1.title | default: 'Kala Jamun' }}</span>
                   <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.card1_tag | default: 'The original' }}</span>
                 </button>
               </li>
 
+              {%- assign p2 = all_products['alphonso-mango'] -%}
+              {%- assign img2 = section.settings.card2_image | default: p2.featured_media | default: p2.featured_image -%}
               <li>
                 <button
                   type="button"
                   data-range-card="1"
-                  {% if section.settings.card2_url != blank %}data-href="{{ section.settings.card2_url }}"{% endif %}
+                  {% if section.settings.card2_url != blank or p2.url != blank %}data-href="{{ section.settings.card2_url | default: p2.url }}"{% endif %}
                   aria-current="false"
                   class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
                 >
@@ -201,25 +193,29 @@
                     class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
                     style="background: radial-gradient(circle at 50% 100%, #EFB36B, #5A2A00 55%, transparent 75%);"
                   ></span>
-                  <img
-                    alt="{{ section.settings.card2_title | default: 'Alphonso Mango' }} can"
-                    loading="lazy"
-                    width="520"
-                    height="1040"
-                    decoding="async"
-                    class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                    src="{% if section.settings.card2_image != blank %}{{ section.settings.card2_image | image_url: width: 520 }}{% else %}{{ 'mango-front.webp' | asset_url }}{% endif %}"
-                  >
-                  <span class="relative heading-style-h3">{{ section.settings.card2_title | default: 'Alphonso Mango' }}</span>
+                  {%- if img2 != blank -%}
+                    <img
+                      alt="{{ section.settings.card2_title | default: p2.title | default: 'Alphonso Mango' }} can"
+                      loading="lazy"
+                      width="520"
+                      height="1040"
+                      decoding="async"
+                      class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                      src="{{ img2 | image_url: width: 520 }}"
+                    >
+                  {%- endif -%}
+                  <span class="relative heading-style-h3">{{ section.settings.card2_title | default: p2.title | default: 'Alphonso Mango' }}</span>
                   <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.card2_tag | default: 'Gold into burnt amber' }}</span>
                 </button>
               </li>
 
+              {%- assign p3 = all_products['wild-magenta'] -%}
+              {%- assign img3 = section.settings.card3_image | default: p3.featured_media | default: p3.featured_image -%}
               <li>
                 <button
                   type="button"
                   data-range-card="2"
-                  {% if section.settings.card3_url != blank %}data-href="{{ section.settings.card3_url }}"{% endif %}
+                  {% if section.settings.card3_url != blank or p3.url != blank %}data-href="{{ section.settings.card3_url | default: p3.url }}"{% endif %}
                   aria-current="false"
                   class="group relative flex w-full flex-col items-center gap-[var(--pad-s)] rounded-[var(--radius-medium)] border border-white/10 bg-white/[0.03] px-[var(--pad-s)] py-[var(--pad-xl)] text-center transition-colors hover:border-white/30 aria-[current=true]:border-white/40 cursor-pointer"
                 >
@@ -228,16 +224,18 @@
                     class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
                     style="background: radial-gradient(circle at 50% 100%, #E6A0E8, #4E0749 55%, transparent 75%);"
                   ></span>
-                  <img
-                    alt="{{ section.settings.card3_title | default: 'Wild Magenta' }} can"
-                    loading="lazy"
-                    width="520"
-                    height="1040"
-                    decoding="async"
-                    class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                    src="{% if section.settings.card3_image != blank %}{{ section.settings.card3_image | image_url: width: 520 }}{% else %}{{ 'print-front.webp' | asset_url }}{% endif %}"
-                  >
-                  <span class="relative heading-style-h3">{{ section.settings.card3_title | default: 'Wild Magenta' }}</span>
+                  {%- if img3 != blank -%}
+                    <img
+                      alt="{{ section.settings.card3_title | default: p3.title | default: 'Wild Magenta' }} can"
+                      loading="lazy"
+                      width="520"
+                      height="1040"
+                      decoding="async"
+                      class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                      src="{{ img3 | image_url: width: 520 }}"
+                    >
+                  {%- endif -%}
+                  <span class="relative heading-style-h3">{{ section.settings.card3_title | default: p3.title | default: 'Wild Magenta' }}</span>
                   <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.card3_tag | default: 'Rose and pink guava' }}</span>
                 </button>
               </li>
