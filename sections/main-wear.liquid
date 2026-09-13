@@ -2,10 +2,10 @@
   <div class="padding-global">
     <div class="container-large max-w-6xl mx-auto px-4">
       <div class="asmaan-subpage-hero">
-        <span class="asmaan-subpage-tag">Studio Uniform</span>
-        <h1 class="asmaan-subpage-title">Asmaan Studio Wear</h1>
+        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'Studio Uniform' }}</span>
+        <h1 class="asmaan-subpage-title">{{ section.settings.title | default: 'Asmaan Studio Wear' }}</h1>
         <p class="asmaan-subpage-sub">
-          Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts.
+          {{ section.settings.subtitle | default: 'Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts.' }}
         </p>
       </div>
 
@@ -94,10 +94,10 @@
 
       <!-- Waitlist Signup Banner -->
       <div id="wear-waitlist" class="max-w-xl mx-auto text-center p-8 rounded-2xl bg-white/[0.03] border border-white/10 mb-12">
-        <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-2">Exclusive Allocation</span>
-        <h2 class="text-2xl font-bold uppercase tracking-tight text-white mb-2">Drop 01 Access</h2>
+        <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-2">{{ section.settings.waitlist_kicker | default: 'Exclusive Allocation' }}</span>
+        <h2 class="text-2xl font-bold uppercase tracking-tight text-white mb-2">{{ section.settings.waitlist_title | default: 'Drop 01 Access' }}</h2>
         <p class="text-sm text-white/70 mb-6">
-          Quantities are strictly limited to 250 units per garment. Register your email for early password-protected access 1 hour before general release.
+          {{ section.settings.waitlist_sub | default: 'Quantities are strictly limited to 250 units per garment. Register your email for early password-protected access 1 hour before general release.' }}
         </p>
         {% form 'customer' %}
           <input type="hidden" name="contact[tags]" value="wear_waitlist">
@@ -122,4 +122,57 @@
   </div>
 </section>
 
-{% section 'asmaan-newsletter' %}
+{% schema %}
+{
+  "name": "Studio Wear Catalog",
+  "tag": "section",
+  "class": "section-main-wear",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tag",
+      "label": "Hero Tagline",
+      "default": "Studio Uniform"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero Title",
+      "default": "Asmaan Studio Wear"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Hero Subtitle",
+      "default": "Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts."
+    },
+    {
+      "type": "header",
+      "content": "Waitlist Banner"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_kicker",
+      "label": "Waitlist Kicker",
+      "default": "Exclusive Allocation"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_title",
+      "label": "Waitlist Title",
+      "default": "Drop 01 Access"
+    },
+    {
+      "type": "textarea",
+      "id": "waitlist_sub",
+      "label": "Waitlist Subtext",
+      "default": "Quantities are strictly limited to 250 units per garment. Register your email for early password-protected access 1 hour before general release."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Studio Wear Catalog"
+    }
+  ]
+}
+{% endschema %}

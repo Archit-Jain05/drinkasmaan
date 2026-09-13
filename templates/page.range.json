@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "hero": {
+      "type": "main-range-hero",
+      "settings": {}
+    },
+    "range": {
+      "type": "asmaan-range",
+      "settings": {}
+    },
+    "callout": {
+      "type": "main-range-callout",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "asmaan-newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "range",
+    "callout",
+    "newsletter"
+  ]
+}

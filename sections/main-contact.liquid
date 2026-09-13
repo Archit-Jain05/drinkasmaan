@@ -2,10 +2,10 @@
   <div class="padding-global">
     <div class="container-large max-w-4xl mx-auto px-4">
       <div class="asmaan-subpage-hero">
-        <span class="asmaan-subpage-tag">Direct Communication</span>
-        <h1 class="asmaan-subpage-title">Get in Touch</h1>
+        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'Direct Communication' }}</span>
+        <h1 class="asmaan-subpage-title">{{ section.settings.title | default: 'Get in Touch' }}</h1>
         <p class="asmaan-subpage-sub">
-          Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours.
+          {{ section.settings.subtitle | default: 'Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours.' }}
         </p>
       </div>
 
@@ -14,17 +14,17 @@
         <div class="space-y-6">
           <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
             <span class="font-mono text-xs uppercase tracking-widest text-white/50 block mb-1">Email Directly</span>
-            <a href="mailto:hello@drinkasmaan.com" class="text-white font-medium hover:underline text-sm">hello@drinkasmaan.com</a>
+            <a href="mailto:{{ section.settings.email | default: 'hello@drinkasmaan.com' }}" class="text-white font-medium hover:underline text-sm">{{ section.settings.email | default: 'hello@drinkasmaan.com' }}</a>
           </div>
 
           <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
             <span class="font-mono text-xs uppercase tracking-widest text-white/50 block mb-1">Studio Inquiries</span>
-            <p class="text-white/80 text-sm">Asmaan Botanical Labs<br>Bandra West, Mumbai &bull; 400050</p>
+            <p class="text-white/80 text-sm">{{ section.settings.address | default: 'Asmaan Botanical Labs<br>Bandra West, Mumbai &bull; 400050' }}</p>
           </div>
 
           <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
             <span class="font-mono text-xs uppercase tracking-widest text-white/50 block mb-1">Response Hours</span>
-            <p class="text-white/80 text-sm">Mon &ndash; Fri: 09:00 &ndash; 19:00 IST</p>
+            <p class="text-white/80 text-sm">{{ section.settings.hours | default: 'Mon &ndash; Fri: 09:00 &ndash; 19:00 IST' }}</p>
           </div>
         </div>
 
@@ -109,4 +109,53 @@
   </div>
 </section>
 
-{% section 'asmaan-newsletter' %}
+{% schema %}
+{
+  "name": "Contact Page",
+  "tag": "section",
+  "class": "section-main-contact",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tag",
+      "label": "Hero Tagline",
+      "default": "Direct Communication"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero Title",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Hero Subtitle",
+      "default": "Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours."
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Support Email",
+      "default": "hello@drinkasmaan.com"
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "Studio Address (HTML allowed)",
+      "default": "Asmaan Botanical Labs<br>Bandra West, Mumbai &bull; 400050"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Response Hours",
+      "default": "Mon – Fri: 09:00 – 19:00 IST"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Page"
+    }
+  ]
+}
+{% endschema %}

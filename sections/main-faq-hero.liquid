@@ -1,0 +1,46 @@
+<section class="asmaan-subpage-section !pb-12">
+  <div class="padding-global">
+    <div class="container-large max-w-4xl mx-auto px-4">
+      <div class="asmaan-subpage-hero !mb-8">
+        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'Got Questions?' }}</span>
+        <h1 class="asmaan-subpage-title">{{ section.settings.title | default: 'Frequently Asked Questions' }}</h1>
+        <p class="asmaan-subpage-sub">
+          {{ section.settings.subtitle | default: 'Everything you need to know about Asmaan Ambition Tonic, botanical sourcing, caffeine curves, and delivery.' }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ Hero Banner",
+  "tag": "div",
+  "class": "section-faq-hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tag",
+      "label": "Hero Tagline",
+      "default": "Got Questions?"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero Title",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Hero Subtitle",
+      "default": "Everything you need to know about Asmaan Ambition Tonic, botanical sourcing, caffeine curves, and delivery."
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Hero Banner"
+    }
+  ]
+}
+{% endschema %}

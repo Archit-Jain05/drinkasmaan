@@ -1,0 +1,36 @@
+{
+  "sections": {
+    "splash": {
+      "type": "asmaan-splash",
+      "settings": {}
+    },
+    "stage": {
+      "type": "asmaan-stage",
+      "settings": {}
+    },
+    "range": {
+      "type": "asmaan-range",
+      "settings": {}
+    },
+    "wear": {
+      "type": "asmaan-wear",
+      "settings": {}
+    },
+    "faq": {
+      "type": "asmaan-faq",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "asmaan-newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "splash",
+    "stage",
+    "range",
+    "wear",
+    "faq",
+    "newsletter"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "hero": {
+      "type": "main-faq-hero",
+      "settings": {}
+    },
+    "faq": {
+      "type": "asmaan-faq",
+      "settings": {}
+    },
+    "support": {
+      "type": "main-faq-support",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "asmaan-newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "faq",
+    "support",
+    "newsletter"
+  ]
+}

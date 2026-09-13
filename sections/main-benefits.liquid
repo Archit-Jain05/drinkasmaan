@@ -2,10 +2,10 @@
   <div class="padding-global">
     <div class="container-large max-w-5xl mx-auto px-4">
       <div class="asmaan-subpage-hero">
-        <span class="asmaan-subpage-tag">Formulated for Performance</span>
-        <h1 class="asmaan-subpage-title">The Science of Asmaan</h1>
+        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'Formulated for Performance' }}</span>
+        <h1 class="asmaan-subpage-title">{{ section.settings.title | default: 'The Science of Asmaan' }}</h1>
         <p class="asmaan-subpage-sub">
-          Energy drinks were engineered for athletes and video gamers. Asmaan is engineered for creators, builders, and deep thinkers who need sustained focus without jitters or burnout.
+          {{ section.settings.subtitle | default: 'Energy drinks were engineered for athletes and video gamers. Asmaan is engineered for creators, builders, and deep thinkers who need sustained focus without jitters or burnout.' }}
         </p>
       </div>
 
@@ -143,8 +143,8 @@
 
       <!-- Action Footer -->
       <div class="text-center py-8">
-        <a href="/#range" class="button is-hero is-primary">
-          <span>Taste the Difference &bull; Shop Range</span>
+        <a href="{{ section.settings.cta_url | default: '/#range' }}" class="button is-hero is-primary">
+          <span>{{ section.settings.cta_label | default: 'Taste the Difference • Shop Range' }}</span>
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
@@ -154,4 +154,46 @@
   </div>
 </section>
 
-{% section 'asmaan-newsletter' %}
+{% schema %}
+{
+  "name": "Science & Benefits",
+  "tag": "section",
+  "class": "section-main-benefits",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tag",
+      "label": "Hero Tagline",
+      "default": "Formulated for Performance"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero Title",
+      "default": "The Science of Asmaan"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Hero Subtitle",
+      "default": "Energy drinks were engineered for athletes and video gamers. Asmaan is engineered for creators, builders, and deep thinkers who need sustained focus without jitters or burnout."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA Button Label",
+      "default": "Taste the Difference • Shop Range"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Science & Benefits"
+    }
+  ]
+}
+{% endschema %}

@@ -344,18 +344,6 @@
             {%- endfor -%}
           </div>
         </div>
-      {%- else -%}
-        <!-- Single Variant / Direct Batch indicator -->
-        <div style="margin-bottom: 1.75rem;" id="variant-selection-container">
-          <label style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
-            Allocation &bull; Direct Batch
-          </label>
-          <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; border-radius: 0.75rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); font-family: var(--font-mono, monospace); font-size: 12px; color: rgba(255,255,255,0.85);">
-            <span style="height: 6px; width: 6px; border-radius: 50%; background: #34d399; display: inline-block;"></span>
-            <span>{{ product.variants.first.title | replace: 'Default Title', 'Direct Batch 250ml Can' }}</span>
-            <span style="color: #34d399; margin-left: 0.25rem;">({{ current_variant.price | money }})</span>
-          </div>
-        </div>
       {%- endif -%}
 
       <!-- Core Specs Pills -->
@@ -403,32 +391,32 @@
 
       <!-- Botanical Accordion -->
       <div style="margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
-        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-science">
+        <div class="product_spec_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <button type="button" class="product_spec_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-science">
             <span>Scientific Formulation</span>
-            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+            <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
           </button>
-          <div id="spec-science" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+          <div id="spec-science" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
             {{ product.metafields.custom.scientific_formulation | default: 'Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine&reg; L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow.' }}
           </div>
         </div>
 
-        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-nutrition">
+        <div class="product_spec_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
+          <button type="button" class="product_spec_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-nutrition">
             <span>Full Nutrition Facts (250ml)</span>
-            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+            <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
           </button>
-          <div id="spec-nutrition" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
+          <div id="spec-nutrition" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
             {{ product.metafields.custom.nutrition_facts | default: 'Energy: 10 kcal &bull; Protein: 0g &bull; Fat: 0g &bull; Total Carbohydrates: 0g &bull; Total Sugars: 0g &bull; Sodium: 14mg &bull; Caffeine: 100mg &bull; L-Theanine: 200mg &bull; KSM-66: 300mg.' }}
           </div>
         </div>
 
-        <div class="faq_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
-          <button type="button" class="faq_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-shipping">
+        <div class="product_spec_item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+          <button type="button" class="product_spec_question" style="padding: 0.5rem 0; font-size: 14px; font-weight: bold; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; align-items: center; width: 100%; background: transparent; border: none; cursor: pointer;" aria-expanded="false" aria-controls="spec-shipping">
             <span>Shipping &amp; Freshness Guarantee</span>
-            <span style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
+            <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
           </button>
-          <div id="spec-shipping" class="faq_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+          <div id="spec-shipping" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
             {{ product.metafields.custom.shipping_details | default: 'All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over &#8377;999.' }}
           </div>
         </div>
@@ -499,21 +487,45 @@
       });
     });
 
-    // 2. Botanical Accordions
-    var faqQuestions = document.querySelectorAll('.faq_question');
-    faqQuestions.forEach(function(btn) {
+    // 2. Botanical Accordions / Spec Drawers
+    var specQuestions = document.querySelectorAll('.product_spec_question');
+    specQuestions.forEach(function(btn) {
       btn.addEventListener('click', function() {
         var ctrlId = btn.getAttribute('aria-controls');
         var answer = document.getElementById(ctrlId);
-        var expanded = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', !expanded);
-        if (answer) {
-          answer.setAttribute('data-open', !expanded);
-          answer.style.display = !expanded ? 'block' : 'none';
-        }
-        var icon = btn.querySelector('span:last-child');
-        if (icon) {
-          icon.innerHTML = expanded ? '&plus;' : '&minus;';
+        var isExpanded = btn.getAttribute('aria-expanded') === 'true';
+        var icon = btn.querySelector('.product_spec_icon');
+
+        // Close other drawers
+        specQuestions.forEach(function(otherBtn) {
+          if (otherBtn !== btn) {
+            otherBtn.setAttribute('aria-expanded', 'false');
+            var otherId = otherBtn.getAttribute('aria-controls');
+            var otherAns = document.getElementById(otherId);
+            if (otherAns) {
+              otherAns.style.display = 'none';
+              otherAns.setAttribute('data-open', 'false');
+            }
+            var otherIcon = otherBtn.querySelector('.product_spec_icon');
+            if (otherIcon) otherIcon.innerHTML = '&plus;';
+          }
+        });
+
+        // Toggle current drawer: if open -> close; if closed -> open
+        if (isExpanded) {
+          btn.setAttribute('aria-expanded', 'false');
+          if (answer) {
+            answer.style.display = 'none';
+            answer.setAttribute('data-open', 'false');
+          }
+          if (icon) icon.innerHTML = '&plus;';
+        } else {
+          btn.setAttribute('aria-expanded', 'true');
+          if (answer) {
+            answer.style.display = 'block';
+            answer.setAttribute('data-open', 'true');
+          }
+          if (icon) icon.innerHTML = '&minus;';
         }
       });
     });
@@ -578,7 +590,12 @@
 {% schema %}
 {
   "name": "Product Details",
-  "settings": []
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product Details"
+    }
+  ]
 }
 {% endschema %}
 

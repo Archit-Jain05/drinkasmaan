@@ -2,10 +2,10 @@
   <div class="padding-global">
     <div class="container-large max-w-6xl mx-auto px-4">
       <div class="asmaan-subpage-hero text-center mb-12">
-        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Direct Allocation &bull; Founders Run</span>
-        <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white mb-4">Complete Shop</h1>
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">{{ section.settings.kicker | default: 'Direct Allocation • Founders Run' }}</span>
+        <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white mb-4">{{ section.settings.title | default: 'Complete Shop' }}</h1>
         <p class="max-w-xl mx-auto text-white/70 text-sm leading-relaxed">
-          Elevated botanical tonics formulated with raw green coffee bean caffeine, L-theanine, and KSM-66 ashwagandha. Zero sugar. Zero jitters.
+          {{ section.settings.subtitle | default: 'Elevated botanical tonics formulated with raw green coffee bean caffeine, L-theanine, and KSM-66 ashwagandha. Zero sugar. Zero jitters.' }}
         </p>
       </div>
 
@@ -205,12 +205,12 @@
       <!-- Free Shipping Banner -->
       <div class="p-6 sm:p-8 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
         <div>
-          <span class="font-mono text-xs uppercase tracking-widest text-emerald-400 block mb-1">Direct from Bengaluru Studio</span>
-          <h3 class="text-xl font-bold uppercase tracking-tight text-white">Free Nationwide Shipping Over &#8377;999</h3>
-          <p class="text-white/60 text-xs mt-1">Dispatched chilled in custom-insulated recyclable corrugated packs.</p>
+          <span class="font-mono text-xs uppercase tracking-widest text-emerald-400 block mb-1">{{ section.settings.banner_kicker | default: 'Direct from Bengaluru Studio' }}</span>
+          <h3 class="text-xl font-bold uppercase tracking-tight text-white">{{ section.settings.banner_heading | default: 'Free Nationwide Shipping Over ₹999' }}</h3>
+          <p class="text-white/60 text-xs mt-1">{{ section.settings.banner_sub | default: 'Dispatched chilled in custom-insulated recyclable corrugated packs.' }}</p>
         </div>
-        <a href="/#range" class="button is-primary is-small whitespace-nowrap">
-          Order Cans
+        <a href="{{ section.settings.banner_cta_url | default: '/#range' }}" class="button is-primary is-small whitespace-nowrap">
+          {{ section.settings.banner_cta_label | default: 'Order Cans' }}
         </a>
       </div>
     </div>
@@ -241,4 +241,68 @@
   })();
 </script>
 
-{% section 'asmaan-newsletter' %}
+{% schema %}
+{
+  "name": "Shop Catalog",
+  "tag": "section",
+  "class": "section-main-shop",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Hero Kicker",
+      "default": "Direct Allocation • Founders Run"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero Title",
+      "default": "Complete Shop"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Hero Subtitle",
+      "default": "Elevated botanical tonics formulated with raw green coffee bean caffeine, L-theanine, and KSM-66 ashwagandha. Zero sugar. Zero jitters."
+    },
+    {
+      "type": "header",
+      "content": "Free Shipping Banner"
+    },
+    {
+      "type": "text",
+      "id": "banner_kicker",
+      "label": "Banner Kicker",
+      "default": "Direct from Bengaluru Studio"
+    },
+    {
+      "type": "text",
+      "id": "banner_heading",
+      "label": "Banner Heading",
+      "default": "Free Nationwide Shipping Over ₹999"
+    },
+    {
+      "type": "text",
+      "id": "banner_sub",
+      "label": "Banner Subtext",
+      "default": "Dispatched chilled in custom-insulated recyclable corrugated packs."
+    },
+    {
+      "type": "text",
+      "id": "banner_cta_label",
+      "label": "Banner CTA Label",
+      "default": "Order Cans"
+    },
+    {
+      "type": "url",
+      "id": "banner_cta_url",
+      "label": "Banner CTA Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop Catalog"
+    }
+  ]
+}
+{% endschema %}

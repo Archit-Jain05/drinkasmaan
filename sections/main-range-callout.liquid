@@ -1,0 +1,52 @@
+<section class="section relative bg-black py-16 text-center border-t border-white/10">
+  <div class="padding-global">
+    <div class="container-large max-w-xl mx-auto px-4">
+      <h2 class="text-2xl font-bold uppercase tracking-tight text-white mb-2">{{ section.settings.title | default: 'Order Founders 12-Pack' }}</h2>
+      <p class="text-white/70 text-sm mb-6">{{ section.settings.subtitle | default: 'Enjoy free nationwide shipping on all 12-packs and 24-packs. Includes 4 cans of each flavour: Kala Jamun, Alphonso Mango, and Wild Magenta.' }}</p>
+      <a href="{{ section.settings.cta_url | default: '/cart' }}" class="button is-hero is-primary">
+        <span>{{ section.settings.cta_label | default: 'Proceed to Checkout • Free Shipping' }}</span>
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Range Order Callout",
+  "tag": "div",
+  "class": "section-range-callout",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Callout Title",
+      "default": "Order Founders 12-Pack"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Callout Subtext",
+      "default": "Enjoy free nationwide shipping on all 12-packs and 24-packs. Includes 4 cans of each flavour: Kala Jamun, Alphonso Mango, and Wild Magenta."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "CTA Button Label",
+      "default": "Proceed to Checkout • Free Shipping"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Range Order Callout"
+    }
+  ]
+}
+{% endschema %}

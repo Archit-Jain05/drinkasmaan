@@ -1,0 +1,46 @@
+<section class="asmaan-subpage-section !pb-8">
+  <div class="padding-global">
+    <div class="container-large max-w-5xl mx-auto px-4 text-center">
+      <div class="asmaan-subpage-hero !mb-6">
+        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'The Complete Lineup' }}</span>
+        <h1 class="asmaan-subpage-title">{{ section.settings.title | default: 'The Asmaan Range' }}</h1>
+        <p class="asmaan-subpage-sub">
+          {{ section.settings.subtitle | default: 'Three unapologetic botanical profiles. Each crafted with 100mg of green coffee caffeine, 200mg L-theanine, 300mg KSM-66 ashwagandha, and zero added sugar.' }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Range Hero Banner",
+  "tag": "div",
+  "class": "section-range-hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tag",
+      "label": "Hero Tagline",
+      "default": "The Complete Lineup"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero Title",
+      "default": "The Asmaan Range"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Hero Subtitle",
+      "default": "Three unapologetic botanical profiles. Each crafted with 100mg of green coffee caffeine, 200mg L-theanine, 300mg KSM-66 ashwagandha, and zero added sugar."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Range Hero Banner"
+    }
+  ]
+}
+{% endschema %}

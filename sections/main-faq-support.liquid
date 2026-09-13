@@ -1,0 +1,49 @@
+<section class="section relative bg-black py-16 text-center border-t border-white/10">
+  <div class="padding-global">
+    <div class="container-large max-w-xl mx-auto px-4">
+      <h2 class="text-xl font-bold uppercase tracking-tight text-white mb-2">{{ section.settings.title | default: 'Still need help?' }}</h2>
+      <p class="text-white/60 text-sm mb-6">{{ section.settings.subtitle | default: 'Our studio support team is on standby to assist with custom orders, dietary questions, or stockist queries.' }}</p>
+      <a href="{{ section.settings.cta_url | default: '/pages/contact' }}" class="button is-hero is-secondary">
+        {{ section.settings.cta_label | default: 'Contact Studio Support' }}
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ Support CTA",
+  "tag": "div",
+  "class": "section-faq-support",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Still need help?"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtext",
+      "default": "Our studio support team is on standby to assist with custom orders, dietary questions, or stockist queries."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button Label",
+      "default": "Contact Studio Support"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Support CTA"
+    }
+  ]
+}
+{% endschema %}
