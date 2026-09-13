@@ -2692,7 +2692,7 @@ input:focus-visible {
   transition: color 0.2s, background-color 0.2s, transform 0.2s;
   position: relative;
   text-decoration: none;
-  font-size: 1.25rem;
+  font-size: 1.5625rem;
   min-width: 2.5rem;
   min-height: 2.5rem;
 }
