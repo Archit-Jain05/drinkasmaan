@@ -506,6 +506,7 @@
 }
 
 /* Spinner */
+/* Spinner */
 .ambassador_spinner {
   width: 18px;
   height: 18px;
@@ -528,35 +529,341 @@
   to { transform: rotate(360deg); }
 }
 
-/* Success Banner */
-.ambassador_success-box {
-  display: none;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  border-radius: 16px;
-  padding: 24px;
-  text-align: center;
-  margin-top: 20px;
+/* Input validation error state */
+.ambassador_input.is-invalid,
+.ambassador_select.is-invalid,
+.ambassador_textarea.is-invalid {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.06) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25) !important;
 }
 
-.ambassador_success-box.is-active {
-  display: block;
+/* Error Banner */
+.ambassador_error-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+  text-align: left;
 }
 
-.ambassador_success-title {
-  color: #34d399;
-  font-weight: 800;
-  font-size: 16px;
+.ambassador_error-title {
+  color: #f87171;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.ambassador_success-desc {
-  color: rgba(255, 255, 255, 0.75);
+.ambassador_error-desc {
+  color: rgba(255, 255, 255, 0.85);
   font-size: 13px;
   line-height: 1.5;
   margin: 0;
+}
+
+/* Celebration Card (In-Page Success Confirmation) */
+.ambassador_celebration-card {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px 24px 40px;
+  animation: celebration-appear 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.ambassador_celebration-card.is-active {
+  display: flex;
+}
+
+@keyframes celebration-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ambassador_celebration-icon-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(52, 211, 153, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #34d399;
+  margin-bottom: 24px;
+  animation: beacon-ring-pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes beacon-ring-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(52, 211, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0);
+  }
+}
+
+.ambassador_celebration-icon {
+  width: 36px;
+  height: 36px;
+  stroke: #34d399;
+}
+
+.ambassador_celebration-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #34d399;
+  margin-bottom: 16px;
+}
+
+.ambassador_celebration-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 6px #34d399;
+}
+
+.ambassador_celebration-title {
+  font-family: 'Libre Franklin', -apple-system, sans-serif;
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 12px;
+}
+
+.ambassador_celebration-desc {
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-size: clamp(14px, 1.8vw, 15px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 500px;
+  margin: 0 0 32px;
+}
+
+.ambassador_celebration-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  width: 100%;
+}
+
+.ambassador_celebration-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.ambassador_celebration-btn.is-primary {
+  background: #fff;
+  color: #000;
+  box-shadow: 0 4px 18px rgba(255, 255, 255, 0.25);
+}
+
+.ambassador_celebration-btn.is-primary:hover {
+  transform: translateY(-2px);
+  background: #f0f0f0;
+  box-shadow: 0 6px 24px rgba(255, 255, 255, 0.4);
+}
+
+.ambassador_celebration-btn.is-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.ambassador_celebration-btn.is-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   FLOATING TOAST NOTIFICATION PORTAL (Global UI Component)
+   ========================================================================== */
+.asmaan-toast-portal {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 90%;
+  max-width: 460px;
+  pointer-events: none;
+}
+
+.asmaan-toast {
+  position: relative;
+  width: 100%;
+  background: rgba(14, 14, 18, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  pointer-events: auto;
+  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  animation: toast-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  overflow: hidden;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.asmaan-toast.is-leaving {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.96);
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Toast Variations */
+.asmaan-toast--success {
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  box-shadow: 0 16px 36px -10px rgba(16, 185, 129, 0.3), 0 0 0 1px rgba(52, 211, 153, 0.25);
+}
+
+.asmaan-toast--success .asmaan-toast_icon {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.asmaan-toast--error {
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  box-shadow: 0 16px 36px -10px rgba(239, 68, 68, 0.3), 0 0 0 1px rgba(239, 68, 68, 0.25);
+}
+
+.asmaan-toast--error .asmaan-toast_icon {
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.asmaan-toast_icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.asmaan-toast_icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.asmaan-toast_content {
+  flex: 1;
+  min-width: 0;
+}
+
+.asmaan-toast_title {
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.asmaan-toast_message {
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+}
+
+.asmaan-toast_close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.asmaan-toast_close:hover {
+  color: #fff;
+}
+
+.asmaan-toast_progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 100%;
+}
+
+.asmaan-toast--success .asmaan-toast_progress {
+  background: #34d399;
+}
+
+.asmaan-toast--error .asmaan-toast_progress {
+  background: #ef4444;
 }
 
 /* --- FAQ ACCORDION -------------------------------------------------------- */

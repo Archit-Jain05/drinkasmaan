@@ -1,24 +1,101 @@
-<div class="asmaan-subpage-section min-h-[75vh] flex flex-col items-center justify-center text-center px-4 bg-black text-white">
-  <div class="max-w-md mx-auto">
-    <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-3">Error 404</span>
-    <h1 class="text-4xl sm:text-6xl font-black tracking-tight uppercase mb-4">Off Course</h1>
-    <p class="text-white/70 text-sm mb-8 leading-relaxed">The coordinate you followed does not exist on our botanical radar. Return to the stage or explore our available range.</p>
-    <div class="flex items-center justify-center gap-4">
-      <a href="/" class="button is-hero is-primary">
-        Return Home
+{{ 'asmaan-404.css' | asset_url | stylesheet_tag }}
+
+<div class="asmaan-404_page">
+  <div class="asmaan-404_glow" aria-hidden="true"></div>
+
+  <div class="asmaan-404_container">
+    <div class="asmaan-404_beacon">
+      <span class="asmaan-404_beacon-dot"></span>
+      <span class="asmaan-404_beacon-text">{{ section.settings.beacon_text | default: 'Error 404 // Lost Coordinate' }}</span>
+    </div>
+
+    <div class="asmaan-404_numeral" aria-label="404">404</div>
+
+    <h1 class="asmaan-404_title">
+      {{ section.settings.title | default: 'Off Course' }}
+    </h1>
+
+    <p class="asmaan-404_desc">
+      {{ section.settings.subtext | default: 'The botanical frequency or coordinate you followed does not exist in our orbit. Step back into the realm or explore our formulation range.' }}
+    </p>
+
+    <div class="asmaan-404_actions">
+      <a href="{{ section.settings.primary_url | default: routes.root_url }}" class="asmaan-404_btn-primary">
+        <span>{{ section.settings.primary_text | default: 'Return Home' }}</span>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor">
+          <path d="M6 3L11 8L6 13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </a>
-      <a href="/#range" class="button is-hero is-secondary">
-        Explore Range
+
+      <a href="{{ section.settings.secondary_url | default: '/#range' }}" class="asmaan-404_btn-secondary">
+        <span>{{ section.settings.secondary_text | default: 'Explore Range' }}</span>
       </a>
     </div>
+
+    {%- if section.settings.show_quicklinks -%}
+      <div class="asmaan-404_quicklinks">
+        <div class="asmaan-404_quicklinks-title">Quick Coordinates</div>
+        <ul class="asmaan-404_quicklinks-list">
+          <li><a href="/pages/ambassador">Ambassador Program</a></li>
+          <li><a href="/pages/merch">Merch Capsule</a></li>
+          <li><a href="/pages/about">Our Story</a></li>
+          <li><a href="/pages/contact">Contact Support</a></li>
+        </ul>
+      </div>
+    {%- endif -%}
   </div>
 </div>
 
-{% section 'asmaan-newsletter' %}
-
 {% schema %}
 {
-  "name": "404 Page",
-  "settings": []
+  "name": "404 Error Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "beacon_text",
+      "label": "Beacon Badge Text",
+      "default": "Error 404 // Lost Coordinate"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Headline",
+      "default": "Off Course"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Description",
+      "default": "The botanical frequency or coordinate you followed does not exist in our orbit. Step back into the realm or explore our formulation range."
+    },
+    {
+      "type": "text",
+      "id": "primary_text",
+      "label": "Primary Button Text",
+      "default": "Return Home"
+    },
+    {
+      "type": "url",
+      "id": "primary_url",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_text",
+      "label": "Secondary Button Text",
+      "default": "Explore Range"
+    },
+    {
+      "type": "url",
+      "id": "secondary_url",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quicklinks",
+      "label": "Show Quick Links",
+      "default": true
+    }
+  ]
 }
 {% endschema %}

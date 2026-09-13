@@ -3,9 +3,14 @@
     "main": {
       "type": "main-404",
       "settings": {}
+    },
+    "newsletter": {
+      "type": "asmaan-newsletter",
+      "settings": {}
     }
   },
   "order": [
-    "main"
+    "main",
+    "newsletter"
   ]
 }

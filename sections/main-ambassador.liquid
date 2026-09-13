@@ -141,9 +141,12 @@
     {%- endif -%}
 
     {%- comment -%} 5. INTEGRATED EXPANDABLE REVEAL FORM {%- endcomment -%}
-    <section id="ambassador-form-section" class="ambassador_form-section">
+    <section id="ambassador-form-section" class="ambassador_form-section{% if form.posted_successfully? or form.errors %} is-open{% endif %}">
+      <!-- Floating Toast Portal -->
+      <div id="asmaan-toast-portal" class="asmaan-toast-portal" aria-live="polite"></div>
+
       <div class="ambassador_form-card">
-        <div class="ambassador_form-header">
+        <div class="ambassador_form-header"{% if form.posted_successfully? %} style="display:none;"{% endif %}>
           <h3>{{ section.settings.form_title | default: 'Ambassador Application' }}</h3>
           <p>{{ section.settings.form_subtitle | default: 'Join the Ambition Collective. Tell us about your craft and where to send your creator package.' }}</p>
         </div>
@@ -152,7 +155,19 @@
           <input type="hidden" name="contact[tags]" value="ambassador_applicant,ambition_collective">
           <input type="hidden" name="contact[subject]" value="New Ambassador Application">
 
-          <div class="ambassador_form-grid">
+          {%- if form.errors -%}
+            <div class="ambassador_error-box" role="alert">
+              <div class="ambassador_error-title">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <span>Submission Incomplete</span>
+              </div>
+              <div class="ambassador_error-desc">{{ form.errors | default_errors }}</div>
+            </div>
+          {%- endif -%}
+
+          <div class="ambassador_form-grid"{% if form.posted_successfully? %} style="display:none;"{% endif %}>
             <div class="ambassador_form-group">
               <label for="AmbassadorName" class="ambassador_label">Full Name *</label>
               <input type="text" name="contact[name]" id="AmbassadorName" class="ambassador_input" placeholder="e.g. Alex Rivera" required>
@@ -215,9 +230,25 @@
             </div>
           </div>
 
-          <div id="ambassador-success" class="ambassador_success-box">
-            <div class="ambassador_success-title">Application Submitted</div>
-            <p class="ambassador_success-desc">Thank you for applying to the Asmaan Ambition Collective. Our team reviews creator applications and will get in touch via email or Instagram within 48 hours.</p>
+          <!-- Celebration Confirmation Card -->
+          <div id="ambassador-success" class="ambassador_celebration-card{% if form.posted_successfully? %} is-active{% endif %}">
+            <div class="ambassador_celebration-icon-wrap">
+              <svg class="ambassador_celebration-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="ambassador_celebration-badge">
+              <span class="ambassador_celebration-dot"></span>
+              <span>STATUS: APPLICATION RECORDED</span>
+            </div>
+            <h3 class="ambassador_celebration-title">Welcome to the Collective</h3>
+            <p class="ambassador_celebration-desc">
+              Your application has been received and logged in our talent registry. Our team reviews submissions on a rolling weekly basis and will reach out directly via Instagram or Email.
+            </p>
+            <div class="ambassador_celebration-actions">
+              <a href="/pages/merch" class="ambassador_celebration-btn is-primary">Explore Merch Capsule</a>
+              <a href="#top" class="ambassador_celebration-btn is-ghost">Return to Top</a>
+            </div>
           </div>
         {% endform %}
       </div>
