@@ -30,6 +30,10 @@
       "articles": "Articles",
       "pages": "Pages"
     },
+    "cart": {
+      "view": "View Cart",
+      "title": "Cart"
+    },
     "breadcrumbs": {
       "home": "Home"
     },
@@ -123,6 +127,7 @@
     }
   },
   "customer": {
+    "account_fallback": "Account",
     "account": {
       "title": "My Account",
       "details": "Account Details",
