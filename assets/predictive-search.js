@@ -1,6 +1,5 @@
 /**
  * Asmaan Live Predictive Search Engine
- * Native Shopify Search Suggest API Integration
  */
 (function() {
   'use strict';
@@ -10,8 +9,6 @@
       this.modal = document.getElementById('predictive-search-modal');
       if (!this.modal) return;
 
-      this.backdrop = this.modal.querySelector('.predictive-search-backdrop');
-      this.panel = this.modal.querySelector('.predictive-search-panel');
       this.input = document.getElementById('predictive-search-input');
       this.clearBtn = document.getElementById('predictive-search-clear');
       this.defaultContainer = document.getElementById('predictive-search-default');
@@ -29,7 +26,6 @@
     }
 
     initEvents() {
-      // Open triggers
       document.querySelectorAll('[data-search-modal-open]').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.preventDefault();
@@ -37,24 +33,21 @@
         });
       });
 
-      // Close triggers
       this.modal.querySelectorAll('[data-search-close]').forEach(btn => {
         btn.addEventListener('click', () => this.close());
       });
 
-      // ESC key to close
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
+        if (e.key === 'Escape' && this.modal.classList.contains('is-active')) {
           this.close();
         }
       });
 
-      // Input listening with debouncing
       if (this.input) {
         this.input.addEventListener('input', () => {
           const query = this.input.value.trim();
           if (this.clearBtn) {
-            this.clearBtn.classList.toggle('hidden', query.length === 0);
+            this.clearBtn.style.display = query.length === 0 ? 'none' : 'flex';
           }
           this.handleInput(query);
         });
@@ -69,23 +62,21 @@
         });
       }
 
-      // Clear button
       if (this.clearBtn) {
         this.clearBtn.addEventListener('click', () => {
           this.input.value = '';
-          this.clearBtn.classList.add('hidden');
+          this.clearBtn.style.display = 'none';
           this.input.focus();
           this.resetToDefault();
         });
       }
 
-      // Quick tag clicks
       this.modal.querySelectorAll('.predictive-search-tag').forEach(tag => {
         tag.addEventListener('click', () => {
           const term = tag.getAttribute('data-search-term');
           if (term && this.input) {
             this.input.value = term;
-            if (this.clearBtn) this.clearBtn.classList.remove('hidden');
+            if (this.clearBtn) this.clearBtn.style.display = 'flex';
             this.handleInput(term);
           }
         });
@@ -93,32 +84,19 @@
     }
 
     open() {
-      this.modal.classList.remove('hidden');
+      this.modal.classList.add('is-active');
       document.body.style.overflow = 'hidden';
 
-      requestAnimationFrame(() => {
-        if (this.backdrop) this.backdrop.classList.remove('opacity-0');
-        if (this.panel) {
-          this.panel.classList.remove('opacity-0', '-translate-y-4');
-          this.panel.classList.add('opacity-100', 'translate-y-0');
-        }
+      setTimeout(() => {
         if (this.input) {
           this.input.focus();
         }
-      });
+      }, 50);
     }
 
     close() {
-      if (this.backdrop) this.backdrop.classList.add('opacity-0');
-      if (this.panel) {
-        this.panel.classList.remove('opacity-100', 'translate-y-0');
-        this.panel.classList.add('opacity-0', '-translate-y-4');
-      }
-
-      setTimeout(() => {
-        this.modal.classList.add('hidden');
-        document.body.style.overflow = '';
-      }, 300);
+      this.modal.classList.remove('is-active');
+      document.body.style.overflow = '';
     }
 
     handleInput(query) {
@@ -139,13 +117,13 @@
       if (this.abortController) {
         this.abortController.abort();
       }
-      if (this.loadingIndicator) this.loadingIndicator.classList.add('hidden');
+      if (this.loadingIndicator) this.loadingIndicator.style.display = 'none';
       if (this.dynamicContainer) {
-        this.dynamicContainer.classList.add('hidden');
+        this.dynamicContainer.style.display = 'none';
         this.dynamicContainer.innerHTML = '';
       }
-      if (this.defaultContainer) this.defaultContainer.classList.remove('hidden');
-      if (this.footer) this.footer.classList.add('hidden');
+      if (this.defaultContainer) this.defaultContainer.style.display = 'block';
+      if (this.footer) this.footer.style.display = 'none';
     }
 
     async fetchResults(query) {
@@ -154,10 +132,10 @@
       }
       this.abortController = new AbortController();
 
-      if (this.defaultContainer) this.defaultContainer.classList.add('hidden');
-      if (this.loadingIndicator) this.loadingIndicator.classList.remove('hidden');
-      if (this.dynamicContainer) this.dynamicContainer.classList.add('hidden');
-      if (this.footer) this.footer.classList.add('hidden');
+      if (this.defaultContainer) this.defaultContainer.style.display = 'none';
+      if (this.loadingIndicator) this.loadingIndicator.style.display = 'block';
+      if (this.dynamicContainer) this.dynamicContainer.style.display = 'none';
+      if (this.footer) this.footer.style.display = 'none';
 
       try {
         const searchBase = window.ASMAAN_CONFIG?.routes?.predictive_search_url || '/search/suggest';
@@ -173,7 +151,7 @@
         console.error('Predictive search error:', err);
         this.renderError();
       } finally {
-        if (this.loadingIndicator) this.loadingIndicator.classList.add('hidden');
+        if (this.loadingIndicator) this.loadingIndicator.style.display = 'none';
       }
     }
 
@@ -188,39 +166,39 @@
 
       if (!this.dynamicContainer) return;
       this.dynamicContainer.innerHTML = '';
-      this.dynamicContainer.classList.remove('hidden');
+      this.dynamicContainer.style.display = 'block';
 
       if (totalCount === 0) {
         this.dynamicContainer.innerHTML = `
-          <div class="text-center py-12">
-            <p class="text-white/70 text-base mb-2">No results found for "${this.escapeHtml(query)}"</p>
-            <p class="text-white/40 text-xs">Try checking your spelling or using more general terms.</p>
+          <div style="text-align: center; padding: 2.5rem 0;">
+            <p style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin: 0 0 0.5rem 0;">No results found for "${this.escapeHtml(query)}"</p>
+            <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin: 0;">Try checking your spelling or using more general terms.</p>
           </div>
         `;
-        if (this.footer) this.footer.classList.add('hidden');
+        if (this.footer) this.footer.style.display = 'none';
         return;
       }
 
-      // Products Section
+      // Products
       if (products.length > 0) {
         const prodSection = document.createElement('div');
         prodSection.innerHTML = `
-          <h4 class="text-xs font-mono tracking-widest uppercase text-white/40 mb-3">Products (${products.length})</h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">Products (${products.length})</h4>
+          <div class="predictive-search-product-grid">
             ${products.map(product => {
               const formattedPrice = this.formatMoney(product.price);
               const isAvailable = product.available !== false;
               const imgUrl = product.featured_image?.url || product.image || '';
               return `
-                <a href="${product.url}" class="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 transition-all group">
-                  <div class="w-14 h-14 rounded-lg overflow-hidden bg-white/5 flex-shrink-0 flex items-center justify-center">
-                    ${imgUrl ? `<img src="${imgUrl}" alt="${this.escapeHtml(product.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">` : '<span class="text-xs text-white/20 font-mono">N/A</span>'}
+                <a href="${product.url}" class="predictive-search-product-card">
+                  <div class="predictive-search-product-img">
+                    ${imgUrl ? `<img src="${imgUrl}" alt="${this.escapeHtml(product.title)}" loading="lazy">` : '<span style="font-size: 0.7rem; color: rgba(255,255,255,0.2); font-family: monospace;">N/A</span>'}
                   </div>
-                  <div class="min-w-0 flex-1">
-                    <h5 class="text-sm font-medium text-white truncate group-hover:text-white/90">${this.escapeHtml(product.title)}</h5>
-                    <div class="flex items-center gap-2 mt-1">
-                      <span class="text-xs font-mono text-white/70">${formattedPrice}</span>
-                      ${!isAvailable ? '<span class="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30">Sold out</span>' : ''}
+                  <div style="flex: 1; min-width: 0;">
+                    <h5 style="font-size: 0.85rem; font-weight: 600; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${this.escapeHtml(product.title)}</h5>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                      <span style="font-size: 0.75rem; font-family: var(--font-mono, monospace); color: rgba(255,255,255,0.7);">${formattedPrice}</span>
+                      ${!isAvailable ? '<span style="font-size: 0.65rem; font-family: monospace; text-transform: uppercase; padding: 0.1rem 0.35rem; border-radius: 0.25rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3);">Sold out</span>' : ''}
                     </div>
                   </div>
                 </a>
@@ -231,16 +209,17 @@
         this.dynamicContainer.appendChild(prodSection);
       }
 
-      // Collections Section
+      // Collections
       if (collections.length > 0) {
         const colSection = document.createElement('div');
+        colSection.style.marginTop = '1.25rem';
         colSection.innerHTML = `
-          <h4 class="text-xs font-mono tracking-widest uppercase text-white/40 mb-3">Collections (${collections.length})</h4>
-          <div class="flex flex-wrap gap-2">
+          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">Collections (${collections.length})</h4>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             ${collections.map(col => `
-              <a href="${col.url}" class="px-3 py-1.5 rounded-lg bg-white/[0.03] hover:bg-white/10 border border-white/10 text-xs text-white flex items-center gap-2 transition-colors">
+              <a href="${col.url}" style="padding: 0.4rem 0.8rem; border-radius: 0.5rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); font-size: 0.75rem; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
                 <span>${this.escapeHtml(col.title)}</span>
-                <span class="text-white/40">&rarr;</span>
+                <span style="color: rgba(255,255,255,0.4);">&rarr;</span>
               </a>
             `).join('')}
           </div>
@@ -248,19 +227,18 @@
         this.dynamicContainer.appendChild(colSection);
       }
 
-      // Articles & Pages Section
+      // Articles & Pages
       if (articles.length > 0 || pages.length > 0) {
         const infoSection = document.createElement('div');
+        infoSection.style.marginTop = '1.25rem';
         const items = [...articles.map(a => ({ ...a, type: 'Article' })), ...pages.map(p => ({ ...p, type: 'Page' }))];
         infoSection.innerHTML = `
-          <h4 class="text-xs font-mono tracking-widest uppercase text-white/40 mb-3">Articles & Information (${items.length})</h4>
-          <div class="space-y-2">
+          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">Stories & Info (${items.length})</h4>
+          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
             ${items.map(item => `
-              <a href="${item.url}" class="block p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 transition-colors">
-                <div class="flex items-center justify-between">
-                  <h5 class="text-xs font-medium text-white/90 truncate">${this.escapeHtml(item.title)}</h5>
-                  <span class="text-[10px] font-mono text-white/40 uppercase ml-2">${item.type}</span>
-                </div>
+              <a href="${item.url}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.85rem; border-radius: 0.65rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); text-decoration: none; color: #fff;">
+                <span style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${this.escapeHtml(item.title)}</span>
+                <span style="font-size: 0.65rem; font-family: var(--font-mono, monospace); text-transform: uppercase; color: rgba(255,255,255,0.4);">${item.type}</span>
               </a>
             `).join('')}
           </div>
@@ -270,7 +248,7 @@
 
       // Footer
       if (this.footer && this.viewAllLink) {
-        this.footer.classList.remove('hidden');
+        this.footer.style.display = 'flex';
         if (this.countEl) {
           this.countEl.textContent = `Showing ${totalCount} suggestions`;
         }
@@ -281,11 +259,11 @@
     renderError() {
       if (!this.dynamicContainer) return;
       this.dynamicContainer.innerHTML = `
-        <div class="text-center py-8 text-white/50 text-xs">
-          An error occurred while fetching search suggestions. Press Enter to view full results.
+        <div style="text-align: center; padding: 2rem 0; color: rgba(255,255,255,0.5); font-size: 0.8rem;">
+          An error occurred while fetching suggestions. Press Enter to view full results.
         </div>
       `;
-      this.dynamicContainer.classList.remove('hidden');
+      this.dynamicContainer.style.display = 'block';
     }
 
     formatMoney(cents) {
@@ -307,7 +285,6 @@
     }
   }
 
-  // Auto-init on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       window.asmaanPredictiveSearch = new PredictiveSearch();

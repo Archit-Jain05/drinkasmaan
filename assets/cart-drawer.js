@@ -1,5 +1,5 @@
 /**
- * Asmaan / Aura High-Performance AJAX Cart Drawer
+ * Asmaan / Aura AJAX Cart Drawer
  */
 (function () {
   'use strict';
@@ -10,19 +10,17 @@
 
   function openCart() {
     if (!drawer || !overlay) return;
-    drawer.classList.remove('translate-x-full');
+    drawer.classList.add('is-active');
     drawer.setAttribute('aria-hidden', 'false');
-    overlay.classList.remove('opacity-0', 'pointer-events-none');
-    overlay.classList.add('opacity-100');
+    overlay.classList.add('is-active');
     document.body.style.overflow = 'hidden';
   }
 
   function closeCart() {
     if (!drawer || !overlay) return;
-    drawer.classList.add('translate-x-full');
+    drawer.classList.remove('is-active');
     drawer.setAttribute('aria-hidden', 'true');
-    overlay.classList.remove('opacity-100');
-    overlay.classList.add('opacity-0', 'pointer-events-none');
+    overlay.classList.remove('is-active');
     document.body.style.overflow = '';
   }
 
@@ -58,117 +56,104 @@
         var newDrawer = temp.querySelector('#cart-drawer');
         if (newDrawer && drawer) {
           drawer.innerHTML = newDrawer.innerHTML;
-          var newClose = drawer.querySelector('#cart-drawer-close');
-          if (newClose) newClose.addEventListener('click', closeCart);
+          bindCartEvents();
         }
       }
-
-      var cartData = await (await fetch('/cart.js')).json();
-      document.querySelectorAll('[data-cart-count]').forEach(function (el) {
-        el.textContent = cartData.item_count;
-        el.style.display = cartData.item_count > 0 ? '' : 'none';
+      var countRes = await fetch('/cart.js');
+      var cartData = await countRes.json();
+      var badges = document.querySelectorAll('.cart-count-badge, #cart-icon-bubble');
+      badges.forEach(function (b) {
+        b.textContent = cartData.item_count;
+        b.classList.toggle('hidden', cartData.item_count === 0);
       });
-
-      document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: cartData } }));
     } catch (err) {
-      console.warn('[Cart Drawer] Refresh error:', err);
+      console.error('Failed to refresh cart:', err);
     }
   }
 
-  document.addEventListener('submit', async function (e) {
-    var form = e.target.closest('form[action*="/cart/add"]');
-    if (!form) return;
+  function bindCartEvents() {
+    var newCloseBtn = document.getElementById('cart-drawer-close');
+    if (newCloseBtn) newCloseBtn.addEventListener('click', closeCart);
 
-    var config = window.ASMAAN_CONFIG || {};
-    if (config.cartType === 'page') return;
-
-    e.preventDefault();
-    var submitBtn = form.querySelector('[type="submit"]');
-    var originalText = submitBtn ? submitBtn.textContent : '';
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Adding...';
-    }
-
-    try {
-      var formData = new FormData(form);
-      var res = await fetch('/cart/add.js', {
-        method: 'POST',
-        body: formData,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    var noteEl = document.getElementById('cart-drawer-note');
+    if (noteEl) {
+      noteEl.addEventListener('change', function () {
+        fetch('/cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ note: noteEl.value })
+        });
       });
-      if (res.ok) {
-        await refreshCart();
-        openCart();
-      } else {
-        var errData = await res.json();
-        alert(errData.description || 'Could not add item to cart.');
-      }
-    } catch (err) {
-      console.error('[Cart Add] Error:', err);
-      form.submit();
-    } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-    }
-  });
-
-  document.addEventListener('click', async function (e) {
-    var qtyBtn = e.target.closest('[data-cart-qty-btn]');
-    var removeBtn = e.target.closest('[data-cart-remove-btn]');
-    if (!qtyBtn && !removeBtn) return;
-
-    var itemRow = e.target.closest('[data-line-key]');
-    if (!itemRow) return;
-
-    var key = itemRow.getAttribute('data-line-key');
-    var currentQty = parseInt(itemRow.querySelector('[data-cart-qty]')?.textContent || '1', 10);
-    var newQty = currentQty;
-
-    if (qtyBtn) {
-      var delta = parseInt(qtyBtn.getAttribute('data-cart-qty-btn'), 10);
-      newQty = Math.max(0, currentQty + delta);
-    } else if (removeBtn) {
-      newQty = 0;
     }
 
-    try {
-      itemRow.style.opacity = '0.4';
-      var res = await fetch('/cart/change.js', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({ id: key, quantity: newQty })
-      });
-      if (res.ok) {
-        await refreshCart();
-      }
-    } catch (err) {
-      console.error('[Cart Change] Error:', err);
-    }
-  });
+    drawer.querySelectorAll('[data-cart-qty-btn]').forEach(function (btn) {
+      btn.addEventListener('click', async function (e) {
+        e.preventDefault();
+        var itemEl = btn.closest('[data-line-key]');
+        if (!itemEl) return;
+        var key = itemEl.getAttribute('data-line-key');
+        var qtyEl = itemEl.querySelector('[data-cart-qty]');
+        var currentQty = parseInt(qtyEl.textContent, 10) || 0;
+        var delta = parseInt(btn.getAttribute('data-cart-qty-btn'), 10) || 0;
+        var newQty = Math.max(0, currentQty + delta);
 
-  var noteTimer;
-  document.addEventListener('input', function (e) {
-    if (e.target && e.target.id === 'cart-drawer-note') {
-      clearTimeout(noteTimer);
-      noteTimer = setTimeout(async function () {
         try {
-          await fetch('/cart/update.js', {
+          await fetch('/cart/change.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ note: e.target.value })
+            body: JSON.stringify({ id: key, quantity: newQty })
           });
-        } catch (err) {}
-      }, 500);
+          await refreshCart();
+        } catch (err) {
+          console.error('Error changing qty:', err);
+        }
+      });
+    });
+
+    drawer.querySelectorAll('[data-cart-remove-btn]').forEach(function (btn) {
+      btn.addEventListener('click', async function (e) {
+        e.preventDefault();
+        var itemEl = btn.closest('[data-line-key]');
+        if (!itemEl) return;
+        var key = itemEl.getAttribute('data-line-key');
+        try {
+          await fetch('/cart/change.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: key, quantity: 0 })
+          });
+          await refreshCart();
+        } catch (err) {
+          console.error('Error removing item:', err);
+        }
+      });
+    });
+  }
+
+  bindCartEvents();
+
+  document.addEventListener('submit', async function (e) {
+    var form = e.target;
+    if (form.action && form.action.includes('/cart/add')) {
+      if (window.ASMAAN_CONFIG && window.ASMAAN_CONFIG.cartType === 'page') {
+        return; // standard submit to cart page
+      }
+      e.preventDefault();
+      var formData = new FormData(form);
+      try {
+        await fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        });
+        await refreshCart();
+        openCart();
+      } catch (err) {
+        form.submit();
+      }
     }
   });
 
-  window.AsmaanCart = {
+  window.asmaanCart = {
     open: openCart,
     close: closeCart,
     refresh: refreshCart
