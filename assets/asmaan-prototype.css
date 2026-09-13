@@ -2692,8 +2692,15 @@ input:focus-visible {
   transition: color 0.2s, background-color 0.2s, transform 0.2s;
   position: relative;
   text-decoration: none;
-  min-width: 2.25rem;
-  min-height: 2.25rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+}
+
+.navbar_icon-button svg,
+.navbar_cart-button svg {
+  width: 30px !important;
+  height: 30px !important;
+  flex-shrink: 0;
 }
 
 .navbar_icon-button:hover,
