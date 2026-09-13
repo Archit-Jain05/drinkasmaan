@@ -136,6 +136,34 @@
           "item4_badge": "DROP 01",
           "item_cta": "Join Drop Waitlist"
         }
+      },
+      "main-ambassador": {
+        "type": "main-ambassador",
+        "settings": {
+          "hero_kicker": "Creator Program / Ambition Collective",
+          "hero_title": "Become an Asmaan Ambassador",
+          "hero_subtext": "The Asmaan Ambassador Program is a hand-selected circle of creators, athletes, and visionaries fueled by relentless ambition. Apply to join.",
+          "cta_text": "Apply Now",
+          "enable_reveal_form": true,
+          "cta_url": "",
+          "steps_title": "How It Works",
+          "step1_num": "01",
+          "step1_title": "Apply",
+          "step1_desc": "Complete your creator application and hear back from our team within 48 hours.",
+          "step2_num": "02",
+          "step2_title": "Get Your Kit",
+          "step2_desc": "Receive an exclusive Asmaan tonic allocation, limited capsule merch, and your personal tracking code.",
+          "step3_num": "03",
+          "step3_title": "Fuel The Culture",
+          "step3_desc": "Share your routine and ambition across your socials to earn competitive commissions and tier rewards.",
+          "google_sheet_url": "https://script.google.com/macros/s/AKfycby8V7D6t-vbUqdswhPjaOG7h9-2RF534jqis9OI56HYP65DfOnPmwp497rIzy-Vwqufrg/exec",
+          "form_title": "Ambassador Application",
+          "form_subtitle": "Join the Ambition Collective. Tell us about your craft and where to send your creator package.",
+          "show_perks": true,
+          "perks_title": "Ambassador Perks",
+          "show_faq": true,
+          "faq_title": "Frequently Asked Questions"
+        }
       }
     },
     "content_for_index": []
