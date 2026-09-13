@@ -29,7 +29,7 @@
           "announcement_link": "",
           "wordmark": "ASMAAN",
           "cta_text": "Get Early Access",
-          "cta_link": "/#range",
+          "cta_link": "shopify://pages/join",
           "motion_text": "Motion",
           "menu_text": "Menu",
           "use_custom_menu": true,
