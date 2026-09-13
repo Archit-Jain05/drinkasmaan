@@ -96,7 +96,7 @@
       {{ section.settings.cta_text | default: 'Get early access' }}
     </a>
     <div class="navbar_socials-links">
-      <a href="{{ section.settings.instagram_url | default: 'https://www.instagram.com/drinkasmaan' }}" target="_blank" rel="noreferrer" class="button is-secondary is-social" tabindex="-1" aria-label="Instagram">
+      <a href="{{ section.settings.instagram_url | default: 'https://www.instagram.com/drinkasmaan' }}" target="_blank" rel="noreferrer" class="navbar_social-link" tabindex="-1" aria-label="Instagram">
         <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3.5" y="3.5" width="17" height="17" rx="5"></rect>
           <circle cx="12" cy="12" r="4"></circle>
@@ -104,7 +104,7 @@
         </svg>
       </a>
       <div class="text-size-tiny text-white/50">&copy; {{ 'now' | date: '%Y' }} {{ section.settings.wordmark | default: 'ASMAAN' }}</div>
-      <a class="button is-secondary is-social" tabindex="-1" href="/pages/contact">Contact</a>
+      <a class="navbar_social-link navbar_contact-link" tabindex="-1" href="/pages/contact">Contact</a>
     </div>
   </div>
 </div>

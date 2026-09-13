@@ -699,6 +699,38 @@ input:focus-visible {
   width: 100%;
 }
 
+.navbar_social-link,
+.navbar_socials-links .button.is-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: auto !important;
+  min-width: 0 !important;
+  padding: 0.35rem 0.6rem !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  text-decoration: none;
+  border-radius: var(--radius-xsmall);
+  transition: color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+}
+
+.navbar_social-link:hover,
+.navbar_socials-links .button.is-secondary:hover {
+  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  transform: translateY(-1px);
+}
+
+.navbar_contact-link {
+  text-transform: uppercase;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+
 /* --- Hero / The Range --- */
 
 /* Push the 3D can viewport with feathering mask */
