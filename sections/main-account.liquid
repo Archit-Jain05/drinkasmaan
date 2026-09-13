@@ -1,0 +1,119 @@
+<section class="section relative bg-black text-white min-h-[80vh] py-16 sm:py-24">
+  <div class="padding-global max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-8 mb-12 border-b border-white/10 gap-4">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest text-[#9089D3] block mb-1">Member Portal</span>
+        <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white">
+          {{ 'customer.account.title' | t | default: 'My Account' }}
+        </h1>
+        <p class="text-sm text-white/60 mt-1">Welcome back, {{ customer.first_name | default: customer.email }}</p>
+      </div>
+      <a href="{{ routes.account_logout_url }}" class="self-start sm:self-auto px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono uppercase tracking-wider text-white transition-colors">
+        {{ 'customer.log_out' | t | default: 'Log Out' }}
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <!-- Order History (2 cols) -->
+      <div class="lg:col-span-2">
+        <h2 class="text-lg font-bold uppercase tracking-wide mb-6 flex items-center justify-between">
+          <span>{{ 'customer.account.orders' | t | default: 'Order History' }}</span>
+          <span class="text-xs font-mono text-white/40 font-normal">({{ customer.orders.size }})</span>
+        </h2>
+
+        {% paginate customer.orders by 10 %}
+          {% if customer.orders.size > 0 %}
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs font-mono">
+                <thead>
+                  <tr class="border-b border-white/15 text-white/50 uppercase tracking-wider">
+                    <th class="py-3 px-2">Order</th>
+                    <th class="py-3 px-2">Date</th>
+                    <th class="py-3 px-2">Payment</th>
+                    <th class="py-3 px-2">Fulfillment</th>
+                    <th class="py-3 px-2 text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                  {% for order in customer.orders %}
+                    <tr class="hover:bg-white/[0.02] transition-colors">
+                      <td class="py-4 px-2 font-bold">
+                        <a href="{{ order.customer_url }}" class="text-white hover:underline">{{ order.name }}</a>
+                      </td>
+                      <td class="py-4 px-2 text-white/60">{{ order.created_at | time_tag: format: 'date' }}</td>
+                      <td class="py-4 px-2">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] uppercase {% if order.financial_status == 'paid' %}bg-emerald-500/20 text-emerald-300{% else %}bg-yellow-500/20 text-yellow-300{% endif %}">
+                          {{ order.financial_status_label }}
+                        </span>
+                      </td>
+                      <td class="py-4 px-2">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] uppercase {% if order.fulfillment_status == 'fulfilled' %}bg-blue-500/20 text-blue-300{% else %}bg-white/10 text-white/60{% endif %}">
+                          {{ order.fulfillment_status_label }}
+                        </span>
+                      </td>
+                      <td class="py-4 px-2 text-right font-bold text-white">{{ order.total_net_amount | money_with_currency }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% if paginate.pages > 1 %}
+              <div class="mt-8 pt-4 border-t border-white/10 flex justify-between text-xs font-mono">
+                {% if paginate.previous %}<a href="{{ paginate.previous.url }}" class="hover:underline">&larr; Previous</a>{% endif %}
+                {% if paginate.next %}<a href="{{ paginate.next.url }}" class="hover:underline ml-auto">Next &rarr;</a>{% endif %}
+              </div>
+            {% endif %}
+
+          {% else %}
+            <div class="p-8 border border-white/10 rounded-2xl bg-white/[0.02] text-center">
+              <p class="text-white/60 text-sm mb-4">{{ 'customer.account.none' | t | default: 'You have not placed any orders yet.' }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="button is-small is-secondary inline-block">Start Shopping</a>
+            </div>
+          {% endif %}
+        {% endpaginate %}
+      </div>
+
+      <!-- Account / Address Details (1 col) -->
+      <div>
+        <h2 class="text-lg font-bold uppercase tracking-wide mb-6">{{ 'customer.account.details' | t | default: 'Account Details' }}</h2>
+        <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10 space-y-4 text-xs font-mono">
+          <div>
+            <span class="text-white/40 block mb-1">Name:</span>
+            <p class="text-white font-sans text-sm font-medium">{{ customer.name }}</p>
+          </div>
+          <div>
+            <span class="text-white/40 block mb-1">Email:</span>
+            <p class="text-white font-sans text-sm">{{ customer.email }}</p>
+          </div>
+
+          {% if customer.default_address %}
+            <div class="pt-4 border-t border-white/10">
+              <span class="text-white/40 block mb-1">Default Shipping Address:</span>
+              <p class="text-white/80 leading-relaxed font-sans text-xs">
+                {{ customer.default_address.address1 }}<br>
+                {% if customer.default_address.address2 %}{{ customer.default_address.address2 }}<br>{% endif %}
+                {{ customer.default_address.city }}, {{ customer.default_address.province_code }} {{ customer.default_address.zip }}<br>
+                {{ customer.default_address.country }}
+              </p>
+            </div>
+          {% endif %}
+
+          <div class="pt-4 border-t border-white/10">
+            <a href="{{ routes.account_addresses_url }}" class="block w-full py-2.5 text-center rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors">
+              {{ 'customer.account.view_addresses' | t: count: customer.addresses_count | default: 'Manage Addresses' }} ({{ customer.addresses_count }})
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Account",
+  "settings": []
+}
+{% endschema %}

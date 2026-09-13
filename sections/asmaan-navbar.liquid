@@ -46,7 +46,43 @@
         {{ section.settings.wordmark | default: 'ASMAAN' }}
       </a>
 
-      <div class="navbar_side is-end">
+      <div class="navbar_side is-end flex items-center gap-1 sm:gap-2">
+        {%- if settings.predictive_search_enabled != false -%}
+          <button
+            type="button"
+            class="navbar_icon-button text-white/80 hover:text-white p-2 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+            data-search-modal-open
+            aria-label="{{ 'general.search.search' | t | default: 'Search' }}"
+          >
+            {% render 'asmaan-icons', name: 'search', class: 'h-4 w-4' %}
+          </button>
+        {%- endif -%}
+
+        {%- if shop.customer_accounts_enabled -%}
+          <a
+            href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+            class="navbar_icon-button hidden sm:flex text-white/80 hover:text-white p-2 rounded-full transition-colors items-center justify-center"
+            aria-label="{{ 'customer.account_fallback' | t | default: 'Account' }}"
+          >
+            {% render 'asmaan-icons', name: 'user', class: 'h-4 w-4' %}
+          </a>
+        {%- endif -%}
+
+        <button
+          type="button"
+          class="navbar_cart-button relative text-white/80 hover:text-white p-2 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+          data-cart-drawer-toggle
+          aria-label="{{ 'general.cart.view' | t | default: 'Cart' }}"
+        >
+          {% render 'asmaan-icons', name: 'bag', class: 'h-4 w-4' %}
+          <span
+            id="cart-icon-bubble"
+            class="cart-count-badge absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-white text-black font-mono text-[10px] font-bold flex items-center justify-center transition-transform {%- if cart.item_count == 0 %} hidden{%- endif -%}"
+          >
+            {{ cart.item_count }}
+          </span>
+        </button>
+
         <button
           type="button"
           class="navbar_menu-button"
@@ -88,6 +124,11 @@
       <a class="navbar_link" tabindex="-1" href="/pages/merch">Merch</a>
       <a class="navbar_link" tabindex="-1" href="/#faq">FAQ</a>
       <a class="navbar_link" tabindex="-1" href="{{ section.settings.cta_link | default: '/#range' }}">Newsletter</a>
+    {%- endif -%}
+    {%- if shop.customer_accounts_enabled -%}
+      <a class="navbar_link" tabindex="-1" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}">
+        {%- if customer -%}{{ 'customer.account.title' | t | default: 'Account' }}{%- else -%}{{ 'customer.log_in' | t | default: 'Log in' }}{%- endif -%}
+      </a>
     {%- endif -%}
   </nav>
 

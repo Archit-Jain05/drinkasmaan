@@ -1,0 +1,90 @@
+{%- if settings.predictive_search_enabled != false -%}
+<div id="predictive-search-modal" class="predictive-search-modal fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t | default: 'Search' }}">
+  <!-- Backdrop -->
+  <div class="predictive-search-backdrop fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity duration-300 opacity-0" data-search-close></div>
+
+  <!-- Search Panel -->
+  <div class="predictive-search-panel relative w-full max-w-3xl mx-auto mt-6 sm:mt-16 bg-[#0c0c0c] border border-white/15 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 -translate-y-4 opacity-0 flex flex-col max-h-[85vh]">
+    <!-- Search Input Header -->
+    <div class="predictive-search-header p-4 sm:p-6 border-b border-white/10 relative">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="relative flex items-center">
+        <span class="absolute left-4 text-white/40 pointer-events-none flex items-center">
+          {% render 'asmaan-icons', name: 'search', class: 'w-5 h-5' %}
+        </span>
+        <input
+          type="search"
+          name="q"
+          id="predictive-search-input"
+          class="w-full bg-white/5 border border-white/15 focus:border-white/40 rounded-xl pl-12 pr-24 py-3.5 text-white text-base sm:text-lg placeholder-white/40 focus:outline-none transition-colors"
+          placeholder="{{ 'general.search.placeholder' | t | default: 'Search products, collections, stories...' }}"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        >
+        <div class="absolute right-3 flex items-center space-x-2">
+          <button
+            type="button"
+            id="predictive-search-clear"
+            class="hidden text-white/40 hover:text-white p-1.5 rounded-md transition-colors"
+            aria-label="{{ 'accessibility.close' | t | default: 'Clear' }}"
+          >
+            {% render 'asmaan-icons', name: 'cross', class: 'w-3.5 h-3.5' %}
+          </button>
+          <button
+            type="button"
+            class="text-white/50 hover:text-white p-1.5 rounded-md transition-colors"
+            data-search-close
+            aria-label="{{ 'accessibility.close' | t | default: 'Close' }}"
+          >
+            <span class="text-xs font-mono uppercase tracking-wider bg-white/10 px-2 py-1 rounded">ESC</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Live Search Content & Suggestions -->
+    <div id="predictive-search-results" class="predictive-search-body flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+      <!-- Default Trending / Quick Links (shown when query is empty) -->
+      <div id="predictive-search-default" class="space-y-6">
+        <div>
+          <h4 class="text-xs font-mono tracking-widest uppercase text-white/40 mb-3">{{ 'general.search.popular_searches' | t | default: 'Popular Searches' }}</h4>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="predictive-search-tag px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-xs text-white/80 transition-colors" data-search-term="Botanical">Botanical</button>
+            <button type="button" class="predictive-search-tag px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-xs text-white/80 transition-colors" data-search-term="Focus Tonic">Focus Tonic</button>
+            <button type="button" class="predictive-search-tag px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-xs text-white/80 transition-colors" data-search-term="Zero Sugar">Zero Sugar</button>
+            <button type="button" class="predictive-search-tag px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-xs text-white/80 transition-colors" data-search-term="Hoodie">Hoodie</button>
+            <button type="button" class="predictive-search-tag px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-xs text-white/80 transition-colors" data-search-term="Tee">Tee</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spinner -->
+      <div id="predictive-search-loading" class="hidden py-12 flex justify-center items-center">
+        <div class="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+      </div>
+
+      <!-- Live Dynamic Results -->
+      <div id="predictive-search-dynamic" class="hidden space-y-6">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Footer Action -->
+    <div id="predictive-search-footer" class="predictive-search-footer hidden p-4 border-t border-white/10 bg-white/[0.02] flex items-center justify-between">
+      <span id="predictive-search-count" class="text-xs text-white/50"></span>
+      <a id="predictive-search-view-all" href="{{ routes.search_url }}" class="text-xs font-medium text-white hover:text-white/80 flex items-center gap-1">
+        <span>{{ 'general.search.view_all' | t | default: 'View all results' }}</span>
+        {% render 'asmaan-icons', name: 'arrow', class: 'w-3.5 h-3.5' %}
+      </a>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Predictive Search",
+  "settings": []
+}
+{% endschema %}

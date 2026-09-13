@@ -1,31 +1,141 @@
-<section class="section relative bg-black text-white min-h-[70vh] py-16">
-  <div class="padding-global">
-    <div class="container-large max-w-4xl mx-auto px-4">
-      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-8">Search</h1>
-      <form action="/search" method="get" class="mb-12 flex gap-4">
-        <input
-          type="search"
-          name="q"
-          value="{{ search.terms | escape }}"
-          placeholder="Search products..."
-          class="flex-1 bg-white/10 border border-white/20 rounded-full px-6 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white"
-        >
-        <button type="submit" class="button">Search</button>
+{%- paginate search.results by 16 -%}
+<section class="section relative bg-black text-white min-h-[75vh] py-16 sm:py-24">
+  <div class="padding-global max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs font-mono uppercase tracking-widest text-white/50 mb-3 block">{{ 'general.search.search' | t | default: 'Search' }}</span>
+      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight mb-6">
+        {%- if search.performed -%}
+          {{ 'general.search.results_with_count' | t: count: search.results_count, terms: search.terms | default: 'Search Results' }}
+        {%- else -%}
+          {{ 'general.search.title' | t | default: 'Search our store' }}
+        {%- endif -%}
+      </h1>
+
+      <!-- Full Search Form -->
+      <form action="{{ routes.search_url }}" method="get" role="search" class="flex gap-2 max-w-lg mx-auto">
+        <div class="relative flex-1">
+          <input
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'general.search.placeholder' | t | default: 'Search products, collections, stories...' }}"
+            class="w-full bg-white/5 border border-white/20 focus:border-white rounded-full px-6 py-3.5 text-white placeholder-white/40 focus:outline-none transition-colors"
+          >
+          <input type="hidden" name="type" value="product,article,page">
+        </div>
+        <button type="submit" class="button px-8 py-3.5 rounded-full bg-white text-black font-semibold hover:bg-white/90 transition-colors">
+          {{ 'general.search.search' | t | default: 'Search' }}
+        </button>
       </form>
-      {%- if search.performed -%}
-        <p class="text-white/60 mb-6">{{ search.results_count }} results found for "{{ search.terms }}"</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    </div>
+
+    {%- if search.performed -%}
+      {%- if search.results_count == 0 -%}
+        <div class="text-center py-16 border border-white/10 rounded-2xl bg-white/[0.02] max-w-lg mx-auto">
+          <p class="text-lg text-white/70 mb-4">{{ 'general.search.no_results_html' | t: terms: search.terms | default: 'No results found.' }}</p>
+          <a href="{{ routes.all_products_collection_url }}" class="button is-secondary inline-block px-6 py-2.5 rounded-full border border-white/20 text-sm hover:bg-white/10 transition-colors">
+            {{ 'general.continue_shopping' | t | default: 'Browse all products' }}
+          </a>
+        </div>
+      {%- else -%}
+        <!-- Results Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {%- for item in search.results -%}
-            <a href="{{ item.url }}" class="block p-4 border border-white/10 rounded-xl hover:border-white/30">
-              <h3 class="font-bold text-lg mb-2">{{ item.title }}</h3>
-              <p class="text-sm text-white/60 line-clamp-2">{{ item.content | strip_html | truncate: 120 }}</p>
-            </a>
+            {%- case item.object_type -%}
+              {%- when 'product' -%}
+                <div class="product-card group relative bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-white/30 rounded-2xl p-4 transition-all duration-300 flex flex-col justify-between">
+                  <div>
+                    <a href="{{ item.url }}" class="block relative aspect-square rounded-xl overflow-hidden bg-white/5 mb-4">
+                      {%- if item.featured_media -%}
+                        <img
+                          src="{{ item.featured_media | image_url: width: 600 }}"
+                          alt="{{ item.featured_media.alt | escape }}"
+                          loading="lazy"
+                          width="600"
+                          height="600"
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        >
+                      {%- else -%}
+                        <div class="w-full h-full flex items-center justify-center text-white/20 font-mono text-sm">No Image</div>
+                      {%- endif -%}
+
+                      {%- unless item.available -%}
+                        <span class="absolute top-2 right-2 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-red-500/80 text-white">
+                          {{ 'products.product.sold_out' | t | default: 'Sold out' }}
+                        </span>
+                      {%- endunless -%}
+                    </a>
+
+                    <span class="text-[10px] font-mono tracking-widest uppercase text-white/40 block mb-1">{{ item.vendor }}</span>
+                    <h3 class="font-semibold text-base text-white group-hover:text-white/90 line-clamp-1 mb-2">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                  </div>
+
+                  <div class="flex items-center justify-between pt-3 border-t border-white/10 mt-2">
+                    <span class="font-mono text-sm text-white/90">{{ item.price | money }}</span>
+                    {%- if item.available -%}
+                      <form method="post" action="{{ routes.cart_add_url }}">
+                        <input type="hidden" name="id" value="{{ item.variants.first.id }}">
+                        <button type="submit" class="text-xs font-mono tracking-wider uppercase px-3 py-1.5 rounded-full bg-white/10 hover:bg-white text-white hover:text-black transition-colors" data-add-to-cart>
+                          + {{ 'products.product.add_to_cart' | t | default: 'Add' }}
+                        </button>
+                      </form>
+                    {%- endif -%}
+                  </div>
+                </div>
+
+              {%- when 'article' -%}
+                <div class="article-card group relative bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 rounded-2xl p-5 flex flex-col justify-between transition-all">
+                  <div>
+                    <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-400 block mb-2">Article</span>
+                    <h3 class="font-bold text-lg mb-2 group-hover:text-white/90">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    <p class="text-xs text-white/60 line-clamp-3 mb-4">{{ item.content | strip_html | truncate: 120 }}</p>
+                  </div>
+                  <a href="{{ item.url }}" class="text-xs font-medium text-white/70 group-hover:text-white flex items-center gap-1.5">
+                    <span>Read story</span>
+                    {% render 'asmaan-icons', name: 'arrow', class: 'w-3 h-3' %}
+                  </a>
+                </div>
+
+              {%- when 'page' -%}
+                <div class="page-card group relative bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 rounded-2xl p-5 flex flex-col justify-between transition-all">
+                  <div>
+                    <span class="text-[10px] font-mono uppercase tracking-widest text-purple-400 block mb-2">Page</span>
+                    <h3 class="font-bold text-lg mb-2 group-hover:text-white/90">
+                      <a href="{{ item.url }}">{{ item.title }}</a>
+                    </h3>
+                    <p class="text-xs text-white/60 line-clamp-3 mb-4">{{ item.content | strip_html | truncate: 120 }}</p>
+                  </div>
+                  <a href="{{ item.url }}" class="text-xs font-medium text-white/70 group-hover:text-white flex items-center gap-1.5">
+                    <span>View page</span>
+                    {% render 'asmaan-icons', name: 'arrow', class: 'w-3 h-3' %}
+                  </a>
+                </div>
+
+            {%- endcase -%}
           {%- endfor -%}
         </div>
+
+        {%- if paginate.pages > 1 -%}
+          <div class="pagination flex justify-center items-center gap-4 mt-12 pt-8 border-t border-white/10 font-mono text-sm">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">&larr; Previous</a>
+            {%- endif -%}
+            <span class="text-white/50">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">Next &rarr;</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
       {%- endif -%}
-    </div>
+    {%- endif -%}
   </div>
 </section>
+{%- endpaginate -%}
 
 {% schema %}
 {

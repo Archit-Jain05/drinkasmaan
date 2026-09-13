@@ -63,36 +63,59 @@
     else
       assign spin = 0
   endcase
+
+  assign engine_mode = settings.engine_type | default: 'cylinder_can'
+  assign model_3d = product.media | where: 'media_type', 'model' | first
 -%}
 
-<div
-  class="asmaan-can"
-  style="aspect-ratio: {{ can_ratio }};"
-  {% if id %}id="{{ id }}"{% endif %}
-  role="img"
-  aria-label="{{ can_alt | escape }}{% if draggable != false %} — interactive 3D model, drag it to turn the can{% endif %}"
-  data-asmaan-can
-  data-engine="{{ 'asmaan-can-engine.js' | asset_url }}"
-  data-label="{{ label_url }}"
-  data-spin="{{ spin }}"
-  data-detail="{{ can_detail }}"
-  data-draggable="{% if draggable == false %}false{% else %}true{% endif %}"
-  {% if tint %}data-tint="{{ tint }}"{% endif %}
-  {% if ground %}data-ground="{{ ground }}"{% endif %}
-  {% if idle_spin %}data-idle-spin="{{ idle_spin }}"{% endif %}
-  {% if headroom %}data-headroom="{{ headroom }}"{% endif %}
-  {% if reach %}data-reach="{{ reach }}"{% endif %}
-  {% if fov %}data-fov="{{ fov }}"{% endif %}
-  {% if pitch %}data-pitch="{{ pitch }}"{% endif %}
->
-  {%- if poster_url -%}
-    <img
-      class="asmaan-can__poster"
-      src="{{ poster_url }}"
-      alt=""
-      loading="lazy"
-      decoding="async"
-      data-asmaan-can-poster
-    >
-  {%- endif -%}
-</div>
+{%- if engine_mode == 'shopify_model_viewer' and model_3d != blank -%}
+  <div class="shopify-model-viewer-wrap relative flex items-center justify-center w-full h-full" style="aspect-ratio: {{ can_ratio }};">
+    {{ model_3d | model_viewer_tag: reveal: 'interaction', toggleable: true, auto-rotate: true, class: 'w-full h-full' }}
+  </div>
+{%- elsif engine_mode == 'photo_2d_only' or label_url == blank -%}
+  <div class="photo-2d-wrap relative flex items-center justify-center w-full h-full" style="aspect-ratio: {{ can_ratio }};">
+    {%- if poster_url != blank -%}
+      <img
+        src="{{ poster_url }}"
+        alt="{{ can_alt | escape }}"
+        class="w-full h-full object-contain"
+        loading="lazy"
+        decoding="async"
+      >
+    {%- endif -%}
+  </div>
+{%- else -%}
+  <div
+    class="asmaan-can"
+    style="aspect-ratio: {{ can_ratio }};"
+    {% if id %}id="{{ id }}"{% endif %}
+    role="img"
+    aria-label="{{ can_alt | escape }}{% if draggable != false %} — interactive 3D model, drag it to turn the can{% endif %}"
+    data-asmaan-can
+    data-engine="{{ 'asmaan-can-engine.js' | asset_url }}"
+    data-label="{{ label_url }}"
+    data-spin="{{ spin }}"
+    data-detail="{{ can_detail }}"
+    data-shape="{{ settings.can_shape | default: '250ml_slim' }}"
+    data-droplets="{% if settings.enable_condensation != false %}true{% else %}false{% endif %}"
+    data-draggable="{% if draggable == false %}false{% else %}true{% endif %}"
+    {% if tint %}data-tint="{{ tint }}"{% endif %}
+    {% if ground %}data-ground="{{ ground }}"{% endif %}
+    {% if idle_spin %}data-idle-spin="{{ idle_spin }}"{% endif %}
+    {% if headroom %}data-headroom="{{ headroom }}"{% endif %}
+    {% if reach %}data-reach="{{ reach }}"{% endif %}
+    {% if fov %}data-fov="{{ fov }}"{% endif %}
+    {% if pitch %}data-pitch="{{ pitch }}"{% endif %}
+  >
+    {%- if poster_url != blank -%}
+      <img
+        class="asmaan-can__poster"
+        src="{{ poster_url }}"
+        alt=""
+        loading="lazy"
+        decoding="async"
+        data-asmaan-can-poster
+      >
+    {%- endif -%}
+  </div>
+{%- endif -%}

@@ -1,9 +1,9 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Asmaan",
-    "theme_version": "1.0.0",
-    "theme_author": "Asmaan",
+    "theme_name": "Aura OS 2.0",
+    "theme_version": "2.0.0",
+    "theme_author": "Aura Studio",
     "theme_documentation_url": "https://drinkasmaan.com",
     "theme_support_url": "https://drinkasmaan.com"
   },
@@ -18,8 +18,136 @@
       {
         "type": "text",
         "id": "brand_name",
-        "label": "Brand Name",
+        "label": "Brand Name Wordmark",
         "default": "ASMAAN"
+      }
+    ]
+  },
+  {
+    "name": "3D Experience Engine",
+    "settings": [
+      {
+        "type": "select",
+        "id": "engine_type",
+        "label": "3D Experience Engine",
+        "options": [
+          {
+            "value": "cylinder_can",
+            "label": "WebGL 3D Cylinder (Can / Bottle / Jar)"
+          },
+          {
+            "value": "shopify_model_viewer",
+            "label": "Shopify Native 3D (.glb / <model-viewer>)"
+          },
+          {
+            "value": "photo_2d_only",
+            "label": "Standard 2D Photography (Disables 3D)"
+          }
+        ],
+        "default": "cylinder_can",
+        "info": "Choose the rendering technology for products. 'WebGL 3D Cylinder' wraps your product's flat label around a realistic 3D model. 'Shopify Native 3D' supports custom .glb 3D files. 'Standard 2D' is ideal for non-cylindrical stores."
+      },
+      {
+        "type": "select",
+        "id": "can_shape",
+        "label": "Cylinder Shape Profile (for WebGL Can Engine)",
+        "options": [
+          {
+            "value": "250ml_slim",
+            "label": "250ml Sleek Slim Can"
+          },
+          {
+            "value": "330ml_standard",
+            "label": "330ml Standard Beverage Can"
+          },
+          {
+            "value": "500ml_tallboy",
+            "label": "500ml Tallboy Pint Can"
+          }
+        ],
+        "default": "250ml_slim",
+        "info": "Adjusts the aspect ratio and height of the 3D can geometry."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_condensation",
+        "label": "Chilled Condensation Droplets",
+        "default": true,
+        "info": "Simulates cold physical water droplets sliding down the frosted metallic surface."
+      },
+      {
+        "type": "range",
+        "id": "auto_spin_speed",
+        "min": 0,
+        "max": 1,
+        "step": 0.1,
+        "label": "Idle 3D Spin Speed",
+        "default": 0.3,
+        "info": "Rotation speed when the user is not actively dragging the can."
+      }
+    ]
+  },
+  {
+    "name": "Cart & Drawer",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart Experience",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Slide-Out Cart Drawer (AJAX)"
+          },
+          {
+            "value": "page",
+            "label": "Dedicated Cart Page (/cart)"
+          }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_free_shipping_bar",
+        "label": "Show Free Shipping Meter",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free Shipping Threshold (in currency sub-units / cents)",
+        "default": 99900,
+        "info": "Example: 99900 for ₹999 or $999.00"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_order_notes",
+        "label": "Enable Order Notes",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Search & Discovery",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enabled",
+        "label": "Enable Live Predictive Search",
+        "default": true,
+        "info": "Displays instant typeahead suggestions in a modal drawer as users type."
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_show_vendor",
+        "label": "Show Vendor in Search Results",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_show_price",
+        "label": "Show Price in Search Results",
+        "default": true
       }
     ]
   },
@@ -35,6 +163,16 @@
         "type": "url",
         "id": "social_twitter_link",
         "label": "X / Twitter"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook_link",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok_link",
+        "label": "TikTok"
       }
     ]
   },
@@ -44,8 +182,8 @@
       {
         "type": "collection",
         "id": "featured_can_collection",
-        "label": "Homepage Can Collection",
-        "info": "Select the collection to feature on the homepage 3D Stage and The Range. Products in this collection will be rendered in 3D using each product's LAST image as its 360° label texture, and front image for cards and posters."
+        "label": "Featured Collection",
+        "info": "Select the primary collection to showcase across the homepage 3D Stage and product grids."
       }
     ]
   }

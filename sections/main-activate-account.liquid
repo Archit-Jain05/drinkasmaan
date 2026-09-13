@@ -1,0 +1,43 @@
+<section class="section relative bg-black text-white min-h-[80vh] py-20 flex items-center">
+  <div class="padding-global max-w-md mx-auto px-4 w-full">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-black uppercase tracking-tight text-white mb-2">{{ 'customer.activate_account.title' | t | default: 'Activate Account' }}</h1>
+      <p class="text-sm text-white/60">{{ 'customer.activate_account.subtext' | t | default: 'Create your password to activate your account.' }}</p>
+    </div>
+
+    {% form 'activate_customer_password' %}
+      {% if form.errors %}
+        <div class="p-3 mb-6 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div class="space-y-4">
+        <div>
+          <label for="password" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">Password</label>
+          <input type="password" name="customer[password]" id="password" autocomplete="new-password" required class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+        </div>
+
+        <div>
+          <label for="password_confirmation" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">Confirm Password</label>
+          <input type="password" name="customer[password_confirmation]" id="password_confirmation" autocomplete="new-password" required class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-white/90 transition-colors">
+          {{ 'customer.activate_account.submit' | t | default: 'Activate Account' }}
+        </button>
+
+        <button type="submit" name="decline" class="w-full text-center text-xs font-mono text-white/50 hover:text-white py-2">
+          {{ 'customer.activate_account.cancel' | t | default: 'Decline Invitation' }}
+        </button>
+      </div>
+    {% endform %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Activate Account",
+  "settings": []
+}
+{% endschema %}

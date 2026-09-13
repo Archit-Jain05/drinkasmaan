@@ -1,54 +1,369 @@
-<section class="asmaan-subpage-section pt-24 pb-20">
-  <div class="padding-global">
-    <div class="container-large max-w-6xl mx-auto px-4">
-      <div class="asmaan-subpage-hero text-left mb-12">
-        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">Curated Catalog &bull; All Batches</span>
-        <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white mb-4">
-          {% if collection.title != blank %}{{ collection.title }}{% else %}All Products{% endif %}
-        </h1>
-        <p class="text-white/60 text-sm max-w-lg">
-          Cognitive focus tonics and architectural studio apparel. Pure functional botanical formulations.
-        </p>
-      </div>
+{%- assign products_per_page = section.settings.products_per_page | default: 12 -%}
+{%- paginate collection.products by products_per_page -%}
+<section class="asmaan-subpage-section pt-24 pb-20 bg-black text-white min-h-[80vh]">
+  <div class="padding-global max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Hero / Header -->
+    <div class="asmaan-subpage-hero mb-8 sm:mb-12">
+      {%- if section.settings.show_subtitle and section.settings.subtitle != blank -%}
+        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">
+          {{ section.settings.subtitle }}
+        </span>
+      {%- endif -%}
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-16">
-        {%- if collection.products.size > 0 -%}
-          {%- for product in collection.products -%}
-            <div class="shop-product-card group">
-              <div class="shop-card-badge">Catalog</div>
-              <div class="shop-card-image-wrap">
-                {%- if product.featured_image -%}
-                  <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" class="shop-card-img">
-                {%- endif -%}
-              </div>
-              <div class="shop-card-details">
-                <span class="shop-card-tag">Asmaan Collection</span>
-                <h3 class="shop-card-title">{{ product.title }}</h3>
-                <p class="shop-card-desc">{{ product.description | strip_html | truncate: 90 }}</p>
-                <div class="shop-card-meta">
-                  <div class="shop-card-price">{{ product.price | money }}</div>
-                </div>
-                <div class="mt-4 flex gap-2">
-                  <a href="{{ product.url }}" class="button is-small is-primary w-full !text-xs">View Details</a>
-                </div>
-              </div>
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white mb-3">
+            {{ collection.title | default: 'All Products' }}
+          </h1>
+          {%- if collection.description != blank -%}
+            <div class="text-white/60 text-sm sm:text-base max-w-2xl leading-relaxed">
+              {{ collection.description }}
             </div>
-          {%- endfor -%}
-        {%- else -%}
-          <div class="col-span-full py-16 text-center">
-            <p class="text-white/60 font-mono text-sm">No products found in this collection.</p>
-            <a href="/collections/all" class="button is-small is-secondary mt-4 inline-block">View All Products</a>
-          </div>
-        {%- endif -%}
+          {%- elsif section.settings.default_description != blank -%}
+            <p class="text-white/60 text-sm sm:text-base max-w-2xl leading-relaxed">
+              {{ section.settings.default_description }}
+            </p>
+          {%- endif -%}
+        </div>
+
+        <!-- Product Count -->
+        <span class="text-xs font-mono text-white/40 uppercase tracking-widest self-start sm:self-end">
+          {{ 'collections.general.items_with_count' | t: count: collection.products_count | default: collection.products_count }} {{ 'products.facets.product_count_simple.other' | t | default: 'products' }}
+        </span>
       </div>
     </div>
+
+    <!-- Filter & Sort Bar -->
+    {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+      <form id="CollectionFiltersForm" class="mb-8 p-4 rounded-2xl bg-white/[0.02] border border-white/10" method="get">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          
+          <!-- Filters Group -->
+          {%- if section.settings.enable_filtering and collection.filters.size > 0 -%}
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span class="text-xs font-mono uppercase tracking-wider text-white/50 mr-1 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+                <span>Filter:</span>
+              </span>
+
+              {%- for filter in collection.filters -%}
+                <details class="filter-dropdown relative group" data-filter-index="{{ forloop.index }}">
+                  <summary class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/15 text-xs text-white/90 cursor-pointer select-none transition-colors">
+                    <span>{{ filter.label }}</span>
+                    {%- if filter.active_values.size > 0 -%}
+                      <span class="w-4 h-4 rounded-full bg-white text-black text-[10px] font-mono font-bold flex items-center justify-center">
+                        {{ filter.active_values.size }}
+                      </span>
+                    {%- endif -%}
+                    <svg class="w-3 h-3 text-white/50 transition-transform group-open:rotate-180" viewBox="0 0 12 12" fill="none" stroke="currentColor"><path d="M2 4l4 4 4-4"/></svg>
+                  </summary>
+
+                  <div class="filter-panel absolute left-0 z-30 mt-2 p-4 min-w-[220px] max-w-xs bg-[#111111] border border-white/20 rounded-xl shadow-2xl backdrop-blur-xl">
+                    <div class="flex items-center justify-between pb-2 mb-3 border-b border-white/10 text-xs font-mono text-white/60">
+                      <span>{{ filter.label }}</span>
+                      {%- if filter.active_values.size > 0 -%}
+                        <a href="{{ filter.url_to_remove }}" class="text-[10px] text-white/40 hover:text-white underline">Reset</a>
+                      {%- endif -%}
+                    </div>
+
+                    {%- case filter.type -%}
+                      {%- when 'boolean' or 'list' -%}
+                        <ul class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                          {%- for filter_value in filter.values -%}
+                            <li>
+                              <label class="flex items-center gap-2 text-xs text-white/80 hover:text-white cursor-pointer select-none py-0.5 {% if filter_value.count == 0 and filter_value.active == false %}opacity-40 cursor-not-allowed{% endif %}">
+                                <input
+                                  type="checkbox"
+                                  name="{{ filter_value.param_name }}"
+                                  value="{{ filter_value.value }}"
+                                  {% if filter_value.active %}checked{% endif %}
+                                  {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                                  class="w-3.5 h-3.5 rounded bg-white/10 border-white/30 text-white accent-white focus:ring-0 cursor-pointer"
+                                  onchange="this.form.submit()"
+                                >
+                                <span class="flex-1 truncate">{{ filter_value.label }}</span>
+                                <span class="font-mono text-[10px] text-white/40">({{ filter_value.count }})</span>
+                              </label>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+
+                      {%- when 'price_range' -%}
+                        <div class="space-y-3">
+                          <div class="flex items-center gap-2">
+                            <div class="flex-1">
+                              <label class="text-[10px] font-mono text-white/40 uppercase block mb-1">Min</label>
+                              <div class="flex items-center bg-white/5 border border-white/15 rounded-lg px-2 py-1.5">
+                                <span class="text-xs text-white/40 mr-1">{{ cart.currency.symbol }}</span>
+                                <input
+                                  type="number"
+                                  name="{{ filter.min_value.param_name }}"
+                                  {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                                  placeholder="0"
+                                  min="0"
+                                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                  class="w-full bg-transparent text-xs text-white focus:outline-none font-mono"
+                                >
+                              </div>
+                            </div>
+                            <span class="text-white/30 mt-4">&ndash;</span>
+                            <div class="flex-1">
+                              <label class="text-[10px] font-mono text-white/40 uppercase block mb-1">Max</label>
+                              <div class="flex items-center bg-white/5 border border-white/15 rounded-lg px-2 py-1.5">
+                                <span class="text-xs text-white/40 mr-1">{{ cart.currency.symbol }}</span>
+                                <input
+                                  type="number"
+                                  name="{{ filter.max_value.param_name }}"
+                                  {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"{% endif %}
+                                  placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                  min="0"
+                                  max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                                  class="w-full bg-transparent text-xs text-white focus:outline-none font-mono"
+                                >
+                              </div>
+                            </div>
+                          </div>
+                          <button type="submit" class="w-full py-1.5 bg-white text-black text-xs font-semibold rounded-lg hover:bg-white/90 transition-colors">
+                            Apply
+                          </button>
+                        </div>
+                    {%- endcase -%}
+                  </div>
+                </details>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <!-- Sort Dropdown -->
+          {%- if section.settings.enable_sorting -%}
+            <div class="flex items-center gap-2 ml-auto">
+              <label for="CollectionSortBy" class="text-xs font-mono uppercase tracking-wider text-white/50 hidden sm:inline">
+                {{ 'products.facets.sort_by_label' | t | default: 'Sort by:' }}
+              </label>
+              <select
+                id="CollectionSortBy"
+                name="sort_by"
+                class="bg-white/5 border border-white/15 focus:border-white/40 text-xs text-white rounded-lg px-3 py-1.5 font-mono focus:outline-none cursor-pointer"
+                onchange="this.form.submit()"
+              >
+                {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %} class="bg-[#111] text-white">
+                    {{ option.name }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endif -%}
+
+        </div>
+
+        <!-- Active Filter Pills & Reset -->
+        {%- assign total_active_filters = 0 -%}
+        {%- for filter in collection.filters -%}
+          {%- assign total_active_filters = total_active_filters | plus: filter.active_values.size -%}
+          {%- if filter.type == 'price_range' and filter.min_value.value != nil or filter.max_value.value != nil -%}
+            {%- assign total_active_filters = total_active_filters | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if total_active_filters > 0 -%}
+          <div class="flex flex-wrap items-center gap-2 pt-3 mt-3 border-t border-white/10">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-white/40">Active:</span>
+            
+            {%- for filter in collection.filters -%}
+              {%- for filter_value in filter.active_values -%}
+                <a href="{{ filter_value.url_to_remove }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs text-white transition-colors">
+                  <span>{{ filter.label }}: {{ filter_value.label }}</span>
+                  <span class="text-white/60 hover:text-white" aria-hidden="true">&times;</span>
+                </a>
+              {%- endfor -%}
+
+              {%- if filter.type == 'price_range' -%}
+                {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                  <a href="{{ filter.url_to_remove }}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs text-white transition-colors">
+                    <span>{{ filter.label }}: {{ filter.min_value.value | default: 0 | money }} - {{ filter.max_value.value | default: filter.range_max | money }}</span>
+                    <span class="text-white/60 hover:text-white" aria-hidden="true">&times;</span>
+                  </a>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            <a href="{{ collection.url }}?sort_by={{ collection.sort_by | default: collection.default_sort_by }}" class="text-xs text-white/50 hover:text-white underline ml-2">
+              {{ 'products.facets.clear_all' | t | default: 'Clear all' }}
+            </a>
+          </div>
+        {%- endif -%}
+      </form>
+    {%- endif -%}
+
+    <!-- Products Grid -->
+    {%- assign col_class = 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3' -%}
+    {%- if section.settings.columns_desktop == 4 -%}
+      {%- assign col_class = 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' -%}
+    {%- elsif section.settings.columns_desktop == 2 -%}
+      {%- assign col_class = 'grid-cols-1 sm:grid-cols-2' -%}
+    {%- endif -%}
+
+    <div class="grid {{ col_class }} gap-6 sm:gap-8 mb-16">
+      {%- if collection.products.size > 0 -%}
+        {%- for product in collection.products -%}
+          <div class="shop-product-card group relative bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-white/30 rounded-2xl p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between">
+            <div>
+              <!-- Badges & Image -->
+              <div class="relative aspect-square rounded-xl overflow-hidden bg-white/5 mb-4">
+                {%- if product.featured_image -%}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                    loading="lazy"
+                    width="600"
+                    height="600"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  >
+                {%- else -%}
+                  <div class="w-full h-full flex items-center justify-center text-white/20 font-mono text-sm">No Image</div>
+                {%- endif -%}
+
+                <!-- Badges -->
+                <div class="absolute top-2.5 left-2.5 flex flex-col gap-1">
+                  {%- if product.compare_at_price > product.price -%}
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-white text-black font-bold">
+                      Sale
+                    </span>
+                  {%- endif -%}
+                  {%- unless product.available -%}
+                    <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-red-500/80 text-white font-bold">
+                      Sold out
+                    </span>
+                  {%- endunless -%}
+                </div>
+              </div>
+
+              <!-- Product Info -->
+              <span class="text-[10px] font-mono tracking-widest uppercase text-white/40 block mb-1">{{ product.vendor }}</span>
+              <h3 class="font-bold text-base sm:text-lg text-white group-hover:text-white/90 line-clamp-1 mb-1.5">
+                <a href="{{ product.url }}">{{ product.title }}</a>
+              </h3>
+              <p class="text-xs text-white/60 line-clamp-2 leading-relaxed mb-4">
+                {{ product.description | strip_html | truncate: 100 }}
+              </p>
+            </div>
+
+            <!-- Price & Actions -->
+            <div class="pt-3 border-t border-white/10 mt-auto">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-baseline gap-2">
+                  <span class="font-mono text-base font-semibold text-white">{{ product.price | money }}</span>
+                  {%- if product.compare_at_price > product.price -%}
+                    <span class="font-mono text-xs text-white/40 line-through">{{ product.compare_at_price | money }}</span>
+                  {%- endif -%}
+                </div>
+                {%- if product.has_only_default_variant == false -%}
+                  <span class="text-[10px] font-mono text-white/40 uppercase">{{ product.variants.size }} options</span>
+                {%- endif -%}
+              </div>
+
+              <div class="flex gap-2">
+                <a href="{{ product.url }}" class="flex-1 py-2 text-center text-xs font-semibold rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-colors">
+                  Details
+                </a>
+                {%- if product.available -%}
+                  <form method="post" action="{{ routes.cart_add_url }}" class="flex-1">
+                    <input type="hidden" name="id" value="{{ product.first_available_variant.id }}">
+                    <button type="submit" class="w-full py-2 text-center text-xs font-semibold rounded-xl bg-white hover:bg-white/90 text-black transition-colors" data-add-to-cart>
+                      + Add
+                    </button>
+                  </form>
+                {%- endif -%}
+              </div>
+            </div>
+
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="col-span-full py-16 text-center border border-white/10 rounded-2xl bg-white/[0.02]">
+          <p class="text-white/70 font-mono text-sm mb-4">
+            {{ 'collections.general.no_matches' | t | default: 'No products match your current filters.' }}
+          </p>
+          <a href="{{ collection.url }}" class="inline-block px-6 py-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-mono uppercase tracking-wider text-white transition-colors">
+            Reset All Filters
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Pagination -->
+    {%- if paginate.pages > 1 -%}
+      <div class="pagination flex justify-center items-center gap-3 pt-8 border-t border-white/10 font-mono text-xs">
+        {%- if paginate.previous -%}
+          <a href="{{ paginate.previous.url }}" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-colors">&larr; Previous</a>
+        {%- endif -%}
+        <span class="text-white/40 px-2">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+        {%- if paginate.next -%}
+          <a href="{{ paginate.next.url }}" class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-colors">Next &rarr;</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
   </div>
 </section>
+{%- endpaginate -%}
 
 {% schema %}
 {
   "name": "Collection Grid",
-  "settings": [],
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle / Badge",
+      "default": "Curated Catalog • All Batches"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subtitle",
+      "label": "Show Subtitle",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "default_description",
+      "label": "Default Description (if collection has none)",
+      "default": "Explore our complete range of functional botanical formulations, cognitive focus tonics, and studio merchandise."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable Faceted Filtering",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable Sorting",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    }
+  ],
   "presets": [
     {
       "name": "Collection Grid"

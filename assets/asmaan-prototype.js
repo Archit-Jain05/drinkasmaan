@@ -70,6 +70,11 @@
 
   var currentTasteIndex = 0;
   var motionMuted = false;
+  try {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      motionMuted = true;
+    }
+  } catch (e) {}
 
   function ease(t) {
     return t * t * t * (t * (t * 6 - 15) + 10);
@@ -436,6 +441,16 @@
     var posterImg = canHost.querySelector('img');
     if (!canvas) return;
 
+    var config = window.ASMAAN_CONFIG || {};
+    if (config.engineType === 'photo_2d_only') {
+      if (canvas) canvas.style.display = 'none';
+      if (posterImg) {
+        posterImg.style.display = '';
+        posterImg.style.opacity = '1';
+      }
+      return;
+    }
+
     if (TASTES.length === 0) {
       if (canvas) canvas.style.display = 'none';
       if (posterImg) posterImg.style.display = 'none';
@@ -529,6 +544,11 @@
     });
 
     function createCanDropletSystem(canInner, canIndex) {
+      if (config.enableCondensation === false) {
+        return {
+          update: function () {}
+        };
+      }
       var DROP_COUNT = 14;
       var dropletGroup = new THREE.Group();
       canInner.add(dropletGroup);
@@ -706,6 +726,12 @@
         var inner = new THREE.Group();
         inner.add(shellMesh, labelMesh, tabMesh);
         inner.position.y = -HEIGHT / 2;
+
+        if (config.canShape === '330ml_standard') {
+          inner.scale.set(1.12, 0.88, 1.12);
+        } else if (config.canShape === '500ml_tallboy') {
+          inner.scale.set(1.12, 1.2, 1.12);
+        }
 
         var grp = new THREE.Group();
         grp.add(inner);

@@ -1,0 +1,90 @@
+<section class="section relative bg-black text-white min-h-[80vh] py-20 flex items-center">
+  <div class="padding-global max-w-md mx-auto px-4 w-full">
+    <div class="text-center mb-8">
+      <span class="text-xs font-mono uppercase tracking-widest text-[#9089D3] block mb-2">Join Asmaan</span>
+      <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white mb-2">{{ 'customer.register.title' | t | default: 'Create Account' }}</h1>
+      <p class="text-sm text-white/60">Create an account to track orders and receive exclusive batch drops.</p>
+    </div>
+
+    {% form 'create_customer' %}
+      {% if form.errors %}
+        <div class="p-3 mb-6 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="FirstName" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">{{ 'customer.register.first_name' | t | default: 'First Name' }}</label>
+            <input
+              type="text"
+              name="customer[first_name]"
+              id="FirstName"
+              {% if form.first_name %}value="{{ form.first_name }}"{% endif %}
+              autocomplete="given-name"
+              class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none transition-colors"
+            >
+          </div>
+          <div>
+            <label for="LastName" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">{{ 'customer.register.last_name' | t | default: 'Last Name' }}</label>
+            <input
+              type="text"
+              name="customer[last_name]"
+              id="LastName"
+              {% if form.last_name %}value="{{ form.last_name }}"{% endif %}
+              autocomplete="family-name"
+              class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none transition-colors"
+            >
+          </div>
+        </div>
+
+        <div>
+          <label for="CustomerEmail" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">{{ 'customer.register.email' | t | default: 'Email' }}</label>
+          <input
+            type="email"
+            name="customer[email]"
+            id="CustomerEmail"
+            {% if form.email %}value="{{ form.email }}"{% endif %}
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="off"
+            required
+            class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none transition-colors"
+            placeholder="name@example.com"
+          >
+        </div>
+
+        <div>
+          <label for="CustomerPassword" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">{{ 'customer.register.password' | t | default: 'Password' }}</label>
+          <input
+            type="password"
+            name="customer[password]"
+            id="CustomerPassword"
+            autocomplete="new-password"
+            required
+            class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none transition-colors"
+          >
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-white/90 transition-colors mt-2">
+          {{ 'customer.register.submit' | t | default: 'Create Account' }}
+        </button>
+      </div>
+    {% endform %}
+
+    <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-white/60">
+      Already have an account?
+      <a href="{{ routes.account_login_url }}" class="text-white font-medium underline ml-1 hover:text-white/80">
+        {{ 'customer.log_in' | t | default: 'Sign in' }}
+      </a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Register",
+  "settings": []
+}
+{% endschema %}

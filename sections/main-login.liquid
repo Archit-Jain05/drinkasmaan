@@ -1,0 +1,159 @@
+<section class="section relative bg-black text-white min-h-[80vh] py-20 flex items-center">
+  <div class="padding-global max-w-md mx-auto px-4 w-full">
+
+    <!-- Recover Password Panel -->
+    <div id="recover" class="hidden">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold tracking-tight mb-2">{{ 'customer.recover_password.title' | t | default: 'Reset your password' }}</h1>
+        <p class="text-sm text-white/60">{{ 'customer.recover_password.subtext' | t | default: 'We will send you an email to reset your password.' }}</p>
+      </div>
+
+      {% form 'recover_customer_password' %}
+        {% assign recover_success = form.posted_successfully? %}
+        {% if form.errors %}
+          <div class="p-3 mb-6 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300">
+            {{ form.errors.messages['form'] }}
+          </div>
+        {% endif %}
+
+        <div class="space-y-4">
+          <div>
+            <label for="RecoverEmail" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">{{ 'customer.login.email' | t | default: 'Email' }}</label>
+            <input
+              type="email"
+              name="email"
+              id="RecoverEmail"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              required
+              class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none transition-colors"
+              placeholder="name@example.com"
+            >
+          </div>
+
+          <button type="submit" class="w-full py-3.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-white/90 transition-colors">
+            {{ 'customer.recover_password.submit' | t | default: 'Submit' }}
+          </button>
+
+          <button type="button" id="HideRecoverPasswordLink" class="w-full text-center text-xs font-mono text-white/50 hover:text-white py-2">
+            {{ 'customer.recover_password.cancel' | t | default: 'Cancel' }}
+          </button>
+        </div>
+      {% endform %}
+    </div>
+
+    <!-- Login Panel -->
+    <div id="customer-login">
+      <div class="text-center mb-8">
+        <span class="text-xs font-mono uppercase tracking-widest text-[#9089D3] block mb-2">Member Portal</span>
+        <h1 class="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white mb-2">{{ 'customer.login.title' | t | default: 'Sign In' }}</h1>
+        <p class="text-sm text-white/60">Access your orders, saved addresses, and profile.</p>
+      </div>
+
+      {% if recover_success %}
+        <div class="p-3 mb-6 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 text-center">
+          {{ 'customer.recover_password.success' | t | default: 'We have sent you an email with a link to update your password.' }}
+        </div>
+      {% endif %}
+
+      {% form 'customer_login' %}
+        {% if form.errors %}
+          <div class="p-3 mb-6 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300">
+            {{ form.errors | default_errors }}
+          </div>
+        {% endif %}
+
+        <div class="space-y-4">
+          <div>
+            <label for="CustomerEmail" class="block text-xs font-mono uppercase tracking-wider text-white/60 mb-2">{{ 'customer.login.email' | t | default: 'Email' }}</label>
+            <input
+              type="email"
+              name="customer[email]"
+              id="CustomerEmail"
+              autocomplete="email"
+              autocorrect="off"
+              autocapitalize="off"
+              required
+              class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none transition-colors"
+              placeholder="name@example.com"
+            >
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label for="CustomerPassword" class="text-xs font-mono uppercase tracking-wider text-white/60">{{ 'customer.login.password' | t | default: 'Password' }}</label>
+              <a href="#recover" id="RecoverPassword" class="text-xs text-white/40 hover:text-white underline">{{ 'customer.login.forgot_password' | t | default: 'Forgot?' }}</a>
+            </div>
+            <input
+              type="password"
+              name="customer[password]"
+              id="CustomerPassword"
+              autocomplete="current-password"
+              required
+              class="w-full bg-white/5 border border-white/15 focus:border-white rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none transition-colors"
+            >
+          </div>
+
+          <button type="submit" class="w-full py-3.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-white/90 transition-colors mt-2">
+            {{ 'customer.login.sign_in' | t | default: 'Sign In' }}
+          </button>
+        </div>
+      {% endform %}
+
+      <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-white/60">
+        Don't have an account?
+        <a href="{{ routes.account_register_url }}" class="text-white font-medium underline ml-1 hover:text-white/80">
+          {{ 'customer.login.create_account' | t | default: 'Create account' }}
+        </a>
+      </div>
+
+      {% if shop.checkout.guest_login %}
+        <div class="mt-6 pt-6 border-t border-white/10 text-center">
+          <h2 class="text-xs font-mono uppercase text-white/50 mb-3">{{ 'customer.login.guest_title' | t | default: 'Continue as a guest' }}</h2>
+          {% form 'guest_login' %}
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-white/10 text-white font-medium text-xs hover:bg-white/20 transition-colors">
+              {{ 'customer.login.guest_continue' | t | default: 'Continue' }}
+            </button>
+          {% endform %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function() {
+    var recover = document.getElementById('recover');
+    var login = document.getElementById('customer-login');
+    var recoverLink = document.getElementById('RecoverPassword');
+    var hideRecoverLink = document.getElementById('HideRecoverPasswordLink');
+
+    if (recoverLink && hideRecoverLink && recover && login) {
+      recoverLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        login.classList.add('hidden');
+        recover.classList.remove('hidden');
+      });
+
+      hideRecoverLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        recover.classList.add('hidden');
+        login.classList.remove('hidden');
+      });
+
+      if (window.location.hash === '#recover') {
+        login.classList.add('hidden');
+        recover.classList.remove('hidden');
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Login",
+  "settings": []
+}
+{% endschema %}

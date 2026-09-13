@@ -1,0 +1,137 @@
+<article class="article-section relative bg-black text-white min-h-[80vh] py-16 sm:py-24">
+  <div class="padding-global max-w-3xl mx-auto px-4 sm:px-6">
+
+    <!-- Back to Blog -->
+    <a href="{{ blog.url }}" class="inline-flex items-center gap-2 text-xs font-mono text-white/50 hover:text-white transition-colors mb-8">
+      &larr; {{ 'blogs.article.back_to_blog' | t: title: blog.title | default: 'Back to Blog' }}
+    </a>
+
+    <!-- Header -->
+    <header class="mb-8">
+      <div class="flex items-center gap-3 text-xs font-mono uppercase tracking-widest text-[#9089D3] mb-3">
+        <span>{{ blog.title }}</span>
+        <span>&bull;</span>
+        <span>{{ article.published_at | time_tag: format: 'date' }}</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white mb-4 leading-tight">
+        {{ article.title }}
+      </h1>
+
+      <div class="flex items-center gap-3 text-xs text-white/60 font-mono">
+        <span>{{ 'blogs.article.written_by' | t: author: article.author | default: article.author }}</span>
+      </div>
+    </header>
+
+    <!-- Featured Image -->
+    {% if article.image %}
+      <div class="relative aspect-[16/9] rounded-2xl overflow-hidden mb-12 bg-white/5">
+        <img
+          src="{{ article.image | image_url: width: 1200 }}"
+          alt="{{ article.image.alt | default: article.title | escape }}"
+          loading="eager"
+          width="1200"
+          height="675"
+          class="w-full h-full object-cover"
+        >
+      </div>
+    {% endif %}
+
+    <!-- Rich Article Content -->
+    <div class="article-content text-white/85 text-base sm:text-lg leading-relaxed space-y-6 font-sans">
+      {{ article.content }}
+    </div>
+
+    <!-- Tags & Social Share -->
+    <div class="flex flex-wrap items-center justify-between gap-4 py-8 my-12 border-t border-b border-white/10">
+      {% if article.tags.size > 0 %}
+        <div class="flex flex-wrap gap-2">
+          {% for tag in article.tags %}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="px-3 py-1 rounded-full text-xs font-mono bg-white/5 hover:bg-white/15 border border-white/10 text-white/70 transition-colors">
+              #{{ tag }}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="flex items-center gap-3 text-xs font-mono text-white/50">
+        <span>Share:</span>
+        <a href="https://twitter.com/intent/tweet?text={{ article.title | url_encode }}&url={{ canonical_url }}" target="_blank" rel="noopener" class="hover:text-white">X/Twitter</a>
+        <span>&bull;</span>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ canonical_url }}" target="_blank" rel="noopener" class="hover:text-white">Facebook</a>
+      </div>
+    </div>
+
+    <!-- Comments Section (if enabled) -->
+    {% if blog.comments_enabled? %}
+      <div id="comments" class="mt-16 pt-8 border-t border-white/10">
+        <h2 class="text-xl font-bold uppercase tracking-wide mb-6">
+          {{ 'blogs.article.comments' | t: count: article.comments_count | default: 'Comments' }} ({{ article.comments_count }})
+        </h2>
+
+        {% if article.comments_count > 0 %}
+          <div class="space-y-4 mb-12">
+            {% for comment in article.comments %}
+              <div class="p-4 rounded-xl bg-white/[0.02] border border-white/10">
+                <div class="flex items-center justify-between text-xs font-mono text-white/40 mb-2">
+                  <span class="font-bold text-white">{{ comment.author }}</span>
+                  <span>{{ comment.created_at | time_tag: format: 'date' }}</span>
+                </div>
+                <div class="text-xs text-white/80 leading-relaxed font-sans">
+                  {{ comment.content }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Leave a comment form -->
+        {% form 'new_comment', article %}
+          <h3 class="text-base font-bold uppercase tracking-wider mb-4">{{ 'blogs.article.comment_form_title' | t | default: 'Leave a Comment' }}</h3>
+
+          {% if form.errors %}
+            <div class="p-3 mb-4 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+
+          {% if form.posted_successfully? %}
+            <div class="p-3 mb-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300">
+              Your comment has been submitted and is awaiting moderation.
+            </div>
+          {% endif %}
+
+          <div class="space-y-4 text-xs font-mono">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-white/60 uppercase mb-1">{{ 'blogs.article.name' | t | default: 'Name' }}</label>
+                <input type="text" name="comment[author]" required class="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-white">
+              </div>
+              <div>
+                <label class="block text-white/60 uppercase mb-1">{{ 'blogs.article.email' | t | default: 'Email' }}</label>
+                <input type="email" name="comment[email]" required class="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-white">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-white/60 uppercase mb-1">{{ 'blogs.article.message' | t | default: 'Comment' }}</label>
+              <textarea name="comment[body]" rows="4" required class="w-full bg-white/5 border border-white/15 rounded-xl p-4 text-white focus:outline-none focus:border-white"></textarea>
+            </div>
+
+            <button type="submit" class="px-6 py-3 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-colors">
+              {{ 'blogs.article.post' | t | default: 'Post Comment' }}
+            </button>
+          </div>
+        {% endform %}
+      </div>
+    {% endif %}
+
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": []
+}
+{% endschema %}

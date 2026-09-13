@@ -30,6 +30,24 @@
     {{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
     {{ 'asmaan-can-3d.css' | asset_url | stylesheet_tag }}
 
+    <script>
+      window.ASMAAN_CONFIG = {
+        engineType: {{ settings.engine_type | default: 'cylinder_can' | json }},
+        canShape: {{ settings.can_shape | default: '250ml_slim' | json }},
+        enableCondensation: {{ settings.enable_condensation | default: true | json }},
+        autoSpinSpeed: {{ settings.auto_spin_speed | default: 0.3 | json }},
+        cartType: {{ settings.cart_type | default: 'drawer' | json }},
+        freeShippingThreshold: {{ settings.free_shipping_threshold | default: 99900 | json }},
+        predictiveSearchEnabled: {{ settings.predictive_search_enabled | default: true | json }},
+        routes: {
+          cart_url: '{{ routes.cart_url }}',
+          cart_add_url: '{{ routes.cart_add_url }}',
+          cart_change_url: '{{ routes.cart_change_url }}',
+          predictive_search_url: '{{ routes.predictive_search_url }}'
+        }
+      };
+    </script>
+
     {{ content_for_header }}
   </head>
 
@@ -49,6 +67,11 @@
 
     {% section 'asmaan-footer' %}
 
+    {% section 'cart-drawer' %}
+    {% section 'predictive-search' %}
+
+    <script src="{{ 'cart-drawer.js' | asset_url }}" defer></script>
+    <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
     <script src="{{ 'asmaan-can-3d.js' | asset_url }}" defer></script>
     <script src="{{ 'asmaan-prototype.js' | asset_url }}" defer></script>
   </body>
