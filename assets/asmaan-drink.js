@@ -1,278 +1,341 @@
 /**
  * Asmaan — Drink / Product Page Interactive Engine (assets/asmaan-drink.js)
- * Fully synchronizes Taste, Pack Tier, Subscription, 3D Carton assembly,
- * Gallery angle rotator, Sticky DrinkBar, and Cart integration.
+ * All product data (flavours, packs, prices, variants, selling plans, labels) is read from
+ * the #drink-data JSON rendered by sections/main-drink.liquid.
  */
 
 (function() {
   'use strict';
 
+  var VIEWS = ['front', 'right', 'back', 'left'];
+
   function initDrinkPage() {
+    var dataEl = document.getElementById('drink-data');
+    var productSection = document.getElementById('buy');
+    if (!dataEl || !productSection) return;
+
+    var data;
+    try {
+      data = JSON.parse(dataEl.textContent);
+    } catch (err) {
+      console.error('Asmaan drink: invalid #drink-data JSON', err);
+      return;
+    }
+
+    var FLAVOURS = data.flavours || [];
+    var PACKS = data.packs || [];
+    var LABELS = data.labels || {};
+    var SUB = data.subscription || {};
+    if (!FLAVOURS.length || !PACKS.length) return;
+
     var root = document.documentElement;
-    var productSection = document.getElementById('buy') || document.querySelector('.drink_product');
-    if (!productSection) return;
-
-    var TASTES = [
-      {
-        id: 'jamun',
-        line1: 'Kala',
-        line2: 'Jamun',
-        tag: 'The original',
-        blurb: 'The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.',
-        primary: '#2A1D4A',
-        secondary: '#9089D3'
-      },
-      {
-        id: 'mango',
-        line1: 'Alphonso',
-        line2: 'Mango',
-        tag: 'Gold into burnt amber',
-        blurb: 'A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.',
-        primary: '#5A2A00',
-        secondary: '#EFB36B'
-      },
-      {
-        id: 'print',
-        line1: 'Wild',
-        line2: 'Magenta',
-        tag: 'Rose and pink guava',
-        blurb: 'The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.',
-        primary: '#4E0749',
-        secondary: '#E6A0E8'
-      }
-    ];
-
-    var PACKS = [
-      { id: '12', cans: 12, price: 2400, tag: 'Starter', note: 'Two weeks of mornings.' },
-      { id: '24', cans: 24, price: 4320, tag: 'Most taken', note: 'The one people come back for.', featured: true },
-      { id: '36', cans: 36, price: 5760, tag: 'Deep work', note: 'A quarter, priced like it.' }
-    ];
-
-    var FREQUENCIES = [
-      { id: '2w', label: 'Every 2 weeks' },
-      { id: '1m', label: 'Monthly' },
-      { id: '2m', label: 'Every 2 months' }
-    ];
-
-    var PANEL_LABELS = {
-      front: 'Front panel · Wordmark & claim',
-      right: 'Right panel · Ingredients & recipe',
-      back: 'Back panel · Nutritional values & volume',
-      left: 'Left panel · Brand story & mission'
-    };
 
     var state = {
       taste: 0,
-      pack: 1, // default to 24 cans (Most taken)
-      mode: 'once', // 'once' or 'subscribe'
-      frequency: 1, // 'Monthly'
+      pack: Math.min(data.defaultPack || 0, PACKS.length - 1),
+      mode: 'once',
+      frequency: Math.max(SUB.defaultFrequency || 0, 0),
       quantity: 1,
-      view: 'front'
+      view: 'front',
+      adding: false
     };
 
-    function formatMoney(amount) {
-      return '₹' + Math.round(amount).toLocaleString('en-IN');
+    // Allow deep links such as /pages/drink?flavour=alphonso-mango
+    var wanted = new URLSearchParams(window.location.search).get('flavour');
+    if (wanted) {
+      FLAVOURS.forEach(function(f, i) { if (f.handle === wanted) state.taste = i; });
+    }
+
+    function $(sel) { return document.querySelector(sel); }
+    function $$(sel) { return document.querySelectorAll(sel); }
+
+    function escapeHtml(str) {
+      return String(str == null ? '' : str).replace(/[&<>"']/g, function(c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    // Mirrors Shopify's money / money_without_trailing_zeros filters using the shop's money format.
+    function formatMoney(cents) {
+      cents = Math.round(cents);
+      var format = data.moneyFormat || '{{amount}}';
+
+      function withDelimiters(amount, precision, thousands, decimal) {
+        var parts = (amount / 100).toFixed(precision).split('.');
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+        return parts.join(decimal);
+      }
+
+      var match = format.match(/\{\{\s*(\w+)\s*\}\}/);
+      var value;
+      switch (match ? match[1] : 'amount') {
+        case 'amount_no_decimals': value = withDelimiters(cents, 0, ',', '.'); break;
+        case 'amount_with_comma_separator': value = withDelimiters(cents, 2, '.', ','); break;
+        case 'amount_no_decimals_with_comma_separator': value = withDelimiters(cents, 0, '.', ','); break;
+        case 'amount_with_apostrophe_separator': value = withDelimiters(cents, 2, "'", '.'); break;
+        default: value = withDelimiters(cents, 2, ',', '.');
+      }
+      if (cents % 100 === 0) value = value.replace(/[.,]00$/, '');
+
+      var tmp = document.createElement('div');
+      tmp.innerHTML = format.replace(/\{\{\s*\w+\s*\}\}/, value);
+      return tmp.textContent;
+    }
+
+    function currentFlavour() { return FLAVOURS[state.taste]; }
+
+    function packData(flavour, i) {
+      return (flavour.packs && flavour.packs[i]) || { variantId: null, price: 0, available: false };
+    }
+
+    function plans() { return currentFlavour().plans || []; }
+
+    function subscriptionAvailable() {
+      if (!SUB.enabled) return false;
+      return data.prelaunch || plans().length > 0;
+    }
+
+    function frequencyOptions() {
+      var p = plans();
+      if (p.length) return p.map(function(plan) { return plan.name; });
+      return SUB.frequencies || [];
+    }
+
+    function discountPercent() {
+      var p = plans();
+      if (p.length) return (p[state.frequency] || p[0]).pct || 0;
+      return SUB.discount || 0;
     }
 
     function calculateOrder() {
-      var packObj = PACKS[state.pack];
-      var basePackPrice = packObj.price;
+      var pack = PACKS[state.pack];
+      var pd = packData(currentFlavour(), state.pack);
       var isSub = state.mode === 'subscribe';
-      var discountRate = isSub ? 0.10 : 0;
-      var unitPrice = basePackPrice * (1 - discountRate);
+      var rate = isSub ? discountPercent() / 100 : 0;
+      var unitPrice = pd.price * (1 - rate);
       var total = unitPrice * state.quantity;
-      var totalCans = packObj.cans * state.quantity;
-      var perCan = total / totalCans;
-      var rawTotal = basePackPrice * state.quantity;
-      var saving = isSub ? (rawTotal - total) : 0;
-
+      var totalCans = pack.cans * state.quantity;
       return {
-        pack: packObj,
-        basePackPrice: basePackPrice,
-        unitPrice: unitPrice,
+        pack: pack,
+        packData: pd,
+        basePackPrice: pd.price,
         total: total,
         totalCans: totalCans,
-        perCan: perCan,
-        saving: saving
+        perCan: totalCans ? total / totalCans : 0,
+        saving: isSub ? pd.price * state.quantity - total : 0
       };
     }
 
+    function splitTitle(title) {
+      var words = String(title).split(' ');
+      if (words.length < 2) return escapeHtml(title);
+      return escapeHtml(words[0]) + '<br>' + escapeHtml(words.slice(1).join(' '));
+    }
+
+    function imageFor(flavour, view, size) {
+      var img = (flavour.images && (flavour.images[view] || flavour.images.front)) || null;
+      return img ? img[size] : null;
+    }
+
+    function ctaLabel(order) {
+      if (data.prelaunch) {
+        if (LABELS.waitlist) return LABELS.waitlist;
+      } else if (!order.packData.variantId || !order.packData.available) {
+        return LABELS.soldOut;
+      }
+      if (state.adding) return LABELS.adding;
+      return state.mode === 'subscribe' ? LABELS.subscribe : LABELS.add;
+    }
+
+    function renderChips() {
+      var wrap = $('[data-drink-chips]');
+      if (!wrap) return;
+      var opts = frequencyOptions();
+      if (state.frequency >= opts.length) state.frequency = 0;
+      wrap.innerHTML = opts.map(function(label, i) {
+        return '<button type="button" class="drink_chip" data-frequency-index="' + i + '" aria-pressed="' + (i === state.frequency) + '">' + escapeHtml(label) + '</button>';
+      }).join('');
+    }
+
     function updateDOM() {
-      var tasteObj = TASTES[state.taste];
+      var flavour = currentFlavour();
       var order = calculateOrder();
+      var fullName = flavour.title;
 
-      // 1. Root color theme update
-      root.style.setProperty('--taste-primary', tasteObj.primary);
-      root.style.setProperty('--taste-secondary', tasteObj.secondary);
+      root.style.setProperty('--taste-primary', flavour.deep);
+      root.style.setProperty('--taste-secondary', flavour.accent);
 
-      // 2. Taste selection buttons & titles
-      var titleElem = document.querySelector('[data-drink-title]');
-      if (titleElem) titleElem.innerHTML = tasteObj.line1 + '<br>' + tasteObj.line2;
+      var titleElem = $('[data-drink-title]');
+      if (titleElem) titleElem.innerHTML = splitTitle(fullName);
 
-      var blurbElem = document.querySelector('[data-drink-blurb]');
-      if (blurbElem) blurbElem.textContent = tasteObj.blurb;
+      var blurbElem = $('[data-drink-blurb]');
+      if (blurbElem) blurbElem.textContent = flavour.blurb || '';
 
-      var tasteBtns = document.querySelectorAll('.drink_taste');
-      tasteBtns.forEach(function(btn, i) {
+      $$('.drink_taste').forEach(function(btn, i) {
         btn.setAttribute('aria-pressed', i === state.taste ? 'true' : 'false');
       });
 
-      // 3. Can Gallery Images
+      // Gallery
       var mainCanImg = document.getElementById('drink-main-can-img');
       if (mainCanImg) {
-        var assetUrl = mainCanImg.getAttribute('data-img-' + tasteObj.id + '-' + state.view);
-        if (assetUrl) mainCanImg.src = assetUrl;
+        var src = imageFor(flavour, state.view, 'full');
+        if (src && mainCanImg.getAttribute('src') !== src) mainCanImg.src = src;
+        mainCanImg.alt = fullName;
       }
-
-      var viewBtns = document.querySelectorAll('.drink_view');
-      viewBtns.forEach(function(btn) {
+      $$('.drink_view').forEach(function(btn) {
         var v = btn.getAttribute('data-view');
         btn.setAttribute('aria-pressed', v === state.view ? 'true' : 'false');
         var vImg = btn.querySelector('img');
-        if (vImg) {
-          var vSrc = vImg.getAttribute('data-img-' + tasteObj.id + '-' + v);
-          if (vSrc) vImg.src = vSrc;
-        }
+        var vSrc = imageFor(flavour, v, 'thumb');
+        if (vImg && vSrc) vImg.src = vSrc;
       });
-
-      var panelNote = document.querySelector('.drink_panel-note');
+      var panelNote = $('.drink_panel-note');
       if (panelNote) {
-        panelNote.innerHTML = (PANEL_LABELS[state.view] || PANEL_LABELS.front) + ' <span aria-hidden="true">·</span> drag the can to turn it';
+        var panels = LABELS.panels || {};
+        panelNote.innerHTML = escapeHtml(panels[state.view] || panels.front || '') +
+          (LABELS.dragHint ? ' <span aria-hidden="true">·</span> ' + escapeHtml(LABELS.dragHint) : '');
       }
 
-      // 4. Pack Buttons & Delivery Mode
-      var packBtns = document.querySelectorAll('.drink_pack');
-      packBtns.forEach(function(btn, i) {
+      // Packs (prices can differ per flavour)
+      $$('.drink_pack').forEach(function(btn) {
+        var i = parseInt(btn.getAttribute('data-pack-index'), 10);
+        var pd = packData(flavour, i);
         btn.setAttribute('aria-pressed', i === state.pack ? 'true' : 'false');
+        btn.setAttribute('data-available', data.prelaunch || (pd.variantId && pd.available) ? 'true' : 'false');
+        var priceEl = btn.querySelector('.drink_pack-price');
+        if (priceEl) priceEl.textContent = formatMoney(pd.price);
+        var eachEl = btn.querySelector('.drink_pack-each');
+        if (eachEl && PACKS[i]) eachEl.textContent = formatMoney(pd.price / PACKS[i].cans) + ' / ' + (LABELS.can || '');
+      });
+      $$('.pack_tier').forEach(function(btn) {
+        var i = parseInt(btn.getAttribute('data-pack-index'), 10);
+        var pd = packData(flavour, i);
+        btn.setAttribute('aria-pressed', i === state.pack ? 'true' : 'false');
+        var eachEl = btn.querySelector('span');
+        if (eachEl && PACKS[i]) eachEl.textContent = formatMoney(pd.price / PACKS[i].cans) + ' / ' + (LABELS.can || '');
       });
 
-      var modeBtns = document.querySelectorAll('.drink_mode');
-      modeBtns.forEach(function(btn) {
+      // Delivery mode
+      var modes = $('[data-drink-modes]');
+      var subOk = subscriptionAvailable();
+      if (modes) modes.hidden = !subOk;
+      if (!subOk) state.mode = 'once';
+
+      var pct = discountPercent();
+      var saveEl = $('[data-drink-save]');
+      if (saveEl) {
+        saveEl.textContent = (LABELS.save || '') + ' ' + pct + '%';
+        saveEl.hidden = !pct;
+      }
+
+      $$('.drink_mode').forEach(function(btn) {
         var m = btn.getAttribute('data-mode');
         btn.setAttribute('aria-pressed', m === state.mode ? 'true' : 'false');
         var priceSpan = btn.querySelector('.drink_mode-price');
         if (priceSpan) {
-          var packPrice = order.basePackPrice;
-          if (m === 'subscribe') {
-            priceSpan.textContent = formatMoney(packPrice * 0.9);
-          } else {
-            priceSpan.textContent = formatMoney(packPrice);
-          }
+          priceSpan.textContent = formatMoney(m === 'subscribe' ? order.basePackPrice * (1 - pct / 100) : order.basePackPrice);
         }
       });
 
-      var freqContainer = document.querySelector('.drink_frequency');
+      var freqContainer = $('.drink_frequency');
       if (freqContainer) {
-        freqContainer.setAttribute('data-open', state.mode === 'subscribe' ? 'true' : 'false');
-        freqContainer.setAttribute('aria-hidden', state.mode === 'subscribe' ? 'false' : 'true');
+        var open = state.mode === 'subscribe' && frequencyOptions().length > 0;
+        freqContainer.setAttribute('data-open', open ? 'true' : 'false');
+        freqContainer.setAttribute('aria-hidden', open ? 'false' : 'true');
       }
-
-      var freqChips = document.querySelectorAll('.drink_chip');
-      freqChips.forEach(function(chip, i) {
+      $$('.drink_chip').forEach(function(chip, i) {
         chip.setAttribute('aria-pressed', i === state.frequency ? 'true' : 'false');
       });
 
-      // 5. Total & Stepper
-      var stepperCount = document.querySelector('.drink_stepper span');
+      // Totals
+      var stepperCount = $('.drink_stepper span');
       if (stepperCount) stepperCount.textContent = state.quantity;
-
-      var minusBtn = document.querySelector('.drink_stepper button:first-child');
+      var minusBtn = $('.drink_stepper button:first-child');
       if (minusBtn) minusBtn.disabled = state.quantity <= 1;
 
-      var sumPrice = document.querySelector('.drink_sum .merch_price');
+      var sumPrice = $('.drink_sum .merch_price');
       if (sumPrice) sumPrice.textContent = formatMoney(order.total);
 
-      var sumNote = document.querySelector('.drink_sum-note');
+      var sumNote = $('.drink_sum-note');
       if (sumNote) {
-        var noteHTML = order.totalCans + ' cans <span aria-hidden="true">·</span> ' + formatMoney(order.perCan) + ' each';
+        var noteHTML = order.totalCans + ' ' + escapeHtml(LABELS.cans) + ' <span aria-hidden="true">·</span> ' +
+          formatMoney(order.perCan) + ' ' + escapeHtml(LABELS.each);
         if (order.saving > 0) {
-          noteHTML += ' <span aria-hidden="true">·</span> saves ' + formatMoney(order.saving);
+          noteHTML += ' <span aria-hidden="true">·</span> ' + escapeHtml(LABELS.saves) + ' ' + formatMoney(order.saving);
         }
         sumNote.innerHTML = noteHTML;
       }
 
-      var mainCtaBtn = document.querySelector('.drink_buy .wear_cta');
-      if (mainCtaBtn) {
-        var ctaText = state.mode === 'subscribe' ? 'Start subscription' : 'Add to bag';
-        var starIcon = mainCtaBtn.querySelector('.wear_cta-star');
-        mainCtaBtn.innerHTML = ctaText + ' ' + (starIcon ? starIcon.outerHTML : '');
-      }
-
-      // 6. Pack Stage Glow & Specs
-      var stageGlow = document.querySelector('.pack_stage .merch_glow');
-      if (stageGlow) {
-        stageGlow.style.setProperty('--glow', tasteObj.secondary);
-      }
-
-      var packTierBtns = document.querySelectorAll('.pack_tier');
-      packTierBtns.forEach(function(btn, i) {
-        btn.setAttribute('aria-pressed', i === state.pack ? 'true' : 'false');
+      // Buy buttons
+      var label = ctaLabel(order);
+      var blocked = !data.prelaunch && (!order.packData.variantId || !order.packData.available);
+      $$('[data-drink-cta]').forEach(function(btn) {
+        var labelEl = btn.querySelector('[data-drink-cta-label]');
+        if (labelEl) labelEl.textContent = label;
+        btn.disabled = blocked || state.adding;
+        btn.setAttribute('aria-disabled', btn.disabled ? 'true' : 'false');
       });
+
+      // Pack scene
+      var stageGlow = $('.pack_stage .merch_glow');
+      if (stageGlow) stageGlow.style.setProperty('--glow', flavour.accent);
+      var canGlow = $('.drink_can .merch_glow');
+      if (canGlow) canGlow.style.setProperty('--glow', flavour.accent);
 
       var packSpecTier = document.getElementById('pack-spec-tier');
-      if (packSpecTier) packSpecTier.textContent = order.pack.tag;
-
+      if (packSpecTier) packSpecTier.textContent = order.pack.tag || '';
       var packSpecInside = document.getElementById('pack-spec-inside');
-      if (packSpecInside) packSpecInside.textContent = order.pack.cans + ' × ' + tasteObj.line1 + ' ' + tasteObj.line2;
-
+      if (packSpecInside) packSpecInside.textContent = order.pack.cans + ' × ' + fullName;
       var packSpecPrice = document.getElementById('pack-spec-price');
-      if (packSpecPrice) packSpecPrice.textContent = formatMoney(order.pack.price);
+      if (packSpecPrice) packSpecPrice.textContent = formatMoney(order.basePackPrice);
 
-      // 7. Flavours Range Cards
-      var flavourCards = document.querySelectorAll('.drink_flavour');
-      flavourCards.forEach(function(card, i) {
+      // Range cards
+      $$('.drink_flavour').forEach(function(card, i) {
         card.setAttribute('data-chosen', i === state.taste ? 'true' : 'false');
         var ctaA = card.querySelector('.drink_flavour-cta');
-        if (ctaA) ctaA.textContent = i === state.taste ? 'In your pack' : 'Take this one';
+        if (ctaA) ctaA.textContent = i === state.taste ? LABELS.inPack : LABELS.takeThis;
       });
 
-      // 8. Sticky DrinkBar
-      var barTasteName = document.querySelector('.drink_bar-copy b');
-      if (barTasteName) barTasteName.textContent = tasteObj.line1 + ' ' + tasteObj.line2;
-
-      var barMetaCount = document.querySelector('.drink_bar-copy .merch_meta span:first-child');
-      if (barMetaCount) barMetaCount.textContent = order.totalCans + ' cans';
-
-      var barMetaFreq = document.querySelector('.drink_bar-copy .merch_meta span:last-child');
+      // Sticky bar
+      var barTasteName = $('.drink_bar-copy b');
+      if (barTasteName) barTasteName.textContent = fullName;
+      var barMetaCount = $('.drink_bar-copy .merch_meta span:first-child');
+      if (barMetaCount) barMetaCount.textContent = order.totalCans + ' ' + LABELS.cans;
+      var barMetaFreq = $('.drink_bar-copy .merch_meta span:last-child');
       if (barMetaFreq) {
-        barMetaFreq.textContent = state.mode === 'subscribe' ? FREQUENCIES[state.frequency].label : 'One time';
+        barMetaFreq.textContent = state.mode === 'subscribe' ? (frequencyOptions()[state.frequency] || '') : LABELS.once;
       }
-
-      var barSwatch = document.querySelector('.drink_bar-swatch');
-      if (barSwatch) {
-        barSwatch.style.setProperty('--swatch', tasteObj.secondary);
-      }
-
-      var barPrice = document.querySelector('.drink_bar-price');
+      var barSwatch = $('.drink_bar-swatch');
+      if (barSwatch) barSwatch.style.setProperty('--swatch', flavour.accent);
+      var barPrice = $('.drink_bar-price');
       if (barPrice) barPrice.textContent = formatMoney(order.total);
-
-      var barBtn = document.querySelector('.drink_bar button');
-      if (barBtn) {
-        barBtn.textContent = state.mode === 'subscribe' ? 'Start subscription' : 'Add to bag';
-      }
     }
 
-    // Bind Taste Buttons
-    var tasteBtns = document.querySelectorAll('.drink_taste');
-    tasteBtns.forEach(function(btn, i) {
+    function selectFlavour(i) {
+      state.taste = i;
+      renderChips();
+      updateDOM();
+    }
+
+    function scrollToBuy() {
+      productSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Event bindings
+    $$('.drink_taste').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        state.taste = i;
-        updateDOM();
+        selectFlavour(parseInt(btn.getAttribute('data-flavour-index'), 10) || 0);
       });
     });
 
-    // Bind Gallery View Buttons
-    var viewBtns = document.querySelectorAll('.drink_view');
-    viewBtns.forEach(function(btn) {
+    $$('.drink_view').forEach(function(btn) {
       btn.addEventListener('click', function() {
         state.view = btn.getAttribute('data-view') || 'front';
         updateDOM();
       });
     });
 
-    // Bind Pack Buttons
-    var packBtns = document.querySelectorAll('.drink_pack, .pack_tier');
-    packBtns.forEach(function(btn) {
+    $$('.drink_pack, .pack_tier').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var idx = parseInt(btn.getAttribute('data-pack-index'), 10);
         if (!isNaN(idx)) {
@@ -282,26 +345,24 @@
       });
     });
 
-    // Bind Mode Buttons
-    var modeBtns = document.querySelectorAll('.drink_mode');
-    modeBtns.forEach(function(btn) {
+    $$('.drink_mode').forEach(function(btn) {
       btn.addEventListener('click', function() {
         state.mode = btn.getAttribute('data-mode') || 'once';
         updateDOM();
       });
     });
 
-    // Bind Frequency Chips
-    var freqChips = document.querySelectorAll('.drink_chip');
-    freqChips.forEach(function(chip, i) {
-      chip.addEventListener('click', function() {
-        state.frequency = i;
+    var chipsWrap = $('[data-drink-chips]');
+    if (chipsWrap) {
+      chipsWrap.addEventListener('click', function(e) {
+        var chip = e.target.closest('[data-frequency-index]');
+        if (!chip) return;
+        state.frequency = parseInt(chip.getAttribute('data-frequency-index'), 10) || 0;
         updateDOM();
       });
-    });
+    }
 
-    // Bind Stepper
-    var minusBtn = document.querySelector('.drink_stepper button:first-child');
+    var minusBtn = $('.drink_stepper button:first-child');
     if (minusBtn) {
       minusBtn.addEventListener('click', function() {
         if (state.quantity > 1) {
@@ -310,8 +371,7 @@
         }
       });
     }
-
-    var plusBtn = document.querySelector('.drink_stepper button:last-child');
+    var plusBtn = $('.drink_stepper button:last-child');
     if (plusBtn) {
       plusBtn.addEventListener('click', function() {
         state.quantity += 1;
@@ -319,29 +379,49 @@
       });
     }
 
-    // Bind Flavours Range CTA
-    var flavourCtas = document.querySelectorAll('.drink_flavour-cta');
-    flavourCtas.forEach(function(cta, i) {
+    $$('.drink_flavour-cta[data-flavour-index]').forEach(function(cta) {
       cta.addEventListener('click', function(e) {
         e.preventDefault();
-        state.taste = i;
-        updateDOM();
-        var buySection = document.getElementById('buy');
-        if (buySection) {
-          buySection.scrollIntoView({ behavior: 'smooth' });
-        }
+        selectFlavour(parseInt(cta.getAttribute('data-flavour-index'), 10) || 0);
+        scrollToBuy();
       });
     });
 
-    // Bind Pack Section "Take it to the bag" CTA
-    var packCta = document.querySelector('.pack_copy .drink_flavour-cta');
+    var packCta = $('[data-drink-to-buy]');
     if (packCta) {
       packCta.addEventListener('click', function(e) {
         e.preventDefault();
-        var buySection = document.getElementById('buy');
-        if (buySection) {
-          buySection.scrollIntoView({ behavior: 'smooth' });
+        scrollToBuy();
+      });
+    }
+
+    // Drag the can horizontally to step through the four panels.
+    var canStage = $('[data-drink-can]');
+    if (canStage) {
+      canStage.style.touchAction = 'pan-y';
+      canStage.style.cursor = 'grab';
+      var dragX = null;
+      var STEP = 60;
+      canStage.addEventListener('pointerdown', function(e) {
+        dragX = e.clientX;
+        canStage.style.cursor = 'grabbing';
+      });
+      window.addEventListener('pointermove', function(e) {
+        if (dragX === null) return;
+        var dx = e.clientX - dragX;
+        if (Math.abs(dx) >= STEP) {
+          var i = VIEWS.indexOf(state.view);
+          i = (i + (dx < 0 ? 1 : -1) + VIEWS.length) % VIEWS.length;
+          state.view = VIEWS[i];
+          dragX = e.clientX;
+          updateDOM();
         }
+      });
+      ['pointerup', 'pointercancel'].forEach(function(type) {
+        window.addEventListener(type, function() {
+          dragX = null;
+          canStage.style.cursor = 'grab';
+        });
       });
     }
 
@@ -349,8 +429,8 @@
     var packStage = document.getElementById('pack-canvas-stage');
     var packCanvas = document.getElementById('pack-scroll-canvas');
     var packPoster = document.getElementById('pack-scroll-poster');
-    var packRun = document.querySelector('.pack_run');
-    var packHold = document.querySelector('.pack_hold');
+    var packRun = $('.pack_run');
+    var packHold = $('.pack_hold');
 
     if (packStage && packCanvas && packRun) {
       var ctx = packCanvas.getContext('2d', { alpha: true });
@@ -361,11 +441,10 @@
       var currentProgress = 0;
       var lastDrawnIndex = -1;
 
-      // Set fixed canvas resolution
       packCanvas.width = 720;
       packCanvas.height = 405;
 
-      function drawFrame(idx) {
+      var drawFrame = function(idx) {
         if (!ctx) return;
         var img = frameImages[idx];
         if (img && img.complete && img.naturalWidth > 0) {
@@ -376,9 +455,8 @@
             packPoster.setAttribute('data-hidden', 'true');
           }
         }
-      }
+      };
 
-      // Preload all 150 frames into memory
       if (firstFrameUrl) {
         for (var f = 1; f <= totalFrames; f++) {
           (function(index) {
@@ -386,80 +464,138 @@
             var img = new Image();
             img.src = firstFrameUrl.replace(/pack-frame-\d+\.webp/, 'pack-frame-' + frameNum + '.webp');
             img.onload = function() {
-              if (index === 1 && lastDrawnIndex === -1) {
-                drawFrame(0);
-              }
+              if (index === 1 && lastDrawnIndex === -1) drawFrame(0);
             };
             frameImages.push(img);
           })(f);
         }
       }
 
-      function onScrollPack() {
-        if (packRun) {
-          var rect = packRun.getBoundingClientRect();
-          var h = window.innerHeight || document.documentElement.clientHeight;
-          var travel = packRun.offsetHeight - h;
-          var scrollThrough = travel > 0 ? (-rect.top) / travel : 0;
-          targetProgress = Math.min(Math.max(scrollThrough, 0), 1);
+      var onScrollPack = function() {
+        var rect = packRun.getBoundingClientRect();
+        var h = window.innerHeight || document.documentElement.clientHeight;
+        var travel = packRun.offsetHeight - h;
+        var scrollThrough = travel > 0 ? (-rect.top) / travel : 0;
+        targetProgress = Math.min(Math.max(scrollThrough, 0), 1);
+        if (packHold) packHold.style.setProperty('--build', targetProgress);
+      };
 
-          if (packHold) {
-            packHold.style.setProperty('--build', targetProgress);
-          }
-        }
-      }
-
-      function animLoop() {
+      var animLoop = function() {
         if (frameImages.length > 0) {
-          // Smooth deceleration interpolation
           currentProgress += (targetProgress - currentProgress) * 0.22;
           var destIndex = Math.min(Math.max(Math.round(currentProgress * (totalFrames - 1)), 0), totalFrames - 1);
-
-          if (destIndex !== lastDrawnIndex) {
-            drawFrame(destIndex);
-          }
+          if (destIndex !== lastDrawnIndex) drawFrame(destIndex);
         }
         requestAnimationFrame(animLoop);
-      }
+      };
 
       window.addEventListener('scroll', onScrollPack, { passive: true });
       onScrollPack();
       requestAnimationFrame(animLoop);
     }
 
-    // Sticky DrinkBar Observer
-    var drinkBar = document.querySelector('.drink_bar');
-    if (drinkBar && productSection && 'IntersectionObserver' in window) {
-      var observer = new IntersectionObserver(function(entries) {
+    // Sticky DrinkBar
+    var drinkBar = $('.drink_bar');
+    if (drinkBar && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           var isOffScreen = !entry.isIntersecting && entry.boundingClientRect.top < 0;
           drinkBar.setAttribute('data-shown', isOffScreen ? 'true' : 'false');
           drinkBar.setAttribute('aria-hidden', isOffScreen ? 'false' : 'true');
+          var barBtn = drinkBar.querySelector('button');
+          if (barBtn) barBtn.tabIndex = isOffScreen ? 0 : -1;
         });
-      }, { threshold: 0 });
-      observer.observe(productSection);
+      }, { threshold: 0 }).observe(productSection);
     }
 
-    // Add to Cart / Drop Modal Handler
+    // Waitlist modal (pre-launch mode)
     var dropModal = document.getElementById('drop-modal');
-    var ctaButtons = document.querySelectorAll('.drink_buy .wear_cta, .drink_bar button');
-    ctaButtons.forEach(function(btn) {
+
+    function setModal(open) {
+      if (!dropModal) return;
+      dropModal.setAttribute('data-open', open ? 'true' : 'false');
+      dropModal.setAttribute('aria-hidden', open ? 'false' : 'true');
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        var input = dropModal.querySelector('#drop-email');
+        if (input) setTimeout(function() { input.focus(); }, 100);
+      }
+    }
+
+    if (dropModal) {
+      var closeBtn = dropModal.querySelector('[data-drop-modal-close]');
+      if (closeBtn) closeBtn.addEventListener('click', function() { setModal(false); });
+      dropModal.addEventListener('click', function(e) { if (e.target === dropModal) setModal(false); });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && dropModal.getAttribute('data-open') === 'true') setModal(false);
+      });
+      // After the customer form posts, the page reloads — reopen so the result is visible.
+      if (/[?&]customer_posted=true/.test(window.location.search) || dropModal.querySelector('[role="alert"]')) {
+        setModal(true);
+      }
+    }
+
+    // Add to cart
+    var errorEl = $('[data-drink-error]');
+
+    function showError(msg) {
+      if (!errorEl) return;
+      errorEl.textContent = msg || '';
+      errorEl.hidden = !msg;
+    }
+
+    function addToCart() {
+      var order = calculateOrder();
+      var pd = order.packData;
+      if (!pd.variantId || !pd.available || state.adding) return;
+
+      var item = { id: pd.variantId, quantity: state.quantity };
+      if (state.mode === 'subscribe') {
+        var plan = plans()[state.frequency];
+        if (plan) item.selling_plan = plan.id;
+      }
+
+      state.adding = true;
+      showError('');
+      updateDOM();
+
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ items: [item] })
+      })
+        .then(function(res) {
+          return res.json().then(function(body) { return { ok: res.ok, body: body }; });
+        })
+        .then(function(result) {
+          if (!result.ok) throw new Error(result.body.description || result.body.message || LABELS.addError);
+          if (data.cartType === 'page' || !window.asmaanCart) {
+            window.location.href = ((window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/') + 'cart';
+            return;
+          }
+          return window.asmaanCart.refresh().then(function() { window.asmaanCart.open(); });
+        })
+        .catch(function(err) {
+          showError(err && err.message ? err.message : LABELS.addError);
+        })
+        .then(function() {
+          state.adding = false;
+          updateDOM();
+        });
+    }
+
+    $$('[data-drink-cta]').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
         e.preventDefault();
-        // If drop waitlist modal exists, open it, or trigger cart drawer
-        if (dropModal) {
-          dropModal.setAttribute('data-open', 'true');
-          dropModal.setAttribute('aria-hidden', 'false');
-          document.body.style.overflow = 'hidden';
-          var input = dropModal.querySelector('#drop-email');
-          if (input) setTimeout(function() { input.focus(); }, 100);
-        } else if (window.CartDrawer && typeof window.CartDrawer.open === 'function') {
-          window.CartDrawer.open();
+        if (data.prelaunch) {
+          setModal(true);
+        } else {
+          addToCart();
         }
       });
     });
 
-    // Initial render
+    renderChips();
     updateDOM();
   }
 

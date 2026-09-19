@@ -2,6 +2,260 @@
   "sections": {
     "main": {
       "type": "main-drink",
+      "blocks": {
+        "flavour_jamun": {
+          "type": "flavour",
+          "settings": {
+            "product": "kala-jamun",
+            "tag": "The original",
+            "blurb": "The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.",
+            "accent": "#9089D3",
+            "deep": "#2A1D4A"
+          }
+        },
+        "flavour_mango": {
+          "type": "flavour",
+          "settings": {
+            "product": "alphonso-mango",
+            "tag": "Gold into burnt amber",
+            "blurb": "A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.",
+            "accent": "#EFB36B",
+            "deep": "#5A2A00"
+          }
+        },
+        "flavour_magenta": {
+          "type": "flavour",
+          "settings": {
+            "product": "wild-magenta",
+            "tag": "Rose and pink guava",
+            "blurb": "The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.",
+            "accent": "#E6A0E8",
+            "deep": "#4E0749"
+          }
+        },
+        "pack_12": {
+          "type": "pack",
+          "settings": {
+            "cans": 12,
+            "tag": "Starter",
+            "note": "Two weeks of mornings.",
+            "price": 2400,
+            "featured": false
+          }
+        },
+        "pack_24": {
+          "type": "pack",
+          "settings": {
+            "cans": 24,
+            "tag": "Most taken",
+            "note": "The one people come back for.",
+            "price": 4320,
+            "featured": true
+          }
+        },
+        "pack_36": {
+          "type": "pack",
+          "settings": {
+            "cans": 36,
+            "tag": "Deep work",
+            "note": "A quarter, priced like it.",
+            "price": 5760,
+            "featured": false
+          }
+        },
+        "badge_1": {
+          "type": "badge",
+          "settings": {
+            "title": "Calm focus",
+            "text": "Drive without the jitter."
+          }
+        },
+        "badge_2": {
+          "type": "badge",
+          "settings": {
+            "title": "Natural caffeine",
+            "text": "100 mg from green coffee."
+          }
+        },
+        "badge_3": {
+          "type": "badge",
+          "settings": {
+            "title": "No crash",
+            "text": "Zero sugar, ten calories."
+          }
+        },
+        "badge_4": {
+          "type": "badge",
+          "settings": {
+            "title": "Nothing hidden",
+            "text": "Every milligram, printed."
+          }
+        },
+        "active_1": {
+          "type": "active",
+          "settings": {
+            "dose": "300 mg",
+            "name": "KSM-66 ashwagandha",
+            "description": "Root extract, at the dose the research is run on. It sits under the caffeine and takes the edge off the push.",
+            "show_in_pack_scene": true,
+            "pack_scene_text": "Root extract at clinical dose. Sustains calm focus and cognitive endurance during intense creative sessions."
+          }
+        },
+        "active_2": {
+          "type": "active",
+          "settings": {
+            "dose": "200 mg",
+            "name": "L-theanine",
+            "description": "From green tea. Smooths the front of the curve, so the lift arrives as attention rather than pressure.",
+            "show_in_pack_scene": true,
+            "pack_scene_text": "From organic green tea. Smooths the caffeine curve into alert, clear-headed flow with zero jitters."
+          }
+        },
+        "active_3": {
+          "type": "active",
+          "settings": {
+            "dose": "100 mg",
+            "name": "Natural caffeine",
+            "description": "Drawn from green coffee beans rather than synthesised. Slower in, longer held, about a third less than the category.",
+            "show_in_pack_scene": true,
+            "pack_scene_text": "Clean lift from green coffee beans. Slower release, longer sustained attention, zero crash."
+          }
+        },
+        "active_4": {
+          "type": "active",
+          "settings": {
+            "dose": "60 mg",
+            "name": "Magnesium bisglycinate",
+            "description": "The form that is actually absorbed, rather than the cheap oxide that mostly is not.",
+            "show_in_pack_scene": false
+          }
+        },
+        "active_5": {
+          "type": "active",
+          "settings": {
+            "dose": "1.4 mg",
+            "name": "B6 with 2.5 µg B12",
+            "description": "For normal energy metabolism — the quiet half of the formula, and the half everyone forgets.",
+            "show_in_pack_scene": false
+          }
+        },
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Volume",
+            "value": "250 ml"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "label": "Energy",
+            "value": "10 kcal"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Sugar",
+            "value": "0 g"
+          }
+        },
+        "fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Caffeine",
+            "value": "100 mg (40 mg / 100 ml)"
+          }
+        },
+        "fact_5": {
+          "type": "fact",
+          "settings": {
+            "label": "Colour",
+            "value": "From food, not dye"
+          }
+        },
+        "fact_6": {
+          "type": "fact",
+          "settings": {
+            "label": "Diet",
+            "value": "Vegan"
+          }
+        },
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "quote": "The only one I have had that does not announce itself. Twenty minutes in I noticed I had stopped checking my phone.",
+            "name": "Ritika",
+            "role": "Studio founder, Bombay"
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "quote": "Jamun is the one. Tart, dry, nothing like the syrup I expected from a can this colour.",
+            "name": "Arjun",
+            "role": "Music producer"
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "quote": "Four hours on one thing, then nothing to come down from. That is the whole pitch and it holds.",
+            "name": "Meher",
+            "role": "Doctor, night rota"
+          }
+        },
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "What makes Asmaan different from other energy drinks?",
+            "answer": "<p>Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, paired with L-theanine and KSM-66 ashwagandha.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "How much caffeine is in a can?",
+            "answer": "<p>100 mg per 250 ml can — about the same as a strong cup of coffee, with no jitters.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Asmaan sugar free?",
+            "answer": "<p>Yes. Zero sugar and only ten calories per 250 ml can.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "flavour_jamun",
+        "flavour_mango",
+        "flavour_magenta",
+        "pack_12",
+        "pack_24",
+        "pack_36",
+        "badge_1",
+        "badge_2",
+        "badge_3",
+        "badge_4",
+        "active_1",
+        "active_2",
+        "active_3",
+        "active_4",
+        "active_5",
+        "fact_1",
+        "fact_2",
+        "fact_3",
+        "fact_4",
+        "fact_5",
+        "fact_6",
+        "review_1",
+        "review_2",
+        "review_3",
+        "faq_1",
+        "faq_2",
+        "faq_3"
+      ],
       "settings": {}
     }
   },
