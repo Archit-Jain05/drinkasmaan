@@ -198,27 +198,10 @@
         mainCtaBtn.innerHTML = ctaText + ' ' + (starIcon ? starIcon.outerHTML : '');
       }
 
-      // 6. 3D Pack Box Carton
-      var packBox = document.querySelector('.pack_box');
-      if (packBox) {
-        var layers = Math.max(Math.round(order.pack.cans / 12), 1);
-        packBox.style.setProperty('--layers', layers);
-        packBox.style.setProperty('--print', tasteObj.secondary);
-        packBox.style.setProperty('--print-deep', tasteObj.primary);
-
-        var packCountText = packBox.querySelector('.pack_count b');
-        if (packCountText) packCountText.textContent = order.pack.cans;
-
-        var boxCanImgs = packBox.querySelectorAll('.pack_can img');
-        boxCanImgs.forEach(function(img) {
-          var cSrc = img.getAttribute('data-img-' + tasteObj.id);
-          if (cSrc) img.src = cSrc;
-        });
-
-        var stageGlow = document.querySelector('.pack_stage .merch_glow');
-        if (stageGlow) {
-          stageGlow.style.setProperty('--glow', tasteObj.secondary);
-        }
+      // 6. Pack Stage Glow & Specs
+      var stageGlow = document.querySelector('.pack_stage .merch_glow');
+      if (stageGlow) {
+        stageGlow.style.setProperty('--glow', tasteObj.secondary);
       }
 
       var packTierBtns = document.querySelectorAll('.pack_tier');
@@ -362,43 +345,85 @@
       });
     }
 
-    // Scroll-driven 3D PackScene Carton Physics
+    // Hardware-accelerated Canvas Scroll Animation Scrubber
+    var packVideo = document.getElementById('pack-scroll-video');
+    var packCanvas = document.getElementById('pack-scroll-canvas');
     var packRun = document.querySelector('.pack_run');
     var packHold = document.querySelector('.pack_hold');
-    var ticking = false;
 
-    function smooth(t) {
-      return t * t * (3 - 2 * t);
-    }
+    if (packVideo && packCanvas && packRun) {
+      var ctx = packCanvas.getContext('2d');
+      var isVideoReady = false;
+      var targetProgress = 0;
+      var currentProgress = 0;
+      var isSeeking = false;
 
-    function clampRange(val, from, to) {
-      if (to === from) return val >= to ? 1 : 0;
-      return Math.min(Math.max((val - from) / (to - from), 0), 1);
-    }
-
-    function onScrollPack() {
-      if (!ticking) {
-        window.requestAnimationFrame(function() {
-          if (packRun && packHold) {
-            var rect = packRun.getBoundingClientRect();
-            var h = window.innerHeight || document.documentElement.clientHeight;
-            var travel = packRun.offsetHeight - h;
-            var scrollThrough = travel > 0 ? (-rect.top) / travel : 0;
-
-            var build = smooth(clampRange(scrollThrough, 0.02, 0.82));
-            var turn = -26 + (14 * Math.min(Math.max(scrollThrough, 0), 1));
-
-            packHold.style.setProperty('--build', build);
-            packHold.style.setProperty('--turn', turn + 'deg');
-          }
-          ticking = false;
-        });
-        ticking = true;
+      function resizeCanvas() {
+        if (!packCanvas || !packVideo) return;
+        var w = packVideo.videoWidth || 1080;
+        var h = packVideo.videoHeight || 1080;
+        if (packCanvas.width !== w || packCanvas.height !== h) {
+          packCanvas.width = w;
+          packCanvas.height = h;
+        }
+        renderCurrentFrame();
       }
-    }
 
-    window.addEventListener('scroll', onScrollPack, { passive: true });
-    onScrollPack();
+      function renderCurrentFrame() {
+        if (!ctx || !packVideo || !packVideo.videoWidth) return;
+        ctx.clearRect(0, 0, packCanvas.width, packCanvas.height);
+        ctx.drawImage(packVideo, 0, 0, packCanvas.width, packCanvas.height);
+      }
+
+      packVideo.addEventListener('loadedmetadata', function() {
+        resizeCanvas();
+        isVideoReady = true;
+        packVideo.currentTime = 0.01;
+      });
+
+      packVideo.addEventListener('loadeddata', function() {
+        resizeCanvas();
+        isVideoReady = true;
+        renderCurrentFrame();
+      });
+
+      packVideo.addEventListener('seeked', function() {
+        renderCurrentFrame();
+        isSeeking = false;
+      });
+
+      function onScrollPack() {
+        if (packRun) {
+          var rect = packRun.getBoundingClientRect();
+          var h = window.innerHeight || document.documentElement.clientHeight;
+          var travel = packRun.offsetHeight - h;
+          var scrollThrough = travel > 0 ? (-rect.top) / travel : 0;
+          targetProgress = Math.min(Math.max(scrollThrough, 0), 1);
+
+          if (packHold) {
+            packHold.style.setProperty('--build', targetProgress);
+          }
+        }
+      }
+
+      function animLoop() {
+        if (isVideoReady && packVideo.duration) {
+          currentProgress += (targetProgress - currentProgress) * 0.22;
+          var targetTime = Math.min(Math.max(currentProgress * packVideo.duration, 0.01), packVideo.duration - 0.02);
+
+          if (!isSeeking && Math.abs(packVideo.currentTime - targetTime) > 0.03) {
+            isSeeking = true;
+            packVideo.currentTime = targetTime;
+          }
+        }
+        requestAnimationFrame(animLoop);
+      }
+
+      window.addEventListener('scroll', onScrollPack, { passive: true });
+      window.addEventListener('resize', resizeCanvas, { passive: true });
+      onScrollPack();
+      requestAnimationFrame(animLoop);
+    }
 
     // Sticky DrinkBar Observer
     var drinkBar = document.querySelector('.drink_bar');
