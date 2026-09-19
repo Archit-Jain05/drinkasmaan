@@ -2,7 +2,41 @@
   "sections": {
     "main": {
       "type": "main-designs",
-      "settings": {}
+      "settings": {},
+      "blocks": {
+        "flavour_1": {
+          "type": "flavour",
+          "settings": {
+            "product": "kala-jamun",
+            "subtitle": "Deep Indian blackberry · tart, dark and round",
+            "deep": "#2A1D4A",
+            "accent": "#9089D3"
+          }
+        },
+        "flavour_2": {
+          "type": "flavour",
+          "settings": {
+            "product": "alphonso-mango",
+            "subtitle": "Ripe Alphonso pressed against something bitter",
+            "deep": "#5A2A00",
+            "accent": "#EFB36B"
+          }
+        },
+        "flavour_3": {
+          "type": "flavour",
+          "settings": {
+            "product": "wild-magenta",
+            "subtitle": "Rose over pink guava with a citrus edge",
+            "deep": "#4E0749",
+            "accent": "#E6A0E8"
+          }
+        }
+      },
+      "block_order": [
+        "flavour_1",
+        "flavour_2",
+        "flavour_3"
+      ]
     }
   },
   "order": [

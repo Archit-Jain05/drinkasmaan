@@ -294,7 +294,7 @@
           <div class="drink_buy">
             <div class="merch_meta">
               <span>{{ section.settings.eyebrow | escape }}</span>
-              {%- if section.settings.eyebrow != blank and section.settings.tagline != blank -%}<span aria-hidden="true">/</span>{%- endif -%}
+              {% if section.settings.eyebrow != blank and section.settings.tagline != blank %}<span aria-hidden="true">/</span>{% endif %}
               <span>{{ section.settings.tagline | escape }}</span>
             </div>
 
@@ -385,9 +385,9 @@
             {%- if section.settings.trust_items != blank -%}
               <ul class="drink_trust">
                 {%- for t in trust_items -%}
-                  {%- assign t = t | strip -%}
-                  {%- if t != blank -%}
-                    <li>{{ t | escape | replace: '[free_shipping_threshold]', threshold_money }}</li>
+                  {%- assign trust_text = t | strip -%}
+                  {%- if trust_text != blank -%}
+                    <li>{{ trust_text | escape | replace: '[free_shipping_threshold]', threshold_money }}</li>
                   {%- endif -%}
                 {%- endfor -%}
               </ul>

@@ -71,7 +71,7 @@
 
       <div class="drop-form-wrapper mt-[var(--pad-l)] text-left">
         {%- form 'customer', class: 'drop-customer-form', id: 'WearDropForm' -%}
-          <input type="hidden" name="contact[tags]" value="newsletter,wear-drop-waitlist">
+          <input type="hidden" name="contact[tags]" value="{{ section.settings.waitlist_tags | escape }}">
 
           {%- if form.posted_successfully? -%}
             <p class="text-size-medium text-center text-white" role="status" aria-live="polite">
@@ -281,6 +281,12 @@
       "id": "modal_success",
       "label": "Success Message",
       "default": "You're on. Watch your inbox the morning it lands."
+    },
+    {
+      "type": "text",
+      "id": "waitlist_tags",
+      "label": "Customer tags",
+      "default": "newsletter,wear-drop-waitlist"
     }
   ],
   "presets": [

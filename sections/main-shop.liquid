@@ -1,3 +1,4 @@
+{%- assign free_shipping_money = settings.free_shipping_threshold | money_without_trailing_zeros -%}
 <section class="asmaan-subpage-section pt-24 pb-20">
   <div class="padding-global">
     <div class="container-large max-w-6xl mx-auto px-4">
@@ -82,7 +83,7 @@
       <div class="p-6 sm:p-8 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
         <div>
           <span class="font-mono text-xs uppercase tracking-widest text-emerald-400 block mb-1">{{ section.settings.banner_kicker | default: 'Direct from Bengaluru Studio' }}</span>
-          <h3 class="text-xl font-bold uppercase tracking-tight text-white">{{ section.settings.banner_heading | default: 'Free Nationwide Shipping Over ₹999' }}</h3>
+          <h3 class="text-xl font-bold uppercase tracking-tight text-white">{{ section.settings.banner_heading | escape | replace: '[free_shipping_threshold]', free_shipping_money }}</h3>
           <p class="text-white/60 text-xs mt-1">{{ section.settings.banner_sub | default: 'Dispatched chilled in custom-insulated recyclable corrugated packs.' }}</p>
         </div>
         <a href="{{ section.settings.banner_cta_url | default: '/#range' }}" class="button is-primary is-small whitespace-nowrap">
@@ -161,7 +162,7 @@
       "type": "text",
       "id": "banner_heading",
       "label": "Banner Heading",
-      "default": "Free Nationwide Shipping Over ₹999"
+      "default": "Free Nationwide Shipping Over [free_shipping_threshold]"
     },
     {
       "type": "text",

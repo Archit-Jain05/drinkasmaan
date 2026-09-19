@@ -53,11 +53,13 @@
             {{ 'general.search.popular_searches' | t | default: 'Popular Searches' }}
           </h4>
           <div class="predictive-search-tag-group">
-            <button type="button" class="predictive-search-tag" data-search-term="Botanical">Botanical</button>
-            <button type="button" class="predictive-search-tag" data-search-term="Focus Tonic">Focus Tonic</button>
-            <button type="button" class="predictive-search-tag" data-search-term="Zero Sugar">Zero Sugar</button>
-            <button type="button" class="predictive-search-tag" data-search-term="Hoodie">Hoodie</button>
-            <button type="button" class="predictive-search-tag" data-search-term="Tee">Tee</button>
+            {%- assign popular_terms = section.settings.popular_searches | newline_to_br | split: '<br />' -%}
+            {%- for term in popular_terms -%}
+              {%- assign term_text = term | strip -%}
+              {%- if term_text != blank -%}
+                <button type="button" class="predictive-search-tag" data-search-term="{{ term_text | escape }}">{{ term_text | escape }}</button>
+              {%- endif -%}
+            {%- endfor -%}
           </div>
         </div>
       </div>
@@ -299,9 +301,38 @@
 </style>
 {%- endif -%}
 
+<script type="application/json" id="predictive-search-labels">
+  {
+    "moneyFormat": {{ shop.money_format | json }},
+    "noResults": {{ section.settings.label_no_results | json }},
+    "noResultsHint": {{ section.settings.label_no_results_hint | json }},
+    "products": {{ section.settings.label_products | json }},
+    "collections": {{ section.settings.label_collections | json }},
+    "info": {{ section.settings.label_info | json }},
+    "article": {{ section.settings.label_article | json }},
+    "page": {{ section.settings.label_page | json }},
+    "soldOut": {{ section.settings.label_sold_out | json }},
+    "showing": {{ section.settings.label_showing | json }},
+    "error": {{ section.settings.label_error | json }}
+  }
+</script>
+
 {% schema %}
 {
-  "name": "Predictive Search",
-  "settings": []
+  "name": "Predictive search",
+  "settings": [
+    { "type": "textarea", "id": "popular_searches", "label": "Popular searches", "default": "Botanical\nFocus Tonic\nZero Sugar\nHoodie\nTee", "info": "One search term per line." },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "label_no_results", "label": "No results", "default": "No results found for \"{query}\"" },
+    { "type": "text", "id": "label_no_results_hint", "label": "No results hint", "default": "Try checking your spelling or using more general terms." },
+    { "type": "text", "id": "label_products", "label": "Products heading", "default": "Products ({count})" },
+    { "type": "text", "id": "label_collections", "label": "Collections heading", "default": "Collections ({count})" },
+    { "type": "text", "id": "label_info", "label": "Articles and pages heading", "default": "Stories & Info ({count})" },
+    { "type": "text", "id": "label_article", "label": "Article", "default": "Article" },
+    { "type": "text", "id": "label_page", "label": "Page", "default": "Page" },
+    { "type": "text", "id": "label_sold_out", "label": "Sold out", "default": "Sold out" },
+    { "type": "text", "id": "label_showing", "label": "Result count", "default": "Showing {count} suggestions" },
+    { "type": "text", "id": "label_error", "label": "Error", "default": "An error occurred while fetching suggestions. Press Enter to view full results." }
+  ]
 }
 {% endschema %}

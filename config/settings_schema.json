@@ -117,7 +117,7 @@
         "id": "free_shipping_threshold",
         "label": "Free Shipping Threshold (in currency sub-units / cents)",
         "default": 99900,
-        "info": "Example: 99900 for ₹999 or $999.00"
+        "info": "In the smallest currency unit, e.g. 99900 for 999.00. Text using [free_shipping_threshold] shows this amount."
       },
       {
         "type": "checkbox",

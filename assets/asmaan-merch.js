@@ -182,6 +182,11 @@
       }
     });
 
+    // After the customer form posts, the page reloads — reopen so the result is visible.
+    if (dropModal && dropModal.querySelector('[role="status"], [role="alert"]')) {
+      openModal();
+    }
+
     // Continuous Animation & Scroll Loop
     var lastTime = performance.now();
     var lastHeroTravel = -1;

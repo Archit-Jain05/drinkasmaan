@@ -1,12 +1,13 @@
+{%- assign free_shipping_money = settings.free_shipping_threshold | money_without_trailing_zeros -%}
 {%- if section.settings.show_announcement != false -%}
   <aside class="asmaan-announcement-bar" aria-label="Store Announcement">
     <a href="{{ section.settings.announcement_link | default: '/#range' }}" class="asmaan-announcement-track block text-inherit">
       <div class="asmaan-announcement-content">
-        <span>{{ section.settings.announcement_text | default: 'FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • FREE SHIPPING OVER ₹999 • ZERO SUGAR • ZERO JITTERS' }}</span>
+        <span>{{ section.settings.announcement_text | escape | replace: '[free_shipping_threshold]', free_shipping_money }}</span>
         <span aria-hidden="true">•</span>
-        <span>{{ section.settings.announcement_text | default: 'FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • FREE SHIPPING OVER ₹999 • ZERO SUGAR • ZERO JITTERS' }}</span>
+        <span>{{ section.settings.announcement_text | escape | replace: '[free_shipping_threshold]', free_shipping_money }}</span>
         <span aria-hidden="true">•</span>
-        <span>{{ section.settings.announcement_text | default: 'FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • FREE SHIPPING OVER ₹999 • ZERO SUGAR • ZERO JITTERS' }}</span>
+        <span>{{ section.settings.announcement_text | escape | replace: '[free_shipping_threshold]', free_shipping_money }}</span>
       </div>
     </a>
   </aside>
@@ -167,7 +168,8 @@
       "type": "text",
       "id": "announcement_text",
       "label": "Announcement Text",
-      "default": "FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • FREE SHIPPING OVER ₹999 • ZERO SUGAR • ZERO JITTERS"
+      "default": "FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • FREE SHIPPING OVER [free_shipping_threshold] • ZERO SUGAR • ZERO JITTERS",
+      "info": "[free_shipping_threshold] is replaced with the amount in Theme settings › Cart."
     },
     {
       "type": "url",

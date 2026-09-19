@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
@@ -39,7 +30,7 @@
         "acc_2_title": "Full Nutrition Facts (250ml)",
         "acc_2_content": "Energy: 10 kcal • Protein: 0g • Fat: 0g • Total Carbohydrates: 0g • Total Sugars: 0g • Sodium: 14mg • Caffeine: 100mg • L-Theanine: 200mg • KSM-66: 300mg.",
         "acc_3_title": "Shipping & Freshness Guarantee",
-        "acc_3_content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over ₹999."
+        "acc_3_content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over [free_shipping_threshold]."
       }
     },
     "newsletter": {

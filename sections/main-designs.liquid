@@ -1,294 +1,163 @@
+{%- comment -%}
+  Can designs gallery. Each "Flavour" block points at a product; the four panel views come from
+  the product images at the positions set below, and the flat 360° print is the product's last
+  image (the unwrapped label texture) unless another image is uploaded on the block.
+{%- endcomment -%}
+
+{%- liquid
+  assign idx_front = section.settings.image_position_front | minus: 1
+  assign idx_right = section.settings.image_position_right | minus: 1
+  assign idx_back = section.settings.image_position_back | minus: 1
+  assign idx_left = section.settings.image_position_left | minus: 1
+  assign view_names = 'front,right,back,left' | split: ','
+-%}
+
 <div data-surface="light" class="min-h-dvh bg-white text-neutral-900 designs-page-wrapper">
-  <!-- Header with Mode and View Toggles -->
   <header class="mx-auto flex max-w-[1400px] flex-wrap items-end justify-between gap-6 px-6 pt-10 pb-8 sm:px-10">
     <div>
-      <p class="font-mono text-[11px] tracking-[0.22em] text-neutral-400 uppercase">
-        {{ section.settings.kicker | default: 'ASMAAN — 250ML' }}
-      </p>
-      <h1 class="mt-2 font-serif text-4xl font-light tracking-tight sm:text-5xl text-neutral-900">
-        {{ section.settings.title | default: 'Can designs' }}
-      </h1>
+      <p class="font-mono text-[11px] tracking-[0.22em] text-neutral-400 uppercase">{{ section.settings.kicker | escape }}</p>
+      <h1 class="mt-2 font-serif text-4xl font-light tracking-tight sm:text-5xl text-neutral-900">{{ section.settings.title | escape }}</h1>
     </div>
 
     <div class="flex flex-wrap items-center gap-2">
-      <!-- Mode Segmented Control (Can vs Flat print) -->
-      <div class="flex rounded-full bg-neutral-100 p-1" role="tablist" aria-label="Display mode">
-        <button
-          type="button"
-          class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors bg-white text-neutral-900 shadow-sm"
-          data-mode="can"
-          aria-pressed="true"
-        >
-          Can
-        </button>
-        <button
-          type="button"
-          class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
-          data-mode="flat"
-          aria-pressed="false"
-        >
-          Flat print
-        </button>
+      <div class="flex rounded-full bg-neutral-100 p-1" role="tablist" aria-label="{{ section.settings.label_mode | escape }}">
+        <button type="button" class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors bg-white text-neutral-900 shadow-sm" data-mode="can" aria-pressed="true">{{ section.settings.label_can | escape }}</button>
+        <button type="button" class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700" data-mode="flat" aria-pressed="false">{{ section.settings.label_flat | escape }}</button>
       </div>
 
-      <!-- View Angle Segmented Control (Front / Right / Back / Left) -->
-      <div id="designs-views-control" class="flex rounded-full bg-neutral-100 p-1" role="tablist" aria-label="Can view angle">
-        <button
-          type="button"
-          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors bg-white text-neutral-900 shadow-sm"
-          data-view="front"
-          aria-pressed="true"
-        >
-          Front
-        </button>
-        <button
-          type="button"
-          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
-          data-view="right"
-          aria-pressed="false"
-        >
-          Right
-        </button>
-        <button
-          type="button"
-          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
-          data-view="back"
-          aria-pressed="false"
-        >
-          Back
-        </button>
-        <button
-          type="button"
-          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
-          data-view="left"
-          aria-pressed="false"
-        >
-          Left
-        </button>
+      <div id="designs-views-control" class="flex rounded-full bg-neutral-100 p-1" role="tablist" aria-label="{{ section.settings.label_angle | escape }}">
+        {%- for view in view_names -%}
+          {%- assign view_label_key = 'label_view_' | append: view -%}
+          <button
+            type="button"
+            class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors {% if forloop.first %}bg-white text-neutral-900 shadow-sm{% else %}text-neutral-400 hover:text-neutral-700{% endif %}"
+            data-view="{{ view }}"
+            aria-pressed="{{ forloop.first }}"
+          >{{ section.settings[view_label_key] | escape }}</button>
+        {%- endfor -%}
       </div>
     </div>
   </header>
 
-  <!-- Main Showcase Container -->
   <main class="mx-auto max-w-[1400px] px-6 pb-24 sm:px-10">
-    <!-- 1. CAN 3D / MULTI-ANGLE MODE -->
     <div id="designs-can-mode" class="block">
-      <p id="designs-panel-label" class="font-mono text-[11px] tracking-[0.18em] text-neutral-400 uppercase">
-        Front panel · Wordmark & claim
-      </p>
+      <p id="designs-panel-label" class="font-mono text-[11px] tracking-[0.18em] text-neutral-400 uppercase">{{ section.settings.panel_front | escape }}</p>
 
       <div class="mt-6 grid gap-x-8 gap-y-14 sm:grid-cols-3">
-        <!-- Kala Jamun -->
-        <figure class="flex flex-col items-center">
-          <div class="mx-auto w-full max-w-[300px]">
-            <div class="aspect-[760/1950] w-full relative flex items-center justify-center">
-              <img
-                src="{{ 'jamun-front.webp' | asset_url }}"
-                data-img-jamun-front="{{ 'jamun-front.webp' | asset_url }}"
-                data-img-jamun-right="{{ 'jamun-right.webp' | asset_url }}"
-                data-img-jamun-back="{{ 'jamun-back.webp' | asset_url }}"
-                data-img-jamun-left="{{ 'jamun-left.webp' | asset_url }}"
-                id="can-img-jamun"
-                alt="Kala Jamun can"
-                class="w-full h-full object-contain transition-opacity duration-300"
-                loading="eager"
-              >
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign p = block.settings.product
+            assign f_title = block.settings.title | default: p.title
+            assign f_sub = block.settings.subtitle | default: p.metafields.custom.tagline.value
+            assign f_deep = block.settings.deep | default: p.metafields.custom.primary_color.value | default: section.settings.fallback_deep
+            assign img_front = p.images[idx_front] | default: p.featured_image
+            assign img_right = p.images[idx_right] | default: img_front
+            assign img_back = p.images[idx_back] | default: img_front
+            assign img_left = p.images[idx_left] | default: img_front
+          -%}
+          <figure class="flex flex-col items-center" {{ block.shopify_attributes }}>
+            <div class="mx-auto w-full max-w-[300px]">
+              <div class="aspect-[760/1950] w-full relative flex items-center justify-center">
+                {%- if img_front != blank -%}
+                  <img
+                    src="{{ img_front | image_url: width: 900 }}"
+                    {% for view in view_names %}
+                      {%- case view -%}
+                        {%- when 'front' -%}{%- assign v_img = img_front -%}
+                        {%- when 'right' -%}{%- assign v_img = img_right -%}
+                        {%- when 'back' -%}{%- assign v_img = img_back -%}
+                        {%- when 'left' -%}{%- assign v_img = img_left -%}
+                      {%- endcase -%}
+                      data-img-{{ view }}="{{ v_img | image_url: width: 900 }}"
+                      data-img-{{ view }}-large="{{ v_img | image_url: width: 1800 }}"
+                    {% endfor %}
+                    data-design-can
+                    width="{{ img_front.width }}"
+                    height="{{ img_front.height }}"
+                    alt="{{ f_title | escape }}"
+                    class="w-full h-full object-contain transition-opacity duration-300"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                  >
+                {%- endif -%}
+              </div>
             </div>
-          </div>
-          <figcaption class="mt-6 text-center">
-            <span class="flex items-baseline justify-center gap-2.5">
-              <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#2A1D4A] inline-block"></span>
-              <span class="text-lg font-medium text-neutral-900">Kala Jamun</span>
-            </span>
-            <span class="mt-1 block text-sm text-neutral-400">Deep Indian blackberry · tart, dark and round</span>
-            <span class="mt-3 flex items-center justify-center gap-3 font-mono text-[10px] tracking-[0.14em] uppercase">
-              <span class="text-neutral-400">Turn with views</span>
-              <span aria-hidden="true" class="text-neutral-200">/</span>
-              <button
-                type="button"
-                data-enlarge="jamun"
-                aria-label="Enlarge Kala Jamun"
-                class="text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900"
-              >
-                Enlarge
-              </button>
-            </span>
-          </figcaption>
-        </figure>
-
-        <!-- Alphonso Mango -->
-        <figure class="flex flex-col items-center">
-          <div class="mx-auto w-full max-w-[300px]">
-            <div class="aspect-[760/1950] w-full relative flex items-center justify-center">
-              <img
-                src="{{ 'mango-front.webp' | asset_url }}"
-                data-img-mango-front="{{ 'mango-front.webp' | asset_url }}"
-                data-img-mango-right="{{ 'mango-right.webp' | asset_url }}"
-                data-img-mango-back="{{ 'mango-back.webp' | asset_url }}"
-                data-img-mango-left="{{ 'mango-left.webp' | asset_url }}"
-                id="can-img-mango"
-                alt="Alphonso Mango can"
-                class="w-full h-full object-contain transition-opacity duration-300"
-                loading="lazy"
-              >
-            </div>
-          </div>
-          <figcaption class="mt-6 text-center">
-            <span class="flex items-baseline justify-center gap-2.5">
-              <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#5A2A00] inline-block"></span>
-              <span class="text-lg font-medium text-neutral-900">Alphonso Mango</span>
-            </span>
-            <span class="mt-1 block text-sm text-neutral-400">Ripe Alphonso pressed against something bitter</span>
-            <span class="mt-3 flex items-center justify-center gap-3 font-mono text-[10px] tracking-[0.14em] uppercase">
-              <span class="text-neutral-400">Turn with views</span>
-              <span aria-hidden="true" class="text-neutral-200">/</span>
-              <button
-                type="button"
-                data-enlarge="mango"
-                aria-label="Enlarge Alphonso Mango"
-                class="text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900"
-              >
-                Enlarge
-              </button>
-            </span>
-          </figcaption>
-        </figure>
-
-        <!-- Wild Magenta -->
-        <figure class="flex flex-col items-center">
-          <div class="mx-auto w-full max-w-[300px]">
-            <div class="aspect-[760/1950] w-full relative flex items-center justify-center">
-              <img
-                src="{{ 'print-front.webp' | asset_url }}"
-                data-img-print-front="{{ 'print-front.webp' | asset_url }}"
-                data-img-print-right="{{ 'print-right.webp' | asset_url }}"
-                data-img-print-back="{{ 'print-back.webp' | asset_url }}"
-                data-img-print-left="{{ 'print-left.webp' | asset_url }}"
-                id="can-img-print"
-                alt="Wild Magenta can"
-                class="w-full h-full object-contain transition-opacity duration-300"
-                loading="lazy"
-              >
-            </div>
-          </div>
-          <figcaption class="mt-6 text-center">
-            <span class="flex items-baseline justify-center gap-2.5">
-              <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#4E0749] inline-block"></span>
-              <span class="text-lg font-medium text-neutral-900">Wild Magenta</span>
-            </span>
-            <span class="mt-1 block text-sm text-neutral-400">Rose over pink guava with a citrus edge</span>
-            <span class="mt-3 flex items-center justify-center gap-3 font-mono text-[10px] tracking-[0.14em] uppercase">
-              <span class="text-neutral-400">Turn with views</span>
-              <span aria-hidden="true" class="text-neutral-200">/</span>
-              <button
-                type="button"
-                data-enlarge="print"
-                aria-label="Enlarge Wild Magenta"
-                class="text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900"
-              >
-                Enlarge
-              </button>
-            </span>
-          </figcaption>
-        </figure>
+            <figcaption class="mt-6 text-center">
+              <span class="flex items-baseline justify-center gap-2.5">
+                <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full inline-block" style="background: {{ f_deep }};"></span>
+                <span class="text-lg font-medium text-neutral-900">{{ f_title | escape }}</span>
+              </span>
+              {%- if f_sub != blank -%}<span class="mt-1 block text-sm text-neutral-400">{{ f_sub | escape }}</span>{%- endif -%}
+              <span class="mt-3 flex items-center justify-center gap-3 font-mono text-[10px] tracking-[0.14em] uppercase">
+                <span class="text-neutral-400">{{ section.settings.label_turn | escape }}</span>
+                <span aria-hidden="true" class="text-neutral-200">/</span>
+                <button
+                  type="button"
+                  data-enlarge="{{ forloop.index0 }}"
+                  aria-label="{{ section.settings.label_enlarge | escape }} {{ f_title | escape }}"
+                  class="text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900"
+                >{{ section.settings.label_enlarge | escape }}</button>
+              </span>
+            </figcaption>
+          </figure>
+        {%- endfor -%}
       </div>
+
+      {%- if section.blocks.size == 0 and request.design_mode -%}
+        <p class="mt-6 text-neutral-500">Add “Flavour” blocks to show the can designs.</p>
+      {%- endif -%}
     </div>
 
-    <!-- 2. FLAT 360° PRINT MODE -->
     <div id="designs-flat-mode" class="hidden space-y-14">
-      <!-- Jamun Wrap -->
-      <figure>
-        <img
-          src="{{ 'jamun-wrap.webp' | asset_url }}"
-          alt="Kala Jamun print, unwrapped over 360°"
-          class="h-auto w-full rounded border border-neutral-100 shadow-sm"
-          loading="lazy"
-        >
-        <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-          <span class="flex items-baseline gap-2.5">
-            <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#2A1D4A] inline-block"></span>
-            <span class="text-lg font-medium text-neutral-900">Kala Jamun</span>
-            <span class="text-sm text-neutral-400">Primary #2A1D4A · Accent #9089D3</span>
-          </span>
-          <span class="font-mono text-[11px] text-neutral-400 uppercase">
-            Four-colour process on aluminium
-          </span>
-        </figcaption>
-      </figure>
-
-      <!-- Mango Wrap -->
-      <figure>
-        <img
-          src="{{ 'mango-wrap.webp' | asset_url }}"
-          alt="Alphonso Mango print, unwrapped over 360°"
-          class="h-auto w-full rounded border border-neutral-100 shadow-sm"
-          loading="lazy"
-        >
-        <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-          <span class="flex items-baseline gap-2.5">
-            <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#5A2A00] inline-block"></span>
-            <span class="text-lg font-medium text-neutral-900">Alphonso Mango</span>
-            <span class="text-sm text-neutral-400">Primary #5A2A00 · Accent #EFB36B</span>
-          </span>
-          <span class="font-mono text-[11px] text-neutral-400 uppercase">
-            Four-colour process on aluminium
-          </span>
-        </figcaption>
-      </figure>
-
-      <!-- Wild Magenta Wrap -->
-      <figure>
-        <img
-          src="{{ 'print-wrap.webp' | asset_url }}"
-          alt="Wild Magenta print, unwrapped over 360°"
-          class="h-auto w-full rounded border border-neutral-100 shadow-sm"
-          loading="lazy"
-        >
-        <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-          <span class="flex items-baseline gap-2.5">
-            <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#4E0749] inline-block"></span>
-            <span class="text-lg font-medium text-neutral-900">Wild Magenta</span>
-            <span class="text-sm text-neutral-400">Primary #4E0749 · Accent #E6A0E8</span>
-          </span>
-          <span class="font-mono text-[11px] text-neutral-400 uppercase">
-            Four-colour process on aluminium
-          </span>
-        </figcaption>
-      </figure>
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign p = block.settings.product
+          assign f_title = block.settings.title | default: p.title
+          assign f_deep = block.settings.deep | default: p.metafields.custom.primary_color.value | default: section.settings.fallback_deep
+          assign f_accent = block.settings.accent | default: p.metafields.custom.accent_color.value | default: section.settings.fallback_accent
+          assign wrap = block.settings.wrap_image | default: p.images.last
+        -%}
+        {%- if wrap != blank -%}
+          <figure {{ block.shopify_attributes }}>
+            {{ wrap | image_url: width: 2400 | image_tag: alt: f_title, class: 'h-auto w-full rounded border border-neutral-100 shadow-sm', loading: 'lazy' }}
+            <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <span class="flex items-baseline gap-2.5">
+                <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full inline-block" style="background: {{ f_deep }};"></span>
+                <span class="text-lg font-medium text-neutral-900">{{ f_title | escape }}</span>
+                {%- if section.settings.show_colour_codes -%}
+                  <span class="text-sm text-neutral-400">{{ section.settings.label_primary | escape }} {{ f_deep | upcase }} · {{ section.settings.label_accent | escape }} {{ f_accent | upcase }}</span>
+                {%- endif -%}
+              </span>
+              {%- if section.settings.print_note != blank -%}
+                <span class="font-mono text-[11px] text-neutral-400 uppercase">{{ section.settings.print_note | escape }}</span>
+              {%- endif -%}
+            </figcaption>
+          </figure>
+        {%- endif -%}
+      {%- endfor -%}
     </div>
 
-    <!-- Footnote -->
-    <p class="mt-20 max-w-2xl border-t border-neutral-100 pt-6 font-mono text-[11px] leading-relaxed text-neutral-400">
-      Each can is real geometry turned from the measured silhouette, wearing its
-      own colourway&rsquo;s print at 1:1 — a millimetre of artwork over a
-      millimetre of aluminium, all four panels, nothing scaled or cropped. Use the buttons
-      above to examine each printed panel or explore the complete 360° unwrapped print.
-    </p>
+    {%- if section.settings.footnote != blank -%}
+      <div class="mt-20 max-w-2xl border-t border-neutral-100 pt-6 font-mono text-[11px] leading-relaxed text-neutral-400">{{ section.settings.footnote }}</div>
+    {%- endif -%}
   </main>
 
-  <!-- Enlarge Lightbox Modal -->
   <div
     id="designs-lightbox"
     class="fixed inset-0 z-50 hidden cursor-zoom-out items-center justify-center bg-white/95 p-8 backdrop-blur-sm transition-opacity duration-300"
     role="dialog"
     aria-modal="true"
-    aria-label="Enlarge can design"
+    aria-label="{{ section.settings.label_enlarge | escape }}"
   >
     <div class="relative h-[88dvh] max-w-full aspect-[760/1950] cursor-default" onclick="event.stopPropagation()">
       <button
         type="button"
         id="designs-lightbox-close"
         class="absolute -top-4 -right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-white shadow-md transition-transform hover:scale-110"
-        aria-label="Close enlarged view"
+        aria-label="{{ section.settings.label_close | escape }}"
       >
         {% render 'asmaan-icons', name: 'cross', class: 'h-3 w-3' %}
       </button>
-      <img
-        id="designs-lightbox-img"
-        src="{{ 'jamun-front.webp' | asset_url }}"
-        alt="Enlarged can view"
-        class="h-full w-full object-contain"
-      >
+      <img id="designs-lightbox-img" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" width="760" height="1950" class="h-full w-full object-contain">
     </div>
   </div>
 </div>
@@ -306,6 +175,15 @@
   }
 </style>
 
+<script type="application/json" id="designs-panel-labels">
+  {
+    "front": {{ section.settings.panel_front | json }},
+    "right": {{ section.settings.panel_right | json }},
+    "back": {{ section.settings.panel_back | json }},
+    "left": {{ section.settings.panel_left | json }}
+  }
+</script>
+
 <script>
   (function() {
     function initDesignsPage() {
@@ -315,118 +193,76 @@
       var flatMode = document.getElementById('designs-flat-mode');
       var viewsControl = document.getElementById('designs-views-control');
       var panelLabel = document.getElementById('designs-panel-label');
-
-      var imgJamun = document.getElementById('can-img-jamun');
-      var imgMango = document.getElementById('can-img-mango');
-      var imgPrint = document.getElementById('can-img-print');
+      var cans = Array.prototype.slice.call(document.querySelectorAll('[data-design-can]'));
 
       var lightbox = document.getElementById('designs-lightbox');
       var lightboxImg = document.getElementById('designs-lightbox-img');
       var lightboxClose = document.getElementById('designs-lightbox-close');
       var enlargeBtns = document.querySelectorAll('[data-enlarge]');
 
-      var currentView = 'front';
-      var currentMode = 'can';
-      var currentEnlargedId = 'jamun';
-
-      var panelLabels = {
-        front: 'Front panel · Wordmark & claim',
-        right: 'Right panel · Ingredients & recipe',
-        back: 'Back panel · Nutritional values & volume',
-        left: 'Left panel · Brand story & mission'
-      };
-
-      function updateCanImages(view) {
-        currentView = view;
-        if (panelLabel) {
-          panelLabel.textContent = panelLabels[view] || panelLabels.front;
-        }
-
-        if (imgJamun) {
-          var srcJ = imgJamun.getAttribute('data-img-jamun-' + view);
-          if (srcJ) imgJamun.src = srcJ;
-        }
-        if (imgMango) {
-          var srcM = imgMango.getAttribute('data-img-mango-' + view);
-          if (srcM) imgMango.src = srcM;
-        }
-        if (imgPrint) {
-          var srcP = imgPrint.getAttribute('data-img-print-' + view);
-          if (srcP) imgPrint.src = srcP;
-        }
-
-        if (lightbox && lightbox.classList.contains('flex') && lightboxImg) {
-          updateLightboxImage();
-        }
-
-        viewBtns.forEach(function(btn) {
-          var v = btn.getAttribute('data-view');
-          if (v === view) {
-            btn.setAttribute('aria-pressed', 'true');
-            btn.classList.add('bg-white', 'text-neutral-900', 'shadow-sm');
-            btn.classList.remove('text-neutral-400');
-          } else {
-            btn.setAttribute('aria-pressed', 'false');
-            btn.classList.remove('bg-white', 'text-neutral-900', 'shadow-sm');
-            btn.classList.add('text-neutral-400');
-          }
-        });
+      var panelLabels = {};
+      try {
+        panelLabels = JSON.parse(document.getElementById('designs-panel-labels').textContent);
+      } catch (err) {
+        panelLabels = {};
       }
 
-      function updateMode(mode) {
-        currentMode = mode;
-        if (mode === 'flat') {
-          if (canMode) canMode.classList.add('hidden');
-          if (canMode) canMode.classList.remove('block');
-          if (flatMode) flatMode.classList.remove('hidden');
-          if (flatMode) flatMode.classList.add('block');
-          if (viewsControl) viewsControl.classList.add('hidden');
-        } else {
-          if (canMode) canMode.classList.remove('hidden');
-          if (canMode) canMode.classList.add('block');
-          if (flatMode) flatMode.classList.add('hidden');
-          if (flatMode) flatMode.classList.remove('block');
-          if (viewsControl) viewsControl.classList.remove('hidden');
-        }
+      var currentView = 'front';
+      var currentEnlarged = 0;
 
-        modeBtns.forEach(function(btn) {
-          var m = btn.getAttribute('data-mode');
-          if (m === mode) {
-            btn.setAttribute('aria-pressed', 'true');
-            btn.classList.add('bg-white', 'text-neutral-900', 'shadow-sm');
-            btn.classList.remove('text-neutral-400');
-          } else {
-            btn.setAttribute('aria-pressed', 'false');
-            btn.classList.remove('bg-white', 'text-neutral-900', 'shadow-sm');
-            btn.classList.add('text-neutral-400');
-          }
+      function setPressed(buttons, attr, value) {
+        buttons.forEach(function(btn) {
+          var on = btn.getAttribute(attr) === value;
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+          btn.classList.toggle('bg-white', on);
+          btn.classList.toggle('text-neutral-900', on);
+          btn.classList.toggle('shadow-sm', on);
+          btn.classList.toggle('text-neutral-400', !on);
         });
       }
 
       function updateLightboxImage() {
-        if (!lightboxImg) return;
-        var targetImg = document.getElementById('can-img-' + currentEnlargedId);
-        if (targetImg) {
-          var src = targetImg.getAttribute('data-img-' + currentEnlargedId + '-' + currentView);
-          if (src) lightboxImg.src = src;
-        }
+        var img = cans[currentEnlarged];
+        if (!lightboxImg || !img) return;
+        lightboxImg.src = img.getAttribute('data-img-' + currentView + '-large') || img.src;
+        lightboxImg.alt = img.alt;
+      }
+
+      function updateCanImages(view) {
+        currentView = view;
+        if (panelLabel) panelLabel.textContent = panelLabels[view] || panelLabels.front || '';
+        cans.forEach(function(img) {
+          var src = img.getAttribute('data-img-' + view);
+          if (src) img.src = src;
+        });
+        if (lightbox && lightbox.classList.contains('flex')) updateLightboxImage();
+        setPressed(viewBtns, 'data-view', view);
+      }
+
+      function updateMode(mode) {
+        var flat = mode === 'flat';
+        if (canMode) { canMode.classList.toggle('hidden', flat); canMode.classList.toggle('block', !flat); }
+        if (flatMode) { flatMode.classList.toggle('hidden', !flat); flatMode.classList.toggle('block', flat); }
+        if (viewsControl) viewsControl.classList.toggle('hidden', flat);
+        setPressed(modeBtns, 'data-mode', mode);
+      }
+
+      function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+        document.body.style.overflow = '';
       }
 
       modeBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          updateMode(btn.getAttribute('data-mode'));
-        });
+        btn.addEventListener('click', function() { updateMode(btn.getAttribute('data-mode')); });
       });
-
       viewBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          updateCanImages(btn.getAttribute('data-view'));
-        });
+        btn.addEventListener('click', function() { updateCanImages(btn.getAttribute('data-view')); });
       });
-
       enlargeBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
-          currentEnlargedId = btn.getAttribute('data-enlarge');
+          currentEnlarged = parseInt(btn.getAttribute('data-enlarge'), 10) || 0;
           updateLightboxImage();
           if (lightbox) {
             lightbox.classList.remove('hidden');
@@ -435,25 +271,11 @@
           }
         });
       });
-
-      function closeLightbox() {
-        if (lightbox) {
-          lightbox.classList.add('hidden');
-          lightbox.classList.remove('flex');
-          document.body.style.overflow = '';
-        }
-      }
-
       if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
       if (lightbox) {
-        lightbox.addEventListener('click', function(e) {
-          if (e.target === lightbox) closeLightbox();
-        });
+        lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
       }
-
-      window.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeLightbox();
-      });
+      window.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
     }
 
     if (document.readyState === 'loading') {
@@ -466,27 +288,60 @@
 
 {% schema %}
 {
-  "name": "Can Designs Gallery",
+  "name": "Can designs gallery",
   "tag": "section",
   "class": "asmaan-designs-section",
   "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "ASMAAN — 250ML" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Can designs" },
+    { "type": "richtext", "id": "footnote", "label": "Footnote", "default": "<p>Each can is real geometry turned from the measured silhouette, wearing its own colourway’s print at 1:1 — a millimetre of artwork over a millimetre of aluminium, all four panels, nothing scaled or cropped. Use the buttons above to examine each printed panel or explore the complete 360° unwrapped print.</p>" },
+    { "type": "header", "content": "Product images" },
+    { "type": "range", "id": "image_position_front", "label": "Image position: front", "min": 1, "max": 10, "step": 1, "default": 1 },
+    { "type": "range", "id": "image_position_right", "label": "Image position: right", "min": 1, "max": 10, "step": 1, "default": 3 },
+    { "type": "range", "id": "image_position_back", "label": "Image position: back", "min": 1, "max": 10, "step": 1, "default": 4 },
+    { "type": "range", "id": "image_position_left", "label": "Image position: left", "min": 1, "max": 10, "step": 1, "default": 2 },
+    { "type": "color", "id": "fallback_deep", "label": "Fallback deep colour", "default": "#2A1D4A" },
+    { "type": "color", "id": "fallback_accent", "label": "Fallback accent colour", "default": "#9089D3" },
+    { "type": "header", "content": "Flat print" },
+    { "type": "checkbox", "id": "show_colour_codes", "label": "Show colour codes", "default": true },
+    { "type": "text", "id": "print_note", "label": "Print note", "default": "Four-colour process on aluminium" },
+    { "type": "header", "content": "Panel captions" },
+    { "type": "text", "id": "panel_front", "label": "Front", "default": "Front panel · Wordmark & claim" },
+    { "type": "text", "id": "panel_right", "label": "Right", "default": "Right panel · Ingredients & recipe" },
+    { "type": "text", "id": "panel_back", "label": "Back", "default": "Back panel · Nutritional values & volume" },
+    { "type": "text", "id": "panel_left", "label": "Left", "default": "Left panel · Brand story & mission" },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "label_can", "label": "Can mode", "default": "Can" },
+    { "type": "text", "id": "label_flat", "label": "Flat print mode", "default": "Flat print" },
+    { "type": "text", "id": "label_view_front", "label": "Front", "default": "Front" },
+    { "type": "text", "id": "label_view_right", "label": "Right", "default": "Right" },
+    { "type": "text", "id": "label_view_back", "label": "Back", "default": "Back" },
+    { "type": "text", "id": "label_view_left", "label": "Left", "default": "Left" },
+    { "type": "text", "id": "label_turn", "label": "Turn hint", "default": "Turn with views" },
+    { "type": "text", "id": "label_enlarge", "label": "Enlarge", "default": "Enlarge" },
+    { "type": "text", "id": "label_primary", "label": "Primary colour", "default": "Primary" },
+    { "type": "text", "id": "label_accent", "label": "Accent colour", "default": "Accent" },
+    { "type": "text", "id": "label_mode", "label": "Mode group (accessibility)", "default": "Display mode" },
+    { "type": "text", "id": "label_angle", "label": "Angle group (accessibility)", "default": "Can view angle" },
+    { "type": "text", "id": "label_close", "label": "Close (accessibility)", "default": "Close enlarged view" }
+  ],
+  "blocks": [
     {
-      "type": "text",
-      "id": "kicker",
-      "label": "Header Kicker",
-      "default": "ASMAAN — 250ML"
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Page Title",
-      "default": "Can designs"
+      "type": "flavour",
+      "name": "Flavour",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "paragraph", "content": "Leave the fields below empty to use the product's own data." },
+        { "type": "text", "id": "title", "label": "Name override" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "info": "Falls back to the product metafield custom.tagline." },
+        { "type": "color", "id": "deep", "label": "Deep colour override" },
+        { "type": "color", "id": "accent", "label": "Accent colour override" },
+        { "type": "image_picker", "id": "wrap_image", "label": "Flat print override", "info": "Defaults to the product's last image." }
+      ]
     }
   ],
   "presets": [
-    {
-      "name": "Can Designs Gallery"
-    }
+    { "name": "Can designs gallery" }
   ]
 }
 {% endschema %}

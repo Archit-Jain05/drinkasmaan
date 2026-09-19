@@ -17,6 +17,13 @@
       this.footer = document.getElementById('predictive-search-footer');
       this.countEl = document.getElementById('predictive-search-count');
       this.viewAllLink = document.getElementById('predictive-search-view-all');
+      this.labels = {};
+      try {
+        const labelsEl = document.getElementById('predictive-search-labels');
+        if (labelsEl) this.labels = JSON.parse(labelsEl.textContent);
+      } catch (err) {
+        this.labels = {};
+      }
 
       this.debounceTimer = null;
       this.currentQuery = '';
@@ -171,8 +178,8 @@
       if (totalCount === 0) {
         this.dynamicContainer.innerHTML = `
           <div style="text-align: center; padding: 2.5rem 0;">
-            <p style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin: 0 0 0.5rem 0;">No results found for "${this.escapeHtml(query)}"</p>
-            <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin: 0;">Try checking your spelling or using more general terms.</p>
+            <p style="color: rgba(255,255,255,0.8); font-size: 0.95rem; margin: 0 0 0.5rem 0;">${this.escapeHtml(this.t('noResults', { query: query }))}</p>
+            <p style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin: 0;">${this.escapeHtml(this.t('noResultsHint'))}</p>
           </div>
         `;
         if (this.footer) this.footer.style.display = 'none';
@@ -183,7 +190,7 @@
       if (products.length > 0) {
         const prodSection = document.createElement('div');
         prodSection.innerHTML = `
-          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">Products (${products.length})</h4>
+          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">${this.escapeHtml(this.t('products', { count: products.length }))}</h4>
           <div class="predictive-search-product-grid">
             ${products.map(product => {
               const formattedPrice = this.formatMoney(product.price);
@@ -198,7 +205,7 @@
                     <h5 style="font-size: 0.85rem; font-weight: 600; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${this.escapeHtml(product.title)}</h5>
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
                       <span style="font-size: 0.75rem; font-family: var(--font-mono, monospace); color: rgba(255,255,255,0.7);">${formattedPrice}</span>
-                      ${!isAvailable ? '<span style="font-size: 0.65rem; font-family: monospace; text-transform: uppercase; padding: 0.1rem 0.35rem; border-radius: 0.25rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3);">Sold out</span>' : ''}
+                      ${!isAvailable ? `<span style="font-size: 0.65rem; font-family: monospace; text-transform: uppercase; padding: 0.1rem 0.35rem; border-radius: 0.25rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3);">${this.escapeHtml(this.t('soldOut'))}</span>` : ''}
                     </div>
                   </div>
                 </a>
@@ -214,7 +221,7 @@
         const colSection = document.createElement('div');
         colSection.style.marginTop = '1.25rem';
         colSection.innerHTML = `
-          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">Collections (${collections.length})</h4>
+          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">${this.escapeHtml(this.t('collections', { count: collections.length }))}</h4>
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             ${collections.map(col => `
               <a href="${col.url}" style="padding: 0.4rem 0.8rem; border-radius: 0.5rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); font-size: 0.75rem; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;">
@@ -231,14 +238,14 @@
       if (articles.length > 0 || pages.length > 0) {
         const infoSection = document.createElement('div');
         infoSection.style.marginTop = '1.25rem';
-        const items = [...articles.map(a => ({ ...a, type: 'Article' })), ...pages.map(p => ({ ...p, type: 'Page' }))];
+        const items = [...articles.map(a => ({ ...a, type: this.t('article') })), ...pages.map(p => ({ ...p, type: this.t('page') }))];
         infoSection.innerHTML = `
-          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">Stories & Info (${items.length})</h4>
+          <h4 style="font-family: var(--font-mono, monospace); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin: 0 0 0.75rem 0;">${this.escapeHtml(this.t('info', { count: items.length }))}</h4>
           <div style="display: flex; flex-direction: column; gap: 0.4rem;">
             ${items.map(item => `
               <a href="${item.url}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.85rem; border-radius: 0.65rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); text-decoration: none; color: #fff;">
                 <span style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${this.escapeHtml(item.title)}</span>
-                <span style="font-size: 0.65rem; font-family: var(--font-mono, monospace); text-transform: uppercase; color: rgba(255,255,255,0.4);">${item.type}</span>
+                <span style="font-size: 0.65rem; font-family: var(--font-mono, monospace); text-transform: uppercase; color: rgba(255,255,255,0.4);">${this.escapeHtml(item.type)}</span>
               </a>
             `).join('')}
           </div>
@@ -250,7 +257,7 @@
       if (this.footer && this.viewAllLink) {
         this.footer.style.display = 'flex';
         if (this.countEl) {
-          this.countEl.textContent = `Showing ${totalCount} suggestions`;
+          this.countEl.textContent = this.t('showing', { count: totalCount });
         }
         this.viewAllLink.href = `${window.ASMAAN_CONFIG?.routes?.search_url || '/search'}?q=${encodeURIComponent(query)}`;
       }
@@ -260,18 +267,43 @@
       if (!this.dynamicContainer) return;
       this.dynamicContainer.innerHTML = `
         <div style="text-align: center; padding: 2rem 0; color: rgba(255,255,255,0.5); font-size: 0.8rem;">
-          An error occurred while fetching suggestions. Press Enter to view full results.
+          ${this.escapeHtml(this.t('error'))}
         </div>
       `;
       this.dynamicContainer.style.display = 'block';
     }
 
-    formatMoney(cents) {
-      if (typeof cents === 'string' && cents.includes('.')) {
-        return cents;
+    t(key, vars) {
+      let text = this.labels[key] || '';
+      Object.keys(vars || {}).forEach((name) => {
+        text = text.split('{' + name + '}').join(vars[name]);
+      });
+      return text;
+    }
+
+    // The suggest API returns prices as decimal strings in the shop currency (e.g. "2400.00").
+    formatMoney(price) {
+      const cents = typeof price === 'string' && price.includes('.') ? Math.round(parseFloat(price) * 100) : Math.round(Number(price));
+      if (isNaN(cents)) return '';
+      const format = this.labels.moneyFormat || '{{amount}}';
+      const group = (precision, thousands, decimal) => {
+        const parts = (cents / 100).toFixed(precision).split('.');
+        parts[0] = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+        return parts.join(decimal);
+      };
+      const match = format.match(/\{\{\s*(\w+)\s*\}\}/);
+      let value;
+      switch (match ? match[1] : 'amount') {
+        case 'amount_no_decimals': value = group(0, ',', '.'); break;
+        case 'amount_with_comma_separator': value = group(2, '.', ','); break;
+        case 'amount_no_decimals_with_comma_separator': value = group(0, '.', ','); break;
+        case 'amount_with_apostrophe_separator': value = group(2, "'", '.'); break;
+        default: value = group(2, ',', '.');
       }
-      const num = Number(cents) / 100;
-      return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (cents % 100 === 0) value = value.replace(/[.,]00$/, '');
+      const tmp = document.createElement('div');
+      tmp.innerHTML = format.replace(/\{\{\s*\w+\s*\}\}/, value);
+      return tmp.textContent;
     }
 
     escapeHtml(str) {

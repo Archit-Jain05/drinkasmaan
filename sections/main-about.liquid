@@ -1,3 +1,4 @@
+{%- assign free_shipping_money = settings.free_shipping_threshold | money_without_trailing_zeros -%}
 <section class="asmaan-subpage-section pt-24 pb-20">
   <div class="padding-global">
     <div class="container-large max-w-4xl mx-auto px-4">
@@ -58,7 +59,7 @@
         <div class="p-8 sm:p-10 rounded-3xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-8">
           <div>
             <h3 class="text-xl sm:text-2xl font-bold uppercase text-white mb-2">{{ section.settings.batch_title | default: 'Experience The Flagship Batch' }}</h3>
-            <p class="text-xs text-white/60">{{ section.settings.batch_sub | default: 'Dispatched direct from our studio with free express delivery over ₹999.' }}</p>
+            <p class="text-xs text-white/60">{{ section.settings.batch_sub | escape | replace: '[free_shipping_threshold]', free_shipping_money }}</p>
           </div>
           <a href="{{ section.settings.batch_cta_url | default: '/#range' }}" class="button is-primary is-small whitespace-nowrap">
             {{ section.settings.batch_cta_label | default: 'Explore Flavors' }}
@@ -129,7 +130,7 @@
       "type": "text",
       "id": "batch_sub",
       "label": "Callout Subtext",
-      "default": "Dispatched direct from our studio with free express delivery over ₹999."
+      "default": "Dispatched direct from our studio with free express delivery over [free_shipping_threshold]."
     },
     {
       "type": "text",

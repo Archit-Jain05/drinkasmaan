@@ -1,3 +1,4 @@
+{%- assign free_shipping_money = settings.free_shipping_threshold | money_without_trailing_zeros -%}
 {%- liquid
   assign handle_lower = product.handle | downcase
   assign title_lower = product.title | downcase
@@ -440,7 +441,7 @@
                   <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
                 </button>
                 <div id="spec-shipping" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
-                  {{ product.metafields.custom.shipping_details | default: section.settings.acc_3_content }}
+                  {{ product.metafields.custom.shipping_details | default: section.settings.acc_3_content | replace: '[free_shipping_threshold]', free_shipping_money }}
                 </div>
               </div>
             {%- endif -%}
@@ -819,7 +820,7 @@
       "type": "textarea",
       "id": "acc_3_content",
       "label": "Accordion 3 Content",
-      "default": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over ₹999."
+      "default": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over [free_shipping_threshold]."
     }
   ],
   "blocks": [
