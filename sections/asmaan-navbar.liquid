@@ -113,21 +113,11 @@
 </header>
 
 <div id="site-menu" class="navbar_menu" data-open="false" aria-hidden="true">
-  <nav class="navbar_link-list" aria-label="Primary">
-    {%- if section.settings.use_custom_menu and section.settings.menu != blank -%}
-      {%- for link in linklists[section.settings.menu].links -%}
-        <a class="navbar_link" tabindex="-1" href="{{ link.url }}">{{ link.title }}</a>
-      {%- endfor -%}
-    {%- else -%}
-      <a class="navbar_link" tabindex="-1" href="/pages/drink">Shop</a>
-      <a class="navbar_link" tabindex="-1" href="/#range">Range</a>
-      <a class="navbar_link" tabindex="-1" href="/#benefits">Benefits</a>
-      <a class="navbar_link" tabindex="-1" href="/pages/wear">Wear</a>
-      <a class="navbar_link" tabindex="-1" href="/pages/merch">Merch</a>
-      <a class="navbar_link" tabindex="-1" href="/pages/designs">Designs</a>
-      <a class="navbar_link" tabindex="-1" href="/#faq">FAQ</a>
-      <a class="navbar_link" tabindex="-1" href="{{ section.settings.cta_link | default: '/pages/drink' }}">Newsletter</a>
-    {%- endif -%}
+  <nav class="navbar_link-list" aria-label="Primary" style="--menu-cols: {{ section.settings.menu_columns }};">
+    {%- assign menu_links = linklists[section.settings.menu].links | default: linklists['main-menu'].links -%}
+    {%- for link in menu_links -%}
+      <a class="navbar_link" tabindex="-1" href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+    {%- endfor -%}
   </nav>
 
   <div class="navbar_bottom">
@@ -147,6 +137,28 @@
     </div>
   </div>
 </div>
+
+<style>
+  /* Menu overlay: links in a grid so the whole menu fits on one screen without scrolling. */
+  .navbar_menu .navbar_link-list {
+    display: grid;
+    grid-template-columns: repeat(var(--menu-cols, 2), minmax(0, 1fr));
+    column-gap: var(--pad-l);
+    align-content: center;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .navbar_menu .navbar_link {
+    font-size: clamp(1.35rem, min(4.2vw, 5.5svh), 3.25rem);
+    padding: clamp(0.5rem, 1.6svh, 1rem) var(--pad-xs);
+    overflow-wrap: anywhere;
+  }
+  .navbar_menu .navbar_link[aria-current="page"] { color: #fff; }
+  @media (max-width: 749px) {
+    .navbar_menu .navbar_link-list { column-gap: 1rem; }
+    .navbar_menu .navbar_link { font-size: clamp(1.1rem, min(6vw, 4.5svh), 1.75rem); padding-inline: 0.25rem; }
+  }
+</style>
 
 {% schema %}
 {
@@ -217,12 +229,22 @@
       "type": "checkbox",
       "id": "use_custom_menu",
       "label": "Use Custom Menu from Shopify Navigation",
-      "default": false
+      "default": false,
+      "info": "The menu below is always used; this option is kept for compatibility."
     },
     {
       "type": "link_list",
       "id": "menu",
       "label": "Custom Menu (if enabled above)"
+    },
+    {
+      "type": "range",
+      "id": "menu_columns",
+      "label": "Menu columns",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
     },
     {
       "type": "url",
