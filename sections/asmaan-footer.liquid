@@ -18,7 +18,7 @@
           <nav class="asmaan-footer-nav-col" aria-label="Footer Primary Navigation">
             <ul class="asmaan-footer-links">
               <li><a href="{{ section.settings.link_1_url | default: '/' }}" class="asmaan-footer-link">{{ section.settings.link_1_label | default: 'HOME' }}</a></li>
-              <li><a href="{{ section.settings.link_2_url | default: '/#range' }}" class="asmaan-footer-link">{{ section.settings.link_2_label | default: 'DRINK' }}</a></li>
+              <li><a href="{{ section.settings.link_2_url | default: '/pages/drink' }}" class="asmaan-footer-link">{{ section.settings.link_2_label | default: 'DRINK' }}</a></li>
               <li><a href="{{ section.settings.link_3_url | default: '/pages/wear' }}" class="asmaan-footer-link">{{ section.settings.link_3_label | default: 'WEAR' }}</a></li>
               <li><a href="{{ section.settings.link_4_url | default: '/#newsletter' }}" class="asmaan-footer-link">{{ section.settings.link_4_label | default: 'JOIN' }}</a></li>
               <li><a href="{{ section.settings.link_5_url | default: '/pages/contact' }}" class="asmaan-footer-link">{{ section.settings.link_5_label | default: 'SUPPORT' }}</a></li>
@@ -28,12 +28,10 @@
           <!-- Column 2: Legal and Policies -->
           <nav class="asmaan-footer-nav-col" aria-label="Footer Policies and Legal">
             <ul class="asmaan-footer-links">
-              <li><a href="{{ section.settings.pol_1_url | default: '/policies/privacy-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_1_label | default: 'PRIVACY POLICY' }}</a></li>
-              <li><a href="{{ section.settings.pol_2_url | default: '/policies/refund-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_2_label | default: 'RETURN POLICY' }}</a></li>
-              <li><a href="{{ section.settings.pol_3_url | default: '/policies/shipping-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_3_label | default: 'SHIPPING POLICY' }}</a></li>
-              <li><a href="{{ section.settings.pol_4_url | default: '/policies/terms-of-service' }}" class="asmaan-footer-link">{{ section.settings.pol_4_label | default: 'TERMS OF SERVICE' }}</a></li>
-              <li><a href="{{ section.settings.pol_5_url | default: '/policies/subscription-policy' }}" class="asmaan-footer-link">{{ section.settings.pol_5_label | default: 'SUBSCRIPTION POLICY' }}</a></li>
-              <li><a href="{{ section.settings.pol_6_url | default: '/pages/contact' }}" class="asmaan-footer-link">{{ section.settings.pol_6_label | default: 'AMBASSADOR PROGRAM' }}</a></li>
+              {%- for policy in shop.policies -%}
+                <li><a href="{{ policy.url }}" class="asmaan-footer-link">{{ policy.title | upcase | escape }}</a></li>
+              {%- endfor -%}
+              <li><a href="{{ section.settings.pol_6_url | default: '/pages/join' }}" class="asmaan-footer-link">{{ section.settings.pol_6_label | default: 'AMBASSADOR PROGRAM' }}</a></li>
             </ul>
           </nav>
         </div>
@@ -145,61 +143,6 @@
     {
       "type": "header",
       "content": "Navigation Column 2"
-    },
-    {
-      "type": "text",
-      "id": "pol_1_label",
-      "label": "Policy 1 Label",
-      "default": "PRIVACY POLICY"
-    },
-    {
-      "type": "url",
-      "id": "pol_1_url",
-      "label": "Policy 1 URL"
-    },
-    {
-      "type": "text",
-      "id": "pol_2_label",
-      "label": "Policy 2 Label",
-      "default": "RETURN POLICY"
-    },
-    {
-      "type": "url",
-      "id": "pol_2_url",
-      "label": "Policy 2 URL"
-    },
-    {
-      "type": "text",
-      "id": "pol_3_label",
-      "label": "Policy 3 Label",
-      "default": "SHIPPING POLICY"
-    },
-    {
-      "type": "url",
-      "id": "pol_3_url",
-      "label": "Policy 3 URL"
-    },
-    {
-      "type": "text",
-      "id": "pol_4_label",
-      "label": "Policy 4 Label",
-      "default": "TERMS OF SERVICE"
-    },
-    {
-      "type": "url",
-      "id": "pol_4_url",
-      "label": "Policy 4 URL"
-    },
-    {
-      "type": "text",
-      "id": "pol_5_label",
-      "label": "Policy 5 Label",
-      "default": "SUBSCRIPTION POLICY"
-    },
-    {
-      "type": "url",
-      "id": "pol_5_url",
-      "label": "Policy 5 URL"
     },
     {
       "type": "text",

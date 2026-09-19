@@ -32,14 +32,13 @@
       </a>
     </div>
 
-    {%- if section.settings.show_quicklinks -%}
+    {%- if section.settings.show_quicklinks and section.settings.quicklinks_menu.links.size > 0 -%}
       <div class="asmaan-404_quicklinks">
-        <div class="asmaan-404_quicklinks-title">Quick Coordinates</div>
+        <div class="asmaan-404_quicklinks-title">{{ section.settings.quicklinks_title | escape }}</div>
         <ul class="asmaan-404_quicklinks-list">
-          <li><a href="/pages/ambassador">Ambassador Program</a></li>
-          <li><a href="/pages/merch">Merch Capsule</a></li>
-          <li><a href="/pages/about">Our Story</a></li>
-          <li><a href="/pages/contact">Contact Support</a></li>
+          {%- for link in section.settings.quicklinks_menu.links -%}
+            <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
         </ul>
       </div>
     {%- endif -%}
@@ -95,6 +94,17 @@
       "id": "show_quicklinks",
       "label": "Show Quick Links",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "quicklinks_title",
+      "label": "Quick links title",
+      "default": "Quick Coordinates"
+    },
+    {
+      "type": "link_list",
+      "id": "quicklinks_menu",
+      "label": "Quick links menu"
     }
   ]
 }

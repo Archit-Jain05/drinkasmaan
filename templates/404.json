@@ -2,7 +2,9 @@
   "sections": {
     "main": {
       "type": "main-404",
-      "settings": {}
+      "settings": {
+        "quicklinks_menu": "404-quick-links"
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
