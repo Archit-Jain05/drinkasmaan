@@ -29,6 +29,8 @@
 
     {{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
     {{ 'asmaan-can-3d.css' | asset_url | stylesheet_tag }}
+    {%- comment -%} Tailwind utilities used by the theme but missing from asmaan-prototype.css (see PROJECT_HANDOFF.md). {%- endcomment -%}
+    {{ 'asmaan-utilities.css' | asset_url | stylesheet_tag }}
 
     <script>
       window.ASMAAN_CONFIG = {
@@ -57,6 +59,16 @@
     </a>
 
     {% section 'asmaan-navbar' %}
+    <script>
+      // Expose the fixed navbar height as --asmaan-header-h for sections that sit below it.
+      (function () {
+        var nav = document.querySelector('header.navbar');
+        if (!nav) return;
+        function set() { document.documentElement.style.setProperty('--asmaan-header-h', nav.getBoundingClientRect().height + 'px'); }
+        set();
+        if ('ResizeObserver' in window) new ResizeObserver(set).observe(nav);
+      })();
+    </script>
 
     <script src="{{ 'three.min.js' | asset_url }}" defer></script>
     <div id="top">

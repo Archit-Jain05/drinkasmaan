@@ -33,23 +33,32 @@ Subscriptions use the product's selling plans (requires a subscriptions app). Wi
 | --- | --- | --- | --- |
 | Home | `index.json` | `asmaan-stage` | Flavour blocks (product picker), else collection |
 | Home / Range | `index.json`, `page.range.json` | `asmaan-range` | Product card blocks, else collection |
-| Drink (`/pages/drink`, also `page.shop.json`) | `page.drink.json` | `main-drink` + `assets/asmaan-drink.js` | Flavour, pack, badge, active, fact, review, FAQ blocks; `@app` blocks for a reviews app |
+| Drink (`/pages/drink`) | `page.shop.json` (and identical `page.drink.json`) | `main-drink` + `assets/asmaan-drink.js` | Flavour, pack, badge, active, fact, review, FAQ blocks; `@app` blocks for a reviews app |
 | Merch | `page.merch.json` | `main-merch` + `assets/asmaan-merch.js` | Garment piece blocks, optionally linked to products |
 | Designs | `page.designs.json` | `main-designs` | Flavour blocks (product images) |
 | Wear | `page.wear.json` | `main-wear` | Settings (drop teaser + waitlist) |
-| Ambassador | `page.ambassador.json` | `main-ambassador` + `assets/asmaan-ambassador.js` | Perk and FAQ blocks, form settings |
+| Ambassador (`/pages/join`) | `page.ambassador.json` | `main-ambassador` + `assets/asmaan-ambassador.js` | Perk and FAQ blocks, form settings |
 | Product | `product.json` | `main-product` | Product; accent from metafield, then the section's "Accent colour per product" list |
 
 Global pieces: `asmaan-navbar`, `asmaan-footer`, `cart-drawer` (+ `assets/cart-drawer.js`, exposes `window.asmaanCart.open/close/refresh`), `predictive-search` (+ `assets/predictive-search.js`).
 
-Pages `designs`, `range` and `shop` have templates but no Shopify Page yet; create the pages in Admin and assign the templates to publish them.
+Shopify Pages: drink (template suffix `shop`), merch, wear, designs, range, about, benefits, faq, join (template `ambassador`), contact. The header uses the `main-menu` menu and the 404 page the `404-quick-links` menu (Online Store › Navigation). The footer lists whichever policies exist in Settings › Policies.
 
 ### Conventions
 
 - Prices are formatted client-side with the shop's own money format (`shop.money_format`), mirroring Liquid's `money_without_trailing_zeros`. Change the currency symbol in Admin › Settings › General, not in code.
 - Text that mentions the free-shipping amount uses the token `[free_shipping_threshold]`, replaced with Theme settings › Cart › Free shipping threshold.
 - JavaScript reads section data from a `<script type="application/json">` tag rendered by the section (`#drink-data`, `#predictive-search-labels`, `#designs-panel-labels`, `window.ASMAAN_AMBASSADOR_LABELS`). Add new labels as settings and pass them the same way.
-- The compiled Tailwind file (`assets/asmaan-prototype.css`) is a static build: utility classes that were not in the prototype (for example responsive `sm:`/`lg:` grid classes) do not exist. Use scoped `<style>` in the section instead, as `asmaan-range` does.
+- The compiled Tailwind file (`assets/asmaan-prototype.css`) is a static build from the prototype, so utility classes the prototype never used do not exist in it. `assets/asmaan-utilities.css` supplies the ones the theme uses. After adding new Tailwind classes to a section, regenerate it: list the classes that have no rule in the theme CSS into `missing.txt`, then run Tailwind v4 on this input and copy the output over `asmaan-utilities.css`:
+
+  ```css
+  @layer theme, base, components, utilities;
+  @import "tailwindcss/theme.css" layer(theme) theme(inline reference);
+  @import "tailwindcss/utilities.css" layer(utilities) source(none);
+  @source "./missing.txt";
+  ```
+
+  (`npx @tailwindcss/cli -i input.css -o asmaan-utilities.css --minify`). No preflight and no theme variables are emitted, so existing styles are unaffected. For one-off layout, scoped `<style>` in the section also works.
 - Beware `'key' | t | default: '...'`: a missing translation renders "translation missing", so the default never applies. Add the key to `locales/en.default.json` instead.
 
 ## Drink page pack animation
@@ -58,7 +67,7 @@ Pages `designs`, `range` and `shop` have templates but no Shopify Page yet; crea
 
 ## Validating and deploying
 
-There is no local Shopify CLI. Validate with Shopify's standalone theme checker before pushing:
+Shopify CLI (`shopify store execute`) is used for Admin changes. Validate the theme with Shopify's standalone theme checker before pushing:
 
 ```bash
 npm i @shopify/theme-check-node   # in a scratch folder
@@ -71,9 +80,11 @@ On Windows PowerShell, if script execution policy blocks `npm`, call `& "C:\Prog
 
 ## Before launch (Shopify Admin)
 
-1. Add pack-size variants with prices to each flavour product.
-2. Set the currency format (e.g. `₹{{amount}}`) in Settings › General.
-3. Review the free-shipping threshold in Theme settings › Cart.
-4. Install a subscriptions app if Subscribe & Save is wanted.
-5. Optionally fill the `custom.*` metafields so product data, not block overrides, drives the copy and colours.
+Done: pack variants (12/24/36 Cans at ₹2,400 / ₹4,320 / ₹5,760), `custom.*` metafields on all flavours, all pages, header and 404 menus.
+
+1. Add stock to the variants (inventory is tracked and currently 0), or stop tracking inventory.
+2. Set the currency format (e.g. `₹{{amount}}`) in Settings › General › Store currency.
+3. Review the free-shipping threshold in Theme settings › Cart (currently ₹999).
+4. Add refund, shipping and terms policies in Settings › Policies; the footer lists them automatically.
+5. Install a subscriptions app if Subscribe & Save is wanted.
 6. Switch off "Pre-launch mode" on the drink section.

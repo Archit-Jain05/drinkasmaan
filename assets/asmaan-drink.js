@@ -183,12 +183,6 @@
         var vSrc = imageFor(flavour, v, 'thumb');
         if (vImg && vSrc) vImg.src = vSrc;
       });
-      var panelNote = $('.drink_panel-note');
-      if (panelNote) {
-        var panels = LABELS.panels || {};
-        panelNote.innerHTML = escapeHtml(panels[state.view] || panels.front || '') +
-          (LABELS.dragHint ? ' <span aria-hidden="true">·</span> ' + escapeHtml(LABELS.dragHint) : '');
-      }
 
       // Packs (prices can differ per flavour)
       $$('.drink_pack').forEach(function(btn) {

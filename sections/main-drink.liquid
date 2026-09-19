@@ -93,9 +93,6 @@
       assign first_blurb = f_blurb
       assign first_accent = f_accent
       assign first_img_front = img_front
-      assign first_img_right = img_right
-      assign first_img_back = img_back
-      assign first_img_left = img_left
       assign first_img_label = img_label
     endif
   -%}
@@ -264,37 +261,9 @@
             </div>
           </div>
 
-          <div class="drink_views" role="group" aria-label="{{ section.settings.label_views | escape }}">
-            {%- for view in view_names -%}
-              {%- liquid
-                case view
-                  when 'front'
-                    assign v_img = first_img_front
-                    assign v_label = section.settings.view_front_label
-                  when 'right'
-                    assign v_img = first_img_right
-                    assign v_label = section.settings.view_right_label
-                  when 'back'
-                    assign v_img = first_img_back
-                    assign v_label = section.settings.view_back_label
-                  when 'left'
-                    assign v_img = first_img_left
-                    assign v_label = section.settings.view_left_label
-                endcase
-              -%}
-              <button type="button" class="drink_view" data-view="{{ view }}" data-asmaan-can-view="{{ view }}" aria-pressed="{{ forloop.first }}">
-                {%- if v_img != blank -%}
-                  <img src="{{ v_img | image_url: width: 240 }}" alt="" loading="lazy" width="{{ v_img.width }}" height="{{ v_img.height }}">
-                {%- endif -%}
-                <span>{{ v_label | escape }}</span>
-              </button>
-            {%- endfor -%}
-          </div>
-
-          <p class="drink_panel-note" aria-live="polite">
-            {{ section.settings.panel_front | escape }}
-            {%- if section.settings.drag_hint != blank %} <span aria-hidden="true">·</span> {{ section.settings.drag_hint | escape }}{%- endif -%}
-          </p>
+          {%- if section.settings.drag_hint != blank -%}
+            <p class="drink_panel-note">{{ section.settings.drag_hint | escape }}</p>
+          {%- endif -%}
         </div>
 
         <div class="drink_column">
@@ -794,14 +763,7 @@
       "saves": {{ section.settings.label_saves | json }},
       "save": {{ section.settings.label_save | json }},
       "inPack": {{ section.settings.label_in_pack | json }},
-      "takeThis": {{ section.settings.label_take_this | json }},
-      "dragHint": {{ section.settings.drag_hint | json }},
-      "panels": {
-        "front": {{ section.settings.panel_front | json }},
-        "right": {{ section.settings.panel_right | json }},
-        "back": {{ section.settings.panel_back | json }},
-        "left": {{ section.settings.panel_left | json }}
-      }
+      "takeThis": {{ section.settings.label_take_this | json }}
     }
   }
 </script>
@@ -871,18 +833,7 @@
   }
 </style>
 
-<script>
-  (function() {
-    var nav = document.querySelector('header.navbar');
-    if (!nav) return;
-    function setHeaderHeight() {
-      document.documentElement.style.setProperty('--asmaan-header-h', nav.getBoundingClientRect().height + 'px');
-    }
-    setHeaderHeight();
-    if ('ResizeObserver' in window) new ResizeObserver(setHeaderHeight).observe(nav);
-    window.addEventListener('resize', setHeaderHeight);
-  })();
-</script>
+
 
 {% schema %}
 {
@@ -891,7 +842,10 @@
   "class": "asmaan-drink-section",
   "max_blocks": 50,
   "settings": [
-    { "type": "header", "content": "Products" },
+    {
+      "type": "header",
+      "content": "Products"
+    },
     {
       "type": "collection",
       "id": "collection",
@@ -902,14 +856,58 @@
       "type": "paragraph",
       "content": "Each flavour's name, images and prices come from its Shopify product. Tagline, description and colours come from the product metafields custom.tagline, custom.blurb, custom.accent_color and custom.primary_color, unless overridden on the Flavour block. Pack prices come from the variant whose option value contains the pack's can count (e.g. \"12 Cans\")."
     },
-    { "type": "range", "id": "image_position_front", "label": "Product image position: front", "min": 1, "max": 10, "step": 1, "default": 1 },
-    { "type": "range", "id": "image_position_right", "label": "Product image position: right", "min": 1, "max": 10, "step": 1, "default": 3 },
-    { "type": "range", "id": "image_position_back", "label": "Product image position: back", "min": 1, "max": 10, "step": 1, "default": 4 },
-    { "type": "range", "id": "image_position_left", "label": "Product image position: left", "min": 1, "max": 10, "step": 1, "default": 2 },
-    { "type": "color", "id": "fallback_accent", "label": "Fallback accent colour", "default": "#9089D3" },
-    { "type": "color", "id": "fallback_deep", "label": "Fallback deep colour", "default": "#2A1D4A" },
-
-    { "type": "header", "content": "Selling" },
+    {
+      "type": "range",
+      "id": "image_position_front",
+      "label": "Product image position: front",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "image_position_right",
+      "label": "Product image position: right",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "image_position_back",
+      "label": "Product image position: back",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "image_position_left",
+      "label": "Product image position: left",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "fallback_accent",
+      "label": "Fallback accent colour",
+      "default": "#9089D3"
+    },
+    {
+      "type": "color",
+      "id": "fallback_deep",
+      "label": "Fallback deep colour",
+      "default": "#2A1D4A"
+    },
+    {
+      "type": "header",
+      "content": "Selling"
+    },
     {
       "type": "checkbox",
       "id": "prelaunch_mode",
@@ -917,20 +915,92 @@
       "default": true,
       "info": "When on, the buy buttons open the waitlist form instead of adding to cart."
     },
-    { "type": "checkbox", "id": "enable_subscription", "label": "Show subscription option", "default": true, "info": "Outside pre-launch mode, the option only appears when the product has selling plans (from a subscriptions app)." },
-    { "type": "range", "id": "subscription_discount", "label": "Subscription discount (%)", "min": 0, "max": 50, "step": 1, "unit": "%", "default": 10, "info": "Used for display when the product has no selling plans." },
-    { "type": "text", "id": "subscription_frequencies", "label": "Subscription frequencies", "default": "Every 2 weeks, Monthly, Every 2 months", "info": "Comma separated. Used when the product has no selling plans." },
-    { "type": "range", "id": "subscription_default_frequency", "label": "Default frequency (position)", "min": 1, "max": 6, "step": 1, "default": 2 },
-
-    { "type": "header", "content": "Buy box" },
-    { "type": "text", "id": "banner_text", "label": "Announcement banner", "default": "FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • ZERO SUGAR • ZERO JITTERS" },
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "250 ml · Zero sugar" },
-    { "type": "text", "id": "tagline", "label": "Tagline", "default": "Ambition Tonic" },
-    { "type": "text", "id": "once_title", "label": "One-time option title", "default": "One time" },
-    { "type": "text", "id": "once_note", "label": "One-time option note", "default": "No commitment." },
-    { "type": "text", "id": "subscribe_title", "label": "Subscribe option title", "default": "Subscribe" },
-    { "type": "text", "id": "subscribe_note", "label": "Subscribe option note", "default": "Free shipping · cancel anytime." },
-    { "type": "text", "id": "cta_note", "label": "Note under the button", "default": "Checkout opens with the first batch. The list gets it first." },
+    {
+      "type": "checkbox",
+      "id": "enable_subscription",
+      "label": "Show subscription option",
+      "default": true,
+      "info": "Outside pre-launch mode, the option only appears when the product has selling plans (from a subscriptions app)."
+    },
+    {
+      "type": "range",
+      "id": "subscription_discount",
+      "label": "Subscription discount (%)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 10,
+      "info": "Used for display when the product has no selling plans."
+    },
+    {
+      "type": "text",
+      "id": "subscription_frequencies",
+      "label": "Subscription frequencies",
+      "default": "Every 2 weeks, Monthly, Every 2 months",
+      "info": "Comma separated. Used when the product has no selling plans."
+    },
+    {
+      "type": "range",
+      "id": "subscription_default_frequency",
+      "label": "Default frequency (position)",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Buy box"
+    },
+    {
+      "type": "text",
+      "id": "banner_text",
+      "label": "Announcement banner",
+      "default": "FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • ZERO SUGAR • ZERO JITTERS"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "250 ml · Zero sugar"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Ambition Tonic"
+    },
+    {
+      "type": "text",
+      "id": "once_title",
+      "label": "One-time option title",
+      "default": "One time"
+    },
+    {
+      "type": "text",
+      "id": "once_note",
+      "label": "One-time option note",
+      "default": "No commitment."
+    },
+    {
+      "type": "text",
+      "id": "subscribe_title",
+      "label": "Subscribe option title",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "subscribe_note",
+      "label": "Subscribe option note",
+      "default": "Free shipping · cancel anytime."
+    },
+    {
+      "type": "text",
+      "id": "cta_note",
+      "label": "Note under the button",
+      "default": "Checkout opens with the first batch. The list gets it first."
+    },
     {
       "type": "textarea",
       "id": "trust_items",
@@ -938,168 +1008,621 @@
       "default": "Secure checkout\nShips in 2–4 days\nCancel anytime\nFree shipping over [free_shipping_threshold]",
       "info": "One item per line. [free_shipping_threshold] is replaced with the amount set in Theme settings › Cart."
     },
-    { "type": "checkbox", "id": "show_stock", "label": "Show batch stock meter", "default": true },
-    { "type": "number", "id": "stock_left", "label": "Packs left", "default": 47 },
-    { "type": "range", "id": "stock_sold_percent", "label": "Meter filled (%)", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 80 },
-    { "type": "text", "id": "stock_note", "label": "Stock note", "default": "packs left in the first batch" },
-
-    { "type": "header", "content": "Gallery" },
-    { "type": "range", "id": "spacing", "label": "Page spacing", "min": 100, "max": 160, "step": 5, "unit": "%", "default": 130, "info": "Scales the space between elements on this page." },
-    { "type": "range", "id": "can_idle_spin", "label": "3D can idle spin", "min": 0, "max": 1, "step": 0.1, "default": 0.3, "info": "How fast the can turns on its own. 0 keeps it still until dragged." },
-    { "type": "text", "id": "view_front_label", "label": "Front view label", "default": "Front" },
-    { "type": "text", "id": "view_right_label", "label": "Right view label", "default": "Right" },
-    { "type": "text", "id": "view_back_label", "label": "Back view label", "default": "Back" },
-    { "type": "text", "id": "view_left_label", "label": "Left view label", "default": "Left" },
-    { "type": "text", "id": "panel_front", "label": "Front panel caption", "default": "Front panel · Wordmark & claim" },
-    { "type": "text", "id": "panel_right", "label": "Right panel caption", "default": "Right panel · Ingredients & recipe" },
-    { "type": "text", "id": "panel_back", "label": "Back panel caption", "default": "Back panel · Nutritional values & volume" },
-    { "type": "text", "id": "panel_left", "label": "Left panel caption", "default": "Left panel · Brand story & mission" },
-    { "type": "text", "id": "drag_hint", "label": "Drag hint", "default": "drag the can to turn it" },
-
-    { "type": "header", "content": "Formula" },
-    { "type": "checkbox", "id": "show_formula", "label": "Show formula", "default": true },
-    { "type": "textarea", "id": "formula_heading", "label": "Heading", "default": "What is\nin it" },
-    { "type": "textarea", "id": "formula_intro", "label": "Intro", "default": "Five actives, at doses worth printing. No proprietary blend, nothing rounded up, and nothing in there to make the label look longer." },
-    { "type": "text", "id": "facts_heading", "label": "Facts heading", "default": "On the can" },
-    { "type": "textarea", "id": "facts_note", "label": "Facts note", "default": "Serve cold enough that the first sip is a decision. Once open, keep it refrigerated and finish it the same day." },
-
-    { "type": "header", "content": "Pack scene" },
-    { "type": "checkbox", "id": "show_pack_scene", "label": "Show pack scene", "default": true },
-    { "type": "text", "id": "pack_eyebrow", "label": "Eyebrow", "default": "The pack" },
-    { "type": "textarea", "id": "pack_heading", "label": "Heading", "default": "Twelve\nat a time" },
-    { "type": "textarea", "id": "pack_body", "label": "Text", "default": "Cans ship in a plain shipper, four across and as deep as the tier you take. Nothing printed on it but the wordmark and a number — what is worth looking at is inside it." },
-    { "type": "text", "id": "pack_cta", "label": "Link text", "default": "Take it to the bag" },
-    { "type": "number", "id": "pack_frame_count", "label": "Animation frame count", "default": 150, "info": "Number of pack-frame-XX.webp files in the theme assets." },
-    { "type": "text", "id": "label_spec_tier", "label": "Spec label: tier", "default": "Tier" },
-    { "type": "text", "id": "label_spec_inside", "label": "Spec label: inside", "default": "Inside" },
-    { "type": "text", "id": "label_spec_price", "label": "Spec label: price", "default": "Price" },
-
-    { "type": "header", "content": "First batch story" },
-    { "type": "checkbox", "id": "show_story", "label": "Show story", "default": true },
-    { "type": "text", "id": "story_eyebrow", "label": "Eyebrow", "default": "The first batch" },
-    { "type": "text", "id": "story_word_1", "label": "Big word 1", "default": "Made" },
-    { "type": "text", "id": "story_word_2", "label": "Big word 2", "default": "Once" },
-    { "type": "textarea", "id": "story_body", "label": "Text", "default": "Two hundred and forty packs, hand-numbered, brewed in one run. No second batch at this recipe — what is in the first is what the first tastes like. The list is told the morning it ships, and nobody else is told at all." },
-
-    { "type": "header", "content": "Range" },
-    { "type": "checkbox", "id": "show_range", "label": "Show range", "default": true },
-    { "type": "textarea", "id": "range_heading", "label": "Heading", "default": "The range" },
-    { "type": "textarea", "id": "range_intro", "label": "Intro", "default": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it." },
-
-    { "type": "header", "content": "Reviews" },
-    { "type": "checkbox", "id": "show_reviews", "label": "Show reviews", "default": false },
-    { "type": "text", "id": "reviews_heading", "label": "Heading", "default": "From the first tasting" },
-    { "type": "textarea", "id": "reviews_note", "label": "Note", "info": "Optional line under the heading." },
-
-    { "type": "header", "content": "FAQ" },
-    { "type": "textarea", "id": "faq_heading", "label": "Heading", "default": "Frequently asked\nquestions" },
-
-    { "type": "header", "content": "Waitlist (pre-launch)" },
-    { "type": "text", "id": "waitlist_heading", "label": "Heading", "default": "First in line" },
-    { "type": "textarea", "id": "waitlist_body", "label": "Text", "default": "Leave an address and the batch is yours to claim the morning checkout opens. One mail, nothing else." },
-    { "type": "text", "id": "waitlist_email_label", "label": "Email field label", "default": "Your email address" },
-    { "type": "text", "id": "waitlist_button", "label": "Button", "default": "Claim a pack" },
-    { "type": "text", "id": "waitlist_success", "label": "Success message", "default": "Held. We'll write the morning the first batch ships." },
-    { "type": "text", "id": "waitlist_tags", "label": "Customer tags", "default": "newsletter,drink-first-batch" },
-
-    { "type": "header", "content": "Labels" },
-    { "type": "text", "id": "label_flavour", "label": "Flavour", "default": "Flavour" },
-    { "type": "text", "id": "label_pack", "label": "Pack", "default": "Pack" },
-    { "type": "text", "id": "label_delivery", "label": "Delivery", "default": "Delivery" },
-    { "type": "text", "id": "label_every", "label": "Every", "default": "Every" },
-    { "type": "text", "id": "label_save", "label": "Save", "default": "save" },
-    { "type": "text", "id": "label_saves", "label": "Saves", "default": "saves" },
-    { "type": "text", "id": "label_cans", "label": "Cans", "default": "cans" },
-    { "type": "text", "id": "label_can", "label": "Per can", "default": "can" },
-    { "type": "text", "id": "label_each", "label": "Each", "default": "each" },
-    { "type": "text", "id": "label_add", "label": "Add to cart button", "default": "Add to bag" },
-    { "type": "text", "id": "label_subscribe", "label": "Subscribe button", "default": "Start subscription" },
-    { "type": "text", "id": "label_waitlist", "label": "Pre-launch button", "info": "Optional. When empty, the normal add / subscribe labels are shown and open the waitlist." },
-    { "type": "text", "id": "label_sold_out", "label": "Sold out", "default": "Sold out" },
-    { "type": "text", "id": "label_adding", "label": "Adding", "default": "Adding…" },
-    { "type": "text", "id": "label_add_error", "label": "Add to cart error", "default": "Could not add to bag. Please try again." },
-    { "type": "text", "id": "label_in_pack", "label": "Range: selected flavour", "default": "In your pack" },
-    { "type": "text", "id": "label_take_this", "label": "Range: other flavour", "default": "Take this one" },
-    { "type": "text", "id": "label_views", "label": "Gallery views (accessibility)", "default": "Can panels" },
-    { "type": "text", "id": "label_quantity", "label": "Quantity (accessibility)", "default": "Packs quantity" },
-    { "type": "text", "id": "label_fewer", "label": "Fewer (accessibility)", "default": "One pack fewer" },
-    { "type": "text", "id": "label_more", "label": "More (accessibility)", "default": "One pack more" },
-    { "type": "text", "id": "label_close", "label": "Close (accessibility)", "default": "Close" }
+    {
+      "type": "checkbox",
+      "id": "show_stock",
+      "label": "Show batch stock meter",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "stock_left",
+      "label": "Packs left",
+      "default": 47
+    },
+    {
+      "type": "range",
+      "id": "stock_sold_percent",
+      "label": "Meter filled (%)",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "text",
+      "id": "stock_note",
+      "label": "Stock note",
+      "default": "packs left in the first batch"
+    },
+    {
+      "type": "header",
+      "content": "Gallery"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Page spacing",
+      "min": 100,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 130,
+      "info": "Scales the space between elements on this page."
+    },
+    {
+      "type": "range",
+      "id": "can_idle_spin",
+      "label": "3D can idle spin",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3,
+      "info": "How fast the can turns on its own. 0 keeps it still until dragged."
+    },
+    {
+      "type": "text",
+      "id": "drag_hint",
+      "label": "Drag hint",
+      "default": "Drag the can to turn it"
+    },
+    {
+      "type": "header",
+      "content": "Formula"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_formula",
+      "label": "Show formula",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "formula_heading",
+      "label": "Heading",
+      "default": "What is\nin it"
+    },
+    {
+      "type": "textarea",
+      "id": "formula_intro",
+      "label": "Intro",
+      "default": "Five actives, at doses worth printing. No proprietary blend, nothing rounded up, and nothing in there to make the label look longer."
+    },
+    {
+      "type": "text",
+      "id": "facts_heading",
+      "label": "Facts heading",
+      "default": "On the can"
+    },
+    {
+      "type": "textarea",
+      "id": "facts_note",
+      "label": "Facts note",
+      "default": "Serve cold enough that the first sip is a decision. Once open, keep it refrigerated and finish it the same day."
+    },
+    {
+      "type": "header",
+      "content": "Pack scene"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pack_scene",
+      "label": "Show pack scene",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "pack_eyebrow",
+      "label": "Eyebrow",
+      "default": "The pack"
+    },
+    {
+      "type": "textarea",
+      "id": "pack_heading",
+      "label": "Heading",
+      "default": "Twelve\nat a time"
+    },
+    {
+      "type": "textarea",
+      "id": "pack_body",
+      "label": "Text",
+      "default": "Cans ship in a plain shipper, four across and as deep as the tier you take. Nothing printed on it but the wordmark and a number — what is worth looking at is inside it."
+    },
+    {
+      "type": "text",
+      "id": "pack_cta",
+      "label": "Link text",
+      "default": "Take it to the bag"
+    },
+    {
+      "type": "number",
+      "id": "pack_frame_count",
+      "label": "Animation frame count",
+      "default": 150,
+      "info": "Number of pack-frame-XX.webp files in the theme assets."
+    },
+    {
+      "type": "text",
+      "id": "label_spec_tier",
+      "label": "Spec label: tier",
+      "default": "Tier"
+    },
+    {
+      "type": "text",
+      "id": "label_spec_inside",
+      "label": "Spec label: inside",
+      "default": "Inside"
+    },
+    {
+      "type": "text",
+      "id": "label_spec_price",
+      "label": "Spec label: price",
+      "default": "Price"
+    },
+    {
+      "type": "header",
+      "content": "First batch story"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_story",
+      "label": "Show story",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "story_eyebrow",
+      "label": "Eyebrow",
+      "default": "The first batch"
+    },
+    {
+      "type": "text",
+      "id": "story_word_1",
+      "label": "Big word 1",
+      "default": "Made"
+    },
+    {
+      "type": "text",
+      "id": "story_word_2",
+      "label": "Big word 2",
+      "default": "Once"
+    },
+    {
+      "type": "textarea",
+      "id": "story_body",
+      "label": "Text",
+      "default": "Two hundred and forty packs, hand-numbered, brewed in one run. No second batch at this recipe — what is in the first is what the first tastes like. The list is told the morning it ships, and nobody else is told at all."
+    },
+    {
+      "type": "header",
+      "content": "Range"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_range",
+      "label": "Show range",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "range_heading",
+      "label": "Heading",
+      "default": "The range"
+    },
+    {
+      "type": "textarea",
+      "id": "range_intro",
+      "label": "Intro",
+      "default": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it."
+    },
+    {
+      "type": "header",
+      "content": "Reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show reviews",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "reviews_heading",
+      "label": "Heading",
+      "default": "From the first tasting"
+    },
+    {
+      "type": "textarea",
+      "id": "reviews_note",
+      "label": "Note",
+      "info": "Optional line under the heading."
+    },
+    {
+      "type": "header",
+      "content": "FAQ"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_heading",
+      "label": "Heading",
+      "default": "Frequently asked\nquestions"
+    },
+    {
+      "type": "header",
+      "content": "Waitlist (pre-launch)"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_heading",
+      "label": "Heading",
+      "default": "First in line"
+    },
+    {
+      "type": "textarea",
+      "id": "waitlist_body",
+      "label": "Text",
+      "default": "Leave an address and the batch is yours to claim the morning checkout opens. One mail, nothing else."
+    },
+    {
+      "type": "text",
+      "id": "waitlist_email_label",
+      "label": "Email field label",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_button",
+      "label": "Button",
+      "default": "Claim a pack"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_success",
+      "label": "Success message",
+      "default": "Held. We'll write the morning the first batch ships."
+    },
+    {
+      "type": "text",
+      "id": "waitlist_tags",
+      "label": "Customer tags",
+      "default": "newsletter,drink-first-batch"
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "text",
+      "id": "label_flavour",
+      "label": "Flavour",
+      "default": "Flavour"
+    },
+    {
+      "type": "text",
+      "id": "label_pack",
+      "label": "Pack",
+      "default": "Pack"
+    },
+    {
+      "type": "text",
+      "id": "label_delivery",
+      "label": "Delivery",
+      "default": "Delivery"
+    },
+    {
+      "type": "text",
+      "id": "label_every",
+      "label": "Every",
+      "default": "Every"
+    },
+    {
+      "type": "text",
+      "id": "label_save",
+      "label": "Save",
+      "default": "save"
+    },
+    {
+      "type": "text",
+      "id": "label_saves",
+      "label": "Saves",
+      "default": "saves"
+    },
+    {
+      "type": "text",
+      "id": "label_cans",
+      "label": "Cans",
+      "default": "cans"
+    },
+    {
+      "type": "text",
+      "id": "label_can",
+      "label": "Per can",
+      "default": "can"
+    },
+    {
+      "type": "text",
+      "id": "label_each",
+      "label": "Each",
+      "default": "each"
+    },
+    {
+      "type": "text",
+      "id": "label_add",
+      "label": "Add to cart button",
+      "default": "Add to bag"
+    },
+    {
+      "type": "text",
+      "id": "label_subscribe",
+      "label": "Subscribe button",
+      "default": "Start subscription"
+    },
+    {
+      "type": "text",
+      "id": "label_waitlist",
+      "label": "Pre-launch button",
+      "info": "Optional. When empty, the normal add / subscribe labels are shown and open the waitlist."
+    },
+    {
+      "type": "text",
+      "id": "label_sold_out",
+      "label": "Sold out",
+      "default": "Sold out"
+    },
+    {
+      "type": "text",
+      "id": "label_adding",
+      "label": "Adding",
+      "default": "Adding…"
+    },
+    {
+      "type": "text",
+      "id": "label_add_error",
+      "label": "Add to cart error",
+      "default": "Could not add to bag. Please try again."
+    },
+    {
+      "type": "text",
+      "id": "label_in_pack",
+      "label": "Range: selected flavour",
+      "default": "In your pack"
+    },
+    {
+      "type": "text",
+      "id": "label_take_this",
+      "label": "Range: other flavour",
+      "default": "Take this one"
+    },
+    {
+      "type": "text",
+      "id": "label_quantity",
+      "label": "Quantity (accessibility)",
+      "default": "Packs quantity"
+    },
+    {
+      "type": "text",
+      "id": "label_fewer",
+      "label": "Fewer (accessibility)",
+      "default": "One pack fewer"
+    },
+    {
+      "type": "text",
+      "id": "label_more",
+      "label": "More (accessibility)",
+      "default": "One pack more"
+    },
+    {
+      "type": "text",
+      "id": "label_close",
+      "label": "Close (accessibility)",
+      "default": "Close"
+    }
   ],
   "blocks": [
-    { "type": "@app" },
+    {
+      "type": "@app"
+    },
     {
       "type": "flavour",
       "name": "Flavour",
       "settings": [
-        { "type": "product", "id": "product", "label": "Product" },
-        { "type": "paragraph", "content": "Leave the fields below empty to use the product's own data." },
-        { "type": "text", "id": "title", "label": "Name override" },
-        { "type": "text", "id": "tag", "label": "Tagline override" },
-        { "type": "textarea", "id": "blurb", "label": "Description override" },
-        { "type": "color", "id": "accent", "label": "Accent colour override" },
-        { "type": "color", "id": "deep", "label": "Deep colour override" },
-        { "type": "image_picker", "id": "label_image", "label": "3D label texture override", "info": "The unwrapped 360° can print. Defaults to the product's last image." }
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "paragraph",
+          "content": "Leave the fields below empty to use the product's own data."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name override"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tagline override"
+        },
+        {
+          "type": "textarea",
+          "id": "blurb",
+          "label": "Description override"
+        },
+        {
+          "type": "color",
+          "id": "accent",
+          "label": "Accent colour override"
+        },
+        {
+          "type": "color",
+          "id": "deep",
+          "label": "Deep colour override"
+        },
+        {
+          "type": "image_picker",
+          "id": "label_image",
+          "label": "3D label texture override",
+          "info": "The unwrapped 360° can print. Defaults to the product's last image."
+        }
       ]
     },
     {
       "type": "pack",
       "name": "Pack tier",
       "settings": [
-        { "type": "number", "id": "cans", "label": "Cans in pack", "default": 12 },
-        { "type": "text", "id": "tag", "label": "Tag", "default": "Starter" },
-        { "type": "text", "id": "note", "label": "Note" },
-        { "type": "number", "id": "price", "label": "Fallback price", "default": 2400, "info": "In whole currency units. Shown only when no matching product variant exists." },
-        { "type": "checkbox", "id": "featured", "label": "Selected by default", "default": false }
+        {
+          "type": "number",
+          "id": "cans",
+          "label": "Cans in pack",
+          "default": 12
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag",
+          "default": "Starter"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Note"
+        },
+        {
+          "type": "number",
+          "id": "price",
+          "label": "Fallback price",
+          "default": 2400,
+          "info": "In whole currency units. Shown only when no matching product variant exists."
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Selected by default",
+          "default": false
+        }
       ]
     },
     {
       "type": "badge",
       "name": "Badge",
       "settings": [
-        { "type": "text", "id": "title", "label": "Title", "default": "Calm focus" },
-        { "type": "text", "id": "text", "label": "Text", "default": "Drive without the jitter." }
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Calm focus"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Drive without the jitter."
+        }
       ]
     },
     {
       "type": "active",
       "name": "Active ingredient",
       "settings": [
-        { "type": "text", "id": "dose", "label": "Dose", "default": "300 mg" },
-        { "type": "text", "id": "name", "label": "Name", "default": "Ingredient" },
-        { "type": "textarea", "id": "description", "label": "Description" },
-        { "type": "checkbox", "id": "show_in_pack_scene", "label": "Show as card in pack scene", "default": false, "info": "Up to three cards are shown." },
-        { "type": "textarea", "id": "pack_scene_text", "label": "Pack scene card text", "info": "Uses the description when empty." }
+        {
+          "type": "text",
+          "id": "dose",
+          "label": "Dose",
+          "default": "300 mg"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Ingredient"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_in_pack_scene",
+          "label": "Show as card in pack scene",
+          "default": false,
+          "info": "Up to three cards are shown."
+        },
+        {
+          "type": "textarea",
+          "id": "pack_scene_text",
+          "label": "Pack scene card text",
+          "info": "Uses the description when empty."
+        }
       ]
     },
     {
       "type": "fact",
       "name": "Can fact",
       "settings": [
-        { "type": "text", "id": "label", "label": "Label", "default": "Volume" },
-        { "type": "text", "id": "value", "label": "Value", "default": "250 ml" }
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Volume"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "250 ml"
+        }
       ]
     },
     {
       "type": "review",
       "name": "Review",
       "settings": [
-        { "type": "textarea", "id": "quote", "label": "Quote", "default": "Write a review." },
-        { "type": "text", "id": "name", "label": "Name", "default": "Name" },
-        { "type": "text", "id": "role", "label": "Role or city" }
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Write a review."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Name"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Role or city"
+        }
       ]
     },
     {
       "type": "faq",
       "name": "FAQ",
       "settings": [
-        { "type": "text", "id": "question", "label": "Question", "default": "Question" },
-        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Answer</p>" }
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Answer</p>"
+        }
       ]
     }
   ],
   "presets": [
-    { "name": "Drink product page" }
+    {
+      "name": "Drink product page"
+    }
   ]
 }
 {% endschema %}

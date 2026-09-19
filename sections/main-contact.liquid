@@ -1,107 +1,82 @@
-<section class="asmaan-subpage-section">
+{%- comment -%}
+  Contact page. Styles are scoped here because the compiled Tailwind build does not include
+  the utility classes this layout needs (grid columns, spacing, form controls).
+{%- endcomment -%}
+
+<section class="asmaan-subpage-section asmaan-contact">
   <div class="padding-global">
-    <div class="container-large max-w-4xl mx-auto px-4">
+    <div class="container-large">
       <div class="asmaan-subpage-hero">
-        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'Direct Communication' }}</span>
-        <h1 class="asmaan-subpage-title">{{ section.settings.title | default: 'Get in Touch' }}</h1>
-        <p class="asmaan-subpage-sub">
-          {{ section.settings.subtitle | default: 'Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours.' }}
-        </p>
+        {%- if section.settings.tag != blank -%}<span class="asmaan-subpage-tag">{{ section.settings.tag | escape }}</span>{%- endif -%}
+        <h1 class="asmaan-subpage-title">{{ section.settings.title | escape }}</h1>
+        {%- if section.settings.subtitle != blank -%}<p class="asmaan-subpage-sub">{{ section.settings.subtitle | escape }}</p>{%- endif -%}
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-        <!-- Contact Info Side -->
-        <div class="space-y-6">
-          <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-            <span class="font-mono text-xs uppercase tracking-widest text-white/50 block mb-1">Email Directly</span>
-            <a href="mailto:{{ section.settings.email | default: 'hello@drinkasmaan.com' }}" class="text-white font-medium hover:underline text-sm">{{ section.settings.email | default: 'hello@drinkasmaan.com' }}</a>
-          </div>
+      <div class="asmaan-contact__grid">
+        <aside class="asmaan-contact__info">
+          {%- if section.settings.email != blank -%}
+            <div class="asmaan-contact__card">
+              <span class="asmaan-contact__label">{{ section.settings.email_label | escape }}</span>
+              <a href="mailto:{{ section.settings.email | escape }}" class="asmaan-contact__value is-link">{{ section.settings.email | escape }}</a>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.address != blank -%}
+            <div class="asmaan-contact__card">
+              <span class="asmaan-contact__label">{{ section.settings.address_label | escape }}</span>
+              <div class="asmaan-contact__value">{{ section.settings.address | escape | newline_to_br }}</div>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.hours != blank -%}
+            <div class="asmaan-contact__card">
+              <span class="asmaan-contact__label">{{ section.settings.hours_label | escape }}</span>
+              <div class="asmaan-contact__value">{{ section.settings.hours | escape }}</div>
+            </div>
+          {%- endif -%}
+        </aside>
 
-          <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-            <span class="font-mono text-xs uppercase tracking-widest text-white/50 block mb-1">Studio Inquiries</span>
-            <p class="text-white/80 text-sm">{{ section.settings.address | default: 'Asmaan Botanical Labs<br>Bandra West, Mumbai &bull; 400050' }}</p>
-          </div>
-
-          <div class="p-6 rounded-2xl bg-white/[0.03] border border-white/10">
-            <span class="font-mono text-xs uppercase tracking-widest text-white/50 block mb-1">Response Hours</span>
-            <p class="text-white/80 text-sm">{{ section.settings.hours | default: 'Mon &ndash; Fri: 09:00 &ndash; 19:00 IST' }}</p>
-          </div>
-        </div>
-
-        <!-- Contact Form -->
-        <div class="md:col-span-2 p-8 rounded-2xl bg-white/[0.03] border border-white/10">
-          {% form 'contact' %}
+        <div class="asmaan-contact__card asmaan-contact__form-card">
+          {% form 'contact', id: 'ContactForm', class: 'asmaan-contact__form' %}
             {%- if form.posted_successfully? -%}
-              <div class="p-6 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-center mb-6">
-                <p class="font-bold mb-1">Message Dispatched Successfully</p>
-                <p class="text-xs text-emerald-400/80">Thank you for writing to Asmaan. Our studio team will review your inquiry and follow up promptly.</p>
+              <div class="asmaan-contact__notice is-success" role="status">
+                <p class="asmaan-contact__notice-title">{{ section.settings.success_title | escape }}</p>
+                <p>{{ section.settings.success_body | escape }}</p>
               </div>
             {%- endif -%}
 
             {%- if form.errors -%}
-              <div class="p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-rose-300 text-sm mb-6">
-                {{ form.errors | default_errors }}
+              <div class="asmaan-contact__notice is-error" role="alert">{{ form.errors | default_errors }}</div>
+            {%- endif -%}
+
+            <div class="asmaan-contact__row">
+              <div class="asmaan-contact__field">
+                <label for="ContactFormName" class="asmaan-contact__label">{{ section.settings.label_name | escape }}</label>
+                <input type="text" name="contact[name]" id="ContactFormName" value="{{ form.name | escape }}" required autocomplete="name" placeholder="{{ section.settings.placeholder_name | escape }}" class="asmaan-contact__input">
+              </div>
+              <div class="asmaan-contact__field">
+                <label for="ContactFormEmail" class="asmaan-contact__label">{{ section.settings.label_email | escape }}</label>
+                <input type="email" name="contact[email]" id="ContactFormEmail" value="{{ form.email | escape }}" required autocomplete="email" placeholder="{{ section.settings.placeholder_email | escape }}" class="asmaan-contact__input">
+              </div>
+            </div>
+
+            {%- assign inquiry_options = section.settings.inquiry_options | newline_to_br | split: '<br />' -%}
+            {%- if section.settings.inquiry_options != blank -%}
+              <div class="asmaan-contact__field">
+                <label for="ContactFormSubject" class="asmaan-contact__label">{{ section.settings.label_inquiry | escape }}</label>
+                <select name="contact[inquiry_type]" id="ContactFormSubject" class="asmaan-contact__input">
+                  {%- for opt in inquiry_options -%}
+                    {%- assign opt_text = opt | strip -%}
+                    {%- if opt_text != blank -%}<option value="{{ opt_text | escape }}">{{ opt_text | escape }}</option>{%- endif -%}
+                  {%- endfor -%}
+                </select>
               </div>
             {%- endif -%}
 
-            <div class="space-y-5">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label for="ContactFormName" class="block font-mono text-xs uppercase tracking-wider text-white/60 mb-2">Name</label>
-                  <input
-                    type="text"
-                    name="contact[name]"
-                    id="ContactFormName"
-                    value="{% if form.name %}{{ form.name }}{% endif %}"
-                    required
-                    placeholder="Your name"
-                    class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
-                  >
-                </div>
-                <div>
-                  <label for="ContactFormEmail" class="block font-mono text-xs uppercase tracking-wider text-white/60 mb-2">Email Address</label>
-                  <input
-                    type="email"
-                    name="contact[email]"
-                    id="ContactFormEmail"
-                    value="{% if form.email %}{{ form.email }}{% endif %}"
-                    required
-                    placeholder="your.email@domain.com"
-                    class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
-                  >
-                </div>
-              </div>
-
-              <div>
-                <label for="ContactFormSubject" class="block font-mono text-xs uppercase tracking-wider text-white/60 mb-2">Inquiry Type</label>
-                <select
-                  name="contact[inquiry_type]"
-                  id="ContactFormSubject"
-                  class="w-full bg-black border border-white/20 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-white transition-colors"
-                >
-                  <option value="General Support">General Support &amp; Order Status</option>
-                  <option value="Wholesale">Wholesale &amp; Retail Distribution</option>
-                  <option value="Creator & Press">Creator Collaboration &amp; Press</option>
-                  <option value="Other">Other Inquiry</option>
-                </select>
-              </div>
-
-              <div>
-                <label for="ContactFormMessage" class="block font-mono text-xs uppercase tracking-wider text-white/60 mb-2">Message</label>
-                <textarea
-                  name="contact[body]"
-                  id="ContactFormMessage"
-                  rows="5"
-                  required
-                  placeholder="How can we assist your creative journey?"
-                  class="w-full bg-black/60 border border-white/20 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white transition-colors"
-                >{% if form.body %}{{ form.body }}{% endif %}</textarea>
-              </div>
-
-              <button type="submit" class="button is-hero is-primary is-full">
-                Dispatch Message
-              </button>
+            <div class="asmaan-contact__field">
+              <label for="ContactFormMessage" class="asmaan-contact__label">{{ section.settings.label_message | escape }}</label>
+              <textarea name="contact[body]" id="ContactFormMessage" rows="6" required placeholder="{{ section.settings.placeholder_message | escape }}" class="asmaan-contact__input">{{ form.body | escape }}</textarea>
             </div>
+
+            <button type="submit" class="button is-hero is-primary is-full asmaan-contact__submit">{{ section.settings.submit_text | escape }}</button>
           {% endform %}
         </div>
       </div>
@@ -109,53 +84,119 @@
   </div>
 </section>
 
+<style>
+  .asmaan-contact__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 2rem;
+    max-width: 60rem;
+    margin: 3rem auto 5rem;
+    align-items: start;
+  }
+  .asmaan-contact__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .asmaan-contact__card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .asmaan-contact__form-card { padding: 2rem; }
+  .asmaan-contact__label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .asmaan-contact__value {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .asmaan-contact__value.is-link { color: #fff; text-decoration: none; word-break: break-word; }
+  .asmaan-contact__value.is-link:hover { text-decoration: underline; }
+  .asmaan-contact__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .asmaan-contact__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+  .asmaan-contact__field { min-width: 0; }
+  .asmaan-contact__input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font: inherit;
+    font-size: 0.9375rem;
+    transition: border-color 0.2s ease;
+  }
+  .asmaan-contact__input::placeholder { color: rgba(255, 255, 255, 0.35); }
+  .asmaan-contact__input:focus { outline: none; border-color: #fff; }
+  select.asmaan-contact__input { background: #000; }
+  textarea.asmaan-contact__input { resize: vertical; min-height: 9rem; }
+  .asmaan-contact__submit { margin-top: 0.5rem; }
+  .asmaan-contact__notice {
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .asmaan-contact__notice.is-success { background: rgba(6, 78, 59, 0.4); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+  .asmaan-contact__notice.is-error { background: rgba(76, 5, 25, 0.4); border: 1px solid rgba(244, 63, 94, 0.4); color: #fda4af; }
+  .asmaan-contact__notice-title { font-weight: 700; margin-bottom: 0.25rem; }
+
+  @media (max-width: 749px) {
+    .asmaan-contact__grid { grid-template-columns: minmax(0, 1fr); margin-top: 2rem; }
+    .asmaan-contact__row { grid-template-columns: minmax(0, 1fr); }
+    .asmaan-contact__form-card { padding: 1.5rem; }
+  }
+</style>
+
 {% schema %}
 {
-  "name": "Contact Page",
+  "name": "Contact page",
   "tag": "section",
   "class": "section-main-contact",
   "settings": [
-    {
-      "type": "text",
-      "id": "tag",
-      "label": "Hero Tagline",
-      "default": "Direct Communication"
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Hero Title",
-      "default": "Get in Touch"
-    },
-    {
-      "type": "textarea",
-      "id": "subtitle",
-      "label": "Hero Subtitle",
-      "default": "Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours."
-    },
-    {
-      "type": "text",
-      "id": "email",
-      "label": "Support Email",
-      "default": "hello@drinkasmaan.com"
-    },
-    {
-      "type": "textarea",
-      "id": "address",
-      "label": "Studio Address (HTML allowed)",
-      "default": "Asmaan Botanical Labs<br>Bandra West, Mumbai &bull; 400050"
-    },
-    {
-      "type": "text",
-      "id": "hours",
-      "label": "Response Hours",
-      "default": "Mon – Fri: 09:00 – 19:00 IST"
-    }
+    { "type": "text", "id": "tag", "label": "Tagline", "default": "Direct Communication" },
+    { "type": "text", "id": "title", "label": "Title", "default": "Get in Touch" },
+    { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours." },
+    { "type": "header", "content": "Contact details" },
+    { "type": "text", "id": "email_label", "label": "Email label", "default": "Email Directly" },
+    { "type": "text", "id": "email", "label": "Support email", "default": "hello@drinkasmaan.com" },
+    { "type": "text", "id": "address_label", "label": "Address label", "default": "Studio Inquiries" },
+    { "type": "textarea", "id": "address", "label": "Address", "default": "Asmaan Botanical Labs\nBandra West, Mumbai • 400050" },
+    { "type": "text", "id": "hours_label", "label": "Hours label", "default": "Response Hours" },
+    { "type": "text", "id": "hours", "label": "Response hours", "default": "Mon – Fri: 09:00 – 19:00 IST" },
+    { "type": "header", "content": "Form" },
+    { "type": "text", "id": "label_name", "label": "Name label", "default": "Name" },
+    { "type": "text", "id": "placeholder_name", "label": "Name placeholder", "default": "Your name" },
+    { "type": "text", "id": "label_email", "label": "Email label", "default": "Email Address" },
+    { "type": "text", "id": "placeholder_email", "label": "Email placeholder", "default": "your.email@domain.com" },
+    { "type": "text", "id": "label_inquiry", "label": "Inquiry label", "default": "Inquiry Type" },
+    { "type": "textarea", "id": "inquiry_options", "label": "Inquiry options", "default": "General Support & Order Status\nWholesale & Retail Distribution\nCreator Collaboration & Press\nOther Inquiry", "info": "One per line. Leave empty to hide the field." },
+    { "type": "text", "id": "label_message", "label": "Message label", "default": "Message" },
+    { "type": "text", "id": "placeholder_message", "label": "Message placeholder", "default": "How can we help?" },
+    { "type": "text", "id": "submit_text", "label": "Button", "default": "Send Message" },
+    { "type": "text", "id": "success_title", "label": "Success title", "default": "Message sent" },
+    { "type": "textarea", "id": "success_body", "label": "Success message", "default": "Thank you for writing to Asmaan. Our team will review your inquiry and follow up promptly." }
   ],
   "presets": [
-    {
-      "name": "Contact Page"
-    }
+    { "name": "Contact page" }
   ]
 }
 {% endschema %}
