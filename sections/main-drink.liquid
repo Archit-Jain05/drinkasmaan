@@ -421,7 +421,15 @@
               data-total-frames="150"
               data-first-frame="{{ 'pack-frame-01.webp' | asset_url }}"
             >
-              <canvas id="pack-scroll-canvas" class="pack_scroll-canvas"></canvas>
+              <img
+                id="pack-scroll-img"
+                class="pack_scroll-img"
+                src="{{ 'pack-frame-01.webp' | asset_url }}"
+                alt="Asmaan Pack Carton"
+                loading="eager"
+                decoding="async"
+              >
+              <canvas id="pack-scroll-canvas" class="pack_scroll-canvas" style="display: none;"></canvas>
             </div>
 
             <!-- Floating Active Ingredient Callouts (Void Energy Style) -->

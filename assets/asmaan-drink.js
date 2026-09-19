@@ -347,50 +347,28 @@
 
     // High-Performance Preloaded Frame Sequence Scroll Engine
     var packStage = document.getElementById('pack-canvas-stage');
-    var packCanvas = document.getElementById('pack-scroll-canvas');
+    var packImg = document.getElementById('pack-scroll-img');
     var packRun = document.querySelector('.pack_run');
     var packHold = document.querySelector('.pack_hold');
 
-    if (packStage && packCanvas && packRun) {
-      var ctx = packCanvas.getContext('2d');
+    if (packStage && packImg && packRun) {
       var totalFrames = parseInt(packStage.getAttribute('data-total-frames') || '150', 10);
-      var firstFrameUrl = packStage.getAttribute('data-first-frame') || '';
-      var frames = [];
-      var isLoaded = false;
+      var firstFrameUrl = packStage.getAttribute('data-first-frame') || packImg.src;
+      var frameUrls = [];
       var targetProgress = 0;
       var currentProgress = 0;
-      var lastDrawnFrame = -1;
+      var lastIndex = 0;
 
-      // Set initial canvas resolution
-      packCanvas.width = 720;
-      packCanvas.height = 405;
-
-      function renderFrame(frameIdx) {
-        if (!ctx) return;
-        var img = frames[frameIdx];
-        if (img && img.complete && img.naturalWidth > 0) {
-          if (packCanvas.width !== img.naturalWidth) {
-            packCanvas.width = img.naturalWidth;
-            packCanvas.height = img.naturalHeight;
-          }
-          ctx.clearRect(0, 0, packCanvas.width, packCanvas.height);
-          ctx.drawImage(img, 0, 0, packCanvas.width, packCanvas.height);
-          lastDrawnFrame = frameIdx;
-        }
-      }
-
+      // Generate all 150 CDN frame URLs and preload
       if (firstFrameUrl) {
         for (var f = 1; f <= totalFrames; f++) {
-          var imgObj = new Image();
           var frameNum = String(f).padStart(2, '0');
-          imgObj.src = firstFrameUrl.replace('pack-frame-01.webp', 'pack-frame-' + frameNum + '.webp');
-          if (f === 1) {
-            imgObj.onload = function() {
-              isLoaded = true;
-              renderFrame(0);
-            };
-          }
-          frames.push(imgObj);
+          var u = firstFrameUrl.replace(/pack-frame-\d+\.webp/, 'pack-frame-' + frameNum + '.webp');
+          frameUrls.push(u);
+
+          // Preload into browser cache
+          var preImg = new Image();
+          preImg.src = u;
         }
       }
 
@@ -409,13 +387,14 @@
       }
 
       function animLoop() {
-        if (frames.length > 0) {
+        if (frameUrls.length > 0) {
           // Lerp inertia for silky smooth frame progression
-          currentProgress += (targetProgress - currentProgress) * 0.24;
+          currentProgress += (targetProgress - currentProgress) * 0.25;
           var destIndex = Math.min(Math.max(Math.round(currentProgress * (totalFrames - 1)), 0), totalFrames - 1);
 
-          if (destIndex !== lastDrawnFrame) {
-            renderFrame(destIndex);
+          if (destIndex !== lastIndex) {
+            packImg.src = frameUrls[destIndex];
+            lastIndex = destIndex;
           }
         }
         requestAnimationFrame(animLoop);

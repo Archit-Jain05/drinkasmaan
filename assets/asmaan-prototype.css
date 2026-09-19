@@ -3882,15 +3882,29 @@ input:focus-visible {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 100%;
   max-width: 48rem;
-  max-height: 48rem;
+  margin: 0 auto;
+}
+
+.pack_scroll-img {
+  width: 100%;
+  height: auto;
+  max-height: min(74svh, 46rem);
+  aspect-ratio: 720 / 405;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  background: transparent;
+  filter: drop-shadow(0 1.5rem 2.5rem rgba(0, 0, 0, 0.7));
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .pack_scroll-canvas {
   width: 100%;
-  height: 100%;
+  height: auto;
   max-height: min(74svh, 46rem);
+  aspect-ratio: 720 / 405;
   object-fit: contain;
   display: block;
   pointer-events: none;
