@@ -176,12 +176,6 @@
       });
 
       // Gallery
-      var mainCanImg = document.getElementById('drink-main-can-img');
-      if (mainCanImg) {
-        var src = imageFor(flavour, state.view, 'full');
-        if (src && mainCanImg.getAttribute('src') !== src) mainCanImg.src = src;
-        mainCanImg.alt = fullName;
-      }
       $$('.drink_view').forEach(function(btn) {
         var v = btn.getAttribute('data-view');
         btn.setAttribute('aria-pressed', v === state.view ? 'true' : 'false');
@@ -315,6 +309,7 @@
       state.taste = i;
       renderChips();
       updateDOM();
+      remountCan();
     }
 
     function scrollToBuy() {
@@ -395,34 +390,33 @@
       });
     }
 
-    // Drag the can horizontally to step through the four panels.
-    var canStage = $('[data-drink-can]');
-    if (canStage) {
-      canStage.style.touchAction = 'pan-y';
-      canStage.style.cursor = 'grab';
-      var dragX = null;
-      var STEP = 60;
-      canStage.addEventListener('pointerdown', function(e) {
-        dragX = e.clientX;
-        canStage.style.cursor = 'grabbing';
-      });
-      window.addEventListener('pointermove', function(e) {
-        if (dragX === null) return;
-        var dx = e.clientX - dragX;
-        if (Math.abs(dx) >= STEP) {
-          var i = VIEWS.indexOf(state.view);
-          i = (i + (dx < 0 ? 1 : -1) + VIEWS.length) % VIEWS.length;
-          state.view = VIEWS[i];
-          dragX = e.clientX;
-          updateDOM();
-        }
-      });
-      ['pointerup', 'pointercancel'].forEach(function(type) {
-        window.addEventListener(type, function() {
-          dragX = null;
-          canStage.style.cursor = 'grab';
-        });
-      });
+    // 3D can: the engine has no label swap, so a flavour change remounts the can with the new
+    // label. Mounting and teardown go through the loader's section load/unload events.
+    var VIEW_SPIN = { front: 0, right: -1.5707963, back: 3.1415927, left: 1.5707963 };
+    var canMount = $('[data-drink-can-mount]');
+    var canTemplate = canMount ? canMount.querySelector('[data-asmaan-can]') : null;
+    canTemplate = canTemplate ? canTemplate.cloneNode(true) : null;
+    var mountedFlavour = 0;
+
+    function remountCan() {
+      if (!canMount || !canTemplate || mountedFlavour === state.taste) return;
+      var flavour = currentFlavour();
+      if (!flavour.label) return;
+      mountedFlavour = state.taste;
+
+      var fresh = canTemplate.cloneNode(true);
+      fresh.setAttribute('data-label', flavour.label);
+      fresh.setAttribute('data-tint', flavour.accent);
+      fresh.setAttribute('data-spin', String(VIEW_SPIN[state.view] || 0));
+      fresh.setAttribute('aria-label', flavour.title);
+      var poster = fresh.querySelector('[data-asmaan-can-poster]');
+      var posterSrc = imageFor(flavour, state.view, 'full');
+      if (poster && posterSrc) poster.src = posterSrc;
+
+      canMount.dispatchEvent(new CustomEvent('shopify:section:unload', { bubbles: true }));
+      canMount.innerHTML = '';
+      canMount.appendChild(fresh);
+      canMount.dispatchEvent(new CustomEvent('shopify:section:load', { bubbles: true }));
     }
 
     // Zero-Flicker Preloaded Canvas Frame Engine
@@ -597,6 +591,7 @@
 
     renderChips();
     updateDOM();
+    remountCan();
   }
 
   if (document.readyState === 'loading') {

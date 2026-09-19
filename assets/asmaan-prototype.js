@@ -1747,17 +1747,25 @@
 
   function initFaqAccordion() {
     var buttons = document.querySelectorAll('.faq_question');
+    // Prefer aria-controls; fall back to the answer inside the same accordion item.
+    function findAnswer(btn) {
+      var id = btn.getAttribute('aria-controls');
+      var el = id ? document.getElementById(id) : null;
+      if (!el) {
+        var item = btn.closest('.faq_accordion') || btn.parentElement;
+        el = item ? item.querySelector('.faq_answer') : null;
+      }
+      return el;
+    }
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         var isExpanded = button.getAttribute('aria-expanded') === 'true';
-        var answerId = button.getAttribute('aria-controls');
-        var answer = document.getElementById(answerId);
+        var answer = findAnswer(button);
 
         buttons.forEach(function (otherBtn) {
           if (otherBtn !== button) {
             otherBtn.setAttribute('aria-expanded', 'false');
-            var otherId = otherBtn.getAttribute('aria-controls');
-            var otherAns = document.getElementById(otherId);
+            var otherAns = findAnswer(otherBtn);
             if (otherAns) otherAns.setAttribute('data-open', 'false');
           }
         });

@@ -54,6 +54,7 @@
       assign o_accent = item.settings.accent
       assign o_deep = item.settings.deep
       assign block_attrs = item.shopify_attributes
+      assign block_label = item.settings.label_image
     else
       assign p = item
       assign o_title = ''
@@ -62,6 +63,7 @@
       assign o_accent = ''
       assign o_deep = ''
       assign block_attrs = ''
+      assign block_label = nil
     endif
 
     if p == blank and o_title == blank
@@ -82,6 +84,7 @@
     assign img_right = p.images[idx_right] | default: img_front
     assign img_back = p.images[idx_back] | default: img_front
     assign img_left = p.images[idx_left] | default: img_front
+    assign img_label = block_label | default: p.images.last
 
     assign is_first = false
     if flavour_count == 0
@@ -93,6 +96,8 @@
       assign first_img_right = img_right
       assign first_img_back = img_back
       assign first_img_left = img_left
+      assign first_img_label = img_label
+      assign first_deep = f_deep
     endif
   -%}
 
@@ -181,6 +186,7 @@
           {{ view | json }}: {% if v_img != blank %}{"full": {{ v_img | image_url: width: 1200 | json }}, "thumb": {{ v_img | image_url: width: 240 | json }}}{% else %}null{% endif %}
         {%- endfor -%}
       },
+      "label": {% if img_label != blank %}{{ img_label | image_url: width: 2048 | json }}{% else %}null{% endif %},
       "packs": [{{ f_packs_json }}],
       "plans": [{{ f_plans_json }}]
     }
@@ -232,7 +238,7 @@
   assign sub_price = 100 | minus: sub_discount | times: default_price | divided_by: 100
 -%}
 
-<div id="top" class="drink-page-wrapper{% if section.settings.banner_text != blank %} has-banner{% endif %}">
+<div id="top" class="drink-page-wrapper{% if section.settings.banner_text != blank %} has-banner{% endif %}" style="--drink-air: {{ section.settings.spacing | divided_by: 100.0 }};">
   {%- if section.settings.banner_text != blank -%}
     <p class="drink_banner">{{ section.settings.banner_text | escape }}</p>
   {%- endif -%}
@@ -242,19 +248,21 @@
     <section id="buy" class="drink_product" aria-label="{{ shop.name | escape }}">
       <div class="drink_product-grid">
         <div class="drink_gallery">
-          <div class="drink_can" data-drink-can>
+          <div class="drink_can" data-drink-can data-asmaan-can-group>
             <span class="merch_glow" style="--glow: {{ first_accent }};" aria-hidden="true"></span>
-            {%- if first_img_front != blank -%}
-              <img
-                id="drink-main-can-img"
-                src="{{ first_img_front | image_url: width: 1200 }}"
-                alt="{{ first_title | escape }}"
-                width="{{ first_img_front.width }}"
-                height="{{ first_img_front.height }}"
-                loading="eager"
-                draggable="false"
-              >
-            {%- endif -%}
+            <div class="drink_can-mount" data-drink-can-mount>
+              {%- render 'asmaan-can-3d',
+                label: first_img_label,
+                poster: first_img_front,
+                alt: first_title,
+                tint: first_accent,
+                draggable: true,
+                idle_spin: section.settings.can_idle_spin,
+                view: 'front',
+                ratio: '760 / 1950',
+                headroom: 1.18
+              -%}
+            </div>
           </div>
 
           <div class="drink_views" role="group" aria-label="{{ section.settings.label_views | escape }}">
@@ -275,7 +283,7 @@
                     assign v_label = section.settings.view_left_label
                 endcase
               -%}
-              <button type="button" class="drink_view" data-view="{{ view }}" aria-pressed="{{ forloop.first }}">
+              <button type="button" class="drink_view" data-view="{{ view }}" data-asmaan-can-view="{{ view }}" aria-pressed="{{ forloop.first }}">
                 {%- if v_img != blank -%}
                   <img src="{{ v_img | image_url: width: 240 }}" alt="" loading="lazy" width="{{ v_img.width }}" height="{{ v_img.height }}">
                 {%- endif -%}
@@ -654,11 +662,11 @@
                     <div {{ q.shopify_attributes }}>
                       <div class="faq_separator"></div>
                       <div class="faq_accordion">
-                        <button type="button" class="faq_question" aria-expanded="{{ forloop.first }}">
+                        <button type="button" class="faq_question" aria-expanded="{{ forloop.first }}" aria-controls="drink-faq-{{ q.id }}">
                           <span class="heading-style-h5">{{ q.settings.question | escape }}</span>
                           <span class="faq_icon-wrapper">{% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}</span>
                         </button>
-                        <div class="faq_answer" data-open="{{ forloop.first }}">
+                        <div class="faq_answer" id="drink-faq-{{ q.id }}" data-open="{{ forloop.first }}">
                           <div><div class="text-size-medium pb-[var(--pad-s)] text-white/70">{{ q.settings.answer }}</div></div>
                         </div>
                       </div>
@@ -800,6 +808,58 @@
 </script>
 
 <style>
+  /* Breathing room: every gap below scales with the "Page spacing" setting (--drink-air). */
+  .drink-page-wrapper [data-drink-blurb] { line-height: 1.65; margin-top: calc(var(--pad-m) * var(--drink-air)); }
+  .drink-page-wrapper .drink_field { margin-top: calc(var(--pad-l) * var(--drink-air)); }
+  .drink-page-wrapper .drink_legend { margin-bottom: calc(var(--pad-xs, 0.5rem) * var(--drink-air)); }
+  .drink-page-wrapper .drink_packs,
+  .drink-page-wrapper .drink_modes { gap: calc(var(--pad-s) * var(--drink-air)); }
+  .drink-page-wrapper .drink_total {
+    margin: calc(var(--pad-l) * var(--drink-air)) 0 calc(var(--pad-l) * var(--drink-air));
+    padding-top: calc(var(--pad-l) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_trust {
+    margin-top: calc(var(--pad-l) * var(--drink-air));
+    gap: calc(var(--pad-s) * var(--drink-air)) calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_stock {
+    margin-top: calc(var(--pad-l) * var(--drink-air));
+    padding-top: calc(var(--pad-l) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_badges {
+    margin-top: calc(var(--pad-xl) * var(--drink-air));
+    padding-top: calc(var(--pad-xl) * var(--drink-air));
+    gap: calc(var(--pad-l) * var(--drink-air)) calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_product { padding-bottom: calc(var(--pad-xxl) * var(--drink-air)); }
+  .drink-page-wrapper .drink_actives li {
+    padding: calc(var(--pad-m) * var(--drink-air)) 0;
+    gap: calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_actives li p { line-height: 1.6; }
+  .drink-page-wrapper .drink_facts dl > div { padding-block: calc(0.35rem * var(--drink-air)); }
+  .drink-page-wrapper .drink_flavours { margin-top: calc(var(--pad-xxl) * var(--drink-air)); gap: calc(var(--pad-xl) * var(--drink-air)); }
+  .drink-page-wrapper .faq_list > div + div { margin-top: calc(0.25rem * var(--drink-air)); }
+  .drink-page-wrapper #formula .padding-section-large,
+  .drink-page-wrapper #range .padding-section-large,
+  .drink-page-wrapper #faq .padding-section-large {
+    padding-top: calc(var(--pad-xxl) * 1.25 * var(--drink-air));
+    padding-bottom: calc(var(--pad-xxl) * 1.25 * var(--drink-air));
+  }
+
+  .drink_can-mount {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drink_can-mount > * {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+  }
+
   /* The navbar is fixed over the top of the page; sit the banner just below it and take the
      banner space out of the product section's own header clearance. */
   .drink-page-wrapper.has-banner .drink_banner {
@@ -885,6 +945,8 @@
     { "type": "text", "id": "stock_note", "label": "Stock note", "default": "packs left in the first batch" },
 
     { "type": "header", "content": "Gallery" },
+    { "type": "range", "id": "spacing", "label": "Page spacing", "min": 100, "max": 160, "step": 5, "unit": "%", "default": 130, "info": "Scales the space between elements on this page." },
+    { "type": "range", "id": "can_idle_spin", "label": "3D can idle spin", "min": 0, "max": 1, "step": 0.1, "default": 0.3, "info": "How fast the can turns on its own. 0 keeps it still until dragged." },
     { "type": "text", "id": "view_front_label", "label": "Front view label", "default": "Front" },
     { "type": "text", "id": "view_right_label", "label": "Right view label", "default": "Right" },
     { "type": "text", "id": "view_back_label", "label": "Back view label", "default": "Back" },
@@ -977,7 +1039,8 @@
         { "type": "text", "id": "tag", "label": "Tagline override" },
         { "type": "textarea", "id": "blurb", "label": "Description override" },
         { "type": "color", "id": "accent", "label": "Accent colour override" },
-        { "type": "color", "id": "deep", "label": "Deep colour override" }
+        { "type": "color", "id": "deep", "label": "Deep colour override" },
+        { "type": "image_picker", "id": "label_image", "label": "3D label texture override", "info": "The unwrapped 360° can print. Defaults to the product's last image." }
       ]
     },
     {
