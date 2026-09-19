@@ -246,7 +246,8 @@
       ],
       "settings": {
         "show_reviews": false,
-        "reviews_note": ""
+        "reviews_note": "",
+        "show_stock": false
       }
     }
   },
