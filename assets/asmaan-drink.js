@@ -345,30 +345,53 @@
       });
     }
 
-    // High-Performance Preloaded Frame Sequence Scroll Engine
+    // Zero-Flicker Preloaded Canvas Frame Engine
     var packStage = document.getElementById('pack-canvas-stage');
-    var packImg = document.getElementById('pack-scroll-img');
+    var packCanvas = document.getElementById('pack-scroll-canvas');
+    var packPoster = document.getElementById('pack-scroll-poster');
     var packRun = document.querySelector('.pack_run');
     var packHold = document.querySelector('.pack_hold');
 
-    if (packStage && packImg && packRun) {
+    if (packStage && packCanvas && packRun) {
+      var ctx = packCanvas.getContext('2d', { alpha: true });
       var totalFrames = parseInt(packStage.getAttribute('data-total-frames') || '150', 10);
-      var firstFrameUrl = packStage.getAttribute('data-first-frame') || packImg.src;
-      var frameUrls = [];
+      var firstFrameUrl = packStage.getAttribute('data-first-frame') || (packPoster ? packPoster.src : '');
+      var frameImages = [];
       var targetProgress = 0;
       var currentProgress = 0;
-      var lastIndex = 0;
+      var lastDrawnIndex = -1;
 
-      // Generate all 150 CDN frame URLs and preload
+      // Set fixed canvas resolution
+      packCanvas.width = 720;
+      packCanvas.height = 405;
+
+      function drawFrame(idx) {
+        if (!ctx) return;
+        var img = frameImages[idx];
+        if (img && img.complete && img.naturalWidth > 0) {
+          ctx.clearRect(0, 0, packCanvas.width, packCanvas.height);
+          ctx.drawImage(img, 0, 0, packCanvas.width, packCanvas.height);
+          lastDrawnIndex = idx;
+          if (packPoster && packPoster.getAttribute('data-hidden') !== 'true') {
+            packPoster.setAttribute('data-hidden', 'true');
+          }
+        }
+      }
+
+      // Preload all 150 frames into memory
       if (firstFrameUrl) {
         for (var f = 1; f <= totalFrames; f++) {
-          var frameNum = String(f).padStart(2, '0');
-          var u = firstFrameUrl.replace(/pack-frame-\d+\.webp/, 'pack-frame-' + frameNum + '.webp');
-          frameUrls.push(u);
-
-          // Preload into browser cache
-          var preImg = new Image();
-          preImg.src = u;
+          (function(index) {
+            var frameNum = String(index).padStart(2, '0');
+            var img = new Image();
+            img.src = firstFrameUrl.replace(/pack-frame-\d+\.webp/, 'pack-frame-' + frameNum + '.webp');
+            img.onload = function() {
+              if (index === 1 && lastDrawnIndex === -1) {
+                drawFrame(0);
+              }
+            };
+            frameImages.push(img);
+          })(f);
         }
       }
 
@@ -387,14 +410,13 @@
       }
 
       function animLoop() {
-        if (frameUrls.length > 0) {
-          // Lerp inertia for silky smooth frame progression
-          currentProgress += (targetProgress - currentProgress) * 0.25;
+        if (frameImages.length > 0) {
+          // Smooth deceleration interpolation
+          currentProgress += (targetProgress - currentProgress) * 0.22;
           var destIndex = Math.min(Math.max(Math.round(currentProgress * (totalFrames - 1)), 0), totalFrames - 1);
 
-          if (destIndex !== lastIndex) {
-            packImg.src = frameUrls[destIndex];
-            lastIndex = destIndex;
+          if (destIndex !== lastDrawnIndex) {
+            drawFrame(destIndex);
           }
         }
         requestAnimationFrame(animLoop);

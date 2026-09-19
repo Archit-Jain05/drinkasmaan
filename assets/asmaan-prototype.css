@@ -3886,10 +3886,11 @@ input:focus-visible {
   margin: 0 auto;
 }
 
-.pack_scroll-img {
+.pack_scroll-poster {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: auto;
-  max-height: min(74svh, 46rem);
   aspect-ratio: 720 / 405;
   object-fit: contain;
   display: block;
@@ -3898,9 +3899,18 @@ input:focus-visible {
   filter: drop-shadow(0 1.5rem 2.5rem rgba(0, 0, 0, 0.7));
   user-select: none;
   -webkit-user-drag: none;
+  transition: opacity 0.25s ease;
+  z-index: 1;
+}
+
+.pack_scroll-poster[data-hidden="true"] {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .pack_scroll-canvas {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: auto;
   max-height: min(74svh, 46rem);
