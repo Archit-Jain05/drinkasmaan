@@ -48,9 +48,9 @@
         <div class="cart-drawer-item" data-line-key="{{ item.key }}" data-line-index="{{ forloop.index }}">
           <div class="cart-drawer-item-img">
             {%- if item.image -%}
-              <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}" loading="lazy">
+              <img src="{{ item.image | image_url: width: 140 }}" width="{{ item.image.width }}" height="{{ item.image.height }}" alt="{{ item.title | escape }}" loading="lazy">
             {%- elsif item.product.featured_image -%}
-              <img src="{{ item.product.featured_image | image_url: width: 140 }}" alt="{{ item.title | escape }}" loading="lazy">
+              <img src="{{ item.product.featured_image | image_url: width: 140 }}" width="{{ item.product.featured_image.width }}" height="{{ item.product.featured_image.height }}" alt="{{ item.title | escape }}" loading="lazy">
             {%- endif -%}
           </div>
           <div class="cart-drawer-item-details">

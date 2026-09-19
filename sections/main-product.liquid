@@ -1,26 +1,19 @@
 {%- assign free_shipping_money = settings.free_shipping_threshold | money_without_trailing_zeros -%}
 {%- liquid
-  assign handle_lower = product.handle | downcase
-  assign title_lower = product.title | downcase
-  
-  if handle_lower contains 'mango' or title_lower contains 'mango'
-    assign flavour_id = 'mango'
-    assign accent_color = '#EFB36B'
-    assign tint_color = '#EFB36B'
-  elsif handle_lower contains 'magenta' or title_lower contains 'magenta' or handle_lower contains 'wild' or title_lower contains 'wild'
-    assign flavour_id = 'magenta'
-    assign accent_color = '#E6A0E8'
-    assign tint_color = '#E6A0E8'
-  else
-    assign flavour_id = 'jamun'
-    assign accent_color = '#9089D3'
-    assign tint_color = '#9089D3'
+  assign accent_color = product.metafields.custom.accent_color.value
+  if accent_color == blank
+    assign colour_lines = section.settings.flavour_colours | newline_to_br | split: '<br />'
+    for line in colour_lines
+      assign pair = line | split: ':'
+      assign pair_handle = pair.first | strip
+      if pair_handle == product.handle
+        assign accent_color = pair.last | strip
+        break
+      endif
+    endfor
   endif
-
-  if product.metafields.custom.accent_color != blank
-    assign accent_color = product.metafields.custom.accent_color
-    assign tint_color = product.metafields.custom.accent_color
-  endif
+  assign accent_color = accent_color | default: section.settings.fallback_accent
+  assign tint_color = accent_color
 
   assign label_asset = ''
   if product.images.size > 0
@@ -240,6 +233,8 @@
         <!-- Fallback / Multi-photo Viewer (hidden during 3D mode) -->
         <img
           src="{{ poster_asset }}"
+          width="760"
+          height="1950"
           alt="{{ product.title | default: 'Asmaan Ambition Tonic' | escape }}"
           class="product-static-image"
           id="main-product-image"
@@ -268,7 +263,7 @@
               data-full-img="{{ image | image_url: width: 800 }}"
               aria-label="View product image {{ forloop.index }}"
             >
-              <img src="{{ image | image_url: width: 100 }}" alt="{{ image.alt | default: product.title | escape }}" style="width: 100%; height: 100%; object-fit: contain;">
+              <img src="{{ image | image_url: width: 100 }}" width="{{ image.width }}" height="{{ image.height }}" alt="{{ image.alt | default: product.title | escape }}" style="width: 100%; height: 100%; object-fit: contain;">
             </button>
           {%- endfor -%}
         </div>
@@ -637,6 +632,8 @@
 {
   "name": "Product Details",
   "settings": [
+    { "type": "textarea", "id": "flavour_colours", "label": "Accent colour per product", "default": "kala-jamun: #9089D3\nalphonso-mango: #EFB36B\nwild-magenta: #E6A0E8", "info": "One per line as product-handle: #hex. Used when the product has no custom.accent_color metafield." },
+    { "type": "color", "id": "fallback_accent", "label": "Fallback accent colour", "default": "#9089D3", "info": "Used when the product has no custom.accent_color metafield." },
     {
       "type": "header",
       "content": "Visual Gallery & 3D Stage"

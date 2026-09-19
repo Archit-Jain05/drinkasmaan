@@ -1,17 +1,82 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
       "type": "main-ambassador",
-      "settings": {}
+      "settings": {
+        "success_primary_url": "shopify://pages/merch"
+      },
+      "blocks": {
+        "perk_1": {
+          "type": "perk",
+          "settings": {
+            "icon": "money",
+            "title": "Competitive Commission",
+            "text": "Earn generous revenue share on every single purchase made with your personal creator code or tracking link."
+          }
+        },
+        "perk_2": {
+          "type": "perk",
+          "settings": {
+            "icon": "box",
+            "title": "Monthly Cans & Merch",
+            "text": "Complimentary monthly allocations of Asmaan Ambition Tonic and first access to limited-edition apparel capsules."
+          }
+        },
+        "perk_3": {
+          "type": "perk",
+          "settings": {
+            "icon": "bolt",
+            "title": "Audience Discounts",
+            "text": "Offer your community an exclusive 15% discount code to experience clean cognitive botanical energy."
+          }
+        },
+        "perk_4": {
+          "type": "perk",
+          "settings": {
+            "icon": "star",
+            "title": "Creator Spotlight",
+            "text": "Get featured across Asmaan digital campaigns, editorial lookbooks, and private brand gatherings."
+          }
+        },
+        "faq_1": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Who qualifies for the Asmaan Ambassador Program?",
+            "answer": "<p>We look for dedicated creators, athletes, designers, founders, and students who have an active digital voice and genuinely align with clean cognitive performance and thoughtful aesthetics. Quality of content and engagement matter more than raw follower numbers.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How and when do I get paid?",
+            "answer": "<p>Commissions are tracked in real-time via your custom affiliate link or discount code. Payouts are distributed monthly via direct bank transfer or PayPal.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is included in the creator welcome package?",
+            "answer": "<p>Accepted ambassadors receive a complimentary shipment of Asmaan Ambition Tonic cases, custom merchandise from our active capsule, and personalized creator promotional collateral.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What are my commitments as an ambassador?",
+            "answer": "<p>We ask for 1 to 2 authentic posts, reels, or stories per month featuring Asmaan in your real routine (working, training, designing, or studying), along with sharing your community discount code.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "perk_1",
+        "perk_2",
+        "perk_3",
+        "perk_4",
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4"
+      ]
     },
     "newsletter": {
       "type": "asmaan-newsletter",

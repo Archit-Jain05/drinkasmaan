@@ -1,167 +1,152 @@
 {{ 'asmaan-ambassador.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'asmaan-ambassador.js' | asset_url }}" defer></script>
 
+{%- liquid
+  assign perk_blocks = section.blocks | where: 'type', 'perk'
+  assign faq_blocks = section.blocks | where: 'type', 'faq_item'
+-%}
+
+{%- capture cta_button -%}
+  {%- if section.settings.enable_reveal_form -%}
+    <button type="button" class="ambassador_btn" data-ambassador-open-form>
+      <span>{{ section.settings.cta_text | escape }}</span>
+      <svg class="ambassador_btn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  {%- else -%}
+    <a href="{{ section.settings.cta_url | default: '#ambassador-form-section' }}" class="ambassador_btn">
+      <span>{{ section.settings.cta_text | escape }}</span>
+      <svg class="ambassador_btn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  {%- endif -%}
+{%- endcapture -%}
+
 <div class="ambassador_page">
   <div class="ambassador_ambient-glow" aria-hidden="true"></div>
 
   <div class="ambassador_container">
-    {%- comment -%} 1. HERO SECTION {%- endcomment -%}
     <section class="ambassador_hero">
       {%- if section.settings.hero_kicker != blank -%}
-        <div class="ambassador_kicker">
-          <span>{{ section.settings.hero_kicker }}</span>
-        </div>
+        <div class="ambassador_kicker"><span>{{ section.settings.hero_kicker | escape }}</span></div>
       {%- endif -%}
 
-      <h1>{{ section.settings.hero_title | default: 'Become an Asmaan Ambassador' }}</h1>
+      <h1>{{ section.settings.hero_title | escape }}</h1>
 
-      <div class="ambassador_hero-sub">
-        <p>
-          {{ section.settings.hero_subtext | default: 'The Asmaan Ambassador Program is a <strong>hand-selected circle</strong> of creators, athletes, and visionaries fueled by relentless ambition. <strong>Apply to join.</strong>' }}
-        </p>
-      </div>
-
-      {%- if section.settings.enable_reveal_form -%}
-        <button type="button" class="ambassador_btn" data-ambassador-open-form>
-          <span>{{ section.settings.cta_text | default: 'Apply Now' }}</span>
-          <svg class="ambassador_btn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      {%- else -%}
-        <a href="{{ section.settings.cta_url | default: '#ambassador-form' }}" class="ambassador_btn">
-          <span>{{ section.settings.cta_text | default: 'Apply Now' }}</span>
-          <svg class="ambassador_btn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
+      {%- if section.settings.hero_subtext != blank -%}
+        <div class="ambassador_hero-sub">{{ section.settings.hero_subtext }}</div>
       {%- endif -%}
+
+      {{ cta_button }}
     </section>
 
-    {%- comment -%} 2. SHOWCASE BUNDLE IMAGE {%- endcomment -%}
     <div class="ambassador_showcase">
       <div class="ambassador_showcase-inner">
         {%- if section.settings.showcase_image != blank -%}
           {{ section.settings.showcase_image | image_url: width: 1400 | image_tag: loading: 'lazy', alt: section.settings.hero_title }}
         {%- else -%}
           <div class="ambassador_fallback-bundle">
-            <div class="ambassador_fallback-item is-can">
-              <img src="{{ 'asmaan-can-jamun.webp' | asset_url }}" alt="Asmaan Jamun" loading="lazy">
-            </div>
-            <div class="ambassador_fallback-item is-hoodie">
-              <img src="{{ 'hoodie-front.webp' | asset_url }}" alt="Asmaan Ambition Hoodie" loading="lazy">
-            </div>
-            <div class="ambassador_fallback-item is-can">
-              <img src="{{ 'asmaan-can-magenta.webp' | asset_url }}" alt="Asmaan Magenta" loading="lazy">
-            </div>
+            {%- liquid
+              assign fallback_items = 'showcase_asset_1,showcase_asset_2,showcase_asset_3' | split: ','
+            -%}
+            {%- for key in fallback_items -%}
+              {%- assign asset_name = section.settings[key] -%}
+              {%- if asset_name != blank -%}
+                <div class="ambassador_fallback-item {% if forloop.index == 2 %}is-hoodie{% else %}is-can{% endif %}">
+                  <img src="{{ asset_name | asset_url }}" alt="" width="760" height="1950" loading="lazy">
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
           </div>
         {%- endif -%}
       </div>
     </div>
 
-    {%- comment -%} 3. HOW IT WORKS SECTION {%- endcomment -%}
     <section class="ambassador_how">
-      <h2>{{ section.settings.steps_title | default: 'How It Works' }}</h2>
+      <h2>{{ section.settings.steps_title | escape }}</h2>
 
       <div class="ambassador_steps">
-        <div class="ambassador_step">
-          <div class="ambassador_step-num">{{ section.settings.step1_num | default: '01' }}</div>
-          <h3>{{ section.settings.step1_title | default: 'Apply' }}</h3>
-          <p>{{ section.settings.step1_desc | default: 'Complete your creator application and hear back from our team within 48 hours.' }}</p>
-        </div>
-
-        <div class="ambassador_step">
-          <div class="ambassador_step-num">{{ section.settings.step2_num | default: '02' }}</div>
-          <h3>{{ section.settings.step2_title | default: 'Get Your Kit' }}</h3>
-          <p>{{ section.settings.step2_desc | default: 'Receive an exclusive Asmaan tonic allocation, limited capsule merch, and your personal tracking code.' }}</p>
-        </div>
-
-        <div class="ambassador_step">
-          <div class="ambassador_step-num">{{ section.settings.step3_num | default: '03' }}</div>
-          <h3>{{ section.settings.step3_title | default: 'Fuel The Culture' }}</h3>
-          <p>{{ section.settings.step3_desc | default: 'Share your routine and ambition across your socials to earn competitive commissions and tier rewards.' }}</p>
-        </div>
+        {%- for n in (1..3) -%}
+          {%- liquid
+            assign num_key = 'step' | append: n | append: '_num'
+            assign title_key = 'step' | append: n | append: '_title'
+            assign desc_key = 'step' | append: n | append: '_desc'
+          -%}
+          {%- if section.settings[title_key] != blank -%}
+            <div class="ambassador_step">
+              <div class="ambassador_step-num">{{ section.settings[num_key] | escape }}</div>
+              <h3>{{ section.settings[title_key] | escape }}</h3>
+              <p>{{ section.settings[desc_key] | escape }}</p>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
       </div>
 
-      {%- if section.settings.enable_reveal_form -%}
-        <button type="button" class="ambassador_btn" data-ambassador-open-form>
-          <span>{{ section.settings.cta_text | default: 'Apply Now' }}</span>
-          <svg class="ambassador_btn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      {%- else -%}
-        <a href="{{ section.settings.cta_url | default: '#ambassador-form' }}" class="ambassador_btn">
-          <span>{{ section.settings.cta_text | default: 'Apply Now' }}</span>
-          <svg class="ambassador_btn-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
-      {%- endif -%}
+      {{ cta_button }}
     </section>
 
-    {%- comment -%} 4. AMBASSADOR PERKS MATRIX {%- endcomment -%}
-    {%- if section.settings.show_perks -%}
+    {%- if section.settings.show_perks and perk_blocks.size > 0 -%}
       <section class="ambassador_perks">
-        <h2>{{ section.settings.perks_title | default: 'Ambassador Perks' }}</h2>
+        <h2>{{ section.settings.perks_title | escape }}</h2>
         <div class="ambassador_perks-grid">
-          <div class="ambassador_perk-card">
-            <svg class="ambassador_perk-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div class="ambassador_perk-title">Competitive Commission</div>
-            <p class="ambassador_perk-desc">Earn generous revenue share on every single purchase made with your personal creator code or tracking link.</p>
-          </div>
-
-          <div class="ambassador_perk-card">
-            <svg class="ambassador_perk-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <div class="ambassador_perk-title">Monthly Cans & Merch</div>
-            <p class="ambassador_perk-desc">Complimentary monthly allocations of Asmaan Ambition Tonic and first access to limited-edition apparel capsules.</p>
-          </div>
-
-          <div class="ambassador_perk-card">
-            <svg class="ambassador_perk-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <div class="ambassador_perk-title">Audience Discounts</div>
-            <p class="ambassador_perk-desc">Offer your community an exclusive 15% discount code to experience clean cognitive botanical energy.</p>
-          </div>
-
-          <div class="ambassador_perk-card">
-            <svg class="ambassador_perk-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-            </svg>
-            <div class="ambassador_perk-title">Creator Spotlight</div>
-            <p class="ambassador_perk-desc">Get featured across Asmaan digital campaigns, editorial lookbooks, and private brand gatherings.</p>
-          </div>
+          {%- for block in perk_blocks -%}
+            <div class="ambassador_perk-card" {{ block.shopify_attributes }}>
+              <svg class="ambassador_perk-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'money' -%}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  {%- when 'box' -%}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  {%- when 'bolt' -%}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  {%- else -%}
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                {%- endcase -%}
+              </svg>
+              <div class="ambassador_perk-title">{{ block.settings.title | escape }}</div>
+              <p class="ambassador_perk-desc">{{ block.settings.text | escape }}</p>
+            </div>
+          {%- endfor -%}
         </div>
       </section>
     {%- endif -%}
 
-    {%- comment -%} 5. INTEGRATED EXPANDABLE REVEAL FORM {%- endcomment -%}
-    <section id="ambassador-form-section" class="ambassador_form-section{% if form.posted_successfully? or form.errors %} is-open{% endif %}">
-      <!-- Floating Toast Portal -->
+    <section id="ambassador-form-section" class="ambassador_form-section">
       <div id="asmaan-toast-portal" class="asmaan-toast-portal" aria-live="polite"></div>
 
       <div class="ambassador_form-card">
-        <div class="ambassador_form-header"{% if form.posted_successfully? %} style="display:none;"{% endif %}>
-          <h3>{{ section.settings.form_title | default: 'Ambassador Application' }}</h3>
-          <p>{{ section.settings.form_subtitle | default: 'Join the Ambition Collective. Tell us about your craft and where to send your creator package.' }}</p>
+        <div class="ambassador_form-header">
+          <h3>{{ section.settings.form_title | escape }}</h3>
+          <p>{{ section.settings.form_subtitle | escape }}</p>
         </div>
 
         {% form 'contact', id: 'ambassador-form', class: 'ambassador_form', data-google-sheet-url: section.settings.google_sheet_url %}
-          <input type="hidden" name="contact[tags]" value="ambassador_applicant,ambition_collective">
-          <input type="hidden" name="contact[subject]" value="New Ambassador Application">
+          {%- if form.posted_successfully? or form.errors -%}
+            {%- comment -%} `form` only exists inside this tag, so open the section from here after a post. {%- endcomment -%}
+            <script>
+              (function() {
+                var s = document.getElementById('ambassador-form-section');
+                if (s) s.classList.add('is-open');
+                {%- if form.posted_successfully? %}
+                  var h = s && s.querySelector('.ambassador_form-header');
+                  if (h) h.style.display = 'none';
+                {%- endif %}
+              })();
+            </script>
+          {%- endif -%}
+
+          <input type="hidden" name="contact[tags]" value="{{ section.settings.contact_tags | escape }}">
+          <input type="hidden" name="contact[subject]" value="{{ section.settings.contact_subject | escape }}">
 
           {%- if form.errors -%}
             <div class="ambassador_error-box" role="alert">
               <div class="ambassador_error-title">
-                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                 </svg>
-                <span>Submission Incomplete</span>
+                <span>{{ section.settings.error_title | escape }}</span>
               </div>
               <div class="ambassador_error-desc">{{ form.errors | default_errors }}</div>
             </div>
@@ -169,381 +154,227 @@
 
           <div class="ambassador_form-grid"{% if form.posted_successfully? %} style="display:none;"{% endif %}>
             <div class="ambassador_form-group">
-              <label for="AmbassadorName" class="ambassador_label">Full Name *</label>
-              <input type="text" name="contact[name]" id="AmbassadorName" class="ambassador_input" placeholder="e.g. Alex Rivera" required>
+              <label for="AmbassadorName" class="ambassador_label">{{ section.settings.label_name | escape }}</label>
+              <input type="text" name="contact[name]" id="AmbassadorName" class="ambassador_input" placeholder="{{ section.settings.placeholder_name | escape }}" required>
             </div>
 
             <div class="ambassador_form-group">
-              <label for="AmbassadorEmail" class="ambassador_label">Email Address *</label>
-              <input type="email" name="contact[email]" id="AmbassadorEmail" class="ambassador_input" placeholder="alex@domain.com" required>
+              <label for="AmbassadorEmail" class="ambassador_label">{{ section.settings.label_email | escape }}</label>
+              <input type="email" name="contact[email]" id="AmbassadorEmail" class="ambassador_input" placeholder="{{ section.settings.placeholder_email | escape }}" required>
             </div>
 
             <div class="ambassador_form-group">
-              <label for="AmbassadorPhone" class="ambassador_label">Phone / WhatsApp</label>
-              <input type="tel" name="contact[phone]" id="AmbassadorPhone" class="ambassador_input" placeholder="+1 (555) 000-0000">
+              <label for="AmbassadorPhone" class="ambassador_label">{{ section.settings.label_phone | escape }}</label>
+              <input type="tel" name="contact[phone]" id="AmbassadorPhone" class="ambassador_input" placeholder="{{ section.settings.placeholder_phone | escape }}">
             </div>
 
             <div class="ambassador_form-group">
-              <label for="AmbassadorInstagram" class="ambassador_label">Instagram Handle *</label>
-              <input type="text" name="contact[instagram]" id="AmbassadorInstagram" class="ambassador_input" placeholder="@yourhandle" required>
+              <label for="AmbassadorInstagram" class="ambassador_label">{{ section.settings.label_instagram | escape }}</label>
+              <input type="text" name="contact[instagram]" id="AmbassadorInstagram" class="ambassador_input" placeholder="{{ section.settings.placeholder_instagram | escape }}" required>
             </div>
 
             <div class="ambassador_form-group">
-              <label for="AmbassadorTikTok" class="ambassador_label">TikTok or YouTube URL</label>
-              <input type="text" name="contact[tiktok_youtube]" id="AmbassadorTikTok" class="ambassador_input" placeholder="@handle or channel link">
+              <label for="AmbassadorTikTok" class="ambassador_label">{{ section.settings.label_other_social | escape }}</label>
+              <input type="text" name="contact[tiktok_youtube]" id="AmbassadorTikTok" class="ambassador_input" placeholder="{{ section.settings.placeholder_other_social | escape }}">
             </div>
 
             <div class="ambassador_form-group">
-              <label for="AmbassadorAudience" class="ambassador_label">Audience Size *</label>
+              <label for="AmbassadorAudience" class="ambassador_label">{{ section.settings.label_audience | escape }}</label>
               <select name="contact[audience_size]" id="AmbassadorAudience" class="ambassador_select" required>
-                <option value="" disabled selected>Select follower range</option>
-                <option value="Under 5,000">Under 5,000</option>
-                <option value="5,000 - 25,000">5,000 - 25,000</option>
-                <option value="25,000 - 100,000">25,000 - 100,000</option>
-                <option value="100,000+">100,000+</option>
+                <option value="" disabled selected>{{ section.settings.placeholder_audience | escape }}</option>
+                {%- assign audience_options = section.settings.audience_options | newline_to_br | split: '<br />' -%}
+                {%- for opt in audience_options -%}
+                  {%- assign opt_text = opt | strip -%}
+                  {%- if opt_text != blank -%}<option value="{{ opt_text | escape }}">{{ opt_text | escape }}</option>{%- endif -%}
+                {%- endfor -%}
               </select>
             </div>
 
             <div class="ambassador_form-group is-full">
-              <label for="AmbassadorNiche" class="ambassador_label">Primary Content Focus *</label>
+              <label for="AmbassadorNiche" class="ambassador_label">{{ section.settings.label_niche | escape }}</label>
               <select name="contact[niche]" id="AmbassadorNiche" class="ambassador_select" required>
-                <option value="" disabled selected>Select primary focus</option>
-                <option value="Fitness, Athletics & Training">Fitness, Athletics & Training</option>
-                <option value="Software, Tech & Startups">Software, Tech & Startups</option>
-                <option value="Design, Architecture & Creative Arts">Design, Architecture & Creative Arts</option>
-                <option value="Streetwear, Fashion & Aesthetics">Streetwear, Fashion & Aesthetics</option>
-                <option value="Gaming & Digital Creation">Gaming & Digital Creation</option>
-                <option value="Daily Routine & Productivity">Daily Routine & Productivity</option>
+                <option value="" disabled selected>{{ section.settings.placeholder_niche | escape }}</option>
+                {%- assign niche_options = section.settings.niche_options | newline_to_br | split: '<br />' -%}
+                {%- for opt in niche_options -%}
+                  {%- assign opt_text = opt | strip -%}
+                  {%- if opt_text != blank -%}<option value="{{ opt_text | escape }}">{{ opt_text | escape }}</option>{%- endif -%}
+                {%- endfor -%}
               </select>
             </div>
 
             <div class="ambassador_form-group is-full">
-              <label for="AmbassadorMessage" class="ambassador_label">Why Asmaan? What drives your ambition?</label>
-              <textarea name="contact[body]" id="AmbassadorMessage" class="ambassador_textarea" placeholder="Tell us about your routine, your goals, or why you want to represent Asmaan..."></textarea>
+              <label for="AmbassadorMessage" class="ambassador_label">{{ section.settings.label_message | escape }}</label>
+              <textarea name="contact[body]" id="AmbassadorMessage" class="ambassador_textarea" placeholder="{{ section.settings.placeholder_message | escape }}"></textarea>
             </div>
 
             <div class="ambassador_form-submit-wrap">
               <button type="submit" id="ambassador-submit-btn" class="ambassador_submit-btn">
                 <span class="ambassador_spinner"></span>
-                <span class="ambassador_submit-text">Submit Application</span>
+                <span class="ambassador_submit-text">{{ section.settings.submit_text | escape }}</span>
               </button>
             </div>
           </div>
 
-          <!-- Celebration Confirmation Card -->
           <div id="ambassador-success" class="ambassador_celebration-card{% if form.posted_successfully? %} is-active{% endif %}">
             <div class="ambassador_celebration-icon-wrap">
-              <svg class="ambassador_celebration-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <svg class="ambassador_celebration-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
                 <path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div class="ambassador_celebration-badge">
               <span class="ambassador_celebration-dot"></span>
-              <span>STATUS: APPLICATION RECORDED</span>
+              <span>{{ section.settings.success_badge | escape }}</span>
             </div>
-            <h3 class="ambassador_celebration-title">Welcome to the Collective</h3>
-            <p class="ambassador_celebration-desc">
-              Your application has been received and logged in our talent registry. Our team reviews submissions on a rolling weekly basis and will reach out directly via Instagram or Email.
-            </p>
+            <h3 class="ambassador_celebration-title">{{ section.settings.success_title | escape }}</h3>
+            <p class="ambassador_celebration-desc">{{ section.settings.success_body | escape }}</p>
             <div class="ambassador_celebration-actions">
-              <a href="/pages/merch" class="ambassador_celebration-btn is-primary">Explore Merch Capsule</a>
-              <a href="#top" class="ambassador_celebration-btn is-ghost">Return to Top</a>
+              {%- if section.settings.success_primary_text != blank -%}
+                <a href="{{ section.settings.success_primary_url | default: routes.root_url }}" class="ambassador_celebration-btn is-primary">{{ section.settings.success_primary_text | escape }}</a>
+              {%- endif -%}
+              {%- if section.settings.success_secondary_text != blank -%}
+                <a href="#top" class="ambassador_celebration-btn is-ghost">{{ section.settings.success_secondary_text | escape }}</a>
+              {%- endif -%}
             </div>
           </div>
         {% endform %}
       </div>
     </section>
 
-    {%- comment -%} 6. FREQUENTLY ASKED QUESTIONS {%- endcomment -%}
-    {%- if section.settings.show_faq -%}
+    {%- if section.settings.show_faq and faq_blocks.size > 0 -%}
       <section class="ambassador_faq">
-        <h2>{{ section.settings.faq_title | default: 'Frequently Asked Questions' }}</h2>
-
+        <h2>{{ section.settings.faq_title | escape }}</h2>
         <div class="ambassador_faq-list">
-          {%- if section.blocks.size > 0 -%}
-            {%- for block in section.blocks -%}
-              {%- if block.type == 'faq_item' -%}
-                <div class="ambassador_faq-item" {{ block.shopify_attributes }}>
-                  <button type="button" class="ambassador_faq-q" aria-expanded="false">
-                    <span>{{ block.settings.question }}</span>
-                    <svg class="ambassador_faq-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                      <path d="M8 3V13M3 8H13" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                  </button>
-                  <div class="ambassador_faq-a">
-                    <div class="ambassador_faq-a-inner">
-                      {{ block.settings.answer }}
-                    </div>
-                  </div>
-                </div>
-              {%- endif -%}
-            {%- endfor -%}
-          {%- else -%}
-            <div class="ambassador_faq-item">
+          {%- for block in faq_blocks -%}
+            <div class="ambassador_faq-item" {{ block.shopify_attributes }}>
               <button type="button" class="ambassador_faq-q" aria-expanded="false">
-                <span>Who qualifies for the Asmaan Ambassador Program?</span>
-                <svg class="ambassador_faq-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                <span>{{ block.settings.question | escape }}</span>
+                <svg class="ambassador_faq-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true">
                   <path d="M8 3V13M3 8H13" stroke-width="2" stroke-linecap="round"/>
                 </svg>
               </button>
               <div class="ambassador_faq-a">
-                <div class="ambassador_faq-a-inner">
-                  We look for dedicated creators, athletes, designers, founders, and students who have an active digital voice and genuinely align with clean cognitive performance and thoughtful aesthetics. Quality of content and engagement matter more than raw follower numbers.
-                </div>
+                <div class="ambassador_faq-a-inner">{{ block.settings.answer }}</div>
               </div>
             </div>
-
-            <div class="ambassador_faq-item">
-              <button type="button" class="ambassador_faq-q" aria-expanded="false">
-                <span>How and when do I get paid?</span>
-                <svg class="ambassador_faq-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                  <path d="M8 3V13M3 8H13" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </button>
-              <div class="ambassador_faq-a">
-                <div class="ambassador_faq-a-inner">
-                  Commissions are tracked in real-time via your custom affiliate link or discount code. Payouts are distributed monthly via direct bank transfer or PayPal.
-                </div>
-              </div>
-            </div>
-
-            <div class="ambassador_faq-item">
-              <button type="button" class="ambassador_faq-q" aria-expanded="false">
-                <span>What is included in the creator welcome package?</span>
-                <svg class="ambassador_faq-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                  <path d="M8 3V13M3 8H13" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </button>
-              <div class="ambassador_faq-a">
-                <div class="ambassador_faq-a-inner">
-                  Accepted ambassadors receive a complimentary shipment of Asmaan Ambition Tonic cases, custom merchandise from our active capsule, and personalized creator promotional collateral.
-                </div>
-              </div>
-            </div>
-
-            <div class="ambassador_faq-item">
-              <button type="button" class="ambassador_faq-q" aria-expanded="false">
-                <span>What are my commitments as an ambassador?</span>
-                <svg class="ambassador_faq-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-                  <path d="M8 3V13M3 8H13" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </button>
-              <div class="ambassador_faq-a">
-                <div class="ambassador_faq-a-inner">
-                  We ask for 1 to 2 authentic posts, reels, or stories per month featuring Asmaan in your real routine (working, training, designing, or studying), along with sharing your community discount code.
-                </div>
-              </div>
-            </div>
-          {%- endif -%}
+          {%- endfor -%}
         </div>
       </section>
     {%- endif -%}
   </div>
 </div>
 
+<script>
+  window.ASMAAN_AMBASSADOR_LABELS = {
+    confirmedTitle: {{ section.settings.toast_success_title | json }},
+    confirmedMessage: {{ section.settings.toast_success_message | json }},
+    requiredTitle: {{ section.settings.toast_required_title | json }},
+    requiredMessage: {{ section.settings.toast_required_message | json }}
+  };
+</script>
+
 {% schema %}
 {
-  "name": "Ambassador Page",
+  "name": "Ambassador page",
   "settings": [
-    {
-      "type": "header",
-      "content": "Hero Section"
-    },
-    {
-      "type": "text",
-      "id": "hero_kicker",
-      "label": "Hero Kicker",
-      "default": "Creator Program / Ambition Collective"
-    },
-    {
-      "type": "text",
-      "id": "hero_title",
-      "label": "Hero Title",
-      "default": "Become an Asmaan Ambassador"
-    },
-    {
-      "type": "textarea",
-      "id": "hero_subtext",
-      "label": "Hero Subtext",
-      "default": "The Asmaan Ambassador Program is a hand-selected circle of creators, athletes, and visionaries fueled by relentless ambition. Apply to join."
-    },
-    {
-      "type": "text",
-      "id": "cta_text",
-      "label": "CTA Button Text",
-      "default": "Apply Now"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_reveal_form",
-      "label": "Reveal Integrated Form on Click",
-      "default": true,
-      "info": "When enabled, clicking Apply Now expands the embedded form. When disabled, links to CTA URL."
-    },
-    {
-      "type": "url",
-      "id": "cta_url",
-      "label": "External CTA URL",
-      "info": "Used if 'Reveal Integrated Form on Click' is disabled"
-    },
-    {
-      "type": "header",
-      "content": "Showcase Banner"
-    },
-    {
-      "type": "image_picker",
-      "id": "showcase_image",
-      "label": "Custom Showcase Banner Image",
-      "info": "Upload a bundle image. If left blank, Asmaan's 3D cans and capsule hoodie will render automatically."
-    },
-    {
-      "type": "header",
-      "content": "How It Works"
-    },
-    {
-      "type": "text",
-      "id": "steps_title",
-      "label": "Steps Section Title",
-      "default": "How It Works"
-    },
-    {
-      "type": "text",
-      "id": "step1_num",
-      "label": "Step 1 Number",
-      "default": "01"
-    },
-    {
-      "type": "text",
-      "id": "step1_title",
-      "label": "Step 1 Title",
-      "default": "Apply"
-    },
-    {
-      "type": "textarea",
-      "id": "step1_desc",
-      "label": "Step 1 Description",
-      "default": "Complete your creator application and hear back from our team within 48 hours."
-    },
-    {
-      "type": "text",
-      "id": "step2_num",
-      "label": "Step 2 Number",
-      "default": "02"
-    },
-    {
-      "type": "text",
-      "id": "step2_title",
-      "label": "Step 2 Title",
-      "default": "Get Your Kit"
-    },
-    {
-      "type": "textarea",
-      "id": "step2_desc",
-      "label": "Step 2 Description",
-      "default": "Receive an exclusive Asmaan tonic allocation, limited capsule merch, and your personal tracking code."
-    },
-    {
-      "type": "text",
-      "id": "step3_num",
-      "label": "Step 3 Number",
-      "default": "03"
-    },
-    {
-      "type": "text",
-      "id": "step3_title",
-      "label": "Step 3 Title",
-      "default": "Fuel The Culture"
-    },
-    {
-      "type": "textarea",
-      "id": "step3_desc",
-      "label": "Step 3 Description",
-      "default": "Share your routine and ambition across your socials to earn competitive commissions and tier rewards."
-    },
-    {
-      "type": "header",
-      "content": "Google Sheets Database Integration"
-    },
-    {
-      "type": "text",
-      "id": "google_sheet_url",
-      "label": "Google Apps Script Webhook URL",
-      "placeholder": "https://script.google.com/macros/s/.../exec",
-      "info": "Paste your Google Apps Script Web App URL here to store all submitted applications in your Google Sheet automatically."
-    },
-    {
-      "type": "header",
-      "content": "Application Form Texts"
-    },
-    {
-      "type": "text",
-      "id": "form_title",
-      "label": "Form Title",
-      "default": "Ambassador Application"
-    },
-    {
-      "type": "textarea",
-      "id": "form_subtitle",
-      "label": "Form Subtitle",
-      "default": "Join the Ambition Collective. Tell us about your craft and where to send your creator package."
-    },
-    {
-      "type": "header",
-      "content": "Perks Section"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_perks",
-      "label": "Show Perks Section",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "perks_title",
-      "label": "Perks Title",
-      "default": "Ambassador Perks"
-    },
-    {
-      "type": "header",
-      "content": "FAQ Section"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_faq",
-      "label": "Show FAQ Section",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "faq_title",
-      "label": "FAQ Title",
-      "default": "Frequently Asked Questions"
-    }
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kicker", "label": "Kicker", "default": "Creator Program / Ambition Collective" },
+    { "type": "text", "id": "hero_title", "label": "Title", "default": "Become an Asmaan Ambassador" },
+    { "type": "richtext", "id": "hero_subtext", "label": "Text", "default": "<p>The Asmaan Ambassador Program is a <strong>hand-selected circle</strong> of creators, athletes, and visionaries fueled by relentless ambition. <strong>Apply to join.</strong></p>" },
+    { "type": "text", "id": "cta_text", "label": "Button text", "default": "Apply Now" },
+    { "type": "checkbox", "id": "enable_reveal_form", "label": "Button reveals the form", "default": true, "info": "When off, the button links to the URL below." },
+    { "type": "url", "id": "cta_url", "label": "Button link" },
+    { "type": "header", "content": "Showcase" },
+    { "type": "image_picker", "id": "showcase_image", "label": "Showcase image" },
+    { "type": "text", "id": "showcase_asset_1", "label": "Fallback theme asset 1", "default": "asmaan-can-jamun.webp", "info": "Theme asset filenames shown when no showcase image is uploaded." },
+    { "type": "text", "id": "showcase_asset_2", "label": "Fallback theme asset 2", "default": "hoodie-front.webp" },
+    { "type": "text", "id": "showcase_asset_3", "label": "Fallback theme asset 3", "default": "asmaan-can-magenta.webp" },
+    { "type": "header", "content": "How it works" },
+    { "type": "text", "id": "steps_title", "label": "Title", "default": "How It Works" },
+    { "type": "text", "id": "step1_num", "label": "Step 1 number", "default": "01" },
+    { "type": "text", "id": "step1_title", "label": "Step 1 title", "default": "Apply" },
+    { "type": "textarea", "id": "step1_desc", "label": "Step 1 text", "default": "Complete your creator application and hear back from our team within 48 hours." },
+    { "type": "text", "id": "step2_num", "label": "Step 2 number", "default": "02" },
+    { "type": "text", "id": "step2_title", "label": "Step 2 title", "default": "Get Your Kit" },
+    { "type": "textarea", "id": "step2_desc", "label": "Step 2 text", "default": "Receive an exclusive Asmaan tonic allocation, limited capsule merch, and your personal tracking code." },
+    { "type": "text", "id": "step3_num", "label": "Step 3 number", "default": "03" },
+    { "type": "text", "id": "step3_title", "label": "Step 3 title", "default": "Fuel The Culture" },
+    { "type": "textarea", "id": "step3_desc", "label": "Step 3 text", "default": "Share your routine and ambition across your socials to earn competitive commissions and tier rewards." },
+    { "type": "header", "content": "Perks" },
+    { "type": "checkbox", "id": "show_perks", "label": "Show perks", "default": true },
+    { "type": "text", "id": "perks_title", "label": "Title", "default": "Ambassador Perks" },
+    { "type": "header", "content": "Application form" },
+    { "type": "text", "id": "form_title", "label": "Title", "default": "Ambassador Application" },
+    { "type": "textarea", "id": "form_subtitle", "label": "Subtitle", "default": "Join the Ambition Collective. Tell us about your craft and where to send your creator package." },
+    { "type": "text", "id": "google_sheet_url", "label": "Google Apps Script webhook URL", "placeholder": "https://script.google.com/macros/s/.../exec", "info": "Optional. Submissions are also sent to this Google Sheet." },
+    { "type": "text", "id": "contact_tags", "label": "Contact tags", "default": "ambassador_applicant,ambition_collective" },
+    { "type": "text", "id": "contact_subject", "label": "Email subject", "default": "New Ambassador Application" },
+    { "type": "text", "id": "label_name", "label": "Name label", "default": "Full Name *" },
+    { "type": "text", "id": "placeholder_name", "label": "Name placeholder", "default": "e.g. Alex Rivera" },
+    { "type": "text", "id": "label_email", "label": "Email label", "default": "Email Address *" },
+    { "type": "text", "id": "placeholder_email", "label": "Email placeholder", "default": "alex@domain.com" },
+    { "type": "text", "id": "label_phone", "label": "Phone label", "default": "Phone / WhatsApp" },
+    { "type": "text", "id": "placeholder_phone", "label": "Phone placeholder", "default": "+91 98765 43210" },
+    { "type": "text", "id": "label_instagram", "label": "Instagram label", "default": "Instagram Handle *" },
+    { "type": "text", "id": "placeholder_instagram", "label": "Instagram placeholder", "default": "@yourhandle" },
+    { "type": "text", "id": "label_other_social", "label": "Other social label", "default": "TikTok or YouTube URL" },
+    { "type": "text", "id": "placeholder_other_social", "label": "Other social placeholder", "default": "@handle or channel link" },
+    { "type": "text", "id": "label_audience", "label": "Audience label", "default": "Audience Size *" },
+    { "type": "text", "id": "placeholder_audience", "label": "Audience placeholder", "default": "Select follower range" },
+    { "type": "textarea", "id": "audience_options", "label": "Audience options", "default": "Under 5,000\n5,000 - 25,000\n25,000 - 100,000\n100,000+", "info": "One per line." },
+    { "type": "text", "id": "label_niche", "label": "Focus label", "default": "Primary Content Focus *" },
+    { "type": "text", "id": "placeholder_niche", "label": "Focus placeholder", "default": "Select primary focus" },
+    { "type": "textarea", "id": "niche_options", "label": "Focus options", "default": "Fitness, Athletics & Training\nSoftware, Tech & Startups\nDesign, Architecture & Creative Arts\nStreetwear, Fashion & Aesthetics\nGaming & Digital Creation\nDaily Routine & Productivity", "info": "One per line." },
+    { "type": "text", "id": "label_message", "label": "Message label", "default": "Why Asmaan? What drives your ambition?" },
+    { "type": "text", "id": "placeholder_message", "label": "Message placeholder", "default": "Tell us about your routine, your goals, or why you want to represent Asmaan..." },
+    { "type": "text", "id": "submit_text", "label": "Submit button", "default": "Submit Application" },
+    { "type": "text", "id": "error_title", "label": "Error title", "default": "Submission Incomplete" },
+    { "type": "header", "content": "After submitting" },
+    { "type": "text", "id": "success_badge", "label": "Badge", "default": "STATUS: APPLICATION RECORDED" },
+    { "type": "text", "id": "success_title", "label": "Title", "default": "Welcome to the Collective" },
+    { "type": "textarea", "id": "success_body", "label": "Text", "default": "Your application has been received and logged in our talent registry. Our team reviews submissions on a rolling weekly basis and will reach out directly via Instagram or Email." },
+    { "type": "text", "id": "success_primary_text", "label": "Primary button", "default": "Explore Merch Capsule" },
+    { "type": "url", "id": "success_primary_url", "label": "Primary button link" },
+    { "type": "text", "id": "success_secondary_text", "label": "Back-to-top button", "default": "Return to Top" },
+    { "type": "text", "id": "toast_success_title", "label": "Success notification title", "default": "Application Confirmed" },
+    { "type": "text", "id": "toast_success_message", "label": "Success notification text", "default": "Your ambassador application has been recorded in our talent registry!" },
+    { "type": "text", "id": "toast_required_title", "label": "Missing fields notification title", "default": "Action Required" },
+    { "type": "text", "id": "toast_required_message", "label": "Missing fields notification text", "default": "Please complete all required fields marked with * correctly." },
+    { "type": "header", "content": "FAQ" },
+    { "type": "checkbox", "id": "show_faq", "label": "Show FAQ", "default": true },
+    { "type": "text", "id": "faq_title", "label": "Title", "default": "Frequently Asked Questions" }
   ],
   "blocks": [
     {
-      "type": "faq_item",
-      "name": "FAQ Item",
+      "type": "perk",
+      "name": "Perk",
       "settings": [
         {
-          "type": "text",
-          "id": "question",
-          "label": "Question",
-          "default": "How does the ambassador program work?"
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "money", "label": "Money" },
+            { "value": "box", "label": "Box" },
+            { "value": "bolt", "label": "Bolt" },
+            { "value": "star", "label": "Star" }
+          ],
+          "default": "star"
         },
-        {
-          "type": "textarea",
-          "id": "answer",
-          "label": "Answer",
-          "default": "As an ambassador, you receive free monthly product allocations and earn commission on every order placed using your creator link."
-        }
+        { "type": "text", "id": "title", "label": "Title", "default": "Perk" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    },
+    {
+      "type": "faq_item",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Question" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Answer</p>" }
       ]
     }
   ],
   "presets": [
-    {
-      "name": "Ambassador Page"
-    }
+    { "name": "Ambassador page" }
   ]
 }
 {% endschema %}

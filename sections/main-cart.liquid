@@ -272,9 +272,9 @@
               <div class="main-cart-item">
                 <div class="main-cart-item-info">
                   {%- if item.image -%}
-                    <img src="{{ item.image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="main-cart-item-img">
+                    <img src="{{ item.image | image_url: width: 140 }}" width="{{ item.image.width }}" height="{{ item.image.height }}" alt="{{ item.title | escape }}" class="main-cart-item-img">
                   {%- elsif item.product.featured_image -%}
-                    <img src="{{ item.product.featured_image | image_url: width: 140 }}" alt="{{ item.title | escape }}" class="main-cart-item-img">
+                    <img src="{{ item.product.featured_image | image_url: width: 140 }}" width="{{ item.product.featured_image.width }}" height="{{ item.product.featured_image.height }}" alt="{{ item.title | escape }}" class="main-cart-item-img">
                   {%- endif -%}
                   <div>
                     <h3 class="main-cart-item-title">{{ item.product.title }}</h3>

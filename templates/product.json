@@ -30,7 +30,9 @@
         "acc_2_title": "Full Nutrition Facts (250ml)",
         "acc_2_content": "Energy: 10 kcal • Protein: 0g • Fat: 0g • Total Carbohydrates: 0g • Total Sugars: 0g • Sodium: 14mg • Caffeine: 100mg • L-Theanine: 200mg • KSM-66: 300mg.",
         "acc_3_title": "Shipping & Freshness Guarantee",
-        "acc_3_content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over [free_shipping_threshold]."
+        "acc_3_content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over [free_shipping_threshold].",
+        "fallback_accent": "#9089D3",
+        "flavour_colours": "kala-jamun: #9089D3\nalphonso-mango: #EFB36B\nwild-magenta: #E6A0E8"
       }
     },
     "newsletter": {

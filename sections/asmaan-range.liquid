@@ -23,7 +23,7 @@
         <div class="padding-section-large">
           <h2 class="heading-style-display mb-[var(--pad-xxl)]">{{ section.settings.title | escape | newline_to_br }}</h2>
 
-          <ul class="grid grid-cols-1 gap-[var(--pad-l)] sm:grid-cols-2 lg:grid-cols-3">
+          <ul class="asmaan-range-grid" data-mobile-row="{{ section.settings.mobile_one_row }}">
             {%- assign card_index = 0 -%}
             {%- for item in card_source -%}
               {%- liquid
@@ -74,13 +74,13 @@
                       width="520"
                       height="1040"
                       decoding="async"
-                      class="relative h-[38svh] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
+                      class="asmaan-range-can relative w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
                       src="{{ c_img | image_url: width: 520 }}"
                     >
                   {%- endif -%}
-                  <span class="relative heading-style-h3">{{ c_title | escape }}</span>
+                  <span class="asmaan-range-title relative heading-style-h3">{{ c_title | escape }}</span>
                   {%- if c_tag != blank -%}
-                    <span class="relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ c_tag | escape }}</span>
+                    <span class="asmaan-range-tag relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ c_tag | escape }}</span>
                   {%- endif -%}
                 </button>
               </li>
@@ -96,6 +96,33 @@
     </div>
   </section>
 </div>
+
+<style>
+  #shopify-section-{{ section.id }} .asmaan-range-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns }}, minmax(0, 1fr));
+    gap: var(--pad-l);
+  }
+  #shopify-section-{{ section.id }} .asmaan-range-can { height: 38svh; }
+
+  @media (max-width: 749px) {
+    #shopify-section-{{ section.id }} .asmaan-range-grid[data-mobile-row="false"] { grid-template-columns: minmax(0, 1fr); }
+    #shopify-section-{{ section.id }} .asmaan-range-grid[data-mobile-row="true"] { gap: 0.5rem; }
+    #shopify-section-{{ section.id }} .asmaan-range-grid[data-mobile-row="true"] > li > button {
+      padding: 1.25rem 0.25rem;
+      gap: 0.5rem;
+    }
+    #shopify-section-{{ section.id }} .asmaan-range-grid[data-mobile-row="true"] .asmaan-range-can { height: 22svh; }
+    #shopify-section-{{ section.id }} .asmaan-range-grid[data-mobile-row="true"] .asmaan-range-title {
+      font-size: clamp(0.85rem, 4vw, 1.1rem);
+      line-height: 1.1;
+    }
+    #shopify-section-{{ section.id }} .asmaan-range-grid[data-mobile-row="true"] .asmaan-range-tag {
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+    }
+  }
+</style>
 
 {% schema %}
 {
@@ -118,7 +145,10 @@
     { "type": "collection", "id": "collection", "label": "Collection", "info": "Falls back to the homepage collection in Theme settings." },
     { "type": "text", "id": "default_tag", "label": "Fallback tagline", "default": "Ambition Tonic", "info": "Shown when a card has no tagline on its block or in the product metafield custom.tagline." },
     { "type": "color", "id": "fallback_secondary", "label": "Fallback glow colour", "default": "#9089D3" },
-    { "type": "color", "id": "fallback_primary", "label": "Fallback glow base colour", "default": "#2A1D4A" }
+    { "type": "color", "id": "fallback_primary", "label": "Fallback glow base colour", "default": "#2A1D4A" },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "columns", "label": "Cards per row", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "checkbox", "id": "mobile_one_row", "label": "Keep cards in one row on phones", "default": true, "info": "When off, cards stack on screens under 750px." }
   ],
   "blocks": [
     {

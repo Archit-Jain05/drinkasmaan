@@ -41,9 +41,9 @@
 
               <div class="shop-card-image-wrap">
                 {%- if product.featured_media != blank -%}
-                  <img src="{{ product.featured_media | image_url: width: 500 }}" alt="{{ product.title | escape }}" class="shop-card-img" loading="lazy">
+                  <img src="{{ product.featured_media | image_url: width: 500 }}" width="{{ product.featured_media.preview_image.width }}" height="{{ product.featured_media.preview_image.height }}" alt="{{ product.title | escape }}" class="shop-card-img" loading="lazy">
                 {%- elsif product.featured_image != blank -%}
-                  <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title | escape }}" class="shop-card-img" loading="lazy">
+                  <img src="{{ product.featured_image | image_url: width: 500 }}" width="{{ product.featured_image.width }}" height="{{ product.featured_image.height }}" alt="{{ product.title | escape }}" class="shop-card-img" loading="lazy">
                 {%- endif -%}
               </div>
 

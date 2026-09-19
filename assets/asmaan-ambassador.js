@@ -106,8 +106,8 @@
       setTimeout(function() {
         window.asmaanNotify({
           type: 'success',
-          title: 'Application Confirmed',
-          message: 'Welcome to the Asmaan Ambition Collective queue! Your application has been logged.'
+          title: (window.ASMAAN_AMBASSADOR_LABELS || {}).confirmedTitle,
+          message: (window.ASMAAN_AMBASSADOR_LABELS || {}).confirmedMessage
         });
       }, 600);
     }
@@ -209,8 +209,8 @@
 
           window.asmaanNotify({
             type: 'error',
-            title: 'Action Required',
-            message: 'Please complete all required fields marked with * correctly.'
+            title: (window.ASMAAN_AMBASSADOR_LABELS || {}).requiredTitle,
+            message: (window.ASMAAN_AMBASSADOR_LABELS || {}).requiredMessage
           });
           return;
         }
@@ -274,8 +274,8 @@
             // Fire Global Toast Confirmation
             window.asmaanNotify({
               type: 'success',
-              title: 'Application Confirmed',
-              message: 'Your ambassador application has been recorded in our talent registry!'
+              title: (window.ASMAAN_AMBASSADOR_LABELS || {}).confirmedTitle,
+              message: (window.ASMAAN_AMBASSADOR_LABELS || {}).confirmedMessage
             });
           }
 
