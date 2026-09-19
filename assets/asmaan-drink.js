@@ -345,18 +345,103 @@
       });
     }
 
-    // Hardware-accelerated Canvas Scroll Animation Scrubber
+    // Hardware-accelerated Canvas Scroll Animation Scrubber with Real-time Background Alpha Keyer
     var packVideo = document.getElementById('pack-scroll-video');
     var packCanvas = document.getElementById('pack-scroll-canvas');
     var packRun = document.querySelector('.pack_run');
     var packHold = document.querySelector('.pack_hold');
 
     if (packVideo && packCanvas && packRun) {
-      var ctx = packCanvas.getContext('2d');
       var isVideoReady = false;
       var targetProgress = 0;
       var currentProgress = 0;
       var isSeeking = false;
+
+      var gl = null;
+      var glProgram = null;
+      var posBuffer = null;
+      var texBuffer = null;
+      var texture = null;
+      var isWebGL = false;
+      var ctx2d = null;
+
+      try {
+        gl = packCanvas.getContext('webgl', { premultipliedAlpha: false, alpha: true }) || packCanvas.getContext('experimental-webgl', { premultipliedAlpha: false, alpha: true });
+        if (gl) {
+          var vsSource = [
+            'attribute vec2 a_position;',
+            'attribute vec2 a_texCoord;',
+            'varying vec2 v_texCoord;',
+            'void main() {',
+            '  gl_Position = vec4(a_position, 0.0, 1.0);',
+            '  v_texCoord = a_texCoord;',
+            '}'
+          ].join('\n');
+
+          var fsSource = [
+            'precision mediump float;',
+            'uniform sampler2D u_image;',
+            'varying vec2 v_texCoord;',
+            'void main() {',
+            '  vec4 color = texture2D(u_image, v_texCoord);',
+            '  float luma = dot(color.rgb, vec3(0.299, 0.587, 0.114));',
+            '  float alpha = smoothstep(0.03, 0.16, luma);',
+            '  gl_FragColor = vec4(color.rgb, color.a * alpha);',
+            '}'
+          ].join('\n');
+
+          function createShader(glCtx, type, src) {
+            var s = glCtx.createShader(type);
+            glCtx.shaderSource(s, src);
+            glCtx.compileShader(s);
+            return s;
+          }
+
+          var vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+          var fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+          glProgram = gl.createProgram();
+          gl.attachShader(glProgram, vs);
+          gl.attachShader(glProgram, fs);
+          gl.linkProgram(glProgram);
+
+          posBuffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            -1, -1,
+             1, -1,
+            -1,  1,
+            -1,  1,
+             1, -1,
+             1,  1
+          ]), gl.STATIC_DRAW);
+
+          texBuffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, texBuffer);
+          gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            0, 1,
+            1, 1,
+            0, 0,
+            0, 0,
+            1, 1,
+            1, 0
+          ]), gl.STATIC_DRAW);
+
+          texture = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+          isWebGL = true;
+        }
+      } catch (e) {
+        isWebGL = false;
+      }
+
+      if (!isWebGL) {
+        ctx2d = packCanvas.getContext('2d');
+      }
 
       function resizeCanvas() {
         if (!packCanvas || !packVideo) return;
@@ -370,9 +455,33 @@
       }
 
       function renderCurrentFrame() {
-        if (!ctx || !packVideo || !packVideo.videoWidth) return;
-        ctx.clearRect(0, 0, packCanvas.width, packCanvas.height);
-        ctx.drawImage(packVideo, 0, 0, packCanvas.width, packCanvas.height);
+        if (!packVideo || !packVideo.videoWidth) return;
+
+        if (isWebGL && gl && glProgram) {
+          gl.viewport(0, 0, packCanvas.width, packCanvas.height);
+          gl.clearColor(0, 0, 0, 0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+
+          gl.useProgram(glProgram);
+
+          var posLoc = gl.getAttribLocation(glProgram, 'a_position');
+          gl.enableVertexAttribArray(posLoc);
+          gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+          gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+          var texLoc = gl.getAttribLocation(glProgram, 'a_texCoord');
+          gl.enableVertexAttribArray(texLoc);
+          gl.bindBuffer(gl.ARRAY_BUFFER, texBuffer);
+          gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
+
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, packVideo);
+
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        } else if (ctx2d) {
+          ctx2d.clearRect(0, 0, packCanvas.width, packCanvas.height);
+          ctx2d.drawImage(packVideo, 0, 0, packCanvas.width, packCanvas.height);
+        }
       }
 
       packVideo.addEventListener('loadedmetadata', function() {

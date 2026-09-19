@@ -3894,7 +3894,9 @@ input:focus-visible {
   object-fit: contain;
   display: block;
   pointer-events: none;
-  filter: drop-shadow(0 1.5rem 2.5rem rgba(0, 0, 0, 0.7));
+  background: transparent;
+  mix-blend-mode: screen;
+  filter: contrast(1.05) brightness(1.02) drop-shadow(0 1.5rem 2.5rem rgba(0, 0, 0, 0.7));
 }
 
 .pack_scroll-video {
