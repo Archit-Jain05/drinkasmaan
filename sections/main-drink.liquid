@@ -232,7 +232,7 @@
   assign sub_price = 100 | minus: sub_discount | times: default_price | divided_by: 100
 -%}
 
-<div id="top" class="drink-page-wrapper">
+<div id="top" class="drink-page-wrapper{% if section.settings.banner_text != blank %} has-banner{% endif %}">
   {%- if section.settings.banner_text != blank -%}
     <p class="drink_banner">{{ section.settings.banner_text | escape }}</p>
   {%- endif -%}
@@ -799,6 +799,32 @@
   }
 </script>
 
+<style>
+  /* The navbar is fixed over the top of the page; sit the banner just below it and take the
+     banner space out of the product section's own header clearance. */
+  .drink-page-wrapper.has-banner .drink_banner {
+    position: relative;
+    z-index: 1;
+    margin-top: var(--asmaan-header-h, 90px);
+  }
+  .drink-page-wrapper.has-banner #buy {
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+  }
+</style>
+
+<script>
+  (function() {
+    var nav = document.querySelector('header.navbar');
+    if (!nav) return;
+    function setHeaderHeight() {
+      document.documentElement.style.setProperty('--asmaan-header-h', nav.getBoundingClientRect().height + 'px');
+    }
+    setHeaderHeight();
+    if ('ResizeObserver' in window) new ResizeObserver(setHeaderHeight).observe(nav);
+    window.addEventListener('resize', setHeaderHeight);
+  })();
+</script>
+
 {% schema %}
 {
   "name": "Drink product page",
@@ -900,9 +926,9 @@
     { "type": "textarea", "id": "range_intro", "label": "Intro", "default": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it." },
 
     { "type": "header", "content": "Reviews" },
-    { "type": "checkbox", "id": "show_reviews", "label": "Show reviews", "default": true },
+    { "type": "checkbox", "id": "show_reviews", "label": "Show reviews", "default": false },
     { "type": "text", "id": "reviews_heading", "label": "Heading", "default": "From the first tasting" },
-    { "type": "textarea", "id": "reviews_note", "label": "Note", "default": "Notes from the tasting room, not verified purchases — this page gets real reviews when it gets real orders." },
+    { "type": "textarea", "id": "reviews_note", "label": "Note", "info": "Optional line under the heading." },
 
     { "type": "header", "content": "FAQ" },
     { "type": "textarea", "id": "faq_heading", "label": "Heading", "default": "Frequently asked\nquestions" },
