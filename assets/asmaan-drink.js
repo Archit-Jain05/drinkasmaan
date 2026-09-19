@@ -214,6 +214,11 @@
           var cSrc = img.getAttribute('data-img-' + tasteObj.id);
           if (cSrc) img.src = cSrc;
         });
+
+        var stageGlow = document.querySelector('.pack_stage .merch_glow');
+        if (stageGlow) {
+          stageGlow.style.setProperty('--glow', tasteObj.secondary);
+        }
       }
 
       var packTierBtns = document.querySelectorAll('.pack_tier');
@@ -380,8 +385,8 @@
             var travel = packRun.offsetHeight - h;
             var scrollThrough = travel > 0 ? (-rect.top) / travel : 0;
 
-            var build = smooth(clampRange(scrollThrough, 0.04, 0.78));
-            var turn = -32 + (18 * Math.min(Math.max(scrollThrough, 0), 1));
+            var build = smooth(clampRange(scrollThrough, 0.02, 0.82));
+            var turn = -26 + (14 * Math.min(Math.max(scrollThrough, 0), 1));
 
             packHold.style.setProperty('--build', build);
             packHold.style.setProperty('--turn', turn + 'deg');

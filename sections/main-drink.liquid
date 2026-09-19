@@ -410,53 +410,140 @@
             </a>
           </div>
 
-          <!-- 3D Shipper Carton Stage -->
+          <!-- 3D Shipper Carton Stage & Floating Actives -->
           <div class="pack_stage">
             <span class="merch_glow" style="--glow: #9089D3;" aria-hidden="true"></span>
+            
             <div class="pack_scene" aria-hidden="true">
               <div class="pack_box" style="--layers: 2; --print: #9089D3; --print-deep: #2A1D4A;">
-                <!-- Internal Standing Cans -->
-                <span class="pack_can" style="--x: -36; --z: 26; --i: 0;">
+                
+                <!-- Internal Standing Cans Grid -->
+                <span class="pack_can" style="--x: -34; --z: 22; --i: 0;">
                   <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
                 </span>
-                <span class="pack_can" style="--x: -12; --z: 26; --i: 1;">
+                <span class="pack_can" style="--x: -12; --z: 22; --i: 1;">
                   <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
                 </span>
-                <span class="pack_can" style="--x: 36; --z: 26; --i: 2;">
+                <span class="pack_can" style="--x: 34; --z: 22; --i: 2;">
                   <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
                 </span>
-                <span class="pack_can" style="--x: -24; --z: -24; --i: 3;">
+                <span class="pack_can" style="--x: -24; --z: -22; --i: 3;">
                   <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
                 </span>
-                <span class="pack_can" style="--x: 0; --z: -24; --i: 4;">
+                <span class="pack_can" style="--x: 0; --z: -22; --i: 4;">
                   <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
                 </span>
-                <span class="pack_can" style="--x: 24; --z: -24; --i: 5;">
+                <span class="pack_can" style="--x: 24; --z: -22; --i: 5;">
                   <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
                 </span>
 
                 <!-- Elevating Hero Can -->
-                <span class="pack_can is-hero" style="--x: 12; --z: 26; --i: 2;">
+                <span class="pack_can is-hero" style="--x: 12; --z: 22; --i: 2;">
                   <span class="pack_hero-glow"></span>
                   <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
                 </span>
 
                 <!-- 3D Box Faces -->
                 <div class="pack_face is-back"></div>
-                <div class="pack_face is-side"></div>
+                
+                <!-- Left Face with Nutrition & Barcode -->
+                <div class="pack_face is-left">
+                  <div class="pack_nutrition-card">
+                    <div class="pack_nutrition-head">
+                      <b>SUPPLEMENT FACTS</b>
+                      <span>Serving Size: 1 Can (250 ml)</span>
+                    </div>
+                    <div class="pack_nutrition-row"><span>Calories</span><b>10</b></div>
+                    <div class="pack_nutrition-row"><span>Total Carbohydrates</span><b>0g</b></div>
+                    <div class="pack_nutrition-row"><span>KSM-66® Ashwagandha</span><b>300mg</b></div>
+                    <div class="pack_nutrition-row"><span>L-Theanine</span><b>200mg</b></div>
+                    <div class="pack_nutrition-row"><span>Natural Caffeine</span><b>100mg</b></div>
+                    <div class="pack_nutrition-row"><span>Magnesium Bisglycinate</span><b>60mg</b></div>
+                    <div class="pack_nutrition-row"><span>Vitamin B6 + B12</span><b>100% DV</b></div>
+                    <div class="pack_nutrition-footer">
+                      <div class="pack_barcode">
+                        <svg viewBox="0 0 100 22" preserveAspectRatio="none" aria-hidden="true">
+                          <rect x="0" y="0" width="3" height="22" fill="currentColor"/>
+                          <rect x="5" y="0" width="2" height="22" fill="currentColor"/>
+                          <rect x="9" y="0" width="4" height="22" fill="currentColor"/>
+                          <rect x="15" y="0" width="1" height="22" fill="currentColor"/>
+                          <rect x="18" y="0" width="3" height="22" fill="currentColor"/>
+                          <rect x="23" y="0" width="2" height="22" fill="currentColor"/>
+                          <rect x="27" y="0" width="5" height="22" fill="currentColor"/>
+                          <rect x="34" y="0" width="2" height="22" fill="currentColor"/>
+                          <rect x="38" y="0" width="1" height="22" fill="currentColor"/>
+                          <rect x="41" y="0" width="4" height="22" fill="currentColor"/>
+                          <rect x="47" y="0" width="2" height="22" fill="currentColor"/>
+                          <rect x="51" y="0" width="3" height="22" fill="currentColor"/>
+                          <rect x="56" y="0" width="1" height="22" fill="currentColor"/>
+                          <rect x="59" y="0" width="4" height="22" fill="currentColor"/>
+                          <rect x="65" y="0" width="2" height="22" fill="currentColor"/>
+                          <rect x="69" y="0" width="3" height="22" fill="currentColor"/>
+                          <rect x="74" y="0" width="5" height="22" fill="currentColor"/>
+                          <rect x="81" y="0" width="2" height="22" fill="currentColor"/>
+                          <rect x="85" y="0" width="3" height="22" fill="currentColor"/>
+                          <rect x="90" y="0" width="1" height="22" fill="currentColor"/>
+                          <rect x="93" y="0" width="4" height="22" fill="currentColor"/>
+                          <rect x="99" y="0" width="1" height="22" fill="currentColor"/>
+                        </svg>
+                        <span>ASM-2026-001</span>
+                      </div>
+                      <span class="pack_stamp">100% RECYCLABLE</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Face -->
+                <div class="pack_face is-right">
+                  <div class="pack_side-brand">
+                    <span class="pack_side-logo">{{ section.settings.wordmark | default: 'ASMAAN' }}</span>
+                    <span class="pack_side-sub">FOUNDERS BATCH</span>
+                  </div>
+                </div>
+
+                <!-- Front Face with Packaging Details -->
                 <div class="pack_face is-front">
-                  <span class="pack_wordmark">{{ section.settings.wordmark | default: 'ASMAAN' }}</span>
-                  <span class="pack_count"><b>24</b> cans</span>
-                  <span class="pack_line">{{ section.settings.tagline | default: 'Ambition Tonic' }}</span>
-                  <span class="pack_seal">250 ML · ZERO SUGAR</span>
+                  <div class="pack_front-inner">
+                    <span class="pack_wordmark">{{ section.settings.wordmark | default: 'ASMAAN' }}</span>
+                    <span class="pack_count"><b>24</b> cans</span>
+                    <span class="pack_line">{{ section.settings.tagline | default: 'Ambition Tonic' }}</span>
+                    <span class="pack_seal">250 ML · ZERO SUGAR · BATCH #001</span>
+                  </div>
                 </div>
 
-                <!-- 3D Top Flap -->
-                <div class="pack_top">
-                  <span class="pack_flap"></span>
-                </div>
+                <!-- 3D Origami Flaps -->
+                <div class="pack_flap is-lid"></div>
+                <div class="pack_flap is-front"></div>
+                <div class="pack_flap is-left"></div>
+                <div class="pack_flap is-right"></div>
 
+                <!-- Floor Shadow -->
                 <span class="pack_shadow"></span>
+              </div>
+            </div>
+
+            <!-- Floating Active Ingredient Callouts (Void Energy Style) -->
+            <div class="pack_actives-callout" aria-hidden="true">
+              <div class="pack_active-card" style="--card-i: 0;">
+                <div class="pack_active-head">
+                  <b>KSM-66® ASHWAGANDHA</b>
+                  <span>(300 MG)</span>
+                </div>
+                <p>Root extract at clinical dose. Sustains calm focus and cognitive endurance during intense creative sessions.</p>
+              </div>
+              <div class="pack_active-card" style="--card-i: 1;">
+                <div class="pack_active-head">
+                  <b>L-THEANINE</b>
+                  <span>(200 MG)</span>
+                </div>
+                <p>From organic green tea. Smooths the caffeine curve into alert, clear-headed flow with zero jitters.</p>
+              </div>
+              <div class="pack_active-card" style="--card-i: 2;">
+                <div class="pack_active-head">
+                  <b>NATURAL CAFFEINE</b>
+                  <span>(100 MG)</span>
+                </div>
+                <p>Clean lift from green coffee beans. Slower release, longer sustained attention, zero crash.</p>
               </div>
             </div>
           </div>

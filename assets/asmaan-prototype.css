@@ -3863,11 +3863,17 @@ input:focus-visible {
 .pack_spec dd {
   margin-top: var(--pad-t);
   font-size: 0.9375rem;
+  font-weight: 400;
+  color: #fff;
 }
 
 .pack_stage {
   position: relative;
-  height: min(68svh, 44rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: min(74svh, 48rem);
+  width: 100%;
 }
 
 .pack_scene {
@@ -3876,67 +3882,214 @@ input:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 1500px;
-  perspective-origin: 50% 42%;
+  perspective: 1600px;
+  perspective-origin: 46% 42%;
+  transform-style: preserve-3d;
 }
 
+/* 3D Shipper Carton */
 .pack_box {
-  --w: clamp(12rem, 28vw, 21rem);
-  --d: calc(var(--w) * 0.52);
-  --h: calc(var(--w) * (0.5 + 0.2 * var(--layers, 2)));
-  --land: clamp(0, calc(var(--build, 1) / 0.18), 1);
-  --out: clamp(0, calc((var(--build, 1) - 0.5) / 0.5), 1);
-  --fwd: clamp(0, calc((var(--out) - 0.42) / 0.58), 1);
+  --w: clamp(14rem, 25vw, 21rem);
+  --d: calc(var(--w) * 0.62);
+  --h: calc(var(--w) * 0.72);
+  --land: clamp(0, calc(var(--build, 1) / 0.16), 1);
+  --flap-open: clamp(0, calc((var(--build, 1) - 0.12) / 0.32), 1);
+  --can-rise: clamp(0, calc((var(--build, 1) - 0.26) / 0.44), 1);
+  --hero-rise: clamp(0, calc((var(--build, 1) - 0.30) / 0.48), 1);
+  --hero-fwd: clamp(0, calc((var(--build, 1) - 0.42) / 0.50), 1);
 
   position: relative;
   width: var(--w);
   height: var(--h);
   transform-style: preserve-3d;
-  transform: rotateX(14deg) rotateY(var(--turn, -24deg))
-    translateY(calc((1 - var(--land)) * -14% + var(--out) * 7%))
-    scale(calc(0.9 + 0.1 * var(--land)));
+  transform: rotateX(18deg) rotateY(var(--turn, -22deg)) rotateZ(1deg)
+    translateY(calc((1 - var(--land)) * -18% + var(--hero-fwd) * 4%))
+    scale(calc(0.92 + 0.08 * var(--land)));
   opacity: var(--land);
-  transition: height 0.5s ease;
+  transition: opacity 0.3s ease;
 }
 
 .pack_face,
 .pack_flap {
-  filter: brightness(calc(1 - 0.2 * var(--out, 0)));
+  position: absolute;
+  box-sizing: border-box;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
 }
 
+/* Carton Faces Styling */
 .pack_face {
-  position: absolute;
   inset: 0;
   margin: auto;
-  border: 1px solid color-mix(in srgb, var(--print, #9089d3) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--print, #9089d3) 30%, rgba(255, 255, 255, 0.12));
   background:
-    linear-gradient(200deg, rgba(255, 255, 255, 0.16), transparent 60%),
-    linear-gradient(to bottom, var(--print-deep, #2a1d4a), #08070c);
+    linear-gradient(195deg, rgba(255, 255, 255, 0.12), transparent 55%),
+    linear-gradient(to bottom, var(--print-deep, #2a1d4a), #08060d);
+  box-shadow: inset 0 0 2rem rgba(0, 0, 0, 0.6);
 }
 
+/* Back Interior Face */
+.pack_face.is-back {
+  transform: translateZ(calc(var(--d) / -2)) rotateY(180deg);
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.95)),
+    linear-gradient(to bottom, var(--print-deep, #2a1d4a), #050408);
+}
+
+/* Left Side Face (Nutrition Facts & Packaging Barcode) */
+.pack_face.is-left {
+  width: var(--d);
+  height: var(--h);
+  transform: rotateY(-90deg) translateZ(calc(var(--w) / 2));
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 60%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--print-deep, #2a1d4a) 90%, #000), #060509);
+  padding: 0.65rem 0.55rem;
+  overflow: hidden;
+  filter: brightness(0.85);
+}
+
+.pack_nutrition-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: var(--font-mono);
+  font-size: calc(var(--w) * 0.026);
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.25;
+}
+
+.pack_nutrition-head {
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #fff;
+  margin-bottom: 0.25rem;
+}
+
+.pack_nutrition-head b {
+  display: block;
+  font-size: calc(var(--w) * 0.034);
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pack_nutrition-head span {
+  font-size: calc(var(--w) * 0.024);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.pack_nutrition-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.15rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pack_nutrition-row span {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.pack_nutrition-row b {
+  font-weight: 600;
+  color: #fff;
+}
+
+.pack_nutrition-footer {
+  margin-top: auto;
+  padding-top: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.pack_barcode {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.pack_barcode svg {
+  width: 100%;
+  height: calc(var(--w) * 0.065);
+}
+
+.pack_barcode span {
+  font-size: calc(var(--w) * 0.022);
+  letter-spacing: 0.18em;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pack_stamp {
+  font-size: calc(var(--w) * 0.02);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--taste-secondary, #9089d3);
+  text-align: center;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  padding: 0.1rem;
+  border-radius: 2px;
+}
+
+/* Right Side Face */
+.pack_face.is-right {
+  width: var(--d);
+  height: var(--h);
+  transform: rotateY(90deg) translateZ(calc(var(--w) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: brightness(0.72);
+}
+
+.pack_side-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  transform: rotate(-90deg);
+}
+
+.pack_side-logo {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-style: italic;
+  font-size: calc(var(--w) * 0.11);
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.pack_side-sub {
+  font-family: var(--font-mono);
+  font-size: calc(var(--w) * 0.035);
+  letter-spacing: 0.22em;
+  color: color-mix(in srgb, var(--print, #9089d3) 75%, #fff);
+}
+
+/* Front Face (Cutaway lower lip showing inner cans) */
 .pack_face.is-front {
+  width: var(--w);
+  height: calc(var(--h) * 0.65);
+  transform: translateZ(calc(var(--d) / 2)) translateY(calc(var(--h) * 0.175));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-top: none;
+}
+
+.pack_front-inner {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
   padding: var(--pad-s) var(--pad-xs);
-  transform: translateZ(calc(var(--d) / 2));
-}
-
-.pack_face.is-back {
-  transform: translateZ(calc(var(--d) / -2)) rotateY(180deg);
-}
-
-.pack_face.is-side {
-  width: var(--d);
-  transform: rotateY(90deg) translateZ(calc(var(--w) / 2));
-  filter: brightness(0.72);
 }
 
 .pack_wordmark {
   font-family: var(--font-heading);
   font-weight: 900;
   font-style: italic;
-  font-size: calc(var(--w) * 0.155);
+  font-size: calc(var(--w) * 0.145);
   line-height: 1;
   letter-spacing: -0.01em;
   color: #fff;
@@ -3944,7 +4097,7 @@ input:focus-visible {
 
 .pack_count {
   font-family: var(--font-mono);
-  font-size: calc(var(--w) * 0.06);
+  font-size: calc(var(--w) * 0.055);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--print, #9089d3) 85%, #fff);
@@ -3952,102 +4105,133 @@ input:focus-visible {
 
 .pack_count b {
   font-weight: 400;
-  font-size: 1.6em;
+  font-size: 1.5em;
 }
 
 .pack_line {
   font-family: var(--font-mono);
-  font-size: calc(var(--w) * 0.045);
+  font-size: calc(var(--w) * 0.04);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.5);
 }
 
 .pack_seal {
-  margin-top: auto;
+  margin-top: 0.25rem;
   padding-top: 0.35rem;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
   font-family: var(--font-mono);
-  font-size: calc(var(--w) * 0.042);
-  letter-spacing: 0.16em;
+  font-size: calc(var(--w) * 0.035);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.4);
 }
 
-.pack_top {
-  position: absolute;
-  top: 50%;
+/* Origami Opening Flaps */
+.pack_flap {
+  border: 1px solid color-mix(in srgb, var(--print, #9089d3) 30%, rgba(255, 255, 255, 0.15));
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent),
+    linear-gradient(to bottom, var(--print-deep, #2a1d4a), #0a0812);
+}
+
+/* Top Main Lid Flap */
+.pack_flap.is-lid {
+  top: 0;
   left: 0;
   width: var(--w);
-  height: var(--d);
-  margin-top: calc(var(--d) / -2);
-  transform-style: preserve-3d;
-  transform: rotateX(90deg) translateZ(calc(var(--h) / 2));
+  height: calc(var(--d) * 1.01);
+  transform-origin: top center;
+  transform: translateZ(calc(var(--d) / -2)) rotateX(calc(90deg + var(--flap-open) * -132deg));
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
 }
 
-.pack_flap {
-  --open: clamp(0, calc((var(--build, 1) - 0.18) / 0.3), 1);
-  position: absolute;
+/* Front Drop Flap */
+.pack_flap.is-front {
+  top: calc(var(--h) * 0.35);
   left: 0;
-  top: 0;
-  width: 100%;
-  height: 50%;
-  border: 1px solid color-mix(in srgb, var(--print, #9089d3) 30%, transparent);
-  background: linear-gradient(to bottom, var(--print-deep, #2a1d4a), #0b0910);
-  backface-visibility: visible;
-  transform-origin: center top;
-  transform: rotateX(calc(var(--open) * -114deg));
+  width: var(--w);
+  height: calc(var(--h) * 0.35);
+  transform-origin: top center;
+  transform: translateZ(calc(var(--d) / 2)) rotateX(calc(var(--flap-open) * 105deg));
+  background: linear-gradient(to bottom, var(--print-deep, #2a1d4a), #06050a);
 }
 
+/* Left Ear Flap */
+.pack_flap.is-left {
+  top: 0;
+  left: 0;
+  width: var(--d);
+  height: calc(var(--w) * 0.32);
+  transform-origin: top center;
+  transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)) rotateX(calc(90deg + var(--flap-open) * -65deg));
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Right Ear Flap */
+.pack_flap.is-right {
+  top: 0;
+  left: 0;
+  width: var(--d);
+  height: calc(var(--w) * 0.32);
+  transform-origin: top center;
+  transform: rotateY(90deg) translateZ(calc(var(--w) / 2)) rotateX(calc(90deg + var(--flap-open) * -65deg));
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Cans Grid & Rising Motion */
 .pack_can {
   position: absolute;
-  bottom: calc(var(--h) - var(--w) * 0.34);
+  bottom: calc(var(--h) * 0.45);
   left: 50%;
-  width: calc(var(--w) * 0.22);
-  --up: clamp(0, calc((var(--build, 1) - 0.42 - var(--i, 0) * 0.055) / 0.2), 1);
+  width: calc(var(--w) * 0.21);
+  transform-style: preserve-3d;
   transform: translate3d(
     calc(var(--x) * var(--w) / 100 - 50%),
-    calc((1 - var(--up)) * 46%),
+    calc(-1 * var(--can-rise) * 42% - var(--i, 0) * 1.5%),
     calc(var(--z) * var(--d) / 100)
   );
-  opacity: var(--up);
   transition: bottom 0.5s ease;
+  pointer-events: none;
 }
 
 .pack_can img {
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 0.5rem 0.75rem rgba(0, 0, 0, 0.55));
+  display: block;
+  filter: drop-shadow(0 0.75rem 1rem rgba(0, 0, 0, 0.6));
 }
 
+/* Hero Can Elevating Out & Popping to Camera */
 .pack_can.is-hero {
+  z-index: 10;
   transform:
     translate3d(
-      calc(var(--x) * var(--w) / 100 - 50% + var(--fwd) * var(--w) * 0.22),
-      calc((1 - var(--up)) * 46% - var(--out) * var(--w) * 0.45),
-      calc(var(--z) * var(--d) / 100 + var(--fwd) * var(--d) * 1.5)
+      calc(var(--x) * var(--w) / 100 - 50% + var(--hero-fwd) * var(--w) * 0.16),
+      calc(-1 * var(--hero-rise) * 82%),
+      calc(var(--z) * var(--d) / 100 + var(--hero-fwd) * var(--d) * 1.75)
     )
-    rotateY(calc(-1 * var(--turn, -24deg) * var(--fwd)))
-    rotateX(calc(-14deg * var(--fwd)))
-    scale(calc(1 + var(--out) * 0.42));
+    rotateY(calc(-1 * var(--turn, -22deg) * var(--hero-fwd)))
+    rotateX(calc(-14deg * var(--hero-fwd)))
+    scale(calc(1 + var(--hero-fwd) * 0.26));
 }
 
 .pack_can.is-hero img {
-  filter: drop-shadow(0 1rem 1.5rem rgba(0, 0, 0, 0.65));
+  filter: drop-shadow(0 1.25rem 2rem rgba(0, 0, 0, 0.75));
 }
 
 .pack_hero-glow {
   position: absolute;
-  inset: -30% -60%;
+  inset: -25% -50%;
   z-index: -1;
   border-radius: 50%;
   background: radial-gradient(
     closest-side,
-    color-mix(in srgb, var(--print, #9089d3) 70%, transparent),
-    transparent 72%
+    color-mix(in srgb, var(--print, #9089d3) 75%, transparent),
+    transparent 70%
   );
-  opacity: calc(var(--fwd, 1) * 0.75);
-  filter: blur(1.5rem);
+  opacity: calc(var(--hero-fwd, 1) * 0.85);
+  filter: blur(1.75rem);
   pointer-events: none;
 }
 
@@ -4056,11 +4240,80 @@ input:focus-visible {
   left: 50%;
   bottom: 0;
   width: 140%;
-  height: calc(var(--d) * 1.1);
+  height: calc(var(--d) * 1.25);
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.7), transparent 72%);
-  filter: blur(0.6rem);
-  transform: translate(-50%, 45%) rotateX(90deg);
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.8), transparent 72%);
+  filter: blur(0.75rem);
+  transform: translate(-50%, calc(var(--h) * 0.5 + 8px)) rotateX(90deg);
+}
+
+/* Floating Actives Callout Cards (Void Energy Style) */
+.pack_actives-callout {
+  position: absolute;
+  top: 50%;
+  right: -5%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: clamp(16rem, 24vw, 22rem);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.pack_active-card {
+  --appear: clamp(0, calc((var(--build, 1) - 0.35 - var(--card-i, 0) * 0.12) / 0.22), 1);
+  padding: 1.1rem 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(14, 12, 20, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 1rem 2.5rem -0.5rem rgba(0, 0, 0, 0.6);
+  opacity: var(--appear);
+  transform: translateX(calc((1 - var(--appear)) * 2rem)) scale(calc(0.92 + 0.08 * var(--appear)));
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.pack_active-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.pack_active-head b {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.pack_active-head span {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--taste-secondary, #9089d3);
+  font-weight: 500;
+}
+
+.pack_active-card p {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+/* -------------------------------------------------------------
+   Responsive Refinements & Text Alignments
+   ------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .pack_actives-callout {
+    right: 0;
+    width: clamp(14rem, 22vw, 18rem);
+  }
 }
 
 @media (max-width: 1100px) {
@@ -4088,11 +4341,11 @@ input:focus-visible {
     height: clamp(10rem, 30svh, 18rem);
   }
   .pack_run {
-    height: 200svh;
+    height: 220svh;
   }
   .pack_grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--pad-m);
+    gap: var(--pad-l);
   }
   .pack_hold {
     padding-top: calc(var(--nav-height) * 0.55);
@@ -4102,7 +4355,7 @@ input:focus-visible {
     gap: var(--pad-xs);
   }
   .pack_copy .heading-style-display {
-    font-size: clamp(2rem, 9vw, 3.5rem);
+    font-size: clamp(2.25rem, 8vw, 3.5rem);
   }
   .pack_copy p {
     font-size: 1rem;
@@ -4112,14 +4365,16 @@ input:focus-visible {
     margin-top: 0;
   }
   .pack_stage {
-    height: min(36svh, 22rem);
+    height: min(44svh, 28rem);
   }
   .pack_scene {
-    align-items: flex-end;
-    padding-bottom: 2%;
+    perspective-origin: 50% 45%;
   }
   .pack_box {
-    --w: clamp(9rem, 38vw, 13rem);
+    --w: clamp(11rem, 36vw, 15rem);
+  }
+  .pack_actives-callout {
+    display: none;
   }
 }
 
@@ -4159,5 +4414,6 @@ input:focus-visible {
     display: none;
   }
 }
+
 
 
