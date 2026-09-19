@@ -49,16 +49,6 @@
           </svg>
           <span class="menu-button-text">{{ section.settings.menu_text | default: 'Menu' }}</span>
         </button>
-
-        <button type="button" class="navbar_toggle" aria-pressed="true" aria-label="Toggle motion effects" data-motion-toggle>
-          <span class="navbar_toggle-icon-on flex items-center">
-            {% render 'asmaan-icons', name: 'bars', class: 'h-4 w-5' %}
-          </span>
-          <span class="navbar_toggle-icon-off hidden items-center">
-            {% render 'asmaan-icons', name: 'bars-off', class: 'h-4 w-5' %}
-          </span>
-          <span class="hidden sm:inline navbar_toggle-label">{{ section.settings.motion_text | default: 'Motion' }}</span>
-        </button>
       </div>
 
       <a class="navbar_wordmark" aria-label="{{ section.settings.wordmark | default: 'ASMAAN' }} — home" href="/">
@@ -213,12 +203,6 @@
     {
       "type": "header",
       "content": "Labels & Menu"
-    },
-    {
-      "type": "text",
-      "id": "motion_text",
-      "label": "Motion Toggle Label",
-      "default": "Motion"
     },
     {
       "type": "text",
