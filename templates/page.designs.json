@@ -8,27 +8,21 @@
           "type": "flavour",
           "settings": {
             "product": "kala-jamun",
-            "subtitle": "Deep Indian blackberry · tart, dark and round",
-            "deep": "#2A1D4A",
-            "accent": "#9089D3"
+            "subtitle": "Deep Indian blackberry · tart, dark and round"
           }
         },
         "flavour_2": {
           "type": "flavour",
           "settings": {
             "product": "alphonso-mango",
-            "subtitle": "Ripe Alphonso pressed against something bitter",
-            "deep": "#5A2A00",
-            "accent": "#EFB36B"
+            "subtitle": "Ripe Alphonso pressed against something bitter"
           }
         },
         "flavour_3": {
           "type": "flavour",
           "settings": {
             "product": "wild-magenta",
-            "subtitle": "Rose over pink guava with a citrus edge",
-            "deep": "#4E0749",
-            "accent": "#E6A0E8"
+            "subtitle": "Rose over pink guava with a citrus edge"
           }
         }
       },

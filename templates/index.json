@@ -39,31 +39,19 @@
         "flavour_1": {
           "type": "flavour_slide",
           "settings": {
-            "product": "kala-jamun",
-            "tag": "The original",
-            "blurb": "The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.",
-            "primary_color": "#2A1D4A",
-            "secondary_color": "#9089D3"
+            "product": "kala-jamun"
           }
         },
         "flavour_2": {
           "type": "flavour_slide",
           "settings": {
-            "product": "alphonso-mango",
-            "tag": "Gold into burnt amber",
-            "blurb": "A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.",
-            "primary_color": "#5A2A00",
-            "secondary_color": "#EFB36B"
+            "product": "alphonso-mango"
           }
         },
         "flavour_3": {
           "type": "flavour_slide",
           "settings": {
-            "product": "wild-magenta",
-            "tag": "Rose and pink guava",
-            "blurb": "The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.",
-            "primary_color": "#4E0749",
-            "secondary_color": "#E6A0E8"
+            "product": "wild-magenta"
           }
         }
       },
@@ -83,28 +71,19 @@
         "range_card_1": {
           "type": "product_card",
           "settings": {
-            "product": "kala-jamun",
-            "tag": "The original",
-            "accent_secondary": "#9089D3",
-            "accent_primary": "#2A1D4A"
+            "product": "kala-jamun"
           }
         },
         "range_card_2": {
           "type": "product_card",
           "settings": {
-            "product": "alphonso-mango",
-            "tag": "Gold into burnt amber",
-            "accent_secondary": "#EFB36B",
-            "accent_primary": "#5A2A00"
+            "product": "alphonso-mango"
           }
         },
         "range_card_3": {
           "type": "product_card",
           "settings": {
-            "product": "wild-magenta",
-            "tag": "Rose and pink guava",
-            "accent_secondary": "#E6A0E8",
-            "accent_primary": "#4E0749"
+            "product": "wild-magenta"
           }
         }
       },

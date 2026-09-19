@@ -6,31 +6,19 @@
         "flavour_jamun": {
           "type": "flavour",
           "settings": {
-            "product": "kala-jamun",
-            "tag": "The original",
-            "blurb": "The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.",
-            "accent": "#9089D3",
-            "deep": "#2A1D4A"
+            "product": "kala-jamun"
           }
         },
         "flavour_mango": {
           "type": "flavour",
           "settings": {
-            "product": "alphonso-mango",
-            "tag": "Gold into burnt amber",
-            "blurb": "A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.",
-            "accent": "#EFB36B",
-            "deep": "#5A2A00"
+            "product": "alphonso-mango"
           }
         },
         "flavour_magenta": {
           "type": "flavour",
           "settings": {
-            "product": "wild-magenta",
-            "tag": "Rose and pink guava",
-            "blurb": "The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.",
-            "accent": "#E6A0E8",
-            "deep": "#4E0749"
+            "product": "wild-magenta"
           }
         },
         "pack_12": {
