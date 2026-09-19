@@ -3895,12 +3895,7 @@ input:focus-visible {
   display: block;
   pointer-events: none;
   background: transparent;
-  mix-blend-mode: screen;
-  filter: contrast(1.05) brightness(1.02) drop-shadow(0 1.5rem 2.5rem rgba(0, 0, 0, 0.7));
-}
-
-.pack_scroll-video {
-  display: none !important;
+  filter: drop-shadow(0 1.5rem 2.5rem rgba(0, 0, 0, 0.7));
 }
 
 /* Floating Actives Callout Cards (Void Energy Style) */

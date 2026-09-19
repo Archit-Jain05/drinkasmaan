@@ -414,19 +414,14 @@
           <div class="pack_stage">
             <span class="merch_glow" style="--glow: #9089D3;" aria-hidden="true"></span>
             
-            <div class="pack_canvas-container" aria-hidden="true">
+            <div
+              id="pack-canvas-stage"
+              class="pack_canvas-container"
+              aria-hidden="true"
+              data-total-frames="150"
+              data-first-frame="{{ 'pack-frame-01.webp' | asset_url }}"
+            >
               <canvas id="pack-scroll-canvas" class="pack_scroll-canvas"></canvas>
-              <!-- Hidden Video for Hardware-Accelerated Frame Scrubbing -->
-              <video
-                id="pack-scroll-video"
-                class="pack_scroll-video"
-                src="{{ 'asmaan-pack-animation.mp4' | asset_url }}"
-                preload="auto"
-                muted
-                playsinline
-                webkit-playsinline
-                style="display: none;"
-              ></video>
             </div>
 
             <!-- Floating Active Ingredient Callouts (Void Energy Style) -->
