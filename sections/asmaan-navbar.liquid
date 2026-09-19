@@ -102,7 +102,7 @@
         </button>
 
         {%- if section.settings.cta_text != blank -%}
-          <a class="button is-small hidden lg:inline-flex" href="{{ section.settings.cta_link | default: '/#range' }}">
+          <a class="button is-small hidden lg:inline-flex" href="{{ section.settings.cta_link | default: '/pages/drink' }}">
             {{ section.settings.cta_text | default: 'Get Early Access' }}
           </a>
         {%- endif -%}
@@ -118,17 +118,19 @@
         <a class="navbar_link" tabindex="-1" href="{{ link.url }}">{{ link.title }}</a>
       {%- endfor -%}
     {%- else -%}
+      <a class="navbar_link" tabindex="-1" href="/pages/drink">Shop</a>
       <a class="navbar_link" tabindex="-1" href="/#range">Range</a>
       <a class="navbar_link" tabindex="-1" href="/#benefits">Benefits</a>
       <a class="navbar_link" tabindex="-1" href="/pages/wear">Wear</a>
       <a class="navbar_link" tabindex="-1" href="/pages/merch">Merch</a>
+      <a class="navbar_link" tabindex="-1" href="/pages/designs">Designs</a>
       <a class="navbar_link" tabindex="-1" href="/#faq">FAQ</a>
-      <a class="navbar_link" tabindex="-1" href="{{ section.settings.cta_link | default: '/#range' }}">Newsletter</a>
+      <a class="navbar_link" tabindex="-1" href="{{ section.settings.cta_link | default: '/pages/drink' }}">Newsletter</a>
     {%- endif -%}
   </nav>
 
   <div class="navbar_bottom">
-    <a class="button is-full" tabindex="-1" href="{{ section.settings.cta_link | default: '/#range' }}">
+    <a class="button is-full" tabindex="-1" href="{{ section.settings.cta_link | default: '/pages/drink' }}">
       {{ section.settings.cta_text | default: 'Get early access' }}
     </a>
     <div class="navbar_socials-links">

@@ -1,0 +1,786 @@
+{{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-drink.js' | asset_url }}" defer="defer"></script>
+
+<div id="top" class="drink-page-wrapper">
+  <!-- Top Announce Banner -->
+  <p class="drink_banner">
+    {{ section.settings.banner_text | default: 'FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • ZERO SUGAR • ZERO JITTERS' }}
+  </p>
+
+  <main>
+    <!-- 1. PRODUCT / BUY BOX SECTION -->
+    <section id="buy" class="drink_product" aria-label="{{ shop.name }} 250ml">
+      <div class="drink_product-grid">
+        <!-- Sticky Gallery with Can & Multi-angle views -->
+        <div class="drink_gallery">
+          <div class="drink_can">
+            <span class="merch_glow" style="--glow: #9089D3;" aria-hidden="true"></span>
+            <img
+              id="drink-main-can-img"
+              src="{{ 'jamun-front.webp' | asset_url }}"
+              data-img-jamun-front="{{ 'jamun-front.webp' | asset_url }}"
+              data-img-jamun-right="{{ 'jamun-right.webp' | asset_url }}"
+              data-img-jamun-back="{{ 'jamun-back.webp' | asset_url }}"
+              data-img-jamun-left="{{ 'jamun-left.webp' | asset_url }}"
+              data-img-mango-front="{{ 'mango-front.webp' | asset_url }}"
+              data-img-mango-right="{{ 'mango-right.webp' | asset_url }}"
+              data-img-mango-back="{{ 'mango-back.webp' | asset_url }}"
+              data-img-mango-left="{{ 'mango-left.webp' | asset_url }}"
+              data-img-print-front="{{ 'print-front.webp' | asset_url }}"
+              data-img-print-right="{{ 'print-right.webp' | asset_url }}"
+              data-img-print-back="{{ 'print-back.webp' | asset_url }}"
+              data-img-print-left="{{ 'print-left.webp' | asset_url }}"
+              alt="Asmaan Ambition Tonic Can"
+              loading="eager"
+            >
+          </div>
+
+          <div class="drink_views" role="group" aria-label="Can Panels">
+            <button type="button" class="drink_view" data-view="front" aria-pressed="true">
+              <img
+                src="{{ 'jamun-front.webp' | asset_url }}"
+                data-img-jamun-front="{{ 'jamun-front.webp' | asset_url }}"
+                data-img-mango-front="{{ 'mango-front.webp' | asset_url }}"
+                data-img-print-front="{{ 'print-front.webp' | asset_url }}"
+                alt=""
+              >
+              <span>Front</span>
+            </button>
+            <button type="button" class="drink_view" data-view="right" aria-pressed="false">
+              <img
+                src="{{ 'jamun-right.webp' | asset_url }}"
+                data-img-jamun-right="{{ 'jamun-right.webp' | asset_url }}"
+                data-img-mango-right="{{ 'mango-right.webp' | asset_url }}"
+                data-img-print-right="{{ 'print-right.webp' | asset_url }}"
+                alt=""
+              >
+              <span>Right</span>
+            </button>
+            <button type="button" class="drink_view" data-view="back" aria-pressed="false">
+              <img
+                src="{{ 'jamun-back.webp' | asset_url }}"
+                data-img-jamun-back="{{ 'jamun-back.webp' | asset_url }}"
+                data-img-mango-back="{{ 'mango-back.webp' | asset_url }}"
+                data-img-print-back="{{ 'print-back.webp' | asset_url }}"
+                alt=""
+              >
+              <span>Back</span>
+            </button>
+            <button type="button" class="drink_view" data-view="left" aria-pressed="false">
+              <img
+                src="{{ 'jamun-left.webp' | asset_url }}"
+                data-img-jamun-left="{{ 'jamun-left.webp' | asset_url }}"
+                data-img-mango-left="{{ 'mango-left.webp' | asset_url }}"
+                data-img-print-left="{{ 'print-left.webp' | asset_url }}"
+                alt=""
+              >
+              <span>Left</span>
+            </button>
+          </div>
+
+          <p class="drink_panel-note" aria-live="polite">
+            Front panel · Wordmark & claim <span aria-hidden="true">·</span> drag the can to turn it
+          </p>
+        </div>
+
+        <!-- Buy Box & Options Column -->
+        <div class="drink_column">
+          <div class="drink_buy">
+            <div class="merch_meta">
+              <span>{{ section.settings.eyebrow | default: '250 ml · Zero sugar' }}</span>
+              <span aria-hidden="true">/</span>
+              <span>{{ section.settings.tagline | default: 'Ambition Tonic' }}</span>
+            </div>
+
+            <h1 class="heading-style-h2 mt-[var(--pad-s)]" data-drink-title>
+              Kala<br>Jamun
+            </h1>
+
+            <p class="mt-[var(--pad-s)] max-width-custom text-white/65" data-drink-blurb>
+              The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.
+            </p>
+
+            <!-- Flavour Switcher -->
+            <fieldset class="drink_field">
+              <legend class="drink_legend">Flavour</legend>
+              <div class="drink_tastes">
+                <button
+                  type="button"
+                  class="drink_taste"
+                  aria-pressed="true"
+                  style="--swatch: #9089D3; --swatch-deep: #2A1D4A;"
+                >
+                  <span class="drink_swatch" aria-hidden="true"></span>
+                  <span>Kala Jamun</span>
+                </button>
+                <button
+                  type="button"
+                  class="drink_taste"
+                  aria-pressed="false"
+                  style="--swatch: #EFB36B; --swatch-deep: #5A2A00;"
+                >
+                  <span class="drink_swatch" aria-hidden="true"></span>
+                  <span>Alphonso Mango</span>
+                </button>
+                <button
+                  type="button"
+                  class="drink_taste"
+                  aria-pressed="false"
+                  style="--swatch: #E6A0E8; --swatch-deep: #4E0749;"
+                >
+                  <span class="drink_swatch" aria-hidden="true"></span>
+                  <span>Wild Magenta</span>
+                </button>
+              </div>
+            </fieldset>
+
+            <!-- Pack Size Switcher -->
+            <fieldset class="drink_field">
+              <legend class="drink_legend">Pack</legend>
+              <div class="drink_packs">
+                <button type="button" class="drink_pack" data-pack-index="0" aria-pressed="false">
+                  <span class="drink_pack-tag">Starter</span>
+                  <span class="drink_pack-cans">12 cans</span>
+                  <span class="drink_pack-price">₹2,400</span>
+                  <span class="drink_pack-each">₹200 / can</span>
+                  <span class="drink_pack-note">Two weeks of mornings.</span>
+                </button>
+                <button type="button" class="drink_pack" data-pack-index="1" aria-pressed="true">
+                  <span class="drink_pack-tag">Most taken</span>
+                  <span class="drink_pack-cans">24 cans</span>
+                  <span class="drink_pack-price">₹4,320</span>
+                  <span class="drink_pack-each">₹180 / can</span>
+                  <span class="drink_pack-note">The one people come back for.</span>
+                </button>
+                <button type="button" class="drink_pack" data-pack-index="2" aria-pressed="false">
+                  <span class="drink_pack-tag">Deep work</span>
+                  <span class="drink_pack-cans">36 cans</span>
+                  <span class="drink_pack-price">₹5,760</span>
+                  <span class="drink_pack-each">₹160 / can</span>
+                  <span class="drink_pack-note">A quarter, priced like it.</span>
+                </button>
+              </div>
+            </fieldset>
+
+            <!-- Delivery Mode (One-time vs Subscription) -->
+            <fieldset class="drink_field">
+              <legend class="drink_legend">Delivery</legend>
+              <div class="drink_modes">
+                <button type="button" class="drink_mode" data-mode="once" aria-pressed="true">
+                  <span class="drink_mode-row">
+                    <b>One time</b>
+                  </span>
+                  <span class="drink_mode-note">No commitment.</span>
+                  <span class="drink_mode-price">₹4,320</span>
+                </button>
+                <button type="button" class="drink_mode" data-mode="subscribe" aria-pressed="false">
+                  <span class="drink_mode-row">
+                    <b>Subscribe</b>
+                    <span class="drink_save">save 10%</span>
+                  </span>
+                  <span class="drink_mode-note">Free shipping · cancel anytime.</span>
+                  <span class="drink_mode-price">₹3,888</span>
+                </button>
+              </div>
+
+              <!-- Frequency Chips Accordion -->
+              <div class="drink_frequency" data-open="false" aria-hidden="true">
+                <div>
+                  <span class="drink_legend">Every</span>
+                  <div class="drink_chips">
+                    <button type="button" class="drink_chip" aria-pressed="false">Every 2 weeks</button>
+                    <button type="button" class="drink_chip" aria-pressed="true">Monthly</button>
+                    <button type="button" class="drink_chip" aria-pressed="false">Every 2 months</button>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Total Stepper & Subtotal -->
+            <div class="drink_total">
+              <div class="drink_stepper" role="group" aria-label="Packs quantity">
+                <button type="button" aria-label="One pack fewer" disabled>&minus;</button>
+                <span aria-live="polite">1</span>
+                <button type="button" aria-label="One pack more">+</button>
+              </div>
+
+              <div class="drink_sum">
+                <span class="merch_price">₹4,320</span>
+                <span class="drink_sum-note">
+                  24 cans <span aria-hidden="true">·</span> ₹180 each
+                </span>
+              </div>
+            </div>
+
+            <!-- Main CTA Button -->
+            <button type="button" class="wear_cta is-wide">
+              Add to bag
+              {% render 'asmaan-icons', name: 'star', class: 'wear_cta-star' %}
+            </button>
+
+            <p class="text-size-tiny mt-[var(--pad-s)] text-white/45">
+              {{ section.settings.cta_note | default: 'Checkout opens with the first batch. The list gets it first.' }}
+            </p>
+
+            <ul class="drink_trust">
+              <li>Secure checkout</li>
+              <li>Ships in 2–4 days</li>
+              <li>Cancel anytime</li>
+              <li>Free shipping over ₹2,400</li>
+            </ul>
+
+            <!-- Limited Stock Inventory Meter -->
+            <div class="drink_stock">
+              <div class="drink_stock-bar">
+                <span style="--sold: 0.8;" aria-hidden="true"></span>
+              </div>
+              <p class="drink_stock-note">
+                <b>47</b> packs left in the first batch
+              </p>
+            </div>
+          </div>
+
+          <!-- 4 Pillars Badges -->
+          <ul class="drink_badges mt-[var(--pad-l)]">
+            <li>
+              <b>Calm focus</b>
+              <span>Drive without the jitter.</span>
+            </li>
+            <li>
+              <b>Natural caffeine</b>
+              <span>100 mg from green coffee.</span>
+            </li>
+            <li>
+              <b>No crash</b>
+              <span>Zero sugar, ten calories.</span>
+            </li>
+            <li>
+              <b>Nothing hidden</b>
+              <span>Every milligram, printed.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. FORMULA & DOSES SECTION -->
+    <section id="formula" class="section relative bg-black border-t border-white/10">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="padding-section-large">
+            <div class="drink_formula">
+              <div class="drink_formula-head">
+                <h2 class="heading-style-display">What is<br>in it</h2>
+                <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">
+                  Five actives, at doses worth printing. No proprietary blend, nothing rounded up, and nothing in there to make the label look longer.
+                </p>
+              </div>
+
+              <ol class="drink_actives">
+                <li>
+                  <span class="drink_dose">300 mg</span>
+                  <div>
+                    <b class="heading-style-h5">KSM-66 ashwagandha</b>
+                    <p class="mt-[var(--pad-xxs)] text-white/60">
+                      Root extract, at the dose the research is run on. It sits under the caffeine and takes the edge off the push.
+                    </p>
+                  </div>
+                </li>
+                <li>
+                  <span class="drink_dose">200 mg</span>
+                  <div>
+                    <b class="heading-style-h5">L-theanine</b>
+                    <p class="mt-[var(--pad-xxs)] text-white/60">
+                      From green tea. Smooths the front of the curve, so the lift arrives as attention rather than pressure.
+                    </p>
+                  </div>
+                </li>
+                <li>
+                  <span class="drink_dose">100 mg</span>
+                  <div>
+                    <b class="heading-style-h5">Natural caffeine</b>
+                    <p class="mt-[var(--pad-xxs)] text-white/60">
+                      Drawn from green coffee beans rather than synthesised. Slower in, longer held, about a third less than the category.
+                    </p>
+                  </div>
+                </li>
+                <li>
+                  <span class="drink_dose">60 mg</span>
+                  <div>
+                    <b class="heading-style-h5">Magnesium bisglycinate</b>
+                    <p class="mt-[var(--pad-xxs)] text-white/60">
+                      The form that is actually absorbed, rather than the cheap oxide that mostly is not.
+                    </p>
+                  </div>
+                </li>
+                <li>
+                  <span class="drink_dose">1.4 mg</span>
+                  <div>
+                    <b class="heading-style-h5">B6 with 2.5 µg B12</b>
+                    <p class="mt-[var(--pad-xxs)] text-white/60">
+                      For normal energy metabolism — the quiet half of the formula, and the half everyone forgets.
+                    </p>
+                  </div>
+                </li>
+              </ol>
+
+              <div class="drink_facts">
+                <h3 class="drink_legend">On the can</h3>
+                <dl>
+                  <div>
+                    <dt>Volume</dt>
+                    <dd>250 ml</dd>
+                  </div>
+                  <div>
+                    <dt>Energy</dt>
+                    <dd>10 kcal</dd>
+                  </div>
+                  <div>
+                    <dt>Sugar</dt>
+                    <dd>0 g</dd>
+                  </div>
+                  <div>
+                    <dt>Caffeine</dt>
+                    <dd>100 mg (40 mg / 100 ml)</dd>
+                  </div>
+                  <div>
+                    <dt>Colour</dt>
+                    <dd>From food, not dye</dd>
+                  </div>
+                  <div>
+                    <dt>Diet</dt>
+                    <dd>Vegan</dd>
+                  </div>
+                </dl>
+                <p class="text-size-tiny mt-[var(--pad-m)] text-white/40">
+                  Serve cold enough that the first sip is a decision. Once open, keep it refrigerated and finish it the same day.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. INTERACTIVE 3D PACK SCENE -->
+    <section id="pack" class="pack_run">
+      <div class="pack_hold">
+        <div class="pack_grid">
+          <div class="pack_copy">
+            <span class="merch_meta">The pack</span>
+            <h2 class="heading-style-display">Twelve<br>at a time</h2>
+            <p class="max-width-custom text-size-medium text-white/65">
+              Cans ship in a plain shipper, four across and as deep as the tier you take. Nothing printed on it but the wordmark and a number — what is worth looking at is inside it.
+            </p>
+
+            <!-- Pack Tier Selectors -->
+            <div class="pack_tiers" role="group" aria-label="Pack tiers">
+              <button type="button" class="pack_tier" data-pack-index="0" aria-pressed="false">
+                <b>12</b>
+                <span>₹200 / can</span>
+              </button>
+              <button type="button" class="pack_tier" data-pack-index="1" aria-pressed="true">
+                <b>24</b>
+                <span>₹180 / can</span>
+              </button>
+              <button type="button" class="pack_tier" data-pack-index="2" aria-pressed="false">
+                <b>36</b>
+                <span>₹160 / can</span>
+              </button>
+            </div>
+
+            <!-- Pack Spec Breakdown -->
+            <dl class="pack_spec">
+              <div>
+                <dt>Tier</dt>
+                <dd id="pack-spec-tier">Most taken</dd>
+              </div>
+              <div>
+                <dt>Inside</dt>
+                <dd id="pack-spec-inside">24 × Kala Jamun</dd>
+              </div>
+              <div>
+                <dt>Price</dt>
+                <dd id="pack-spec-price">₹4,320</dd>
+              </div>
+            </dl>
+
+            <a href="#buy" class="drink_flavour-cta">
+              Take it to the bag
+            </a>
+          </div>
+
+          <!-- 3D Shipper Carton Stage -->
+          <div class="pack_stage">
+            <span class="merch_glow" style="--glow: #9089D3;" aria-hidden="true"></span>
+            <div class="pack_scene" aria-hidden="true">
+              <div class="pack_box" style="--layers: 2; --print: #9089D3; --print-deep: #2A1D4A;">
+                <!-- Internal Standing Cans -->
+                <span class="pack_can" style="--x: -36; --z: 26; --i: 0;">
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
+                </span>
+                <span class="pack_can" style="--x: -12; --z: 26; --i: 1;">
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
+                </span>
+                <span class="pack_can" style="--x: 36; --z: 26; --i: 2;">
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
+                </span>
+                <span class="pack_can" style="--x: -24; --z: -24; --i: 3;">
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
+                </span>
+                <span class="pack_can" style="--x: 0; --z: -24; --i: 4;">
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
+                </span>
+                <span class="pack_can" style="--x: 24; --z: -24; --i: 5;">
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
+                </span>
+
+                <!-- Elevating Hero Can -->
+                <span class="pack_can is-hero" style="--x: 12; --z: 26; --i: 2;">
+                  <span class="pack_hero-glow"></span>
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" data-img-jamun="{{ 'jamun-front.webp' | asset_url }}" data-img-mango="{{ 'mango-front.webp' | asset_url }}" data-img-print="{{ 'print-front.webp' | asset_url }}" alt="">
+                </span>
+
+                <!-- 3D Box Faces -->
+                <div class="pack_face is-back"></div>
+                <div class="pack_face is-side"></div>
+                <div class="pack_face is-front">
+                  <span class="pack_wordmark">{{ section.settings.wordmark | default: 'ASMAAN' }}</span>
+                  <span class="pack_count"><b>24</b> cans</span>
+                  <span class="pack_line">{{ section.settings.tagline | default: 'Ambition Tonic' }}</span>
+                  <span class="pack_seal">250 ML · ZERO SUGAR</span>
+                </div>
+
+                <!-- 3D Top Flap -->
+                <div class="pack_top">
+                  <span class="pack_flap"></span>
+                </div>
+
+                <span class="pack_shadow"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. FIRST BATCH STORY SECTION -->
+    <section class="drink_story">
+      <span class="merch_meta">The first batch</span>
+      <p class="drink_story-type" aria-hidden="true">
+        <span>Made</span>
+        <span>Once</span>
+      </p>
+      <h2 class="sr-only">Made Once</h2>
+      <p class="max-width-medium text-size-medium text-white/70">
+        Two hundred and forty packs, hand-numbered, brewed in one run. No second batch at this recipe — what is in the first is what the first tastes like. The list is told the morning it ships, and nobody else is told at all.
+      </p>
+    </section>
+
+    <!-- 5. THE FLAVOURS RANGE SECTION -->
+    <section id="range" class="section relative bg-black border-t border-white/10">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="padding-section-large">
+            <h2 class="heading-style-display">The range</h2>
+            <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">
+              Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it.
+            </p>
+
+            <ul class="drink_flavours">
+              <!-- Kala Jamun -->
+              <li class="drink_flavour" data-chosen="true" style="--swatch: #9089D3; --swatch-deep: #2A1D4A;">
+                <div class="drink_flavour-shot">
+                  <span class="merch_glow" style="--glow: #9089D3;" aria-hidden="true"></span>
+                  <img src="{{ 'jamun-front.webp' | asset_url }}" alt="Kala Jamun can" loading="lazy">
+                </div>
+                <span class="merch_tag">The original</span>
+                <h3 class="heading-style-h3">Kala<br>Jamun</h3>
+                <p class="text-white/60">
+                  The one the brand started on. Deep Indian blackberry — tart at the front, dark and round underneath, and dry enough to drink for four hours straight.
+                </p>
+                <a href="#buy" class="drink_flavour-cta">In your pack</a>
+              </li>
+
+              <!-- Alphonso Mango -->
+              <li class="drink_flavour" data-chosen="false" style="--swatch: #EFB36B; --swatch-deep: #5A2A00;">
+                <div class="drink_flavour-shot">
+                  <span class="merch_glow" style="--glow: #EFB36B;" aria-hidden="true"></span>
+                  <img src="{{ 'mango-front.webp' | asset_url }}" alt="Alphonso Mango can" loading="lazy">
+                </div>
+                <span class="merch_tag">Gold into burnt amber</span>
+                <h3 class="heading-style-h3">Alphonso<br>Mango</h3>
+                <p class="text-white/60">
+                  A ripe Alphonso pressed against something bitter. Heavy fruit up top, burnt amber at the finish, and none of the syrup that usually comes with it.
+                </p>
+                <a href="#buy" class="drink_flavour-cta">Take this one</a>
+              </li>
+
+              <!-- Wild Magenta -->
+              <li class="drink_flavour" data-chosen="false" style="--swatch: #E6A0E8; --swatch-deep: #4E0749;">
+                <div class="drink_flavour-shot">
+                  <span class="merch_glow" style="--glow: #E6A0E8;" aria-hidden="true"></span>
+                  <img src="{{ 'print-front.webp' | asset_url }}" alt="Wild Magenta can" loading="lazy">
+                </div>
+                <span class="merch_tag">Rose and pink guava</span>
+                <h3 class="heading-style-h3">Wild<br>Magenta</h3>
+                <p class="text-white/60">
+                  The loudest can in the range. Rose over pink guava, with a citrus edge that keeps the whole thing sharp instead of sweet.
+                </p>
+                <a href="#buy" class="drink_flavour-cta">Take this one</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. TASTING REVIEWS SECTION -->
+    <section class="section relative bg-black border-t border-white/10">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="padding-section-large">
+            <h2 class="heading-style-h3">From the first tasting</h2>
+            <p class="text-size-small mt-[var(--pad-s)] max-width-medium text-white/40">
+              Notes from the tasting room, not verified purchases — this page gets real reviews when it gets real orders.
+            </p>
+
+            <ul class="drink_reviews">
+              <li>
+                {% render 'asmaan-icons', name: 'star', class: 'h-4 w-4 text-[var(--taste-secondary)]' %}
+                <blockquote class="text-size-medium">
+                  "The only one I have had that does not announce itself. Twenty minutes in I noticed I had stopped checking my phone."
+                </blockquote>
+                <footer class="merch_meta">
+                  <span>Ritika</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Studio founder, Bombay</span>
+                </footer>
+              </li>
+              <li>
+                {% render 'asmaan-icons', name: 'star', class: 'h-4 w-4 text-[var(--taste-secondary)]' %}
+                <blockquote class="text-size-medium">
+                  "Jamun is the one. Tart, dry, nothing like the syrup I expected from a can this colour."
+                </blockquote>
+                <footer class="merch_meta">
+                  <span>Arjun</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Music producer</span>
+                </footer>
+              </li>
+              <li>
+                {% render 'asmaan-icons', name: 'star', class: 'h-4 w-4 text-[var(--taste-secondary)]' %}
+                <blockquote class="text-size-medium">
+                  "Four hours on one thing, then nothing to come down from. That is the whole pitch and it holds."
+                </blockquote>
+                <footer class="merch_meta">
+                  <span>Meher</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Doctor, night rota</span>
+                </footer>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. FAQ SECTION -->
+    <section id="faq" class="section relative bg-black border-t border-white/10">
+      <div class="padding-global">
+        <div class="container-large">
+          <div class="padding-section-large">
+            <div class="mb-[var(--pad-xxl)]">
+              <h2 class="heading-style-display whitespace-pre-line">Frequently asked<br>questions</h2>
+            </div>
+            <div class="max-width-large align-center">
+              <div class="faq_list">
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button type="button" class="faq_question" aria-expanded="true">
+                      <span class="heading-style-h5">What makes Asmaan different from other energy drinks?</span>
+                      <span class="faq_icon-wrapper">{% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}</span>
+                    </button>
+                    <div class="faq_answer" data-open="true">
+                      <div><p class="text-size-medium pb-[var(--pad-s)] text-white/70">Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, paired with L-theanine and KSM-66 ashwagandha.</p></div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button type="button" class="faq_question" aria-expanded="false">
+                      <span class="heading-style-h5">How much caffeine is in a can?</span>
+                      <span class="faq_icon-wrapper">{% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}</span>
+                    </button>
+                    <div class="faq_answer" data-open="false">
+                      <div><p class="text-size-medium pb-[var(--pad-s)] text-white/70">100 mg per 250 ml can — about the same as a strong cup of coffee, with no jitters.</p></div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="faq_separator"></div>
+                  <div class="faq_accordion">
+                    <button type="button" class="faq_question" aria-expanded="false">
+                      <span class="heading-style-h5">Is Asmaan sugar free?</span>
+                      <span class="faq_icon-wrapper">{% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}</span>
+                    </button>
+                    <div class="faq_answer" data-open="false">
+                      <div><p class="text-size-medium pb-[var(--pad-s)] text-white/70">Yes. Zero sugar and only ten calories per 250 ml can.</p></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky DrinkBar for instant checkout -->
+  <div class="drink_bar" data-shown="false" aria-hidden="true">
+    <div class="drink_bar-inner">
+      <span class="drink_bar-swatch" style="--swatch: #9089D3;" aria-hidden="true"></span>
+      <div class="drink_bar-copy">
+        <b>Kala Jamun</b>
+        <span class="merch_meta">
+          <span>24 cans</span>
+          <span aria-hidden="true">·</span>
+          <span>One time</span>
+        </span>
+      </div>
+      <span class="drink_bar-price">₹4,320</span>
+      <button type="button" class="button is-small" tabindex="-1">
+        Add to bag
+      </button>
+    </div>
+  </div>
+
+  <!-- Drop Waitlist Modal -->
+  <div
+    id="drop-modal"
+    class="drop_modal"
+    data-open="false"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drop-title"
+  >
+    <div class="drop_sheet" role="document">
+      <button
+        type="button"
+        class="drop_close"
+        data-drop-modal-close
+        aria-label="Close"
+      >
+        <span class="sr-only">Close</span>
+        {% render 'asmaan-icons', name: 'cross', class: 'h-3 w-3' %}
+      </button>
+
+      <h2 id="drop-title" class="heading-style-h2">
+        First in line
+      </h2>
+      <p class="mt-[var(--pad-s)] text-white/70">
+        Leave an address and the batch is yours to claim the morning checkout opens. One mail, nothing else.
+      </p>
+
+      <div class="drop-form-wrapper mt-[var(--pad-l)] text-left">
+        {%- form 'customer', class: 'drop-customer-form', id: 'DrinkDropForm' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter,drink-first-batch">
+
+          {%- if form.posted_successfully? -%}
+            <p class="text-size-medium text-center text-white" role="status" aria-live="polite">
+              Held. We'll write the morning the first batch ships.
+            </p>
+          {%- else -%}
+            <div class="newsletter_field relative">
+              <input
+                id="drop-email"
+                type="email"
+                name="contact[email]"
+                required
+                autocomplete="email"
+                placeholder=" "
+                class="newsletter_input"
+                value="{{ form.email }}"
+                aria-required="true"
+              >
+              <label for="drop-email" class="newsletter_label">
+                Your email address
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              class="button is-full mt-[var(--pad-m)]"
+            >
+              Claim a pack
+            </button>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Modal Close listener
+  document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('drop-modal');
+    var closeBtn = modal ? modal.querySelector('[data-drop-modal-close]') : null;
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', function() {
+        modal.setAttribute('data-open', 'false');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Drink / Shop Product Page",
+  "tag": "div",
+  "class": "asmaan-drink-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "banner_text",
+      "label": "Top Announcement Banner",
+      "default": "FOUNDERS BATCH NOW LIVE • 100% BOTANICAL FOCUS TONIC • ZERO SUGAR • ZERO JITTERS"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow Text",
+      "default": "250 ml · Zero sugar"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Brand Tagline",
+      "default": "Ambition Tonic"
+    },
+    {
+      "type": "text",
+      "id": "wordmark",
+      "label": "Wordmark",
+      "default": "ASMAAN"
+    },
+    {
+      "type": "text",
+      "id": "cta_note",
+      "label": "CTA Note",
+      "default": "Checkout opens with the first batch. The list gets it first."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Drink / Shop Product Page"
+    }
+  ]
+}
+{% endschema %}
