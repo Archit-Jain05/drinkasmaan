@@ -1,267 +1,291 @@
-<section id="wear" class="section relative bg-black py-24 border-t border-white/10">
-  <div class="padding-global">
-    <div class="container-large max-w-6xl mx-auto px-4">
-      <div class="asmaan-subpage-hero text-center mb-12">
-        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'Studio Uniform' }}</span>
-        <h2 class="asmaan-subpage-title">{{ section.settings.title | default: 'Asmaan Studio Wear' }}</h2>
-        <p class="asmaan-subpage-sub mx-auto">
-          {{ section.settings.subtitle | default: 'Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts.' }}
-        </p>
+<div id="top">
+  {%- comment -%}
+    The clothing page: a drop teaser, not a shop.
+    One full-bleed picture (or interactive fallback ambient canvas), one button,
+    one warning line, and the drop waitlist modal dialog.
+  {%- endcomment -%}
+
+  <section id="wear-hero" class="wear_hero" aria-label="{{ section.settings.title | default: 'Wear' }}">
+    <!-- Parallax media wrapper -->
+    <div class="wear_media" data-wear-media>
+      <div class="wear_fallback" aria-hidden="true">
+        <span class="wear_fallback-mark">{{ section.settings.wordmark | default: 'ASMAAN' }}</span>
       </div>
 
-      <!-- Studio Wear Grid -->
-      <div class="asmaan-wear-grid mb-16">
-        {%- if section.blocks.size > 0 -%}
-          {%- for block in section.blocks -%}
-            {%- liquid
-              assign b_prod = block.settings.product
-              if b_prod != blank
-                assign item_title = block.settings.title | default: b_prod.title
-                assign item_price = block.settings.price | default: b_prod.price | money
-                assign item_desc = block.settings.description | default: b_prod.description | strip_html | truncate: 120
-                assign item_img = block.settings.image | default: b_prod.featured_media
-                assign item_url = block.settings.cta_url | default: b_prod.url
-              else
-                assign item_title = block.settings.title | default: 'Studio Piece'
-                assign item_price = block.settings.price | default: '₹2,499'
-                assign item_desc = block.settings.description | default: 'Heavyweight textile with tailored utilitarian cut.'
-                assign item_img = block.settings.image
-                assign item_url = block.settings.cta_url | default: '#newsletter'
-              endif
-            -%}
-            <div class="asmaan-wear-card group" {{ block.shopify_attributes }}>
-              <div class="asmaan-wear-img-wrap">
-                {%- if block.settings.badge != blank -%}
-                  <span class="asmaan-wear-badge">{{ block.settings.badge }}</span>
-                {%- endif -%}
-                <div class="text-center p-6">
-                  {%- if item_img != blank -%}
-                    <img src="{{ item_img | image_url: width: 600 }}" alt="{{ item_title | escape }}" class="h-28 w-auto mx-auto object-contain transition-transform duration-500 group-hover:scale-105" loading="lazy">
-                  {%- else -%}
-                    <svg class="h-20 w-20 mx-auto text-white/40 group-hover:text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                  {%- endif -%}
-                </div>
-              </div>
-              <div class="flex items-center justify-between mb-1">
-                <h3 class="font-bold text-base uppercase tracking-tight text-white">{{ item_title }}</h3>
-                <span class="font-mono text-sm text-white/80">{{ item_price }}</span>
-              </div>
-              <p class="text-xs text-white/50 mb-4">{{ item_desc }}</p>
-              <a href="{{ item_url | default: '#newsletter' }}" class="button is-hero is-secondary is-full text-center text-xs py-2 mt-auto">
-                {{ block.settings.cta_label | default: section.settings.item_cta | default: 'Join Drop Waitlist' }}
-              </a>
-            </div>
-          {%- endfor -%}
-        {%- else -%}
-          <!-- Fallback Cards if no blocks added yet -->
-          <div class="asmaan-wear-card group">
-            <div class="asmaan-wear-img-wrap">
-              <span class="asmaan-wear-badge">DROP 01</span>
-              <div class="text-center p-6">
-                <svg class="h-20 w-20 mx-auto text-white/40 group-hover:text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-            </div>
-            <div class="flex items-center justify-between mb-1">
-              <h3 class="font-bold text-base uppercase tracking-tight text-white">Studio Heavyweight Tee</h3>
-              <span class="font-mono text-sm text-white/80">&#8377;2,499</span>
-            </div>
-            <p class="text-xs text-white/50 mb-4">300 GSM combed loopback cotton, relaxed drop-shoulder cut, tonal insignia print.</p>
-            <a href="#newsletter" class="button is-hero is-secondary is-full text-center text-xs py-2 mt-auto">
-              Join Drop Waitlist
-            </a>
-          </div>
+      {%- if section.settings.image != blank -%}
+        <img
+          src="{{ section.settings.image | image_url: width: 2400 }}"
+          alt="{{ section.settings.title | default: 'Asmaan clothing' | escape }}"
+          class="wear_photo"
+          loading="eager"
+          fetchpriority="high"
+          onerror="this.style.display='none'"
+        >
+      {%- endif -%}
+    </div>
 
-          <div class="asmaan-wear-card group">
-            <div class="asmaan-wear-img-wrap">
-              <span class="asmaan-wear-badge">DROP 01</span>
-              <div class="text-center p-6">
-                <svg class="h-20 w-20 mx-auto text-white/40 group-hover:text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 4v16m8-8H4" />
-                </svg>
-              </div>
-            </div>
-            <div class="flex items-center justify-between mb-1">
-              <h3 class="font-bold text-base uppercase tracking-tight text-white">Creative Flow Hoodie</h3>
-              <span class="font-mono text-sm text-white/80">&#8377;4,999</span>
-            </div>
-            <p class="text-xs text-white/50 mb-4">480 GSM dense French terry, double-layered architectural hood, hidden tech pocket.</p>
-            <a href="#newsletter" class="button is-hero is-secondary is-full text-center text-xs py-2 mt-auto">
-              Join Drop Waitlist
-            </a>
-          </div>
+    <!-- Foreground Content -->
+    <div class="wear_content">
+      <h1 class="sr-only">
+        {{ shop.name }} — {{ section.settings.title | default: 'Wear' }}
+      </h1>
 
-          <div class="asmaan-wear-card group">
-            <div class="asmaan-wear-img-wrap">
-              <span class="asmaan-wear-badge">DROP 01</span>
-              <div class="text-center p-6">
-                <svg class="h-20 w-20 mx-auto text-white/40 group-hover:text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-              </div>
-            </div>
-            <div class="flex items-center justify-between mb-1">
-              <h3 class="font-bold text-base uppercase tracking-tight text-white">Matte Field Cap</h3>
-              <span class="font-mono text-sm text-white/80">&#8377;1,899</span>
-            </div>
-            <p class="text-xs text-white/50 mb-4">Weatherproof matte nylon, FIDLOCK magnetic buckle, anti-sweat internal headband.</p>
-            <a href="#newsletter" class="button is-hero is-secondary is-full text-center text-xs py-2 mt-auto">
-              Join Drop Waitlist
-            </a>
-          </div>
+      <button type="button" class="wear_cta" data-drop-modal-open aria-haspopup="dialog" aria-expanded="false">
+        {{ section.settings.cta_text | default: 'Get notified' }}
+        {% render 'asmaan-icons', name: 'star', class: 'wear_cta-star' %}
+      </button>
 
-          <div class="asmaan-wear-card group">
-            <div class="asmaan-wear-img-wrap">
-              <span class="asmaan-wear-badge">DROP 01</span>
-              <div class="text-center p-6">
-                <svg class="h-20 w-20 mx-auto text-white/40 group-hover:text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
+      <p class="wear_line">
+        {{ section.settings.line_text | default: 'Drops land without warning. If you are not on the list, you will miss it.' }}
+      </p>
+    </div>
+  </section>
+
+  <!-- Drop Waitlist Modal Dialog -->
+  <div
+    id="drop-modal"
+    class="drop_modal"
+    data-open="false"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drop-title"
+  >
+    <div class="drop_sheet" role="document">
+      <button
+        type="button"
+        class="drop_close"
+        data-drop-modal-close
+        aria-label="{{ section.settings.modal_close_text | default: 'Close' }}"
+      >
+        <span class="sr-only">{{ section.settings.modal_close_text | default: 'Close' }}</span>
+        {% render 'asmaan-icons', name: 'cross', class: 'h-3 w-3' %}
+      </button>
+
+      <h2 id="drop-title" class="heading-style-h2">
+        {{ section.settings.modal_title | default: 'On the list' }}
+      </h2>
+      <p class="mt-[var(--pad-s)] text-white/70">
+        {{ section.settings.modal_body | default: 'One mail, the morning the drop goes live. Nothing else, ever.' }}
+      </p>
+
+      <div class="drop-form-wrapper mt-[var(--pad-l)] text-left">
+        {%- form 'customer', class: 'drop-customer-form', id: 'WearDropForm' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter,wear-drop-waitlist">
+
+          {%- if form.posted_successfully? -%}
+            <p class="text-size-medium text-center text-white" role="status" aria-live="polite">
+              {{ section.settings.modal_success | default: "You're on. Watch your inbox the morning it lands." }}
+            </p>
+          {%- else -%}
+            <div class="newsletter_field relative">
+              <input
+                id="drop-email"
+                type="email"
+                name="contact[email]"
+                required
+                autocomplete="email"
+                placeholder=" "
+                class="newsletter_input"
+                value="{{ form.email }}"
+                aria-required="true"
+                {% if form.errors %}aria-invalid="true" aria-describedby="drop-error"{% endif %}
+              >
+              <label for="drop-email" class="newsletter_label">
+                {{ section.settings.modal_placeholder | default: 'Your email address' }}
+              </label>
             </div>
-            <div class="flex items-center justify-between mb-1">
-              <h3 class="font-bold text-base uppercase tracking-tight text-white">Studio Aluminum Tote</h3>
-              <span class="font-mono text-sm text-white/80">&#8377;1,499</span>
-            </div>
-            <p class="text-xs text-white/50 mb-4">Reinforced 24oz waxed canvas with custom anodized aluminum hardware clip.</p>
-            <a href="#newsletter" class="button is-hero is-secondary is-full text-center text-xs py-2 mt-auto">
-              Join Drop Waitlist
-            </a>
-          </div>
-        {%- endif -%}
+
+            {%- if form.errors -%}
+              <p id="drop-error" class="mt-[var(--pad-xxs)] text-size-small text-[#ff7676]" role="alert">
+                {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] | default: "That address didn't look right. Try again?" }}
+              </p>
+            {%- endif -%}
+
+            <button
+              type="submit"
+              class="button is-full mt-[var(--pad-m)]"
+            >
+              {{ section.settings.modal_cta | default: 'Notify me' }}
+            </button>
+          {%- endif -%}
+        {%- endform -%}
       </div>
     </div>
   </div>
-</section>
+</div>
+
+<script>
+  (function() {
+    function initWearPage() {
+      var hero = document.getElementById('wear-hero');
+      var media = hero ? hero.querySelector('[data-wear-media]') : null;
+      var modal = document.getElementById('drop-modal');
+      var openBtns = document.querySelectorAll('[data-drop-modal-open]');
+      var closeBtns = document.querySelectorAll('[data-drop-modal-close]');
+      var emailInput = document.getElementById('drop-email');
+
+      // Parallax effect on scroll
+      var PARALLAX = 0.25;
+      var ticking = false;
+
+      function onScroll() {
+        if (!ticking) {
+          window.requestAnimationFrame(function() {
+            if (hero && media) {
+              var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+              var top = hero.offsetTop;
+              media.style.transform = 'translate3d(0, ' + ((scrollY - top) * PARALLAX) + 'px, 0)';
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      // Modal open / close handlers
+      function openModal() {
+        if (!modal) return;
+        modal.setAttribute('data-open', 'true');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        openBtns.forEach(function(btn) { btn.setAttribute('aria-expanded', 'true'); });
+        if (emailInput) {
+          setTimeout(function() { emailInput.focus(); }, 100);
+        }
+      }
+
+      function closeModal() {
+        if (!modal) return;
+        modal.setAttribute('data-open', 'false');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        openBtns.forEach(function(btn) { btn.setAttribute('aria-expanded', 'false'); });
+      }
+
+      openBtns.forEach(function(btn) {
+        btn.addEventListener('click', openModal);
+      });
+
+      closeBtns.forEach(function(btn) {
+        btn.addEventListener('click', closeModal);
+      });
+
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) closeModal();
+        });
+      }
+
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && modal.getAttribute('data-open') === 'true') {
+          closeModal();
+        }
+      });
+
+      // Auto-open modal if posted with error or success
+      var formSuccess = modal ? modal.querySelector('[role="status"]') : null;
+      var formError = modal ? modal.querySelector('[role="alert"]') : null;
+      if (formSuccess || formError) {
+        openModal();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWearPage);
+    } else {
+      initWearPage();
+    }
+  })();
+</script>
 
 {% schema %}
 {
-  "name": "Asmaan Wear",
-  "tag": "div",
-  "class": "asmaan-wear-section",
+  "name": "Wear Drop Teaser",
+  "tag": "section",
+  "class": "asmaan-wear-page-section",
   "settings": [
     {
-      "type": "text",
-      "id": "tag",
-      "label": "Section Tagline",
-      "default": "Studio Uniform"
+      "type": "header",
+      "content": "Hero Configuration"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "Heading",
-      "default": "Asmaan Studio Wear"
-    },
-    {
-      "type": "textarea",
-      "id": "subtitle",
-      "label": "Subtitle",
-      "default": "Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts."
+      "label": "Page Title",
+      "default": "Wear"
     },
     {
       "type": "text",
-      "id": "item_cta",
-      "label": "Default Button Label",
-      "default": "Join Drop Waitlist"
-    }
-  ],
-  "blocks": [
+      "id": "wordmark",
+      "label": "Brand Wordmark Watermark",
+      "default": "ASMAAN"
+    },
     {
-      "type": "wear_item",
-      "name": "Wear Item",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Shopify Product",
-          "info": "Optional. If selected, title, price, and image will auto-populate."
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Custom Image"
-        },
-        {
-          "type": "text",
-          "id": "badge",
-          "label": "Badge",
-          "default": "DROP 01"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Title",
-          "default": "Studio Heavyweight Tee"
-        },
-        {
-          "type": "text",
-          "id": "price",
-          "label": "Price",
-          "default": "₹2,499"
-        },
-        {
-          "type": "textarea",
-          "id": "description",
-          "label": "Description",
-          "default": "300 GSM combed loopback cotton, relaxed drop-shoulder cut, tonal insignia print."
-        },
-        {
-          "type": "text",
-          "id": "cta_label",
-          "label": "Button Label Override"
-        },
-        {
-          "type": "url",
-          "id": "cta_url",
-          "label": "Button Link"
-        }
-      ]
+      "type": "image_picker",
+      "id": "image",
+      "label": "Lifestyle Hero Image",
+      "info": "Leave blank to display the built-in ambient atmosphere fallback composition."
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Hero Button Text",
+      "default": "Get notified"
+    },
+    {
+      "type": "textarea",
+      "id": "line_text",
+      "label": "Teaser Warning Line",
+      "default": "Drops land without warning. If you are not on the list, you will miss it."
+    },
+    {
+      "type": "header",
+      "content": "Drop Waitlist Modal"
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Modal Heading",
+      "default": "On the list"
+    },
+    {
+      "type": "textarea",
+      "id": "modal_body",
+      "label": "Modal Subtitle",
+      "default": "One mail, the morning the drop goes live. Nothing else, ever."
+    },
+    {
+      "type": "text",
+      "id": "modal_placeholder",
+      "label": "Email Input Label",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "modal_cta",
+      "label": "Modal Button Text",
+      "default": "Notify me"
+    },
+    {
+      "type": "text",
+      "id": "modal_close_text",
+      "label": "Close Button Text",
+      "default": "Close"
+    },
+    {
+      "type": "textarea",
+      "id": "modal_success",
+      "label": "Success Message",
+      "default": "You're on. Watch your inbox the morning it lands."
     }
   ],
   "presets": [
     {
-      "name": "Asmaan Wear",
-      "blocks": [
-        {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Studio Heavyweight Tee",
-            "price": "₹2,499",
-            "description": "300 GSM combed loopback cotton, relaxed drop-shoulder cut, tonal insignia print."
-          }
-        },
-        {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Creative Flow Hoodie",
-            "price": "₹4,999",
-            "description": "480 GSM dense French terry, double-layered architectural hood, hidden tech pocket."
-          }
-        },
-        {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Matte Field Cap",
-            "price": "₹1,899",
-            "description": "Weatherproof matte nylon, FIDLOCK magnetic buckle, anti-sweat internal headband."
-          }
-        },
-        {
-          "type": "wear_item",
-          "settings": {
-            "badge": "DROP 01",
-            "title": "Studio Aluminum Tote",
-            "price": "₹1,499",
-            "description": "Reinforced 24oz waxed canvas with custom anodized aluminum hardware clip."
-          }
-        }
-      ]
+      "name": "Wear Drop Teaser"
     }
   ]
 }

@@ -1,0 +1,492 @@
+<div data-surface="light" class="min-h-dvh bg-white text-neutral-900 designs-page-wrapper">
+  <!-- Header with Mode and View Toggles -->
+  <header class="mx-auto flex max-w-[1400px] flex-wrap items-end justify-between gap-6 px-6 pt-10 pb-8 sm:px-10">
+    <div>
+      <p class="font-mono text-[11px] tracking-[0.22em] text-neutral-400 uppercase">
+        {{ section.settings.kicker | default: 'ASMAAN — 250ML' }}
+      </p>
+      <h1 class="mt-2 font-serif text-4xl font-light tracking-tight sm:text-5xl text-neutral-900">
+        {{ section.settings.title | default: 'Can designs' }}
+      </h1>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      <!-- Mode Segmented Control (Can vs Flat print) -->
+      <div class="flex rounded-full bg-neutral-100 p-1" role="tablist" aria-label="Display mode">
+        <button
+          type="button"
+          class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors bg-white text-neutral-900 shadow-sm"
+          data-mode="can"
+          aria-pressed="true"
+        >
+          Can
+        </button>
+        <button
+          type="button"
+          class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
+          data-mode="flat"
+          aria-pressed="false"
+        >
+          Flat print
+        </button>
+      </div>
+
+      <!-- View Angle Segmented Control (Front / Right / Back / Left) -->
+      <div id="designs-views-control" class="flex rounded-full bg-neutral-100 p-1" role="tablist" aria-label="Can view angle">
+        <button
+          type="button"
+          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors bg-white text-neutral-900 shadow-sm"
+          data-view="front"
+          aria-pressed="true"
+        >
+          Front
+        </button>
+        <button
+          type="button"
+          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
+          data-view="right"
+          aria-pressed="false"
+        >
+          Right
+        </button>
+        <button
+          type="button"
+          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
+          data-view="back"
+          aria-pressed="false"
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          class="designs-view-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700"
+          data-view="left"
+          aria-pressed="false"
+        >
+          Left
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Container -->
+  <main class="mx-auto max-w-[1400px] px-6 pb-24 sm:px-10">
+    <!-- 1. CAN 3D / MULTI-ANGLE MODE -->
+    <div id="designs-can-mode" class="block">
+      <p id="designs-panel-label" class="font-mono text-[11px] tracking-[0.18em] text-neutral-400 uppercase">
+        Front panel · Wordmark & claim
+      </p>
+
+      <div class="mt-6 grid gap-x-8 gap-y-14 sm:grid-cols-3">
+        <!-- Kala Jamun -->
+        <figure class="flex flex-col items-center">
+          <div class="mx-auto w-full max-w-[300px]">
+            <div class="aspect-[760/1950] w-full relative flex items-center justify-center">
+              <img
+                src="{{ 'jamun-front.webp' | asset_url }}"
+                data-img-jamun-front="{{ 'jamun-front.webp' | asset_url }}"
+                data-img-jamun-right="{{ 'jamun-right.webp' | asset_url }}"
+                data-img-jamun-back="{{ 'jamun-back.webp' | asset_url }}"
+                data-img-jamun-left="{{ 'jamun-left.webp' | asset_url }}"
+                id="can-img-jamun"
+                alt="Kala Jamun can"
+                class="w-full h-full object-contain transition-opacity duration-300"
+                loading="eager"
+              >
+            </div>
+          </div>
+          <figcaption class="mt-6 text-center">
+            <span class="flex items-baseline justify-center gap-2.5">
+              <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#2A1D4A] inline-block"></span>
+              <span class="text-lg font-medium text-neutral-900">Kala Jamun</span>
+            </span>
+            <span class="mt-1 block text-sm text-neutral-400">Deep Indian blackberry · tart, dark and round</span>
+            <span class="mt-3 flex items-center justify-center gap-3 font-mono text-[10px] tracking-[0.14em] uppercase">
+              <span class="text-neutral-400">Turn with views</span>
+              <span aria-hidden="true" class="text-neutral-200">/</span>
+              <button
+                type="button"
+                data-enlarge="jamun"
+                aria-label="Enlarge Kala Jamun"
+                class="text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900"
+              >
+                Enlarge
+              </button>
+            </span>
+          </figcaption>
+        </figure>
+
+        <!-- Alphonso Mango -->
+        <figure class="flex flex-col items-center">
+          <div class="mx-auto w-full max-w-[300px]">
+            <div class="aspect-[760/1950] w-full relative flex items-center justify-center">
+              <img
+                src="{{ 'mango-front.webp' | asset_url }}"
+                data-img-mango-front="{{ 'mango-front.webp' | asset_url }}"
+                data-img-mango-right="{{ 'mango-right.webp' | asset_url }}"
+                data-img-mango-back="{{ 'mango-back.webp' | asset_url }}"
+                data-img-mango-left="{{ 'mango-left.webp' | asset_url }}"
+                id="can-img-mango"
+                alt="Alphonso Mango can"
+                class="w-full h-full object-contain transition-opacity duration-300"
+                loading="lazy"
+              >
+            </div>
+          </div>
+          <figcaption class="mt-6 text-center">
+            <span class="flex items-baseline justify-center gap-2.5">
+              <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#5A2A00] inline-block"></span>
+              <span class="text-lg font-medium text-neutral-900">Alphonso Mango</span>
+            </span>
+            <span class="mt-1 block text-sm text-neutral-400">Ripe Alphonso pressed against something bitter</span>
+            <span class="mt-3 flex items-center justify-center gap-3 font-mono text-[10px] tracking-[0.14em] uppercase">
+              <span class="text-neutral-400">Turn with views</span>
+              <span aria-hidden="true" class="text-neutral-200">/</span>
+              <button
+                type="button"
+                data-enlarge="mango"
+                aria-label="Enlarge Alphonso Mango"
+                class="text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900"
+              >
+                Enlarge
+              </button>
+            </span>
+          </figcaption>
+        </figure>
+
+        <!-- Wild Magenta -->
+        <figure class="flex flex-col items-center">
+          <div class="mx-auto w-full max-w-[300px]">
+            <div class="aspect-[760/1950] w-full relative flex items-center justify-center">
+              <img
+                src="{{ 'print-front.webp' | asset_url }}"
+                data-img-print-front="{{ 'print-front.webp' | asset_url }}"
+                data-img-print-right="{{ 'print-right.webp' | asset_url }}"
+                data-img-print-back="{{ 'print-back.webp' | asset_url }}"
+                data-img-print-left="{{ 'print-left.webp' | asset_url }}"
+                id="can-img-print"
+                alt="Wild Magenta can"
+                class="w-full h-full object-contain transition-opacity duration-300"
+                loading="lazy"
+              >
+            </div>
+          </div>
+          <figcaption class="mt-6 text-center">
+            <span class="flex items-baseline justify-center gap-2.5">
+              <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#4E0749] inline-block"></span>
+              <span class="text-lg font-medium text-neutral-900">Wild Magenta</span>
+            </span>
+            <span class="mt-1 block text-sm text-neutral-400">Rose over pink guava with a citrus edge</span>
+            <span class="mt-3 flex items-center justify-center gap-3 font-mono text-[10px] tracking-[0.14em] uppercase">
+              <span class="text-neutral-400">Turn with views</span>
+              <span aria-hidden="true" class="text-neutral-200">/</span>
+              <button
+                type="button"
+                data-enlarge="print"
+                aria-label="Enlarge Wild Magenta"
+                class="text-neutral-500 underline decoration-neutral-300 underline-offset-4 transition-colors hover:text-neutral-900"
+              >
+                Enlarge
+              </button>
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <!-- 2. FLAT 360° PRINT MODE -->
+    <div id="designs-flat-mode" class="hidden space-y-14">
+      <!-- Jamun Wrap -->
+      <figure>
+        <img
+          src="{{ 'jamun-wrap.webp' | asset_url }}"
+          alt="Kala Jamun print, unwrapped over 360°"
+          class="h-auto w-full rounded border border-neutral-100 shadow-sm"
+          loading="lazy"
+        >
+        <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <span class="flex items-baseline gap-2.5">
+            <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#2A1D4A] inline-block"></span>
+            <span class="text-lg font-medium text-neutral-900">Kala Jamun</span>
+            <span class="text-sm text-neutral-400">Primary #2A1D4A · Accent #9089D3</span>
+          </span>
+          <span class="font-mono text-[11px] text-neutral-400 uppercase">
+            Four-colour process on aluminium
+          </span>
+        </figcaption>
+      </figure>
+
+      <!-- Mango Wrap -->
+      <figure>
+        <img
+          src="{{ 'mango-wrap.webp' | asset_url }}"
+          alt="Alphonso Mango print, unwrapped over 360°"
+          class="h-auto w-full rounded border border-neutral-100 shadow-sm"
+          loading="lazy"
+        >
+        <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <span class="flex items-baseline gap-2.5">
+            <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#5A2A00] inline-block"></span>
+            <span class="text-lg font-medium text-neutral-900">Alphonso Mango</span>
+            <span class="text-sm text-neutral-400">Primary #5A2A00 · Accent #EFB36B</span>
+          </span>
+          <span class="font-mono text-[11px] text-neutral-400 uppercase">
+            Four-colour process on aluminium
+          </span>
+        </figcaption>
+      </figure>
+
+      <!-- Wild Magenta Wrap -->
+      <figure>
+        <img
+          src="{{ 'print-wrap.webp' | asset_url }}"
+          alt="Wild Magenta print, unwrapped over 360°"
+          class="h-auto w-full rounded border border-neutral-100 shadow-sm"
+          loading="lazy"
+        >
+        <figcaption class="mt-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <span class="flex items-baseline gap-2.5">
+            <span aria-hidden="true" class="size-2.5 translate-y-px rounded-full bg-[#4E0749] inline-block"></span>
+            <span class="text-lg font-medium text-neutral-900">Wild Magenta</span>
+            <span class="text-sm text-neutral-400">Primary #4E0749 · Accent #E6A0E8</span>
+          </span>
+          <span class="font-mono text-[11px] text-neutral-400 uppercase">
+            Four-colour process on aluminium
+          </span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <!-- Footnote -->
+    <p class="mt-20 max-w-2xl border-t border-neutral-100 pt-6 font-mono text-[11px] leading-relaxed text-neutral-400">
+      Each can is real geometry turned from the measured silhouette, wearing its
+      own colourway&rsquo;s print at 1:1 — a millimetre of artwork over a
+      millimetre of aluminium, all four panels, nothing scaled or cropped. Use the buttons
+      above to examine each printed panel or explore the complete 360° unwrapped print.
+    </p>
+  </main>
+
+  <!-- Enlarge Lightbox Modal -->
+  <div
+    id="designs-lightbox"
+    class="fixed inset-0 z-50 hidden cursor-zoom-out items-center justify-center bg-white/95 p-8 backdrop-blur-sm transition-opacity duration-300"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Enlarge can design"
+  >
+    <div class="relative h-[88dvh] max-w-full aspect-[760/1950] cursor-default" onclick="event.stopPropagation()">
+      <button
+        type="button"
+        id="designs-lightbox-close"
+        class="absolute -top-4 -right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 text-white shadow-md transition-transform hover:scale-110"
+        aria-label="Close enlarged view"
+      >
+        {% render 'asmaan-icons', name: 'cross', class: 'h-3 w-3' %}
+      </button>
+      <img
+        id="designs-lightbox-img"
+        src="{{ 'jamun-front.webp' | asset_url }}"
+        alt="Enlarged can view"
+        class="h-full w-full object-contain"
+      >
+    </div>
+  </div>
+</div>
+
+<style>
+  .designs-page-wrapper {
+    color-scheme: light;
+    background-color: #ffffff !important;
+    color: #171717 !important;
+    min-height: 100vh;
+  }
+  .designs-page-wrapper button:focus-visible {
+    outline: 2px solid #171717 !important;
+    outline-offset: 2px !important;
+  }
+</style>
+
+<script>
+  (function() {
+    function initDesignsPage() {
+      var modeBtns = document.querySelectorAll('.designs-mode-btn');
+      var viewBtns = document.querySelectorAll('.designs-view-btn');
+      var canMode = document.getElementById('designs-can-mode');
+      var flatMode = document.getElementById('designs-flat-mode');
+      var viewsControl = document.getElementById('designs-views-control');
+      var panelLabel = document.getElementById('designs-panel-label');
+
+      var imgJamun = document.getElementById('can-img-jamun');
+      var imgMango = document.getElementById('can-img-mango');
+      var imgPrint = document.getElementById('can-img-print');
+
+      var lightbox = document.getElementById('designs-lightbox');
+      var lightboxImg = document.getElementById('designs-lightbox-img');
+      var lightboxClose = document.getElementById('designs-lightbox-close');
+      var enlargeBtns = document.querySelectorAll('[data-enlarge]');
+
+      var currentView = 'front';
+      var currentMode = 'can';
+      var currentEnlargedId = 'jamun';
+
+      var panelLabels = {
+        front: 'Front panel · Wordmark & claim',
+        right: 'Right panel · Ingredients & recipe',
+        back: 'Back panel · Nutritional values & volume',
+        left: 'Left panel · Brand story & mission'
+      };
+
+      function updateCanImages(view) {
+        currentView = view;
+        if (panelLabel) {
+          panelLabel.textContent = panelLabels[view] || panelLabels.front;
+        }
+
+        if (imgJamun) {
+          var srcJ = imgJamun.getAttribute('data-img-jamun-' + view);
+          if (srcJ) imgJamun.src = srcJ;
+        }
+        if (imgMango) {
+          var srcM = imgMango.getAttribute('data-img-mango-' + view);
+          if (srcM) imgMango.src = srcM;
+        }
+        if (imgPrint) {
+          var srcP = imgPrint.getAttribute('data-img-print-' + view);
+          if (srcP) imgPrint.src = srcP;
+        }
+
+        if (lightbox && lightbox.classList.contains('flex') && lightboxImg) {
+          updateLightboxImage();
+        }
+
+        viewBtns.forEach(function(btn) {
+          var v = btn.getAttribute('data-view');
+          if (v === view) {
+            btn.setAttribute('aria-pressed', 'true');
+            btn.classList.add('bg-white', 'text-neutral-900', 'shadow-sm');
+            btn.classList.remove('text-neutral-400');
+          } else {
+            btn.setAttribute('aria-pressed', 'false');
+            btn.classList.remove('bg-white', 'text-neutral-900', 'shadow-sm');
+            btn.classList.add('text-neutral-400');
+          }
+        });
+      }
+
+      function updateMode(mode) {
+        currentMode = mode;
+        if (mode === 'flat') {
+          if (canMode) canMode.classList.add('hidden');
+          if (canMode) canMode.classList.remove('block');
+          if (flatMode) flatMode.classList.remove('hidden');
+          if (flatMode) flatMode.classList.add('block');
+          if (viewsControl) viewsControl.classList.add('hidden');
+        } else {
+          if (canMode) canMode.classList.remove('hidden');
+          if (canMode) canMode.classList.add('block');
+          if (flatMode) flatMode.classList.add('hidden');
+          if (flatMode) flatMode.classList.remove('block');
+          if (viewsControl) viewsControl.classList.remove('hidden');
+        }
+
+        modeBtns.forEach(function(btn) {
+          var m = btn.getAttribute('data-mode');
+          if (m === mode) {
+            btn.setAttribute('aria-pressed', 'true');
+            btn.classList.add('bg-white', 'text-neutral-900', 'shadow-sm');
+            btn.classList.remove('text-neutral-400');
+          } else {
+            btn.setAttribute('aria-pressed', 'false');
+            btn.classList.remove('bg-white', 'text-neutral-900', 'shadow-sm');
+            btn.classList.add('text-neutral-400');
+          }
+        });
+      }
+
+      function updateLightboxImage() {
+        if (!lightboxImg) return;
+        var targetImg = document.getElementById('can-img-' + currentEnlargedId);
+        if (targetImg) {
+          var src = targetImg.getAttribute('data-img-' + currentEnlargedId + '-' + currentView);
+          if (src) lightboxImg.src = src;
+        }
+      }
+
+      modeBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          updateMode(btn.getAttribute('data-mode'));
+        });
+      });
+
+      viewBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          updateCanImages(btn.getAttribute('data-view'));
+        });
+      });
+
+      enlargeBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          currentEnlargedId = btn.getAttribute('data-enlarge');
+          updateLightboxImage();
+          if (lightbox) {
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+          }
+        });
+      });
+
+      function closeLightbox() {
+        if (lightbox) {
+          lightbox.classList.add('hidden');
+          lightbox.classList.remove('flex');
+          document.body.style.overflow = '';
+        }
+      }
+
+      if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+      if (lightbox) {
+        lightbox.addEventListener('click', function(e) {
+          if (e.target === lightbox) closeLightbox();
+        });
+      }
+
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDesignsPage);
+    } else {
+      initDesignsPage();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Can Designs Gallery",
+  "tag": "section",
+  "class": "asmaan-designs-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Header Kicker",
+      "default": "ASMAAN — 250ML"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Page Title",
+      "default": "Can designs"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Can Designs Gallery"
+    }
+  ]
+}
+{% endschema %}
