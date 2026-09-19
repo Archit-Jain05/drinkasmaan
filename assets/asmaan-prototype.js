@@ -1758,6 +1758,8 @@
       return el;
     }
     buttons.forEach(function (button) {
+      if (button.dataset.faqBound) return;
+      button.dataset.faqBound = 'true';
       button.addEventListener('click', function () {
         var isExpanded = button.getAttribute('aria-expanded') === 'true';
         var answer = findAnswer(button);
@@ -1813,7 +1815,11 @@
     init();
   }
 
-  document.addEventListener('shopify:section:load', init);
+  // Only re-run for real theme-editor reloads (they carry a sectionId); other scripts dispatch
+  // synthetic section events to remount their own widgets.
+  document.addEventListener('shopify:section:load', function (e) {
+    if (e.detail && e.detail.sectionId) init();
+  });
 
   document.addEventListener('shopify:block:select', function (e) {
     var blockId = e.detail.blockId;
