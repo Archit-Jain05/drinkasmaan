@@ -89,6 +89,21 @@
     return Math.min(Math.max((value - from) / (to - from), 0), 1);
   }
 
+  /**
+   * How far a pinned section has travelled past the viewport, 0 as it appears at the bottom
+   * and 1 once it has left the top. Fading on that progress keeps the copy on screen for most
+   * of the section — measuring against the viewport alone left long stretches of empty
+   * background on short screens, where a section is much taller than the viewport.
+   */
+  function pinAmount(rect, windowH) {
+    var travel = rect.height + windowH;
+    if (travel <= 0) return { enter: 0, exit: 0, amount: 0 };
+    var progress = (windowH - rect.top) / travel;
+    var enter = range(progress, 0.04, 0.22);
+    var exit = 1 - range(progress, 0.78, 0.96);
+    return { enter: enter, exit: exit, amount: enter * exit };
+  }
+
   function wrapRange(value, min, max) {
     var size = max - min;
     var folded = (value - min) % size;
@@ -1355,19 +1370,16 @@
       // 3. READ PASS: Batch all getBoundingClientRect measurements together (No layout thrashing)
       for (var pi = 0; pi < pinnedCache.length; pi++) {
         var pItem = pinnedCache[pi];
-        var rect = pItem.sec.getBoundingClientRect();
-        pItem.enter = range(rect.top, windowH * 0.4, 0);
-        pItem.exit = range(rect.bottom - windowH, 0, windowH * 0.3);
-        pItem.amount = pItem.enter * pItem.exit;
+        var pinned = pinAmount(pItem.sec.getBoundingClientRect(), windowH);
+        pItem.enter = pinned.enter;
+        pItem.exit = pinned.exit;
+        pItem.amount = pinned.amount;
       }
 
       var pRect = profileSection ? profileSection.getBoundingClientRect() : null;
 
       for (var bi = 0; bi < benefitCache.length; bi++) {
-        var bRect = benefitCache[bi].el.getBoundingClientRect();
-        var bEnter = range(bRect.top, windowH * 0.4, 0);
-        var bExit = range(bRect.bottom - windowH, 0, windowH * 0.3);
-        benefitCache[bi].amount = bEnter * bExit;
+        benefitCache[bi].amount = pinAmount(benefitCache[bi].el.getBoundingClientRect(), windowH).amount;
       }
 
       // 4. WRITE PASS: Update styles/classes with zero forced synchronous layout
@@ -1389,9 +1401,7 @@
       }
 
       if (pRect) {
-        var pEnter = range(pRect.top, windowH * 0.4, 0);
-        var pExit = range(pRect.bottom - windowH, 0, windowH * 0.3);
-        var pAmount = pEnter * pExit;
+        var pAmount = pinAmount(pRect, windowH).amount;
         var isTasteActive = pAmount > 0.25;
         if (isTasteActive !== lastTasteActive) {
           lastTasteActive = isTasteActive;

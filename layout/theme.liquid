@@ -31,6 +31,8 @@
     {{ 'asmaan-can-3d.css' | asset_url | stylesheet_tag }}
     {%- comment -%} Tailwind utilities used by the theme but missing from asmaan-prototype.css (see PROJECT_HANDOFF.md). {%- endcomment -%}
     {{ 'asmaan-utilities.css' | asset_url | stylesheet_tag }}
+    {%- comment -%} Small-screen corrections; must load last. {%- endcomment -%}
+    {{ 'asmaan-mobile.css' | asset_url | stylesheet_tag }}
 
     <script>
       window.ASMAAN_CONFIG = {

@@ -58,8 +58,6 @@
   }
 
   .product-gallery-stage {
-    position: sticky;
-    top: 6rem;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 1.5rem;
@@ -75,6 +73,15 @@
   @media (min-width: 640px) {
     .product-gallery-stage {
       padding: 2rem;
+    }
+  }
+
+  /* Sticky only where there is a second column to scroll past it. */
+  @media (min-width: 990px) {
+    .product-gallery-stage:not(.\!static) {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
     }
   }
 

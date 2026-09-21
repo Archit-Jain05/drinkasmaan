@@ -1,0 +1,159 @@
+/* ---------------------------------------------------------------------------
+   Asmaan — small-screen corrections.
+
+   Loaded after asmaan-prototype.css, so these rules win on equal specificity.
+   Everything here is scoped to phone widths unless noted, and fixes layouts
+   that were built for the desktop grid: text that ended up too small to read,
+   controls too small to tap, and blocks that reserved desktop-sized space.
+--------------------------------------------------------------------------- */
+
+/* The footer columns stack on small screens, which turns the brand block's
+   `flex: 1 1 320px` basis into a 320px-tall empty gap above the links. */
+@media (max-width: 989px) {
+  .asmaan-footer-brand {
+    flex: 0 0 auto;
+    max-width: none;
+  }
+
+  .asmaan-footer-main {
+    gap: var(--pad-l);
+    padding-bottom: var(--pad-l);
+  }
+}
+
+@media (max-width: 767px) {
+  /* --- Drink: pack cards -------------------------------------------------
+     Four pieces of text on one line left the tier name and per-can price
+     squeezed to 8px. Two tidy rows instead: name + price, then cans + each. */
+  .drink_pack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.35rem 0.75rem;
+  }
+
+  .drink_pack-tag {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.6875rem;
+  }
+
+  .drink_pack-price {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    margin-left: 0;
+    font-size: 1.375rem;
+  }
+
+  .drink_pack-cans {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 0.9375rem;
+  }
+
+  .drink_pack-each {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+    font-size: 0.75rem;
+  }
+
+  /* --- Readable small print ---------------------------------------------- */
+  .drink_banner,
+  .drink_panel-note,
+  .merch_meta,
+  .merch_meta span {
+    font-size: 0.75rem;
+  }
+
+  .drink_trust {
+    font-size: 0.6875rem;
+  }
+
+  /* --- Drink: sticky buy bar --------------------------------------------- */
+  .drink_bar-inner {
+    gap: 0.75rem;
+  }
+
+  .drink_bar-copy b {
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
+  .drink_bar-price {
+    white-space: nowrap;
+  }
+
+  .drink_bar .button {
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* --- Drink: pack scene -------------------------------------------------
+     2.2 screens of scroll left long empty stretches under the copy. */
+  .pack_run {
+    height: 170svh;
+    height: 170vh;
+  }
+
+  /* --- Tap targets (24px minimum) ---------------------------------------- */
+  .asmaan-footer-link {
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+
+  .merch_nav-item {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .merch_size,
+  .merch_face-button,
+  .drink_chip,
+  .drink_taste,
+  .drink_view {
+    min-height: 2.75rem;
+  }
+
+  .designs-page-wrapper button[data-enlarge] {
+    min-height: 2.75rem;
+    padding: 0.5rem 0.25rem;
+  }
+}
+
+/* --- Product page controls ------------------------------------------------
+   These are inline-styled in the section, so they need a little more weight. */
+@media (max-width: 767px) {
+  #view-mode-3d,
+  #view-mode-photo {
+    min-height: 2.25rem;
+    padding: 0.45rem 0.85rem !important;
+  }
+
+  #product-qty {
+    min-height: 2.5rem;
+  }
+
+  .product-thumb-btn {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
+/* Filter checkboxes on collection pages were 12px squares. */
+@media (max-width: 767px) {
+  .asmaan-filter-option,
+  .facet-checkbox {
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .asmaan-filter-option input[type='checkbox'],
+  .facet-checkbox input[type='checkbox'] {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+}
