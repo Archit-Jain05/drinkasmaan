@@ -455,7 +455,7 @@
           <div class="pack_grid">
             <div class="pack_copy">
               <span class="merch_meta">{{ section.settings.pack_eyebrow | escape }}</span>
-              <h2 class="heading-style-display">{{ section.settings.pack_heading | escape | newline_to_br }}</h2>
+              <h2 class="heading-style-display">{{ section.settings.pack_heading | escape }}</h2>
               {%- if section.settings.pack_body != blank -%}
                 <p class="max-width-custom text-size-medium text-white/65">{{ section.settings.pack_body | escape }}</p>
               {%- endif -%}
@@ -622,7 +622,7 @@
           <div class="container-large">
             <div class="padding-section-large">
               <div class="mb-[var(--pad-xxl)]">
-                <h2 class="heading-style-display whitespace-pre-line">{{ section.settings.faq_heading | escape | newline_to_br }}</h2>
+                <h2 class="heading-style-display whitespace-pre-line">{{ section.settings.faq_heading | escape }}</h2>
               </div>
               <div class="max-width-large align-center">
                 <div class="faq_list">

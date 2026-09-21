@@ -89,6 +89,25 @@
     font-size: 0.75rem;
     cursor: pointer;
   }
+
+  @media (max-width: 767px) {
+    /* The panel is far wider than the little dropdown it hangs off, so on a
+       phone the ones further along the row ran off the right edge. Anchor it
+       to the filter bar instead and let it span the bar's full width. */
+    .collection-filters-form {
+      position: relative;
+    }
+    .filter-dropdown {
+      position: static;
+    }
+    .filter-panel {
+      left: 1rem;
+      right: 1rem;
+      width: auto;
+      min-width: 0;
+      max-width: none;
+    }
+  }
 </style>
 
 <section class="asmaan-subpage-section pt-24 pb-20 bg-black text-white min-h-[80vh]">

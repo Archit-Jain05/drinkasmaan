@@ -3055,6 +3055,10 @@ input:focus-visible {
 .drink_gallery {
   position: sticky;
   top: var(--nav-height);
+  /* Grid items stretch by default, which makes this box as tall as the buy
+     column. A sticky box that already spans the scroll region cannot move, so
+     the can scrolled away and left the column empty. */
+  align-self: start;
   display: flex;
   flex-direction: column;
   align-items: center;
