@@ -246,3 +246,11 @@
     font-size: 11px;
   }
 }
+
+/* The subscribe card is narrow on a phone and the savings badge broke across
+   two lines inside it. */
+@media (max-width: 767px) {
+  body .drink_save {
+    white-space: nowrap;
+  }
+}
