@@ -210,3 +210,24 @@
     min-height: 2rem;
   }
 }
+
+/* A second pass over what measured under 11px once the rules above were live. */
+@media (max-width: 767px) {
+  body .merch_number,
+  body .merch_tag,
+  body .merch_strip dt {
+    font-size: 11px;
+  }
+
+  body .cart-drawer-empty .button.is-small,
+  body .filter-dropdown summary span,
+  body .filter-panel summary span {
+    font-size: 12px;
+  }
+
+  /* 1.15rem is only 16px against the theme's 14px root. */
+  body .filter-panel input[type='checkbox'] {
+    width: 22px;
+    height: 22px;
+  }
+}
