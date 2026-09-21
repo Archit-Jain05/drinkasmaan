@@ -37,7 +37,7 @@
   body .drink_pack-tag {
     grid-column: 1;
     grid-row: 1;
-    font-size: 0.6875rem;
+    font-size: 11px;
   }
 
   body .drink_pack-price {
@@ -45,20 +45,20 @@
     grid-row: 1;
     justify-self: end;
     margin-left: 0;
-    font-size: 1.375rem;
+    font-size: 22px;
   }
 
   body .drink_pack-cans {
     grid-column: 1;
     grid-row: 2;
-    font-size: 0.9375rem;
+    font-size: 15px;
   }
 
   body .drink_pack-each {
     grid-column: 2;
     grid-row: 2;
     justify-self: end;
-    font-size: 0.75rem;
+    font-size: 11px;
   }
 
   /* --- Readable small print ---------------------------------------------- */
@@ -66,15 +66,15 @@
   body .drink_panel-note,
   body .merch_meta,
   body .merch_meta span {
-    font-size: 0.75rem;
+    font-size: 12px;
   }
 
   body .drink_trust {
-    font-size: 0.6875rem;
+    font-size: 11px;
   }
 
   body .drink_pack-note {
-    font-size: 0.8125rem;
+    font-size: 13px;
   }
 
   /* --- Drink: sticky buy bar --------------------------------------------- */
@@ -83,7 +83,7 @@
   }
 
   body .drink_bar-copy b {
-    font-size: 0.8125rem;
+    font-size: 13px;
     white-space: nowrap;
   }
 
@@ -147,12 +147,66 @@
   /* Collection filter rows were 12px checkboxes. */
   body .filter-panel label {
     min-height: 2.75rem;
-    font-size: 0.8125rem;
+    font-size: 13px;
   }
 
   body .filter-panel input[type='checkbox'] {
     width: 1.15rem;
     height: 1.15rem;
     flex: 0 0 auto;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Readable minimum type on phones.
+
+   The theme's root font is 14px, so the `0.75rem` / `0.625rem` sizes the
+   desktop design uses for labels and fine print land between 7.9px and 10.5px
+   on a phone — below the ~11px where small caps and mono type stop being
+   legible. Each rule below names a place that measured under 11px on the live
+   store and lifts it to 11px (incidental labels) or 12px (anything a shopper
+   is expected to read).
+--------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  body .loader_tagline,
+  body .asmaan-range-tag,
+  body .drink_legend,
+  body .drink_save,
+  body .drink_trust li,
+  body .drink_facts dt,
+  body .pack_tier span,
+  body .merch_nav-item,
+  body .merch_face-button,
+  body .text-\[10px\],
+  body .designs-page-wrapper .text-neutral-200,
+  body .designs-page-wrapper .text-neutral-400,
+  body .designs-page-wrapper .text-neutral-500 {
+    font-size: 11px;
+  }
+
+  body .text-size-tiny,
+  body .text-xs,
+  body .drink_mode-note,
+  body .drink_sum-note,
+  body .drink_sum-note span,
+  body .drink_chip,
+  body .drink_flavour-cta,
+  body .asmaan-subpage-tag,
+  body .asmaan-contact__label,
+  body .asmaan-footer-tagline,
+  body .asmaan-footer-copyright,
+  body .cart-drawer-badge,
+  body .cart-drawer-shipping-text span,
+  body .cart-drawer-shipping-text strong,
+  body .cart-drawer-empty .button {
+    font-size: 12px;
+  }
+}
+
+/* The collection filter's price inputs are 14px tall on their own; the padded
+   wrapper around them is not part of the input's hit area. */
+@media (max-width: 767px) {
+  body .filter-panel input[type='number'] {
+    min-height: 2rem;
   }
 }
