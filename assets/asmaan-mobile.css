@@ -254,3 +254,25 @@
     white-space: nowrap;
   }
 }
+
+/* Final pass: these lost to more specific rules in the compiled stylesheet,
+   so each selector here carries at least as much weight. */
+@media (max-width: 767px) {
+  body a.navbar_social-link.navbar_contact-link {
+    font-size: 12px;
+  }
+
+  body .navbar_cart-button .cart-count-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  body .pack_spec dt {
+    font-size: 11px;
+  }
+
+  body .pack_active-head span {
+    font-size: 11px;
+  }
+}
