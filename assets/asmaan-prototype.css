@@ -725,7 +725,7 @@ input:focus-visible {
 
 .navbar_contact-link {
   text-transform: uppercase;
-  font-size: 0.75rem !important;
+  font-size: 12px !important;
   letter-spacing: 0.08em;
   font-weight: 500;
 }
