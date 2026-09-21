@@ -1,15 +1,88 @@
 /* ---------------------------------------------------------------------------
-   Asmaan — small-screen corrections.
+   Asmaan — readable type and small-screen corrections.
 
-   Fixes layouts that were built for the desktop grid: text too small to read,
-   controls too small to tap, and blocks that reserved desktop-sized space.
+   Two things live here. First, a minimum type size that applies at every
+   width: the theme's root font is 14px, so the `0.75rem` and `0.625rem` sizes
+   the design uses for labels, counts and fine print render between 7.9px and
+   10.5px — under the ~11px where small caps and mono type stop being legible.
+   Second, the layout fixes small screens need, where a design built for the
+   desktop grid leaves text crushed, controls too small to tap, and blocks
+   holding desktop-sized space.
 
-   Selectors are prefixed with `body` on purpose. Sections re-include
-   asmaan-prototype.css after this file, so matching plain class selectors would
+   Selectors are prefixed with `body` on purpose. Sections load their own
+   stylesheets after this file, so matching plain class selectors would
    otherwise lose on source order.
 --------------------------------------------------------------------------- */
 
-/* The footer columns stack on small screens, which turns the brand block's
+/* --- Readable minimum type, every width ---------------------------------
+   Each selector below measured under 11px on the live store. Incidental
+   labels go to 11px; anything a shopper is meant to read goes to 12px. */
+body .loader_tagline,
+body .asmaan-range-tag,
+body .drink_legend,
+body .drink_save,
+body .drink_banner,
+body .drink_panel-note,
+body .drink_pack-tag,
+body .drink_pack-each,
+body .drink_trust,
+body .drink_trust li,
+body .drink_facts dt,
+body .pack_spec dt,
+body .pack_tier span,
+body .pack_active-head span,
+body .merch_nav-item,
+body .merch_face-button,
+body .merch_number,
+body .merch_tag,
+body .merch_strip dt,
+body .text-\[10px\],
+body .designs-page-wrapper .text-neutral-200,
+body .designs-page-wrapper .text-neutral-400,
+body .designs-page-wrapper .text-neutral-500 {
+  font-size: 11px;
+}
+
+body .text-size-tiny,
+body .text-xs,
+body .merch_meta,
+body .merch_meta span,
+body .drink_mode-note,
+body .drink_sum-note,
+body .drink_sum-note span,
+body .drink_pack-note,
+body .drink_chip,
+body .drink_flavour-cta,
+body .asmaan-subpage-tag,
+body .asmaan-contact__label,
+body .asmaan-footer-tagline,
+body .asmaan-footer-copyright,
+body .navbar_social-link,
+body .cart-drawer-badge,
+body .cart-drawer-shipping-text span,
+body .cart-drawer-shipping-text strong,
+body .cart-drawer-empty .button,
+body .cart-drawer-empty .button.is-small,
+body .filter-panel label,
+body .filter-dropdown summary span,
+body .filter-panel summary span {
+  font-size: 12px;
+}
+
+body .navbar_cart-button .cart-count-badge,
+body .cart-count-badge {
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+}
+
+/* The savings badge sits in a narrow card and broke across two lines. */
+body .drink_save {
+  white-space: nowrap;
+}
+
+/* --- Footer ---------------------------------------------------------------
+   The columns stack below 990px, which turns the brand block's
    `flex: 1 1 320px` basis into a 320px tall empty gap above the links. */
 @media (max-width: 989px) {
   body .asmaan-footer-brand {
@@ -37,7 +110,6 @@
   body .drink_pack-tag {
     grid-column: 1;
     grid-row: 1;
-    font-size: 11px;
   }
 
   body .drink_pack-price {
@@ -58,23 +130,6 @@
     grid-column: 2;
     grid-row: 2;
     justify-self: end;
-    font-size: 11px;
-  }
-
-  /* --- Readable small print ---------------------------------------------- */
-  body .drink_banner,
-  body .drink_panel-note,
-  body .merch_meta,
-  body .merch_meta span {
-    font-size: 12px;
-  }
-
-  body .drink_trust {
-    font-size: 11px;
-  }
-
-  body .drink_pack-note {
-    font-size: 13px;
   }
 
   /* --- Drink: sticky buy bar --------------------------------------------- */
@@ -144,130 +199,24 @@
     min-height: 2.75rem;
   }
 
-  /* Collection filter rows were 12px checkboxes. */
   body .filter-panel label {
     min-height: 2.75rem;
-    font-size: 13px;
-  }
-
-  body .filter-panel input[type='checkbox'] {
-    width: 1.15rem;
-    height: 1.15rem;
-    flex: 0 0 auto;
   }
 }
 
-/* ---------------------------------------------------------------------------
-   Readable minimum type on phones.
-
-   The theme's root font is 14px, so the `0.75rem` / `0.625rem` sizes the
-   desktop design uses for labels and fine print land between 7.9px and 10.5px
-   on a phone — below the ~11px where small caps and mono type stop being
-   legible. Each rule below names a place that measured under 11px on the live
-   store and lifts it to 11px (incidental labels) or 12px (anything a shopper
-   is expected to read).
---------------------------------------------------------------------------- */
-@media (max-width: 767px) {
-  body .loader_tagline,
-  body .asmaan-range-tag,
-  body .drink_legend,
-  body .drink_save,
-  body .drink_trust li,
-  body .drink_facts dt,
-  body .pack_tier span,
-  body .merch_nav-item,
-  body .merch_face-button,
-  body .text-\[10px\],
-  body .designs-page-wrapper .text-neutral-200,
-  body .designs-page-wrapper .text-neutral-400,
-  body .designs-page-wrapper .text-neutral-500 {
-    font-size: 11px;
-  }
-
-  body .text-size-tiny,
-  body .text-xs,
-  body .drink_mode-note,
-  body .drink_sum-note,
-  body .drink_sum-note span,
-  body .drink_chip,
-  body .drink_flavour-cta,
-  body .asmaan-subpage-tag,
-  body .asmaan-contact__label,
-  body .asmaan-footer-tagline,
-  body .asmaan-footer-copyright,
-  body .cart-drawer-badge,
-  body .cart-drawer-shipping-text span,
-  body .cart-drawer-shipping-text strong,
-  body .cart-drawer-empty .button {
-    font-size: 12px;
-  }
+/* --- Collection filter controls -------------------------------------------
+   The checkboxes were 12px and the price inputs 14px tall; the padded wrapper
+   around an input is not part of its hit area. */
+body .filter-panel input[type='checkbox'] {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
 }
 
-/* The collection filter's price inputs are 14px tall on their own; the padded
-   wrapper around them is not part of the input's hit area. */
-@media (max-width: 767px) {
-  body .filter-panel input[type='number'] {
-    min-height: 2rem;
-  }
+body .filter-panel input[type='number'] {
+  min-height: 2rem;
 }
 
-/* A second pass over what measured under 11px once the rules above were live. */
-@media (max-width: 767px) {
-  body .merch_number,
-  body .merch_tag,
-  body .merch_strip dt {
-    font-size: 11px;
-  }
-
-  body .cart-drawer-empty .button.is-small,
-  body .filter-dropdown summary span,
-  body .filter-panel summary span {
-    font-size: 12px;
-  }
-
-  /* 1.15rem is only 16px against the theme's 14px root. */
-  body .filter-panel input[type='checkbox'] {
-    width: 24px;
-    height: 24px;
-  }
-}
-
-/* Nav drawer and cart badge: only visible once a panel opens, but they are
-   phone-first surfaces, so they get the same readable minimum. */
-@media (max-width: 767px) {
-  body .navbar_social-link {
-    font-size: 12px;
-  }
-
-  body .cart-count-badge {
-    width: 18px;
-    height: 18px;
-    font-size: 11px;
-  }
-}
-
-/* The subscribe card is narrow on a phone and the savings badge broke across
-   two lines inside it. */
-@media (max-width: 767px) {
-  body .drink_save {
-    white-space: nowrap;
-  }
-}
-
-/* Final pass: these lost to more specific rules in the compiled stylesheet,
-   so each selector here carries at least as much weight. */
-@media (max-width: 767px) {
-  body .navbar_cart-button .cart-count-badge {
-    width: 18px;
-    height: 18px;
-    font-size: 11px;
-  }
-
-  body .pack_spec dt {
-    font-size: 11px;
-  }
-
-  body .pack_active-head span {
-    font-size: 11px;
-  }
+body .filter-panel button {
+  min-height: 2rem;
 }
