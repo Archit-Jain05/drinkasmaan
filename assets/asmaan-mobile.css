@@ -231,3 +231,18 @@
     height: 24px;
   }
 }
+
+/* Nav drawer and cart badge: only visible once a panel opens, but they are
+   phone-first surfaces, so they get the same readable minimum. */
+@media (max-width: 767px) {
+  body .navbar_contact-link,
+  body .navbar_social-link {
+    font-size: 12px;
+  }
+
+  body .cart-count-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+}
