@@ -1,4 +1,4 @@
-{{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
+{%- comment -%} asmaan-prototype.css is loaded in theme.liquid; re-including it here would override the later small-screen stylesheet. {%- endcomment -%}
 <script src="{{ 'asmaan-drink.js' | asset_url }}" defer="defer"></script>
 
 {%- comment -%}
