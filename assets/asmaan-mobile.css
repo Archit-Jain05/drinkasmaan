@@ -227,7 +227,7 @@
 
   /* 1.15rem is only 16px against the theme's 14px root. */
   body .filter-panel input[type='checkbox'] {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
   }
 }
