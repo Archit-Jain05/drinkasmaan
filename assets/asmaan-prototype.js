@@ -56,9 +56,20 @@
   var LEAN_Y = 0.28;
   var LEAN_Z = 0.06;
   var TRACK_FOLLOW = 7;
-  var CLOSE_UP_DOLLY = 0.53;
-  var CLOSE_UP_CAM_Y = -0.7;
-  var CLOSE_UP_CAM_PITCH = 0.16;
+  var CLOSE_UP_DOLLY = 0.34;
+  var CLOSE_UP_CAM_PITCH = 0.06;
+  // The label's benefit icon column: its u on the print, and each icon's centre measured down
+  // from the top of the print (research, cortisol, zero sugar, focus). Each benefit section
+  // turns that column to the camera and stops on its own icon.
+  var ICON_COLUMN_U = 0.75;
+  var ICON_V = [0.21, 0.417, 0.607, 0.792];
+  var BENEFIT_ICON = [0, 1, 2, 3]; // top of the column to the bottom, one per benefit section
+  var ICON_FACE = -(ICON_COLUMN_U - 0.5) * Math.PI * 2;
+  var ICON_FOLLOW = 8;
+  var ICON_TURN_FROM = 0.12; // share of the icon-to-icon move the 360 turn runs across
+  var ICON_TURN_TO = 0.8;
+  var ICON_TURN_FILL = 0.5; // studio light let back in while the spot is out, so the turn reads
+  var ICON_LIFT_MOBILE = 0.42; // share of the half-screen the icon sits above centre on phones
   var STUDIO_DIM = 0.98;
   var SPOT_INTENSITY = 8.5;
   var CLOSE_UP_ENV = 0.06;
@@ -724,8 +735,8 @@
 
         var labelMat = new THREE.MeshStandardMaterial({
           metalness: 0.1,
-          roughness: 0.38,
-          envMapIntensity: 0.45,
+          roughness: 0.34,
+          envMapIntensity: 0.4,
           normalMap: condensationNormalMap,
           normalScale: condensationNormalMap ? new THREE.Vector2(0.7, 0.7) : undefined,
           transparent: true
@@ -1153,6 +1164,31 @@
     var lastShowNav = null;
     var lastPeakBenefit = -1;
     var lastActiveBenefitIdx = -1;
+    var iconRail = 0;
+    var iconRailSeeded = false;
+
+    /**
+     * Which icon the close-up is on, as a float: 0 while the first benefit section is centred,
+     * 1 for the second and so on. It holds on each icon through the middle of its section and
+     * only travels across the seam between two sections.
+     */
+    function iconRailTarget() {
+      var mid = windowH / 2;
+      var raw = 0;
+      for (var k = 0; k < benefitCache.length; k++) {
+        var r = benefitCache[k].el.getBoundingClientRect();
+        if (mid >= r.top && r.height > 0) raw = k + Math.min((mid - r.top) / r.height, 1) - 0.5;
+      }
+      raw = Math.min(Math.max(raw, 0), benefitCache.length - 1);
+      var whole = Math.floor(raw);
+      return whole + ease(range(raw - whole, 0.2, 0.8));
+    }
+
+    // Height of a label icon in the can group's space, before the group's own scale.
+    function iconLocalY(iconIndex, inner) {
+      var labelY = LABEL.top - ICON_V[iconIndex] * (LABEL.top - LABEL.bottom);
+      return (labelY - HEIGHT / 2) * (inner ? inner.scale.y : 1);
+    }
 
     var windowH = window.innerHeight;
     var windowW = window.innerWidth;
@@ -1228,17 +1264,42 @@
           var u = stage3D.unit || 1;
           var cDist = stage3D.closeDistance || 1;
 
-          // Camera Dolly for Close-up
-          stage3D.camera.position.set(
-            0,
-            closeUp * CLOSE_UP_CAM_Y,
-            cDist * (1 - closeUp * (1 - CLOSE_UP_DOLLY))
+          // Which benefit icon the close-up is framing, eased like the stage itself
+          var railTarget = benefitCache.length ? iconRailTarget() : 0;
+          if (!iconRailSeeded || isMotionOff) {
+            iconRail = railTarget;
+            iconRailSeeded = true;
+          } else {
+            iconRail += (railTarget - iconRail) * (1 - Math.exp(-ICON_FOLLOW * dt));
+          }
+          var railFrom = Math.floor(iconRail);
+          var railTo = Math.min(railFrom + 1, BENEFIT_ICON.length - 1);
+          var railInner = stage3D.cans[0].inner;
+          var railFrac = iconRail - railFrom;
+          var iconY = pose.y * u + pose.scale * lerp(
+            iconLocalY(BENEFIT_ICON[railFrom], railInner),
+            iconLocalY(BENEFIT_ICON[railTo], railInner),
+            railFrac
           );
-          stage3D.camera.rotation.set(closeUp * CLOSE_UP_CAM_PITCH, 0, 0);
+          // Between two icons: the spot goes out, the can makes a full turn, and the spot comes
+          // back up on the next icon once the turn has landed.
+          var iconTurn = ease(range(railFrac, ICON_TURN_FROM, ICON_TURN_TO)) * Math.PI * 2;
+          var iconDark = range(railFrac, 0, ICON_TURN_FROM + 0.02) * (1 - range(railFrac, ICON_TURN_TO, 1));
+
+          // Camera Dolly for Close-up: level with the icon, pitched up a touch. On phones the copy
+          // sits over the middle of the screen, so the icon is framed in the upper part instead.
+          var camZ = cDist * (1 - closeUp * (1 - CLOSE_UP_DOLLY));
+          var camPitch = closeUp * CLOSE_UP_CAM_PITCH;
+          var iconLift = windowW < 992 ? ICON_LIFT_MOBILE * camZ * Math.tan((stage3D.camera.fov * Math.PI) / 360) : 0;
+          stage3D.camera.position.set(0, closeUp * (iconY - Math.tan(camPitch) * camZ - iconLift), camZ);
+          stage3D.camera.rotation.set(camPitch, 0, 0);
 
           // Dramatic Close-Up Lighting:
           // 1. Dims environment reflections by 94% so metal doesn't fill shadows back in
           var envMult = 1 - closeUp * (1 - CLOSE_UP_ENV);
+          // three r163+ reads scene.environmentIntensity, not each material's envMapIntensity,
+          // for anything lit by scene.environment — so the dim has to go on the scene.
+          stage3D.scene.environmentIntensity = envMult;
           if (stage3D.shellMat) {
             stage3D.shellMat.envMapIntensity = 1.0 * envMult;
           }
@@ -1253,18 +1314,17 @@
           if (stage3D.studioLights) {
             for (var si = 0; si < stage3D.studioLights.length; si++) {
               var sItem = stage3D.studioLights[si];
-              sItem.light.intensity = sItem.intensity * (1 - closeUp * STUDIO_DIM);
+              sItem.light.intensity = sItem.intensity * (1 - closeUp * STUDIO_DIM * (1 - iconDark * ICON_TURN_FILL));
             }
           }
 
           // 3. Raking crescent spotlight shines down front of the can
           if (stage3D.spot) {
-            stage3D.spot.intensity = closeUp * SPOT_INTENSITY;
+            stage3D.spot.intensity = closeUp * SPOT_INTENSITY * (1 - iconDark);
             stage3D.spot.visible = closeUp > 0.001;
             var canX = pose.x * u;
-            var canY = pose.y * u;
-            stage3D.spot.position.set(canX, canY + SPOT_HEIGHT, SPOT_DEPTH);
-            stage3D.spot.target.position.set(canX, canY + SPOT_AIM, 0);
+            stage3D.spot.position.set(canX, iconY + SPOT_HEIGHT - SPOT_AIM, SPOT_DEPTH);
+            stage3D.spot.target.position.set(canX, iconY, 0);
             stage3D.spot.target.updateMatrixWorld();
           }
 
@@ -1341,10 +1401,22 @@
 
             var canRotationY = pose.spin + canObj.spinAngle + spread * (slot * TURN_PER_SLOT - LEAN_Y);
 
+            // Close-up: turn the icon column to the camera. The facing angle is latched on the
+            // way in so the blend never flips round when the free spin passes the far side.
+            if (closeUp > 0) {
+              if (canObj.iconFace === undefined) {
+                canObj.iconFace = canRotationY + wrapAngle(ICON_FACE - canRotationY);
+              }
+              canRotationY = lerp(canRotationY, canObj.iconFace + iconTurn, ease(closeUp));
+            } else {
+              canObj.iconFace = undefined;
+            }
+            var settle = 1 - closeUp * 0.85;
+
             grp.rotation.set(
-              pose.pitch + spread * TILT_X,
+              (pose.pitch + spread * TILT_X) * settle,
               canRotationY,
-              pose.roll + spread * LEAN_Z
+              (pose.roll + spread * LEAN_Z) * settle
             );
             grp.scale.setScalar(pose.scale * presence * (0.85 + 0.15 * edgeFade));
 
