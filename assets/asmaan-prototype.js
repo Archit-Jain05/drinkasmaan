@@ -57,8 +57,13 @@
   var LEAN_Y = 0.28;
   var LEAN_Z = 0.06;
   var TRACK_FOLLOW = 7;
-  var CLOSE_UP_DOLLY = 0.34;
+  var CLOSE_UP_DOLLY = 0.62; // close-up camera distance as a share of the stage framing; frames the whole can
   var CLOSE_UP_CAM_PITCH = 0.06;
+  // Framed that wide the whole can is in view, so the camera rests near its top (lid just under
+  // the header, base running off the bottom) and follows each icon only a little; the spot does
+  // the travelling down the column.
+  var CLOSE_UP_AIM = 0.62; // resting aim, as a share of the can's height up from its base
+  var CLOSE_UP_FOLLOW = 0.2; // share of the icon's travel the camera follows
   // The label's benefit icon column: its u on the print, and each icon's centre measured down
   // from the top of the print (research, cortisol, zero sugar, focus). The close-up turns that
   // column to the camera once, then each benefit section glides the view down to its own icon.
@@ -1284,12 +1289,14 @@
           // Between two icons the can holds still and the camera (and the spot with it) glides
           // straight down the column to the next one.
 
-          // Camera Dolly for Close-up: level with the icon, pitched up a touch. On phones the copy
-          // sits over the middle of the screen, so the icon is framed in the upper part instead.
+          // Camera Dolly for Close-up: aimed near the top of the can, pitched up a touch. On phones
+          // the copy sits over the middle of the screen, so the icon is framed in the upper part instead.
           var camZ = cDist * (1 - closeUp * (1 - CLOSE_UP_DOLLY));
           var camPitch = closeUp * CLOSE_UP_CAM_PITCH;
           var iconLift = windowW < 992 ? ICON_LIFT_MOBILE * camZ * Math.tan((stage3D.camera.fov * Math.PI) / 360) : 0;
-          stage3D.camera.position.set(0, closeUp * (iconY - Math.tan(camPitch) * camZ - iconLift), camZ);
+          var restY = pose.y * u + pose.scale * (CLOSE_UP_AIM - 0.5) * HEIGHT * (railInner ? railInner.scale.y : 1);
+          var aimY = windowW < 992 ? iconY : lerp(restY, iconY, CLOSE_UP_FOLLOW);
+          stage3D.camera.position.set(0, closeUp * (aimY - Math.tan(camPitch) * camZ - iconLift), camZ);
           stage3D.camera.rotation.set(camPitch, 0, 0);
 
           // Dramatic Close-Up Lighting:
