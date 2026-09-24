@@ -22,6 +22,12 @@
   endif
 
   assign capsule_sizes = section.settings.sizes
+  assign shop_open = false
+  for block in section.blocks
+    if block.settings.product != blank and block.settings.product.available
+      assign shop_open = true
+    endif
+  endfor
 -%}
 
 <div class="merch_wash" style="--wash: 0.55;" aria-hidden="true"></div>
@@ -103,7 +109,16 @@
 
   {%- if piece_count > 0 -%}
     {%- assign hold_multiplier = piece_count | times: 1.9 | times: 100 -%}
-    <div class="merch_run" style="height: {{ hold_multiplier }}svh; height: {{ hold_multiplier }}vh;">
+    <div
+      class="merch_run"
+      style="height: {{ hold_multiplier }}svh; height: {{ hold_multiplier }}vh;"
+      data-label-add="{{ section.settings.label_add | escape }}"
+      data-label-pick="{{ section.settings.label_pick_size | escape }}"
+      data-label-adding="{{ section.settings.label_adding | escape }}"
+      data-label-added="{{ section.settings.label_added | escape }}"
+      data-label-error="{{ section.settings.label_add_error | escape }}"
+      data-cart-type="{{ settings.cart_type | default: 'drawer' | escape }}"
+    >
       <div class="merch_run-sticky">
         {%- for block in section.blocks -%}
           {%- liquid
@@ -147,6 +162,18 @@
             assign front_img = block.settings.front_image | default: p.images[0]
             assign back_img = block.settings.back_image | default: p.images[1]
             assign default_num = forloop.index | prepend: '0' | slice: -2, 2
+
+            assign can_buy = false
+            if p != blank and p.available
+              assign can_buy = true
+            endif
+            assign size_pos = -1
+            for option in p.options_with_values
+              assign option_name = option.name | downcase
+              if option_name == 'size'
+                assign size_pos = option.position | minus: 1
+              endif
+            endfor
           -%}
           <section
             class="merch_piece"
@@ -209,18 +236,48 @@
 
                 {%- if price != blank -%}<span class="merch_price">{{ price }}</span>{%- endif -%}
 
-                {%- if size_list.size > 0 -%}
-                  <div class="merch_sizes" role="group" aria-label="{{ section.settings.label_sizes_group | escape }}">
-                    {%- for size in size_list -%}
-                      {%- assign size_label = size | strip -%}
-                      {%- if size_label != blank -%}
-                        <button type="button" class="merch_size" aria-pressed="false">{{ size_label | escape }}</button>
-                      {%- endif -%}
-                    {%- endfor -%}
-                  </div>
-                {%- endif -%}
+                {%- if can_buy -%}
+                  {%- comment -%} Sizes are the product's own variants, so a sold-out size can't be picked. {%- endcomment -%}
+                  {%- if size_pos >= 0 -%}
+                    <div class="merch_sizes" role="group" aria-label="{{ section.settings.label_sizes_group | escape }}">
+                      {%- for v in p.variants -%}
+                        <button
+                          type="button"
+                          class="merch_size"
+                          aria-pressed="false"
+                          data-variant-id="{{ v.id }}"
+                          {% unless v.available %}disabled aria-label="{{ v.options[size_pos] | escape }} — {{ section.settings.label_sold_out | escape }}"{% endunless %}
+                        >{{ v.options[size_pos] | escape }}</button>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
 
-                <button type="button" class="button is-small" data-open-drop>{{ section.settings.cta_text | escape }}</button>
+                  <button
+                    type="button"
+                    class="button is-small merch_add"
+                    data-merch-add
+                    data-needs-size="{% if size_pos >= 0 %}true{% else %}false{% endif %}"
+                    {% if size_pos < 0 %}data-variant-id="{{ p.selected_or_first_available_variant.id }}"{% endif %}
+                  >{{ section.settings.label_add | escape }}</button>
+                  <p class="merch_status" role="status" aria-live="polite" hidden></p>
+                {%- else -%}
+                  {%- if size_list.size > 0 -%}
+                    <div class="merch_sizes" role="group" aria-label="{{ section.settings.label_sizes_group | escape }}">
+                      {%- for size in size_list -%}
+                        {%- assign size_label = size | strip -%}
+                        {%- if size_label != blank -%}
+                          <button type="button" class="merch_size" aria-pressed="false">{{ size_label | escape }}</button>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+
+                  {%- if p != blank -%}
+                    <button type="button" class="button is-small merch_add" disabled>{{ section.settings.label_sold_out | escape }}</button>
+                  {%- else -%}
+                    <button type="button" class="button is-small" data-open-drop>{{ section.settings.cta_text | escape }}</button>
+                  {%- endif -%}
+                {%- endif -%}
 
                 {%- if section.settings.fit != blank -%}
                   <p class="text-size-tiny max-width-xsmall text-white/40">{{ section.settings.fit | escape }}</p>
@@ -262,13 +319,22 @@
       {%- if capsule_price != blank -%}<p class="merch_drop-price">{{ capsule_price }}</p>{%- endif -%}
       {%- if section.settings.price_note != blank -%}<p class="merch_meta">{{ section.settings.price_note | escape }}</p>{%- endif -%}
 
-      <button type="button" class="wear_cta pointer-events-on" data-open-drop>
-        {{ section.settings.cta_text | escape }}
-        {% render 'asmaan-icons', name: 'star', class: 'wear_cta-star' %}
-      </button>
-
-      {%- if section.settings.drop_body != blank -%}
-        <p class="max-width-medium text-white/60">{{ section.settings.drop_body | escape }}</p>
+      {%- if shop_open -%}
+        <button type="button" class="wear_cta pointer-events-on" data-merch-shop>
+          {{ section.settings.shop_cta_text | escape }}
+          {% render 'asmaan-icons', name: 'star', class: 'wear_cta-star' %}
+        </button>
+        {%- if section.settings.shop_body != blank -%}
+          <p class="max-width-medium text-white/60">{{ section.settings.shop_body | escape }}</p>
+        {%- endif -%}
+      {%- else -%}
+        <button type="button" class="wear_cta pointer-events-on" data-open-drop>
+          {{ section.settings.cta_text | escape }}
+          {% render 'asmaan-icons', name: 'star', class: 'wear_cta-star' %}
+        </button>
+        {%- if section.settings.drop_body != blank -%}
+          <p class="max-width-medium text-white/60">{{ section.settings.drop_body | escape }}</p>
+        {%- endif -%}
       {%- endif -%}
 
       <dl class="merch_strip">
@@ -284,7 +350,7 @@
             <dd>{{ capsule_sizes | escape }}</dd>
           </div>
         {%- endif -%}
-        {%- if section.settings.drop_line != blank -%}
+        {%- if section.settings.drop_line != blank and shop_open == false -%}
           <div>
             <dt>{{ section.settings.label_drop | escape }}</dt>
             <dd>{{ section.settings.drop_line | escape }}</dd>
@@ -364,7 +430,10 @@
     { "type": "header", "content": "Closing drop" },
     { "type": "text", "id": "drop_title", "label": "Title", "default": "The drop" },
     { "type": "textarea", "id": "drop_body", "label": "Text", "default": "Three pieces, made once. When the run is gone there is no second one — the list gets the morning it lands, and nobody else gets told." },
-    { "type": "text", "id": "drop_line", "label": "Urgency note", "default": "Drops land without warning. If you are not on the list, you will miss it." },
+    { "type": "text", "id": "drop_line", "label": "Urgency note", "default": "Drops land without warning. If you are not on the list, you will miss it.", "info": "Hidden once a linked product is on sale." },
+    { "type": "header", "content": "Closing screen — on sale", "info": "Used instead of the drop copy above once any piece is linked to a product that's in stock." },
+    { "type": "text", "id": "shop_cta_text", "label": "Button text", "default": "Shop the capsule" },
+    { "type": "textarea", "id": "shop_body", "label": "Text", "default": "Three pieces, made once. When the run is gone there is no second one." },
     { "type": "header", "content": "Waitlist modal" },
     { "type": "text", "id": "modal_title", "label": "Title", "default": "On the list" },
     { "type": "textarea", "id": "modal_body", "label": "Text", "default": "One mail, the morning the drop goes live. Nothing else, ever." },
@@ -383,7 +452,13 @@
     { "type": "text", "id": "label_fit", "label": "Fit", "default": "Fit" },
     { "type": "text", "id": "label_sizes", "label": "Sizes", "default": "Sizes" },
     { "type": "text", "id": "label_drop", "label": "The drop", "default": "The drop" },
-    { "type": "text", "id": "label_close", "label": "Close (accessibility)", "default": "Close" }
+    { "type": "text", "id": "label_close", "label": "Close (accessibility)", "default": "Close" },
+    { "type": "text", "id": "label_add", "label": "Add to bag", "default": "Add to bag" },
+    { "type": "text", "id": "label_pick_size", "label": "Size needed", "default": "Pick a size first" },
+    { "type": "text", "id": "label_adding", "label": "Adding", "default": "Adding…" },
+    { "type": "text", "id": "label_added", "label": "Added", "default": "In your bag" },
+    { "type": "text", "id": "label_sold_out", "label": "Sold out", "default": "Sold out" },
+    { "type": "text", "id": "label_add_error", "label": "Add to bag failed", "default": "That didn't go through. Try again?" }
   ],
   "blocks": [
     {

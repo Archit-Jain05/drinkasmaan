@@ -21,7 +21,8 @@
             "hero_height": "34svh",
             "hero_tilt": "-7deg",
             "hero_lap": "-3%",
-            "hero_drift": "0.16"
+            "hero_drift": "0.16",
+            "product": "starfall-tee"
           }
         },
         "piece_2": {
@@ -41,7 +42,8 @@
             "hero_height": "42svh",
             "hero_tilt": "0deg",
             "hero_lap": "-1%",
-            "hero_drift": "0.06"
+            "hero_drift": "0.06",
+            "product": "ambition-hoodie"
           }
         },
         "piece_3": {
@@ -61,7 +63,8 @@
             "hero_height": "47svh",
             "hero_tilt": "6deg",
             "hero_lap": "-3%",
-            "hero_drift": "0.2"
+            "hero_drift": "0.2",
+            "product": "ambition-denim"
           }
         }
       },

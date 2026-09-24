@@ -615,6 +615,51 @@ main#MainContent,
   color: #000;
 }
 
+.merch_size:disabled {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.28);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+/* Tapping Add to bag before a size shakes the sizes once instead of greying the button out. */
+.merch_sizes.is-nudged {
+  animation: merch-nudge 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes merch-nudge {
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.merch_add {
+  min-width: 11rem;
+  justify-content: center;
+}
+
+.merch_add[aria-busy="true"] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.merch_add:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.merch_status {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .merch_sizes.is-nudged { animation: none; }
+}
+
 /* Which piece is on screen, and a way to jump between them. Sits where the
    benefits nav sits on the home page, so the site keeps one furniture. */
 /* Absolute inside the held frame rather than fixed to the window, so it is on
@@ -748,7 +793,7 @@ main#MainContent,
 
   /* Both of these are said again, in full, on the closing screen. */
   .merch_spec,
-  .merch_col.is-end > p {
+  .merch_col.is-end > p:not(.merch_status) {
     display: none;
   }
 

@@ -16,6 +16,15 @@
     var run = document.querySelector('.merch_run');
     var pieceScreens = run ? Array.from(run.querySelectorAll('.merch_piece')) : [];
     var navItems = run ? Array.from(run.querySelectorAll('.merch_nav-item')) : [];
+    var ROUTES_ROOT = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+    var CART_TYPE = run ? run.getAttribute('data-cart-type') : 'drawer';
+    var LABELS = {
+      add: run ? run.getAttribute('data-label-add') : 'Add to bag',
+      pick: run ? run.getAttribute('data-label-pick') : 'Pick a size first',
+      adding: run ? run.getAttribute('data-label-adding') : 'Adding…',
+      added: run ? run.getAttribute('data-label-added') : 'In your bag',
+      error: run ? run.getAttribute('data-label-error') : "That didn't go through. Try again?"
+    };
     var dropModal = document.querySelector('.drop_modal');
     var dropClose = dropModal ? dropModal.querySelector('.drop_close') : null;
     var dropEmailInput = dropModal ? dropModal.querySelector('#drop-email') : null;
@@ -87,15 +96,104 @@
 
       sizeBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
+          if (btn.disabled) return;
+          if (addBtn && addBtn._pickTimer && !adding) {
+            clearTimeout(addBtn._pickTimer);
+            addBtn.textContent = LABELS.add;
+          }
           var isPressed = btn.getAttribute('aria-pressed') === 'true';
           sizeBtns.forEach(function(b) { b.setAttribute('aria-pressed', 'false'); });
           if (!isPressed) {
             btn.setAttribute('aria-pressed', 'true');
           }
+          setStatus('');
         });
       });
 
+      // Buying: only pieces linked to an in-stock product render [data-merch-add].
+      var addBtn = screen.querySelector('[data-merch-add]');
+      var statusEl = screen.querySelector('.merch_status');
+      var sizesEl = screen.querySelector('.merch_sizes');
+      var adding = false;
+
+      function setStatus(msg) {
+        if (!statusEl) return;
+        statusEl.textContent = msg || '';
+        statusEl.hidden = !msg;
+      }
+
+      function chosenVariant() {
+        if (addBtn.getAttribute('data-needs-size') !== 'true') return addBtn.getAttribute('data-variant-id');
+        var picked = sizeBtns.filter(function(b) { return b.getAttribute('aria-pressed') === 'true'; })[0];
+        return picked ? picked.getAttribute('data-variant-id') : null;
+      }
+
+      if (addBtn) {
+        addBtn.addEventListener('click', function() {
+          if (adding) return;
+          var variantId = chosenVariant();
+          if (!variantId) {
+            // Said on the button itself: a status line under it collides with the piece
+            // counter at the foot of the frame on phones.
+            addBtn.textContent = LABELS.pick;
+            clearTimeout(addBtn._pickTimer);
+            addBtn._pickTimer = setTimeout(function() { if (!adding) addBtn.textContent = LABELS.add; }, 1600);
+            if (sizesEl) {
+              sizesEl.classList.remove('is-nudged');
+              void sizesEl.offsetWidth;
+              sizesEl.classList.add('is-nudged');
+            }
+            return;
+          }
+
+          adding = true;
+          setStatus('');
+          addBtn.setAttribute('aria-busy', 'true');
+          addBtn.textContent = LABELS.adding;
+
+          fetch(ROUTES_ROOT + 'cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ items: [{ id: Number(variantId), quantity: 1 }] })
+          })
+            .then(function(res) {
+              return res.json().then(function(body) { return { ok: res.ok, body: body }; });
+            })
+            .then(function(result) {
+              if (!result.ok) throw new Error(result.body.description || result.body.message || LABELS.error);
+              addBtn.textContent = LABELS.added;
+              if (CART_TYPE === 'page' || !window.asmaanCart) {
+                window.location.href = ROUTES_ROOT + 'cart';
+                return;
+              }
+              return window.asmaanCart.refresh().then(function() { window.asmaanCart.open(); });
+            })
+            .catch(function(err) {
+              addBtn.textContent = LABELS.add;
+              setStatus(err && err.message ? err.message : LABELS.error);
+            })
+            .then(function() {
+              adding = false;
+              addBtn.removeAttribute('aria-busy');
+              setTimeout(function() { if (!adding) addBtn.textContent = LABELS.add; }, 2400);
+            });
+        });
+      }
+
       return state;
+    });
+
+    // "Shop the capsule" on the closing screen: back up to the first piece.
+    document.querySelectorAll('[data-merch-shop]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if (!run) return;
+        var runTop = run.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+        var travel = run.offsetHeight - window.innerHeight;
+        window.scrollTo({
+          top: runTop + (travel * 0.5) / Math.max(pieceStates.length, 1),
+          behavior: root.dataset.motion === 'off' ? 'auto' : 'smooth'
+        });
+      });
     });
 
     var activePieceIndex = -1;
