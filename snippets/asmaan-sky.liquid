@@ -1,0 +1,51 @@
+{%- comment -%}
+  The night sky behind every page (same sky as joinasmaan.in, a step darker at the violet end
+  so the cans stay the brightest thing on screen). Styles live in asmaan-brand.css.
+
+  Rendered once from the layout, fixed behind all content. A section that has to hide
+  something fixed underneath it (the homepage range covers the 3D can stage) renders it again
+  with `cover: true` and puts the class `asmaan-sky-cover` on itself. That adds two copies,
+  both still fixed to the viewport so they line up with the page sky: one clipped to the
+  section, one in a band above it that fades in, so whatever is covered fades out.
+{%- endcomment -%}
+{%- capture sky -%}
+  <div class="asmaan-sky{% if cover %} is-cover{% endif %}" aria-hidden="true">
+    <div class="asmaan-sky__orb is-1"></div>
+    <div class="asmaan-sky__orb is-2"></div>
+    <div class="asmaan-sky__stars" data-asmaan-stars></div>
+    <div class="asmaan-sky__grain"></div>
+  </div>
+{%- endcapture -%}
+{%- if cover -%}
+  <div class="asmaan-sky-cover__body" aria-hidden="true">{{ sky }}</div>
+  <div class="asmaan-sky-cover__fade" aria-hidden="true">{{ sky }}</div>
+{%- else -%}
+  {{ sky }}
+{%- endif -%}
+{%- unless cover -%}
+  <script>
+    (function () {
+      function fill() {
+        document.querySelectorAll('[data-asmaan-stars]').forEach(function (box) {
+          if (box.childElementCount) return;
+          var frag = document.createDocumentFragment();
+          for (var i = 0; i < 70; i++) {
+            var star = document.createElement('span');
+            var size = Math.random() < 0.82 ? 1.4 : 2.4;
+            star.className = 'asmaan-sky__star';
+            star.style.width = star.style.height = size + 'px';
+            star.style.left = (Math.random() * 100).toFixed(2) + '%';
+            star.style.top = (Math.random() * 100).toFixed(2) + '%';
+            star.style.setProperty('--o', (0.35 + Math.random() * 0.5).toFixed(2));
+            star.style.animationDuration = (3 + Math.random() * 5).toFixed(1) + 's';
+            star.style.animationDelay = (-Math.random() * 8).toFixed(1) + 's';
+            frag.appendChild(star);
+          }
+          box.appendChild(frag);
+        });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill);
+      else fill();
+    })();
+  </script>
+{%- endunless -%}

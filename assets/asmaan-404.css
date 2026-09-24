@@ -71,7 +71,7 @@
 }
 
 .asmaan-404_beacon-text {
-  font-family: 'Geist Mono', monospace, ui-monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.2em;
@@ -80,11 +80,11 @@
 
 /* Big Glitch / Numerals */
 .asmaan-404_numeral {
-  font-family: 'Libre Franklin', -apple-system, sans-serif;
+  font-family: var(--font-heading);
   font-weight: 900;
   font-size: clamp(80px, 16vw, 140px);
   line-height: 0.9;
-  letter-spacing: -0.05em;
+  letter-spacing: var(--asmaan-track-display);
   text-transform: uppercase;
   background: linear-gradient(180deg, #FFFFFF 20%, rgba(255, 255, 255, 0.2) 100%);
   -webkit-background-clip: text;
@@ -95,10 +95,10 @@
 
 /* Headline */
 .asmaan-404_title {
-  font-family: 'Libre Franklin', -apple-system, sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(24px, 4vw, 36px);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   text-transform: uppercase;
   margin: 0 0 16px;
   color: #fff;
@@ -107,7 +107,7 @@
 
 /* Subtext */
 .asmaan-404_desc {
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--font-sans);
   font-size: clamp(14px, 1.8vw, 16px);
   line-height: 1.65;
   color: rgba(255, 255, 255, 0.65);
@@ -134,7 +134,7 @@
   border-radius: 999px;
   background: #ffffff;
   color: #000000;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -170,7 +170,7 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: #ffffff;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -197,7 +197,7 @@
 }
 
 .asmaan-404_quicklinks-title {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.15em;

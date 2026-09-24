@@ -25,7 +25,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;700;800&family=Libre+Franklin:ital,wght@0,300;0,400;0,700;0,900;1,900&display=swap" rel="stylesheet">
+    {%- comment -%} Inter is the primary face; EB Garamond stands in for Apple Garamond (not licensed for web use). {%- endcomment -%}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=EB+Garamond:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
     {{ 'asmaan-prototype.css' | asset_url | stylesheet_tag }}
     {{ 'asmaan-can-3d.css' | asset_url | stylesheet_tag }}
@@ -33,6 +34,8 @@
     {{ 'asmaan-utilities.css' | asset_url | stylesheet_tag }}
     {%- comment -%} Small-screen corrections; must load last. {%- endcomment -%}
     {{ 'asmaan-mobile.css' | asset_url | stylesheet_tag }}
+    {%- comment -%} Night-sky background and logo; overrides the black surfaces above. {%- endcomment -%}
+    {{ 'asmaan-brand.css' | asset_url | stylesheet_tag }}
 
     <script>
       window.ASMAAN_CONFIG = {
@@ -56,6 +59,7 @@
   </head>
 
   <body class="template-{{ template.name | default: 'index' }} min-h-full text-white antialiased bg-black">
+    {% render 'asmaan-sky' %}
     <a class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:p-4" href="#MainContent">
       Skip to content
     </a>

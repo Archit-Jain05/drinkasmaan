@@ -16,7 +16,9 @@
   endif
 -%}
 
-<div class="relative z-10 bg-black before:absolute before:inset-x-0 before:bottom-full before:h-[30svh] before:bg-gradient-to-b before:from-transparent before:to-black before:content-['']">
+<div class="asmaan-sky-cover relative z-10 bg-black before:absolute before:inset-x-0 before:bottom-full before:h-[30svh] before:bg-gradient-to-b before:from-transparent before:to-black before:content-['']">
+  {%- comment -%} Opaque copy of the page sky: this block slides over the fixed 3D can stage. {%- endcomment -%}
+  {% render 'asmaan-sky', cover: true %}
   <section id="range-section" class="section relative bg-black">
     <div class="padding-global">
       <div class="container-large">

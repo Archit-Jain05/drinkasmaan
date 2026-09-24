@@ -1,43 +1,108 @@
 {%- comment -%}
   Contact page. Styles are scoped here because the compiled Tailwind build does not include
   the utility classes this layout needs (grid columns, spacing, form controls).
+
+  Each "Topic" block is a radio row posted as contact[inquiry_type]. The chosen row and the
+  form panel take that topic's colours through :has(), so picking a topic needs no script.
 {%- endcomment -%}
 
-<section class="asmaan-subpage-section asmaan-contact">
+{%- liquid
+  assign topic_count = section.blocks | where: 'type', 'topic' | size
+  assign band_items = section.settings.band_items | newline_to_br | split: '<br />'
+-%}
+
+<section class="asmaan-subpage-section asmaan-contact" id="Contact-{{ section.id }}">
   <div class="padding-global">
     <div class="container-large">
-      <div class="asmaan-subpage-hero">
-        {%- if section.settings.tag != blank -%}<span class="asmaan-subpage-tag">{{ section.settings.tag | escape }}</span>{%- endif -%}
-        <h1 class="asmaan-subpage-title">{{ section.settings.title | escape }}</h1>
-        {%- if section.settings.subtitle != blank -%}<p class="asmaan-subpage-sub">{{ section.settings.subtitle | escape }}</p>{%- endif -%}
-      </div>
+      <header class="asmaan-contact__hero">
+        {%- if section.settings.tag != blank -%}
+          <p class="asmaan-contact__tag">{{ section.settings.tag | escape }}</p>
+        {%- endif -%}
 
-      <div class="asmaan-contact__grid">
-        <aside class="asmaan-contact__info">
+        <h1 class="asmaan-contact__title">
+          {%- assign title_lines = section.settings.title | newline_to_br | split: '<br />' -%}
+          {%- for line in title_lines -%}<span>{{ line | strip | escape }}</span>{%- endfor -%}
+        </h1>
+
+        <div class="asmaan-contact__cans" aria-hidden="true" data-contact-cans>
+          {%- for i in (1..3) -%}
+            {%- liquid
+              assign image_key = 'can_image_' | append: i
+              assign asset_key = 'can_asset_' | append: i
+              assign can_image = section.settings[image_key]
+              assign can_asset = section.settings[asset_key]
+            -%}
+            {%- if can_image != blank -%}
+              <img class="asmaan-contact__can is-{{ i }}" src="{{ can_image | image_url: width: 640 }}" width="640" height="{{ 640 | divided_by: can_image.aspect_ratio | round }}" alt="" loading="eager" data-drift="{% cycle '0.10', '0.04', '0.16' %}">
+            {%- elsif can_asset != blank -%}
+              <img class="asmaan-contact__can is-{{ i }}" src="{{ can_asset | asset_url }}" width="760" height="1950" alt="" loading="eager" data-drift="{% cycle '0.10', '0.04', '0.16' %}">
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        <div class="asmaan-contact__intro">
+          {%- if section.settings.subtitle != blank -%}
+            <p class="asmaan-contact__sub">{{ section.settings.subtitle | escape }}</p>
+          {%- endif -%}
           {%- if section.settings.email != blank -%}
-            <div class="asmaan-contact__card">
-              <span class="asmaan-contact__label">{{ section.settings.email_label | escape }}</span>
-              <a href="mailto:{{ section.settings.email | escape }}" class="asmaan-contact__value is-link">{{ section.settings.email | escape }}</a>
-            </div>
+            <a class="asmaan-contact__mail" href="mailto:{{ section.settings.email | escape }}">
+              <span>{{ section.settings.email | escape }}</span>
+              <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
+            </a>
           {%- endif -%}
-          {%- if section.settings.address != blank -%}
-            <div class="asmaan-contact__card">
-              <span class="asmaan-contact__label">{{ section.settings.address_label | escape }}</span>
-              <div class="asmaan-contact__value">{{ section.settings.address | escape | newline_to_br }}</div>
-            </div>
-          {%- endif -%}
-          {%- if section.settings.hours != blank -%}
-            <div class="asmaan-contact__card">
-              <span class="asmaan-contact__label">{{ section.settings.hours_label | escape }}</span>
-              <div class="asmaan-contact__value">{{ section.settings.hours | escape }}</div>
-            </div>
-          {%- endif -%}
-        </aside>
+        </div>
+      </header>
+    </div>
+  </div>
 
-        <div class="asmaan-contact__card asmaan-contact__form-card">
-          {% form 'contact', id: 'ContactForm', class: 'asmaan-contact__form' %}
+  {%- if section.settings.band_items != blank -%}
+    <div class="asmaan-contact__band" aria-hidden="true">
+      <div class="asmaan-contact__band-track">
+        {%- for pass in (1..2) -%}
+          {%- for item in band_items -%}
+            {%- assign item_text = item | strip -%}
+            {%- if item_text != blank -%}
+              <span class="asmaan-contact__band-item">{{ item_text | escape }}</span>
+              <svg class="asmaan-contact__band-star" viewBox="0 0 24 24" width="24" height="24"><path d="M12 0c.9 6.6 4.8 10.6 12 12-7.2 1.4-11.1 5.4-12 12-.9-6.6-4.8-10.6-12-12 7.2-1.4 11.1-5.4 12-12Z" fill="currentColor"/></svg>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="padding-global">
+    <div class="container-large">
+      {% form 'contact', id: 'ContactForm', class: 'asmaan-contact__form' %}
+        <div class="asmaan-contact__desk{% if topic_count == 0 %} is-single{% endif %}">
+          {%- if topic_count > 0 -%}
+            <fieldset class="asmaan-contact__topics">
+              <legend class="asmaan-contact__legend">{{ section.settings.label_inquiry | escape }}</legend>
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'topic' -%}
+                  <label class="asmaan-contact__topic" style="--topic: {{ block.settings.color }}; --topic-ink: {{ block.settings.ink }};" {{ block.shopify_attributes }}>
+                    <input type="radio" name="contact[inquiry_type]" id="ContactTopic-{{ block.id }}" value="{{ block.settings.name | escape }}"{% if forloop.first %} checked{% endif %}>
+                    <span class="asmaan-contact__topic-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+                    <span class="asmaan-contact__topic-name">{{ block.settings.name | escape }}</span>
+                    <span class="asmaan-contact__topic-mark" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/></svg>
+                    </span>
+                    {%- if block.settings.blurb != blank -%}
+                      <span class="asmaan-contact__topic-blurb">{{ block.settings.blurb | escape }}</span>
+                    {%- endif -%}
+                  </label>
+                {%- endif -%}
+              {%- endfor -%}
+            </fieldset>
+          {%- endif -%}
+
+          <div class="asmaan-contact__panel">
+            {%- if section.settings.form_title != blank -%}
+              <h2 class="asmaan-contact__panel-title">{{ section.settings.form_title | escape }}</h2>
+            {%- endif -%}
+
             {%- if form.posted_successfully? -%}
-              <div class="asmaan-contact__notice is-success" role="status">
+              <div class="asmaan-contact__notice" role="status">
                 <p class="asmaan-contact__notice-title">{{ section.settings.success_title | escape }}</p>
                 <p>{{ section.settings.success_body | escape }}</p>
               </div>
@@ -58,113 +123,478 @@
               </div>
             </div>
 
-            {%- assign inquiry_options = section.settings.inquiry_options | newline_to_br | split: '<br />' -%}
-            {%- if section.settings.inquiry_options != blank -%}
-              <div class="asmaan-contact__field">
-                <label for="ContactFormSubject" class="asmaan-contact__label">{{ section.settings.label_inquiry | escape }}</label>
-                <select name="contact[inquiry_type]" id="ContactFormSubject" class="asmaan-contact__input">
-                  {%- for opt in inquiry_options -%}
-                    {%- assign opt_text = opt | strip -%}
-                    {%- if opt_text != blank -%}<option value="{{ opt_text | escape }}">{{ opt_text | escape }}</option>{%- endif -%}
-                  {%- endfor -%}
-                </select>
-              </div>
-            {%- endif -%}
-
             <div class="asmaan-contact__field">
               <label for="ContactFormMessage" class="asmaan-contact__label">{{ section.settings.label_message | escape }}</label>
-              <textarea name="contact[body]" id="ContactFormMessage" rows="6" required placeholder="{{ section.settings.placeholder_message | escape }}" class="asmaan-contact__input">{{ form.body | escape }}</textarea>
+              <textarea name="contact[body]" id="ContactFormMessage" rows="5" required placeholder="{{ section.settings.placeholder_message | escape }}" class="asmaan-contact__input">{{ form.body | escape }}</textarea>
             </div>
 
-            <button type="submit" class="button is-hero is-primary is-full asmaan-contact__submit">{{ section.settings.submit_text | escape }}</button>
-          {% endform %}
+            <button type="submit" class="asmaan-contact__submit">
+              <span class="asmaan-contact__submit-label">{{ section.settings.submit_text | escape }}</span>
+              <span class="asmaan-contact__submit-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"/></svg>
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
+      {% endform %}
+
+      <dl class="asmaan-contact__details">
+        {%- if section.settings.email != blank -%}
+          <div>
+            <dt>{{ section.settings.email_label | escape }}</dt>
+            <dd><a href="mailto:{{ section.settings.email | escape }}">{{ section.settings.email | escape }}</a></dd>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.address != blank -%}
+          <div>
+            <dt>{{ section.settings.address_label | escape }}</dt>
+            <dd>{{ section.settings.address | escape | newline_to_br }}</dd>
+          </div>
+        {%- endif -%}
+        {%- if section.settings.hours != blank -%}
+          <div>
+            <dt>{{ section.settings.hours_label | escape }}</dt>
+            <dd>{{ section.settings.hours | escape }}</dd>
+          </div>
+        {%- endif -%}
+      </dl>
     </div>
   </div>
 </section>
 
 <style>
-  .asmaan-contact__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    gap: 2rem;
-    max-width: 60rem;
-    margin: 3rem auto 5rem;
-    align-items: start;
+  #Contact-{{ section.id }} {
+    padding-bottom: 0;
   }
-  .asmaan-contact__info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+
+  /* --- Hero ------------------------------------------------------------ */
+  .asmaan-contact__hero {
+    position: relative;
+    padding: clamp(24px, 3vw, 48px) 0 clamp(56px, 7vw, 104px);
   }
-  .asmaan-contact__card {
-    padding: 1.5rem;
-    border-radius: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  .asmaan-contact__form-card { padding: 2rem; }
-  .asmaan-contact__label {
-    display: block;
-    margin-bottom: 0.5rem;
+  .asmaan-contact__tag {
+    margin: 0;
     font-family: var(--font-mono, monospace);
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
+    font-size: 12px;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.55);
   }
-  .asmaan-contact__value {
-    font-size: 0.9375rem;
+  .asmaan-contact__title {
+    position: relative;
+    z-index: 1;
+    margin: 20px 0 0;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(64px, 14vw, 232px);
+    line-height: 0.82;
+    letter-spacing: var(--asmaan-track-display);
+    text-transform: uppercase;
+  }
+  .asmaan-contact__title span { display: block; }
+  .asmaan-contact__title span + span { padding-left: 0.32em; }
+
+  .asmaan-contact__cans {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    height: clamp(260px, 36vw, 580px);
+    aspect-ratio: 0.96;
+    pointer-events: none;
+  }
+  .asmaan-contact__can {
+    --r: 0deg;
+    --y: 0px;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: auto;
+    transform: translateY(var(--y)) rotate(var(--r));
+    filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.65));
+    animation: asmaan-contact-rise 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .asmaan-contact__can.is-1 { --r: -13deg; left: 0; top: 7%; height: 90%; z-index: 1; animation-delay: 0.08s; }
+  .asmaan-contact__can.is-2 { --r: -2deg; left: 28%; z-index: 3; }
+  .asmaan-contact__can.is-3 { --r: 11deg; left: 56%; top: 11%; height: 86%; z-index: 2; animation-delay: 0.16s; }
+  @keyframes asmaan-contact-rise {
+    from { opacity: 0; translate: 0 60px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+
+  .asmaan-contact__intro {
+    position: relative;
+    z-index: 3;
+    max-width: min(520px, 52%);
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+  .asmaan-contact__sub {
+    margin: 0;
+    font-size: 18px;
     line-height: 1.55;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.72);
   }
-  .asmaan-contact__value.is-link { color: #fff; text-decoration: none; word-break: break-word; }
-  .asmaan-contact__value.is-link:hover { text-decoration: underline; }
-  .asmaan-contact__form {
+  .asmaan-contact__mail {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(22px, 2.3vw, 34px);
+    line-height: 1.1;
+    word-break: break-word;
+    transition: border-color 0.25s ease;
+  }
+  .asmaan-contact__mail svg { flex: none; transition: transform 0.25s ease; }
+  .asmaan-contact__mail:hover { border-color: #fff; }
+  .asmaan-contact__mail:hover svg { transform: translate(3px, -3px); }
+
+  /* --- Info band ------------------------------------------------------- */
+  .asmaan-contact__band {
+    position: relative;
+    z-index: 4;
+    width: 106%;
+    margin-left: -3%;
+    padding: 16px 0;
+    overflow: hidden;
+    background: #efb36b;
+    color: #3d1c00;
+    transform: rotate(-2deg);
+  }
+  .asmaan-contact__band-track {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    width: max-content;
+    animation: asmaan-contact-band 38s linear infinite;
+  }
+  .asmaan-contact__band-item {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(22px, 2.4vw, 38px);
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .asmaan-contact__band-star { flex: none; width: 22px; height: 22px; }
+  @keyframes asmaan-contact-band {
+    to { transform: translateX(calc(-50% - 14px)); }
+  }
+
+  /* --- Topics + form --------------------------------------------------- */
+  .asmaan-contact__form { margin-top: clamp(80px, 10vw, 150px); }
+  .asmaan-contact__desk {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: stretch;
+  }
+  .asmaan-contact__desk.is-single {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .asmaan-contact__topics {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+  }
+  .asmaan-contact__legend {
+    float: left;
+    width: 100%;
+    padding: 0 0 20px;
+    font-family: var(--font-mono, monospace);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .asmaan-contact__topic {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    column-gap: 12px;
+    align-items: center;
+    padding: 24px 24px 24px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    cursor: pointer;
+    transition: background-color 0.4s ease, color 0.4s ease, padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .asmaan-contact__topic:last-child { border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+  .asmaan-contact__topic input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+  .asmaan-contact__topic-num {
+    font-family: var(--font-mono, monospace);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--topic);
+    transition: color 0.4s ease;
+  }
+  .asmaan-contact__topic-name {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(24px, 2.2vw, 36px);
+    line-height: 0.95;
+    text-transform: uppercase;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .asmaan-contact__topic-mark {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    color: var(--topic-ink);
+    background: var(--topic);
+    transform: scale(0.35);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.4s ease, color 0.4s ease;
+  }
+  .asmaan-contact__topic-mark svg { opacity: 0; transition: opacity 0.2s ease; }
+  .asmaan-contact__topic-blurb {
+    grid-column: 2 / -1;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    transition: max-height 0.45s ease, opacity 0.35s ease, margin 0.45s ease;
+  }
+  .asmaan-contact__topic:hover .asmaan-contact__topic-name { transform: translateX(8px); }
+  .asmaan-contact__topic:hover .asmaan-contact__topic-mark { transform: scale(0.6); }
+
+  .asmaan-contact__topic:has(input:checked) {
+    padding-left: 24px;
+    background: var(--topic);
+    color: var(--topic-ink);
+    border-color: transparent;
+  }
+  .asmaan-contact__topic:has(input:checked) + .asmaan-contact__topic { border-top-color: transparent; }
+  .asmaan-contact__topic:has(input:checked) .asmaan-contact__topic-num { color: var(--topic-ink); }
+  .asmaan-contact__topic:has(input:checked) .asmaan-contact__topic-name { transform: none; }
+  .asmaan-contact__topic:has(input:checked) .asmaan-contact__topic-mark {
+    transform: none;
+    background: var(--topic-ink);
+    color: var(--topic);
+  }
+  .asmaan-contact__topic:has(input:checked) .asmaan-contact__topic-mark svg { opacity: 1; }
+  .asmaan-contact__topic:has(input:checked) .asmaan-contact__topic-blurb {
+    max-height: 120px;
+    margin-top: 12px;
+    opacity: 0.85;
+  }
+  .asmaan-contact__topic:has(input:focus-visible) { outline: 2px solid #fff; outline-offset: 3px; }
+
+  .asmaan-contact__panel {
+    --panel: #ffffff;
+    --panel-ink: #000000;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: clamp(28px, 3.6vw, 60px);
+    background: var(--panel);
+    color: var(--panel-ink);
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'topic' %}
+  #Contact-{{ section.id }} .asmaan-contact__form:has(#ContactTopic-{{ block.id }}:checked) .asmaan-contact__panel { --panel: {{ block.settings.color }}; --panel-ink: {{ block.settings.ink }}; }
+    {%- endif -%}
+  {%- endfor %}
+  .asmaan-contact__panel-title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(34px, 3.8vw, 60px);
+    line-height: 0.9;
+    text-transform: uppercase;
   }
   .asmaan-contact__row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
+    gap: 30px;
   }
   .asmaan-contact__field { min-width: 0; }
+  .asmaan-contact__panel .asmaan-contact__label {
+    display: block;
+    font-family: var(--font-mono, monospace);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: inherit;
+    opacity: 0.72;
+  }
   .asmaan-contact__input {
+    display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 0.8rem 1rem;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    font: inherit;
-    font-size: 0.9375rem;
+    padding: 10px 0 12px;
+    border: 0;
+    border-bottom: 2px solid color-mix(in srgb, var(--panel-ink) 32%, transparent);
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.4;
     transition: border-color 0.2s ease;
   }
-  .asmaan-contact__input::placeholder { color: rgba(255, 255, 255, 0.35); }
-  .asmaan-contact__input:focus { outline: none; border-color: #fff; }
-  select.asmaan-contact__input { background: #000; }
-  textarea.asmaan-contact__input { resize: vertical; min-height: 9rem; }
-  .asmaan-contact__submit { margin-top: 0.5rem; }
+  .asmaan-contact__input::placeholder { color: color-mix(in srgb, var(--panel-ink) 45%, transparent); }
+  .asmaan-contact__input:focus { outline: none; border-bottom-color: var(--panel-ink); }
+  .asmaan-contact__input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 100px var(--panel) inset;
+    -webkit-text-fill-color: var(--panel-ink);
+  }
+  textarea.asmaan-contact__input { resize: vertical; min-height: 140px; }
+
+  .asmaan-contact__submit {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 68px;
+    margin-top: 6px;
+    padding: 6px 6px 6px 26px;
+    border: 0;
+    border-radius: 0;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-style: italic;
+    font-size: clamp(20px, 1.8vw, 26px);
+    line-height: 1;
+    text-transform: uppercase;
+    transition: background-color 0.25s ease;
+  }
+  .asmaan-contact__submit-label { align-self: center; }
+  .asmaan-contact__submit-arrow {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    background: var(--panel);
+    color: var(--panel-ink);
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+  .asmaan-contact__submit-arrow svg { transition: transform 0.25s ease; }
+  .asmaan-contact__submit:hover { background: #161616; }
+  .asmaan-contact__submit:hover .asmaan-contact__submit-arrow svg { transform: translateX(4px); }
+  .asmaan-contact__submit:focus-visible { outline: 3px solid var(--panel-ink); outline-offset: 3px; }
+
   .asmaan-contact__notice {
-    padding: 1rem 1.25rem;
-    border-radius: 0.75rem;
-    font-size: 0.875rem;
+    padding: 18px 20px;
+    background: var(--panel-ink);
+    color: var(--panel);
+    font-size: 16px;
     line-height: 1.5;
   }
-  .asmaan-contact__notice.is-success { background: rgba(6, 78, 59, 0.4); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-  .asmaan-contact__notice.is-error { background: rgba(76, 5, 25, 0.4); border: 1px solid rgba(244, 63, 94, 0.4); color: #fda4af; }
-  .asmaan-contact__notice-title { font-weight: 700; margin-bottom: 0.25rem; }
+  .asmaan-contact__notice p { margin: 0; }
+  .asmaan-contact__notice ul { margin: 0; padding-left: 1.2em; }
+  .asmaan-contact__notice-title {
+    margin-bottom: 4px !important;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-style: italic;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+  .asmaan-contact__notice.is-error { background: #000; color: #fda4af; }
+
+  /* --- Details --------------------------------------------------------- */
+  .asmaan-contact__details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+    margin: clamp(72px, 8vw, 120px) 0 0;
+    padding: 32px 0 clamp(72px, 8vw, 120px);
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .asmaan-contact__details dt {
+    font-family: var(--font-mono, monospace);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .asmaan-contact__details dd {
+    margin: 12px 0 0;
+    font-size: 18px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .asmaan-contact__details a {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.35);
+    text-underline-offset: 5px;
+  }
+  .asmaan-contact__details a:hover { text-decoration-color: #fff; }
+
+  @media (max-width: 989px) {
+    .asmaan-contact__desk { grid-template-columns: minmax(0, 1fr); }
+    .asmaan-contact__topic { padding-right: 16px; }
+    .asmaan-contact__topic:has(input:checked) { padding-left: 16px; }
+  }
 
   @media (max-width: 749px) {
-    .asmaan-contact__grid { grid-template-columns: minmax(0, 1fr); margin-top: 2rem; }
-    .asmaan-contact__row { grid-template-columns: minmax(0, 1fr); }
-    .asmaan-contact__form-card { padding: 1.5rem; }
+    .asmaan-contact__cans {
+      position: relative;
+      right: auto;
+      height: 290px;
+      margin: 12px auto 0;
+    }
+    .asmaan-contact__title { font-size: 19vw; }
+    .asmaan-contact__sub { font-size: 16px; }
+    .asmaan-contact__intro { max-width: none; margin-top: 24px; }
+    .asmaan-contact__band { transform: rotate(-3deg); padding: 12px 0; }
+    .asmaan-contact__row { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+    .asmaan-contact__details { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .asmaan-contact__can,
+    .asmaan-contact__band-track { animation: none; }
   }
 </style>
+
+<script>
+  (function () {
+    var root = document.getElementById('Contact-{{ section.id }}');
+    if (!root) return;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var cans = root.querySelectorAll('[data-drift]');
+    if (!cans.length) return;
+    var ticking = false;
+    function update() {
+      var y = Math.min(window.scrollY, window.innerHeight * 1.5);
+      cans.forEach(function (can) {
+        can.style.setProperty('--y', (y * -parseFloat(can.dataset.drift)).toFixed(1) + 'px');
+      });
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+  })();
+</script>
 
 {% schema %}
 {
@@ -173,8 +603,17 @@
   "class": "section-main-contact",
   "settings": [
     { "type": "text", "id": "tag", "label": "Tagline", "default": "Direct Communication" },
-    { "type": "text", "id": "title", "label": "Title", "default": "Get in Touch" },
+    { "type": "textarea", "id": "title", "label": "Title", "default": "Get in\nTouch", "info": "Each line is set on its own row." },
     { "type": "textarea", "id": "subtitle", "label": "Subtitle", "default": "Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours." },
+    { "type": "header", "content": "Hero cans" },
+    { "type": "image_picker", "id": "can_image_1", "label": "Can 1 (back left)" },
+    { "type": "text", "id": "can_asset_1", "label": "Can 1 fallback theme asset", "default": "asmaan-can-magenta.webp" },
+    { "type": "image_picker", "id": "can_image_2", "label": "Can 2 (front)" },
+    { "type": "text", "id": "can_asset_2", "label": "Can 2 fallback theme asset", "default": "asmaan-can-jamun.webp" },
+    { "type": "image_picker", "id": "can_image_3", "label": "Can 3 (back right)" },
+    { "type": "text", "id": "can_asset_3", "label": "Can 3 fallback theme asset", "default": "asmaan-can-mango.webp", "info": "Transparent cut-outs work best. Leave both fields of a can empty to hide it." },
+    { "type": "header", "content": "Info band" },
+    { "type": "textarea", "id": "band_items", "label": "Scrolling band", "default": "Replies within 24 business hours\nMon – Fri 09:00 – 19:00 IST\nBandra West, Mumbai\nhello@drinkasmaan.com", "info": "One item per line. Leave empty to hide the band." },
     { "type": "header", "content": "Contact details" },
     { "type": "text", "id": "email_label", "label": "Email label", "default": "Email Directly" },
     { "type": "text", "id": "email", "label": "Support email", "default": "hello@drinkasmaan.com" },
@@ -183,20 +622,41 @@
     { "type": "text", "id": "hours_label", "label": "Hours label", "default": "Response Hours" },
     { "type": "text", "id": "hours", "label": "Response hours", "default": "Mon – Fri: 09:00 – 19:00 IST" },
     { "type": "header", "content": "Form" },
+    { "type": "text", "id": "form_title", "label": "Form heading", "default": "Drop us a line" },
+    { "type": "text", "id": "label_inquiry", "label": "Topic heading", "default": "What's it about?", "info": "Topics are added as blocks." },
     { "type": "text", "id": "label_name", "label": "Name label", "default": "Name" },
     { "type": "text", "id": "placeholder_name", "label": "Name placeholder", "default": "Your name" },
     { "type": "text", "id": "label_email", "label": "Email label", "default": "Email Address" },
     { "type": "text", "id": "placeholder_email", "label": "Email placeholder", "default": "your.email@domain.com" },
-    { "type": "text", "id": "label_inquiry", "label": "Inquiry label", "default": "Inquiry Type" },
-    { "type": "textarea", "id": "inquiry_options", "label": "Inquiry options", "default": "General Support & Order Status\nWholesale & Retail Distribution\nCreator Collaboration & Press\nOther Inquiry", "info": "One per line. Leave empty to hide the field." },
     { "type": "text", "id": "label_message", "label": "Message label", "default": "Message" },
     { "type": "text", "id": "placeholder_message", "label": "Message placeholder", "default": "How can we help?" },
     { "type": "text", "id": "submit_text", "label": "Button", "default": "Send Message" },
     { "type": "text", "id": "success_title", "label": "Success title", "default": "Message sent" },
     { "type": "textarea", "id": "success_body", "label": "Success message", "default": "Thank you for writing to Asmaan. Our team will review your inquiry and follow up promptly." }
   ],
+  "blocks": [
+    {
+      "type": "topic",
+      "name": "Topic",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "name", "label": "Topic", "default": "General Support" },
+        { "type": "textarea", "id": "blurb", "label": "Description", "info": "Shown under the topic once it is picked." },
+        { "type": "color", "id": "color", "label": "Colour", "default": "#9089D3" },
+        { "type": "color", "id": "ink", "label": "Text colour", "default": "#1A1030" }
+      ]
+    }
+  ],
   "presets": [
-    { "name": "Contact page" }
+    {
+      "name": "Contact page",
+      "blocks": [
+        { "type": "topic", "settings": { "name": "Orders & Support", "color": "#9089D3", "ink": "#1A1030" } },
+        { "type": "topic", "settings": { "name": "Wholesale & Retail", "color": "#E6A0E8", "ink": "#3A0536" } },
+        { "type": "topic", "settings": { "name": "Press & Creators", "color": "#EFB36B", "ink": "#3D1C00" } },
+        { "type": "topic", "settings": { "name": "Something Else", "color": "#FFFFFF", "ink": "#000000" } }
+      ]
+    }
   ]
 }
 {% endschema %}

@@ -156,8 +156,7 @@
     display: flex;
     flex-direction: column;
     transform: translateX(100%);
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.85);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
     color: #ffffff;
     font-family: var(--font-sans, -apple-system, sans-serif);
     box-sizing: border-box;
@@ -165,6 +164,8 @@
   #cart-drawer.is-active,
   #cart-drawer[aria-hidden="false"] {
     transform: translateX(0) !important;
+    /* Only while open: parked off-canvas, the shadow bleeds 45px onto the page's right edge. */
+    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.85);
   }
 
   .cart-drawer-header {

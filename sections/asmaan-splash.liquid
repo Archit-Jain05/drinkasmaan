@@ -6,9 +6,8 @@
 >
   <div class="loader_mark" aria-label="{{ section.settings.wordmark | default: 'ASMAAN' }}">
     <span class="loader_letters" aria-hidden="true">
-      {%- assign letters = section.settings.wordmark | default: 'ASMAAN' | split: '' -%}
-      {%- for letter in letters -%}
-        <span class="loader_letter" data-index="{{ forloop.index0 }}">{{ letter }}</span>
+      {%- for i in (0..5) -%}
+        <span class="loader_letter" data-index="{{ i }}">{% render 'asmaan-logo-letter', index: i %}</span>
       {%- endfor -%}
     </span>
     <span class="loader_tagline">{{ section.settings.tagline | default: 'AMBITION TONIC' }}</span>

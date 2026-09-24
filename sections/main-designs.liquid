@@ -12,7 +12,7 @@
   assign view_names = 'front,right,back,left' | split: ','
 -%}
 
-<div data-surface="light" class="min-h-dvh bg-white text-neutral-900 designs-page-wrapper">
+<div data-surface="dark" class="min-h-dvh text-neutral-900 designs-page-wrapper">
   <header class="mx-auto flex max-w-[1400px] flex-wrap items-end justify-between gap-6 px-6 pt-10 pb-8 sm:px-10">
     <div>
       <p class="font-mono text-[11px] tracking-[0.22em] text-neutral-400 uppercase">{{ section.settings.kicker | escape }}</p>
@@ -163,15 +163,30 @@
 </div>
 
 <style>
+  /* Sits on the site's night sky. The markup and the tab script still use the
+     light-theme utility names, so they are remapped here rather than renamed. */
   .designs-page-wrapper {
     padding-top: var(--asmaan-header-h, 90px);
-    color-scheme: light;
-    background-color: #ffffff !important;
-    color: #171717 !important;
+    color-scheme: dark;
+    background-color: transparent !important;
+    color: #fff !important;
     min-height: 100vh;
   }
+  .designs-page-wrapper .text-neutral-900 { color: #fff; }
+  .designs-page-wrapper .text-neutral-500 { color: rgba(255, 255, 255, 0.7); }
+  .designs-page-wrapper .text-neutral-400 { color: rgba(255, 255, 255, 0.58); }
+  .designs-page-wrapper .text-neutral-200 { color: rgba(255, 255, 255, 0.28); }
+  .designs-page-wrapper .bg-neutral-100 { background-color: rgba(255, 255, 255, 0.08); }
+  .designs-page-wrapper .border-neutral-100 { border-color: rgba(255, 255, 255, 0.12); }
+  .designs-page-wrapper .decoration-neutral-300 { text-decoration-color: rgba(255, 255, 255, 0.35); }
+  .designs-page-wrapper .hover\:text-neutral-700:hover,
+  .designs-page-wrapper .hover\:text-neutral-900:hover { color: #fff; }
+  /* The active tab keeps its white pill, so its label stays dark. */
+  .designs-page-wrapper .bg-white.text-neutral-900 { color: #171717; }
+  .designs-page-wrapper .bg-white\/95 { background-color: rgba(4, 2, 11, 0.94); }
+  .designs-page-wrapper .bg-neutral-900.text-white { background-color: #fff; color: #000; }
   .designs-page-wrapper button:focus-visible {
-    outline: 2px solid #171717 !important;
+    outline: 2px solid #fff !important;
     outline-offset: 2px !important;
   }
 </style>

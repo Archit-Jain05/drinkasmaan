@@ -4,10 +4,10 @@
       <div class="container-large">
         <div class="padding-section-large">
           <div class="mb-[var(--pad-xxl)]">
-            <h2 class="heading-style-display whitespace-pre-line">{{ section.settings.title | escape }}</h2>
+            <h2 class="heading-style-display whitespace-pre-line faq_title">{{ section.settings.title | escape }}</h2>
           </div>
 
-          <div class="max-width-large align-center">
+          <div class="max-width-large faq_column">
             <div class="faq_list">
               
                 {%- for block in section.blocks -%}
@@ -50,6 +50,12 @@
     </div>
   </div>
 </section>
+
+<style>
+  /* Centred on the page. Not `.align-center`: another rule gives that class nowrap. */
+  #faq .faq_title { text-align: center; }
+  #faq .faq_column { margin-left: auto; margin-right: auto; }
+</style>
 
 {% schema %}
 {

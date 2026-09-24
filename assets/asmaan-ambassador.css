@@ -63,7 +63,7 @@
   font-size: clamp(34px, 5.8vw, 62px);
   font-weight: 900;
   font-style: italic;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   line-height: 1.05;
   text-transform: uppercase;
   margin: 0 0 24px;
@@ -216,7 +216,7 @@
   font-size: clamp(30px, 4.5vw, 48px);
   font-weight: 900;
   font-style: italic;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   text-transform: uppercase;
   margin: 0 0 54px;
   color: #fff;
@@ -257,7 +257,7 @@
   color: #fff;
   line-height: 1;
   margin: 0 0 20px;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   text-shadow: 0 0 24px rgba(255, 255, 255, 0.2);
 }
 
@@ -290,7 +290,7 @@
   font-size: clamp(26px, 3.5vw, 38px);
   font-weight: 900;
   font-style: italic;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   text-transform: uppercase;
   text-align: center;
   margin: 0 0 44px;
@@ -384,7 +384,7 @@
   font-family: var(--font-heading, var(--font-sans));
   font-size: clamp(24px, 3.5vw, 36px);
   font-weight: 900;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   text-transform: uppercase;
   margin: 0 0 10px;
   color: #fff;
@@ -553,7 +553,7 @@
 
 .ambassador_error-title {
   color: #f87171;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -636,7 +636,7 @@
   border-radius: 999px;
   background: rgba(52, 211, 153, 0.12);
   border: 1px solid rgba(52, 211, 153, 0.3);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -654,17 +654,17 @@
 }
 
 .ambassador_celebration-title {
-  font-family: 'Libre Franklin', -apple-system, sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(24px, 4vw, 32px);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   text-transform: uppercase;
   color: #fff;
   margin: 0 0 12px;
 }
 
 .ambassador_celebration-desc {
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--font-sans);
   font-size: clamp(14px, 1.8vw, 15px);
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.7);
@@ -687,7 +687,7 @@
   justify-content: center;
   padding: 14px 28px;
   border-radius: 999px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
@@ -818,7 +818,7 @@
 }
 
 .asmaan-toast_title {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -828,7 +828,7 @@
 }
 
 .asmaan-toast_message {
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.45;
   color: rgba(255, 255, 255, 0.75);
@@ -878,7 +878,7 @@
   font-size: clamp(24px, 3.5vw, 36px);
   font-weight: 900;
   font-style: italic;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--asmaan-track-display);
   text-transform: uppercase;
   text-align: center;
   margin: 0 0 38px;

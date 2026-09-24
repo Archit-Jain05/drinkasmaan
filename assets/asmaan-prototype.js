@@ -31,6 +31,7 @@
     [0.8803, 5.1947]
   ];
   var HEIGHT = 5.1947;
+  var CAN_RADIUS = 0.9956; // body radius from the profile above
   var LABEL = { bottom: 0.2057, top: 5.0022 };
   var SLEEVE_OFFSET = 0.004;
 
@@ -59,23 +60,25 @@
   var CLOSE_UP_DOLLY = 0.34;
   var CLOSE_UP_CAM_PITCH = 0.06;
   // The label's benefit icon column: its u on the print, and each icon's centre measured down
-  // from the top of the print (research, cortisol, zero sugar, focus). Each benefit section
-  // turns that column to the camera and stops on its own icon.
+  // from the top of the print (research, cortisol, zero sugar, focus). The close-up turns that
+  // column to the camera once, then each benefit section glides the view down to its own icon.
   var ICON_COLUMN_U = 0.75;
   var ICON_V = [0.21, 0.417, 0.607, 0.792];
   var BENEFIT_ICON = [0, 1, 2, 3]; // top of the column to the bottom, one per benefit section
   var ICON_FACE = -(ICON_COLUMN_U - 0.5) * Math.PI * 2;
   var ICON_FOLLOW = 8;
-  var ICON_TURN_FROM = 0.12; // share of the icon-to-icon move the 360 turn runs across
-  var ICON_TURN_TO = 0.8;
-  var ICON_TURN_FILL = 0.5; // studio light let back in while the spot is out, so the turn reads
   var ICON_LIFT_MOBILE = 0.42; // share of the half-screen the icon sits above centre on phones
-  var STUDIO_DIM = 0.98;
-  var SPOT_INTENSITY = 8.5;
+  var STUDIO_DIM = 0.93;
+  var SPOT_INTENSITY = 5.5;
   var CLOSE_UP_ENV = 0.06;
-  var SPOT_HEIGHT = 3.2;
+  // The close-up spot shines down on the icon from about 35 degrees up, so the condensation
+  // catches the light. From that angle a round beam would land as a tall oval, so its mask is
+  // an oval squashed by cos(35deg) and the pool on the can comes out round.
+  var SPOT_RISE = 2.1;
   var SPOT_DEPTH = 3.0;
-  var SPOT_AIM = 0.9;
+  var SPOT_ANGLE = Math.PI / 17;
+  var SPOT_ANGLE_MOBILE = Math.PI / 25; // the can is drawn smaller on phones, so the circle is too
+  var SPOT_DROP = 0.14; // aim a little under the icon so the circle takes in its caption too
   var FRICTION = 2.4;
   var IDLE_DELAY_MS = 1800;
 
@@ -309,15 +312,12 @@
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, 256, 256);
 
-    ctx.filter = 'blur(12px)';
+    // A soft oval, squashed to undo the spot's downward rake (see SPOT_RISE), so the pool it
+    // throws on the can is round.
+    ctx.filter = 'blur(26px)';
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(128, 116, 96, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#000000';
-    ctx.beginPath();
-    ctx.arc(128, 76, 97, 0, Math.PI * 2);
+    ctx.ellipse(128, 128, 92, 92 * 0.82, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.filter = 'none';
 
@@ -803,9 +803,9 @@
       { light: ambientLight, intensity: 0.3 }
     ];
 
-    // Crescent close-up spot
+    // Round close-up spot
     var spotMask = createSpotMaskTexture(THREE);
-    var spot = new THREE.SpotLight(0xfff6ec, 0, 26, Math.PI / 8, 0.35, 0.2);
+    var spot = new THREE.SpotLight(0xfff6ec, 0, 26, SPOT_ANGLE, 0.35, 0.2);
     spot.map = spotMask;
     scene.add(spot);
     scene.add(spot.target);
@@ -1281,10 +1281,8 @@
             iconLocalY(BENEFIT_ICON[railTo], railInner),
             railFrac
           );
-          // Between two icons: the spot goes out, the can makes a full turn, and the spot comes
-          // back up on the next icon once the turn has landed.
-          var iconTurn = ease(range(railFrac, ICON_TURN_FROM, ICON_TURN_TO)) * Math.PI * 2;
-          var iconDark = range(railFrac, 0, ICON_TURN_FROM + 0.02) * (1 - range(railFrac, ICON_TURN_TO, 1));
+          // Between two icons the can holds still and the camera (and the spot with it) glides
+          // straight down the column to the next one.
 
           // Camera Dolly for Close-up: level with the icon, pitched up a touch. On phones the copy
           // sits over the middle of the screen, so the icon is framed in the upper part instead.
@@ -1314,17 +1312,21 @@
           if (stage3D.studioLights) {
             for (var si = 0; si < stage3D.studioLights.length; si++) {
               var sItem = stage3D.studioLights[si];
-              sItem.light.intensity = sItem.intensity * (1 - closeUp * STUDIO_DIM * (1 - iconDark * ICON_TURN_FILL));
+              sItem.light.intensity = sItem.intensity * (1 - closeUp * STUDIO_DIM);
             }
           }
 
-          // 3. Raking crescent spotlight shines down front of the can
+          // 3. A round spot on the icon; everything around it stays in shadow
           if (stage3D.spot) {
-            stage3D.spot.intensity = closeUp * SPOT_INTENSITY * (1 - iconDark);
+            stage3D.spot.intensity = closeUp * SPOT_INTENSITY;
             stage3D.spot.visible = closeUp > 0.001;
+            stage3D.spot.angle = windowW < 992 ? SPOT_ANGLE_MOBILE : SPOT_ANGLE;
             var canX = pose.x * u;
-            stage3D.spot.position.set(canX, iconY + SPOT_HEIGHT - SPOT_AIM, SPOT_DEPTH);
-            stage3D.spot.target.position.set(canX, iconY, 0);
+            // Aim at the front of the can, not its axis: a raked beam aimed at the axis meets
+            // the surface higher up and misses the icon.
+            var canFront = pose.scale * CAN_RADIUS * (railInner ? railInner.scale.x : 1);
+            stage3D.spot.position.set(canX, iconY - SPOT_DROP + SPOT_RISE, canFront + SPOT_DEPTH);
+            stage3D.spot.target.position.set(canX, iconY - SPOT_DROP, canFront);
             stage3D.spot.target.updateMatrixWorld();
           }
 
@@ -1407,7 +1409,7 @@
               if (canObj.iconFace === undefined) {
                 canObj.iconFace = canRotationY + wrapAngle(ICON_FACE - canRotationY);
               }
-              canRotationY = lerp(canRotationY, canObj.iconFace + iconTurn, ease(closeUp));
+              canRotationY = lerp(canRotationY, canObj.iconFace, ease(closeUp));
             } else {
               canObj.iconFace = undefined;
             }

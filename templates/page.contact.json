@@ -11,6 +11,50 @@
   "sections": {
     "main": {
       "type": "main-contact",
+      "blocks": {
+        "topic_orders": {
+          "type": "topic",
+          "settings": {
+            "name": "Orders & Support",
+            "blurb": "Deliveries, subscriptions, a dented can — anything about an order you've placed.",
+            "color": "#9089D3",
+            "ink": "#1A1030"
+          }
+        },
+        "topic_wholesale": {
+          "type": "topic",
+          "settings": {
+            "name": "Wholesale & Retail",
+            "blurb": "Stocking Asmaan in your cafe, gym, office or store.",
+            "color": "#E6A0E8",
+            "ink": "#3A0536"
+          }
+        },
+        "topic_press": {
+          "type": "topic",
+          "settings": {
+            "name": "Press & Creators",
+            "blurb": "Stories, shoots, collaborations and samples for review.",
+            "color": "#EFB36B",
+            "ink": "#3D1C00"
+          }
+        },
+        "topic_other": {
+          "type": "topic",
+          "settings": {
+            "name": "Something Else",
+            "blurb": "Ideas, feedback, or just saying hi.",
+            "color": "#FFFFFF",
+            "ink": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "topic_orders",
+        "topic_wholesale",
+        "topic_press",
+        "topic_other"
+      ],
       "settings": {}
     },
     "newsletter": {

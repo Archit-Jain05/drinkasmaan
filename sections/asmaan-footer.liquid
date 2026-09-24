@@ -4,8 +4,8 @@
       <div class="asmaan-footer-main">
         <!-- Brand Wordmark Logo Column -->
         <div class="asmaan-footer-brand">
-          <a href="/" class="asmaan-footer-logo" aria-label="{{ section.settings.brand_name | default: 'ASMAAN' }} — Home">
-            {{ section.settings.brand_name | default: 'ASMAAN' }}
+          <a href="/" class="asmaan-footer-logo" aria-label="{{ section.settings.brand_name | default: 'Asmaan' }} — Home">
+            {% render 'asmaan-logo' %}
           </a>
           {%- if section.settings.tagline != blank -%}
             <p class="asmaan-footer-tagline">{{ section.settings.tagline }}</p>
