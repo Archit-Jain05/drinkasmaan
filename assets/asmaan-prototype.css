@@ -3718,6 +3718,11 @@ input:focus-visible {
   transform: translateY(0);
 }
 
+/* Keep the fixed drink bar from covering the footer once it comes into view. */
+body.has-sticky-drink-bar .asmaan-footer {
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+}
+
 .drink_bar-inner {
   display: flex;
   align-items: center;
