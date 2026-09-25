@@ -3,9 +3,11 @@
     <div class="padding-global">
       <div class="container-large">
         <div class="padding-section-large">
-          <div class="mb-[var(--pad-xxl)]">
-            <h2 class="heading-style-display whitespace-pre-line">{{ section.settings.title | escape }}</h2>
-          </div>
+          {%- unless section.settings.title == blank -%}
+            <div class="mb-[var(--pad-xxl)]">
+              <h2 class="heading-style-display whitespace-pre-line">{{ section.settings.title | escape }}</h2>
+            </div>
+          {%- endunless -%}
 
           <div class="max-width-large align-center">
             <div class="faq_list">

@@ -492,6 +492,7 @@
           drinkBar.setAttribute('aria-hidden', isOffScreen ? 'false' : 'true');
           var barBtn = drinkBar.querySelector('button');
           if (barBtn) barBtn.tabIndex = isOffScreen ? 0 : -1;
+          document.body.classList.toggle('has-sticky-drink-bar', isOffScreen);
         });
       }, { threshold: 0 }).observe(productSection);
     }
