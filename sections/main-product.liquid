@@ -170,7 +170,7 @@
 
   .pack-opt-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
     gap: 0.75rem;
   }
 
@@ -218,7 +218,7 @@
 
       <!-- 3D / 2D View Mode Switcher (if product has uploaded images) -->
       {%- if section.settings.show_3d_toggle and product.images.size > 0 -%}
-        <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10; display: flex; gap: 0.25rem; background: rgba(255,255,255,0.06); padding: 2px; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-mono, monospace); font-size: 10px; text-transform: uppercase;">
+        <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10; display: flex; gap: 0.25rem; background: rgba(255,255,255,0.06); padding: 2px; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.1); font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase;">
           <button type="button" id="view-mode-3d" style="padding: 0.25rem 0.65rem; border-radius: 0.35rem; background: rgba(255,255,255,0.2); color: #fff; font-weight: bold; cursor: pointer; border: none;">3D Can</button>
           <button type="button" id="view-mode-photo" style="padding: 0.25rem 0.65rem; border-radius: 0.35rem; background: transparent; color: rgba(255,255,255,0.6); cursor: pointer; border: none;">Photos</button>
         </div>
@@ -346,7 +346,7 @@
                 <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">
                   {{ variant.title }}
                 </span>
-                <span style="display: block; font-size: 10px; color: {% if variant.available %}#34d399{% else %}rgba(255,255,255,0.4){% endif %}; font-family: var(--font-mono, monospace); margin-top: 2px;">
+                <span style="display: block; font-size: 12px; color: {% if variant.available %}#34d399{% else %}rgba(255,255,255,0.4){% endif %}; font-family: var(--font-mono, monospace); margin-top: 2px;">
                   {% if variant.available %}
                     {{ variant.price | money }}
                   {% else %}

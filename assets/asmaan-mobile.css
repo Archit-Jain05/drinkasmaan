@@ -220,3 +220,174 @@ body .filter-panel input[type='number'] {
 body .filter-panel button {
   min-height: 2rem;
 }
+
+/* --- Form fields, touch screens -------------------------------------------
+   iOS Safari zooms the page into any field set under 16px when it is tapped,
+   and leaves it zoomed. The newsletter, waitlist, search, filter and quantity
+   fields were all 12–14px. */
+@media (max-width: 767px) {
+  body input[type='email'],
+  body input[type='text'],
+  body input[type='search'],
+  body input[type='number'],
+  body input[type='tel'],
+  body input[type='password'],
+  body input:not([type]),
+  body select,
+  body textarea {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  /* --- Subpage heroes ----------------------------------------------------
+     `min-height: 80vh` suits the pages whose hero holds the whole page. On
+     the FAQ and cart it left most of a phone screen empty under the title. */
+  body .asmaan-subpage-section {
+    min-height: 0;
+  }
+
+  /* --- 404: clear the fixed header --------------------------------------- */
+  body .asmaan-404_page {
+    padding-top: calc(var(--asmaan-header-h, 90px) + 2rem);
+  }
+
+  /* --- Homepage wear teaser ----------------------------------------------
+     Full-screen is for a photo. Without one it was a screen of empty sky
+     above a single button. */
+  body .wear_hero:not(:has(.wear_photo)) {
+    min-height: 60svh;
+  }
+
+  /* --- Drink: pack tiers -------------------------------------------------
+     "Rs. 200 / can" broke after the slash in a third of the width. */
+  body .pack_tiers {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  body .pack_tier {
+    padding: 0.75rem 0.6rem;
+  }
+
+  body .pack_tier span {
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  /* --- Buttons whose label runs to two lines ----------------------------- */
+  body .button.is-hero {
+    text-wrap: balance;
+    line-height: 1.35;
+  }
+
+  /* --- Inline links: a comfortable tap height without moving the text ---- */
+  body .newsletter_container a.underline,
+  body .asmaan-404_quicklinks a,
+  body .asmaan-contact dd a {
+    display: inline-block;
+    padding-block: 0.4rem;
+    margin-block: -0.4rem;
+  }
+
+  /* --- Benefits: comparison table as cards --------------------------------
+     Four columns in 350px gave one-word lines and pushed the fourth column
+     off-screen behind a scroller nothing pointed to. Each row becomes a card:
+     the feature as its heading, then one line per drink. */
+  body .asmaan-comp-table,
+  body .asmaan-comp-table tbody,
+  body .asmaan-comp-table tr,
+  body .asmaan-comp-table td {
+    display: block;
+    width: 100%;
+  }
+
+  body .asmaan-comp-table {
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  body .asmaan-comp-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  body .asmaan-comp-table tr {
+    margin-bottom: 0.75rem;
+    padding: 1rem 1.1rem 0.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  body .asmaan-comp-table td {
+    padding: 0;
+    border: 0;
+  }
+
+  body .asmaan-comp-table td:first-child {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+  }
+
+  body .asmaan-comp-table td[data-label] {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 0.6rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.9375rem;
+  }
+
+  body .asmaan-comp-table td[data-label]::before {
+    content: attr(data-label);
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1.9;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+/* --- Header on narrow phones ------------------------------------------------
+   The wordmark is centred absolutely, and at 375px and under the search icon
+   ran into it. The icons keep their 36px tap area and lose the gaps between
+   them; the wordmark drops 2px. Under 350px there is still no room, so the
+   menu button shows only its dots and the wordmark takes the space between
+   the two sides instead of the exact centre. */
+@media (max-width: 429px) {
+  body .navbar_side.is-end {
+    gap: 0 !important;
+  }
+
+  body header .navbar_wordmark .asmaan-logo {
+    height: 24px;
+  }
+}
+
+@media (max-width: 349px) {
+  body .navbar_menu-button {
+    padding-left: 0.8rem !important;
+    padding-right: 0.8rem !important;
+  }
+
+  body .navbar_menu-button .menu-button-text {
+    display: none !important;
+  }
+
+  body .navbar_side {
+    flex: 0 0 auto !important;
+  }
+
+  body .navbar_wordmark {
+    position: static !important;
+    transform: none !important;
+  }
+}
