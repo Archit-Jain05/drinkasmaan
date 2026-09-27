@@ -1173,6 +1173,8 @@
     var lastScrollProgress = -1;
     var lastHostLit = -1;
     var lastSkyFlavour = -1;
+    var lastStageBehind = null;
+    var rangeBlock = document.getElementById('range-section');
     var copyRight = 0; // right edge of the benefit copy, px (read pass, used next frame)
     var railLeft = 0; // left edge of the benefit icon rail, px
     var lastTasteActive = false;
@@ -1467,6 +1469,16 @@
 
         // Fixed stage opacity & exit dive (dirty checked)
         if (canStageHost) {
+          // The fade below follows the eased progress, which trails a fast scroll, so the
+          // fixed can used to hang over the range block and the sections after it. Go by
+          // where the range block really is instead: once it is on screen, send the stage
+          // behind the sky at once.
+          var behind = rangeBlock ? rangeBlock.getBoundingClientRect().top < windowH : targetProgress >= 1;
+          if (behind !== lastStageBehind) {
+            lastStageBehind = behind;
+            canStageHost.style.zIndex = behind ? '-2' : '';
+            canStageHost.style.visibility = behind ? 'hidden' : '';
+          }
           var lit = 1 - range(eased, 0.99, 1);
           if (Math.abs(lit - lastHostLit) > 0.002) {
             lastHostLit = lit;
