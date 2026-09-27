@@ -9,17 +9,14 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "main-benefits",
-      "settings": {}
-    },
-    "newsletter": {
-      "type": "asmaan-newsletter",
-      "settings": {}
+    "moved": {
+      "type": "asmaan-redirect",
+      "settings": {
+        "target": "/pages/about#benefits"
+      }
     }
   },
   "order": [
-    "main",
-    "newsletter"
+    "moved"
   ]
 }

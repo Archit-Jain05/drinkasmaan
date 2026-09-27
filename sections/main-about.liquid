@@ -22,6 +22,7 @@
           </p>
         </div>
 
+        {%- if section.settings.show_pillars -%}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
             <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-2">Pillar I</span>
@@ -56,6 +57,9 @@
           </div>
         </div>
 
+        {%- endif -%}
+
+        {%- if section.settings.show_batch -%}
         <div class="p-8 sm:p-10 rounded-3xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-8">
           <div>
             <h3 class="text-xl sm:text-2xl font-bold uppercase text-white mb-2">{{ section.settings.batch_title | default: 'Experience The Flagship Batch' }}</h3>
@@ -65,6 +69,7 @@
             {{ section.settings.batch_cta_label | default: 'Explore Flavors' }}
           </a>
         </div>
+        {%- endif -%}
       </div>
     </div>
   </div>
@@ -99,6 +104,13 @@
       "content": "The Premise"
     },
     {
+      "type": "checkbox",
+      "id": "show_pillars",
+      "label": "Show the four pillars",
+      "info": "Turn off when the Science & Benefits section is on the same page, which covers them in more depth.",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "premise_title",
       "label": "Premise Title",
@@ -119,6 +131,12 @@
     {
       "type": "header",
       "content": "Flagship Batch Callout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_batch",
+      "label": "Show the callout",
+      "default": true
     },
     {
       "type": "text",

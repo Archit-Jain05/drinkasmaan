@@ -1,0 +1,35 @@
+{%- comment -%}
+  Forwards a retired page to where its content now lives (Benefits and FAQ were folded into
+  About on 2026-09-27). The page itself stays published so menu links, bookmarks and search
+  results keep working; visitors are sent on at once, and anyone without JavaScript gets the
+  link. In the theme editor it only shows a note, so the page can still be edited.
+{%- endcomment -%}
+{%- assign target = section.settings.target | default: '/pages/about' -%}
+
+{%- unless request.design_mode -%}
+  <meta http-equiv="refresh" content="0; url={{ target | escape }}">
+  <script>location.replace({{ target | json }});</script>
+{%- endunless -%}
+
+<section class="asmaan-subpage-section">
+  <div class="padding-global">
+    <div class="container-large max-w-3xl mx-auto px-4 text-center">
+      <p class="asmaan-subpage-sub">
+        {{ section.settings.message | escape }}
+        <a class="underline" href="{{ target | escape }}">{{ section.settings.link_label | escape }}</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Page moved",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "target", "label": "Send visitors to", "default": "/pages/about", "info": "A path on this store, with an #anchor if needed, e.g. /pages/about#faq" },
+    { "type": "text", "id": "message", "label": "Message", "default": "This page is now part of About." },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Go there" }
+  ]
+}
+{% endschema %}

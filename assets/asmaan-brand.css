@@ -68,6 +68,13 @@ body .drink_formula-head p {
   text-align: center;
 }
 
+/* A subpage section that follows another section (Benefits under About) needs a section
+   gap, not the clearance for the fixed header it takes when it opens a page. */
+body main .shopify-section + .shopify-section > .asmaan-subpage-section {
+  min-height: 0;
+  padding-top: 4rem;
+}
+
 /* --- Type ---------------------------------------------------------------- */
 body {
   font-family: var(--asmaan-font-primary);
