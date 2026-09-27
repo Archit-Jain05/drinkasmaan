@@ -283,6 +283,16 @@ body .navbar_wordmark {
 }
 body .navbar_wordmark .asmaan-logo { height: clamp(26px, 2.4vw, 36px); }
 
+/* The wear teaser's watermark is the serif logo rather than set type. Its hairlines
+   need a little more opacity than the old heavy italic caps to read at the same weight. */
+body .wear_fallback-mark {
+  line-height: 0;
+  color: rgba(255, 255, 255, 0.07);
+}
+body .wear_fallback-mark .asmaan-logo {
+  width: min(84vw, 1500px);
+  height: auto;
+}
 body .asmaan-footer-logo { line-height: 0; }
 body .asmaan-footer-logo .asmaan-logo { height: clamp(64px, 7vw, 108px); }
 

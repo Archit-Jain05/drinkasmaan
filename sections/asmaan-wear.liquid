@@ -9,7 +9,7 @@
     <!-- Parallax media wrapper -->
     <div class="wear_media" data-wear-media>
       <div class="wear_fallback" aria-hidden="true">
-        <span class="wear_fallback-mark">{{ section.settings.wordmark | default: 'ASMAAN' }}</span>
+        <span class="wear_fallback-mark">{% render 'asmaan-logo' %}</span>
       </div>
 
       {%- if section.settings.image != blank -%}
@@ -224,6 +224,7 @@
       "type": "text",
       "id": "wordmark",
       "label": "Brand Wordmark Watermark",
+      "info": "No longer shown: the watermark is now the Asmaan logo.",
       "default": "ASMAAN"
     },
     {

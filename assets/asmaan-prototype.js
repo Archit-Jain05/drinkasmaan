@@ -120,7 +120,7 @@
     var progress = (windowH - rect.top) / travel;
     var enter = range(progress, 0.04, 0.22);
     var exit = 1 - range(progress, 0.78, 0.96);
-    return { enter: enter, exit: exit, amount: enter * exit };
+    return { enter: enter, exit: exit, amount: enter * exit, progress: progress };
   }
 
   function wrapRange(value, min, max) {
@@ -1456,6 +1456,7 @@
         pItem.enter = pinned.enter;
         pItem.exit = pinned.exit;
         pItem.amount = pinned.amount;
+        pItem.progress = pinned.progress;
       }
 
       var pRect = profileSection ? profileSection.getBoundingClientRect() : null;
@@ -1482,12 +1483,13 @@
         }
       }
 
-      // Sky flavour (asmaan-brand.css): full through the hero and benefits, gone once the
-      // manifesto has faded in. Uses its own dirty check, since a jump from above the
-      // manifesto to below it leaves the pin amount at 0 on both sides.
+      // Sky flavour (asmaan-brand.css): full through the hero, the benefits and the manifesto
+      // (whose own wash covers it), then handed back to the night sky over about a screen and
+      // a half of scroll as the manifesto leaves and the range block comes up, so the flavour
+      // wash dissolves into a sky that is already part-way there instead of cutting to violet.
       for (var si = 0; si < pinnedCache.length; si++) {
         if (!pinnedCache[si].isManifesto) continue;
-        var skyFlavour = 1 - pinnedCache[si].enter;
+        var skyFlavour = 1 - ease(range(pinnedCache[si].progress, 0.66, 1.14));
         if (Math.abs(skyFlavour - lastSkyFlavour) > 0.004 || (skyFlavour !== lastSkyFlavour && (skyFlavour === 0 || skyFlavour === 1))) {
           lastSkyFlavour = skyFlavour;
           document.documentElement.style.setProperty('--asmaan-sky-flavour', skyFlavour.toFixed(3));
