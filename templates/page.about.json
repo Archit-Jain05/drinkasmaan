@@ -74,9 +74,6 @@
     },
     "faq": {
       "type": "asmaan-faq",
-      "settings": {
-        "title": "Frequently asked\nquestions"
-      },
       "blocks": {
         "faq_1": {
           "type": "faq_item",
@@ -152,15 +149,24 @@
         "faq_7",
         "faq_8",
         "faq_9"
-      ]
+      ],
+      "settings": {
+        "title": "Frequently asked\nquestions"
+      }
     },
     "support": {
       "type": "main-faq-support",
-      "settings": {}
+      "settings": {
+        "title": "Still need help?",
+        "subtitle": "Our studio support team is on standby to assist with custom orders, dietary questions, or stockist queries.",
+        "cta_label": "Contact Studio Support",
+        "cta_url": ""
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
-      "settings": {}
+      "settings": {},
+      "disabled": true
     }
   },
   "order": [
