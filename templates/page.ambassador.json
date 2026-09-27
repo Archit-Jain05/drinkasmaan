@@ -1,10 +1,16 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-ambassador",
-      "settings": {
-        "success_primary_url": "shopify://pages/merch"
-      },
       "blocks": {
         "perk_1": {
           "type": "perk",
@@ -76,11 +82,83 @@
         "faq_2",
         "faq_3",
         "faq_4"
-      ]
+      ],
+      "settings": {
+        "hero_kicker": "Creator Program / Ambition Collective",
+        "hero_title": "Become an Asmaan Ambassador",
+        "hero_subtext": "<p>The Asmaan Ambassador Program is a <strong>hand-selected circle</strong> of creators, athletes, and visionaries fueled by relentless ambition. <strong>Apply to join.</strong></p>",
+        "cta_text": "Apply Now",
+        "enable_reveal_form": true,
+        "cta_url": "",
+        "showcase_asset_1": "jamun-front.webp",
+        "showcase_asset_2": "hoodie-front.webp",
+        "showcase_asset_3": "print-front.webp",
+        "steps_title": "How It Works",
+        "step1_num": "01",
+        "step1_title": "Apply",
+        "step1_desc": "Complete your creator application and hear back from our team within 48 hours.",
+        "step2_num": "02",
+        "step2_title": "Get Your Kit",
+        "step2_desc": "Receive an exclusive Asmaan tonic allocation, limited capsule merch, and your personal tracking code.",
+        "step3_num": "03",
+        "step3_title": "Fuel The Culture",
+        "step3_desc": "Share your routine and ambition across your socials to earn competitive commissions and tier rewards.",
+        "show_perks": true,
+        "perks_title": "Ambassador Perks",
+        "form_title": "Ambassador Application",
+        "form_subtitle": "Join the Ambition Collective. Tell us about your craft and where to send your creator package.",
+        "google_sheet_url": "",
+        "contact_tags": "ambassador_applicant,ambition_collective",
+        "contact_subject": "New Ambassador Application",
+        "label_name": "Full Name *",
+        "placeholder_name": "e.g. Alex Rivera",
+        "label_email": "Email Address *",
+        "placeholder_email": "alex@domain.com",
+        "label_phone": "Phone / WhatsApp",
+        "placeholder_phone": "+91 98765 43210",
+        "label_instagram": "Instagram Handle *",
+        "placeholder_instagram": "@yourhandle",
+        "label_other_social": "TikTok or YouTube URL",
+        "placeholder_other_social": "@handle or channel link",
+        "label_audience": "Audience Size *",
+        "placeholder_audience": "Select follower range",
+        "audience_options": "Under 5,000\n5,000 - 25,000\n25,000 - 100,000\n100,000+",
+        "label_niche": "Primary Content Focus *",
+        "placeholder_niche": "Select primary focus",
+        "niche_options": "Fitness, Athletics & Training\nSoftware, Tech & Startups\nDesign, Architecture & Creative Arts\nStreetwear, Fashion & Aesthetics\nGaming & Digital Creation\nDaily Routine & Productivity",
+        "label_message": "Why Asmaan? What drives your ambition?",
+        "placeholder_message": "Tell us about your routine, your goals, or why you want to represent Asmaan...",
+        "submit_text": "Submit Application",
+        "error_title": "Submission Incomplete",
+        "success_badge": "STATUS: APPLICATION RECORDED",
+        "success_title": "Welcome to the Collective",
+        "success_body": "Your application has been received and logged in our talent registry. Our team reviews submissions on a rolling weekly basis and will reach out directly via Instagram or Email.",
+        "success_primary_text": "Explore Merch Capsule",
+        "success_primary_url": "shopify://pages/merch",
+        "success_secondary_text": "Return to Top",
+        "toast_success_title": "Application Confirmed",
+        "toast_success_message": "Your ambassador application has been recorded in our talent registry!",
+        "toast_required_title": "Action Required",
+        "toast_required_message": "Please complete all required fields marked with * correctly.",
+        "show_faq": true,
+        "faq_title": "Frequently Asked Questions"
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
-      "settings": {}
+      "disabled": true,
+      "settings": {
+        "brand_name": "ASMAAN",
+        "title": "Join the first batch",
+        "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
+        "placeholder": "Your email address",
+        "cta_text": "Sign up",
+        "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
+        "instagram_url": "",
+        "legal_link": "",
+        "terms_link": "",
+        "privacy_link": ""
+      }
     }
   },
   "order": [
