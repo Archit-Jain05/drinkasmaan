@@ -14,6 +14,7 @@
   endif
   assign accent_color = accent_color | default: section.settings.fallback_accent
   assign tint_color = accent_color
+  assign primary_color = product.metafields.custom.primary_color.value | default: accent_color
 
   assign label_asset = ''
   if product.images.size > 0
@@ -476,6 +477,12 @@
 <!-- Product Page UI Interactivity -->
 <script>
   (function() {
+    // 0. Match the sitewide sky/glow background to this product's own colours (same
+    // --taste-* variables the home hero and drink-page flavour switcher set on change;
+    // this page has no flavour switcher, so it has to set them once on load instead).
+    document.documentElement.style.setProperty('--taste-primary', {{ primary_color | json }});
+    document.documentElement.style.setProperty('--taste-secondary', {{ accent_color | json }});
+
     // 1. Pack size / Variant button interactions
     var packBtns = document.querySelectorAll('#pack-selector .pack-opt-btn');
     var priceDisplay = document.getElementById('product-price-display');
