@@ -49,6 +49,15 @@
   );
 }
 
+/* Homepage hero: the can's own glow (.gamme_gradient, in asmaan-stage.liquid) already
+   carries the active flavour's colour there, so the shared sky stays black-only on this
+   template instead of also blending toward the taste variables — avoids doubling up on
+   colour right where the flavour-specific glow already does that job. Drink and product
+   pages (no equivalent glow of their own) keep the taste-blended sky from :root above. */
+body.template-index {
+  --asmaan-sky: linear-gradient(180deg, #04020b 0%, #07041a 16%, #0e0729 34%, #050308 70%, #000000 100%);
+}
+
 /* --- Type ---------------------------------------------------------------- */
 body {
   font-family: var(--asmaan-font-primary);
