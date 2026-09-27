@@ -104,7 +104,11 @@ body .asmaan-contact__submit-label {
   max-height: 820px;
   left: -16vw;
   top: -6vh;
-  background: radial-gradient(circle, rgba(124, 92, 255, 0.6), transparent 68%);
+  /* Tinted from the active flavour's accent colour (--taste-secondary, set in
+     asmaan-prototype.js / asmaan-drink.js on flavour change) so the sky reads as the
+     can in focus rather than staying fixed to Kala Jamun's violet. Falls back to
+     the original violet when no flavour context has set the variable. */
+  background: radial-gradient(circle, color-mix(in srgb, var(--taste-secondary, #9089d3) 60%, transparent), transparent 68%);
   animation: asmaan-sky-drift-1 26s ease-in-out infinite;
 }
 .asmaan-sky__orb.is-2 {
@@ -114,7 +118,7 @@ body .asmaan-contact__submit-label {
   max-height: 700px;
   right: -14vw;
   bottom: -10vh;
-  background: radial-gradient(circle, rgba(200, 110, 255, 0.48), transparent 68%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--taste-secondary, #9089d3) 48%, transparent), transparent 68%);
   animation: asmaan-sky-drift-2 32s ease-in-out infinite;
 }
 @keyframes asmaan-sky-drift-1 {
