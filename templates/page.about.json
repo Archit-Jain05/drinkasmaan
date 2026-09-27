@@ -1,12 +1,31 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-about",
-      "settings": {}
+      "settings": {
+        "title": "The ambition\ntonic",
+        "intro": "Energy drinks were built for sport and for the night out: a spike, then a crash. Asmaan is built for the work in between — a drink for the hours you spend on one thing.",
+        "words_label": "Printed on the side of every can",
+        "manifesto": "If you're reading this, you're probably in the middle of something that matters.\nThe kind of work nobody applauds yet.\nKeep showing up.\nThe results will eventually introduce themselves.\nUntil then, protect the person building them.",
+        "panel_asset": "jamun-left.webp",
+        "panel_alt": "The side panel of a Kala Jamun can, where the same words are printed.",
+        "panel_caption": "Left panel, every can",
+        "premise_title": "Made for\nthe work",
+        "people": "Programmers writing code at 2 AM\nDesigners on their fifth pass at the type\nWriters finishing the fifth draft\nFounders building something from nothing",
+        "premise_p2": "Not a heart-racing spike. A steady floor that holds for about four hours, then lets you down gently."
+      }
     },
     "benefits": {
       "type": "main-benefits",
-      "settings": {},
       "blocks": {
         "b_sugar": {
           "type": "benefit",
@@ -18,8 +37,8 @@
             "note": "10 kcal per 250 ml",
             "assets": "mango-front.webp",
             "surface": "#5a2a00",
-            "ink": "#efb36b",
-            "bands": ""
+            "bands": "",
+            "ink": "#efb36b"
           }
         },
         "b_caffeine": {
@@ -32,8 +51,8 @@
             "note": "About a strong cup of coffee",
             "assets": "jamun-front.webp",
             "surface": "#2a1d4a",
-            "ink": "#9089d3",
-            "bands": ""
+            "bands": "",
+            "ink": "#9089d3"
           }
         },
         "b_calm": {
@@ -46,8 +65,8 @@
             "note": "Peaks about forty minutes in, holds for about four hours",
             "assets": "print-front.webp",
             "surface": "#4e0749",
-            "ink": "#e6a0e8",
-            "bands": ""
+            "bands": "",
+            "ink": "#e6a0e8"
           }
         },
         "b_colour": {
@@ -60,8 +79,8 @@
             "note": "Vegan",
             "assets": "jamun-front.webp, mango-front.webp, print-front.webp",
             "surface": "#2a1d4a",
-            "ink": "#ffffff",
-            "bands": "#9089d3, #efb36b, #e6a0e8"
+            "bands": "#9089d3, #efb36b, #e6a0e8",
+            "ink": "#ffffff"
           }
         }
       },
@@ -70,7 +89,14 @@
         "b_caffeine",
         "b_calm",
         "b_colour"
-      ]
+      ],
+      "settings": {
+        "title": "What is\nin the can",
+        "subtitle": "Five actives at doses worth printing, no proprietary blend, and nothing in there to make the label look longer.",
+        "compare_title": "How it\ncompares",
+        "cta_label": "Shop the range",
+        "cta_url": ""
+      }
     },
     "faq": {
       "type": "asmaan-faq",
@@ -157,7 +183,7 @@
     "support": {
       "type": "main-faq-support",
       "settings": {
-        "title": "Still need help?",
+        "title": "need help?",
         "subtitle": "Our studio support team is on standby to assist with custom orders, dietary questions, or stockist queries.",
         "cta_label": "Contact Studio Support",
         "cta_url": ""
@@ -165,8 +191,19 @@
     },
     "newsletter": {
       "type": "asmaan-newsletter",
-      "settings": {},
-      "disabled": true
+      "disabled": true,
+      "settings": {
+        "brand_name": "ASMAAN",
+        "title": "Join the first batch",
+        "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
+        "placeholder": "Your email address",
+        "cta_text": "Sign up",
+        "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
+        "instagram_url": "",
+        "legal_link": "",
+        "terms_link": "",
+        "privacy_link": ""
+      }
     }
   },
   "order": [
