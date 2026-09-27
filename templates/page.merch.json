@@ -1,70 +1,84 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-merch",
-      "settings": {},
       "blocks": {
         "piece_1": {
           "type": "piece",
           "settings": {
+            "product": "starfall-tee",
             "number": "01",
             "line1": "Starfall",
             "line2": "Tee",
             "tag": "Washed black · raw hem",
             "blurb": "Heavyweight cotton washed until the black went grey at the seams, then torn off at the hem and left there. Violet and bone piping runs the shoulder and curves down the body. The wordmark is sprayed rather than printed — it drips because it was meant to.",
             "spec": "Heavyweight cotton, stone washed\nBoxy body, dropped shoulder\nHem torn off, threads left on\nSprayed wordmark front, starburst back",
+            "price": "",
+            "sizes": "",
             "front_asset": "tee-front.webp",
             "back_asset": "tee-back.webp",
-            "primary_color": "#2A1D4A",
-            "secondary_color": "#9089D3",
+            "primary_color": "#2a1d4a",
+            "secondary_color": "#9089d3",
             "is_tall": false,
             "hero_height": "34svh",
             "hero_tilt": "-7deg",
             "hero_lap": "-3%",
-            "hero_drift": "0.16",
-            "product": "starfall-tee"
+            "hero_drift": "0.16"
           }
         },
         "piece_2": {
           "type": "piece",
           "settings": {
+            "product": "ambition-hoodie",
             "number": "02",
             "line1": "Ambition",
             "line2": "Hoodie",
             "tag": "Full zip · faded black",
             "blurb": "A full-zip hood in faded black, heavy enough to hold its own shape. The joke is set across the chest in pink over a silver star; the wordmark is sprayed across the back, big enough to read from the other side of the room.",
             "spec": "Brushed fleece, heavyweight\nFull zip, lined hood\nDropped shoulder, roomy sleeve\nChest print front, wordmark back",
+            "price": "",
+            "sizes": "",
             "front_asset": "hoodie-front.webp",
             "back_asset": "hoodie-back.webp",
-            "primary_color": "#4E0749",
-            "secondary_color": "#E6A0E8",
+            "primary_color": "#4e0749",
+            "secondary_color": "#e6a0e8",
             "is_tall": false,
             "hero_height": "42svh",
             "hero_tilt": "0deg",
             "hero_lap": "-1%",
-            "hero_drift": "0.06",
-            "product": "ambition-hoodie"
+            "hero_drift": "0.06"
           }
         },
         "piece_3": {
           "type": "piece",
           "settings": {
+            "product": "ambition-denim",
             "number": "03",
             "line1": "Ambition",
             "line2": "Denim",
             "tag": "Mid wash · wide leg",
             "blurb": "Rigid mid-wash denim cut wide from the hip down and left long enough to stack over a shoe. The wordmark is worked into the thigh the way a tour shirt carries it, with sparks, stars and a barcode thrown across the rest of the leg.",
             "spec": "Rigid denim, mid wash\nWide leg, long inseam\nPrint across thigh and back pocket\nWordmark at the waistband",
+            "price": "",
+            "sizes": "",
             "front_asset": "denim-front.webp",
             "back_asset": "denim-back.webp",
-            "primary_color": "#16233F",
-            "secondary_color": "#8AA8D8",
+            "primary_color": "#16233f",
+            "secondary_color": "#8aa8d8",
             "is_tall": true,
             "hero_height": "47svh",
             "hero_tilt": "6deg",
             "hero_lap": "-3%",
-            "hero_drift": "0.2",
-            "product": "ambition-denim"
+            "hero_drift": "0.2"
           }
         }
       },
@@ -72,11 +86,64 @@
         "piece_1",
         "piece_2",
         "piece_3"
-      ]
+      ],
+      "settings": {
+        "kicker": "Capsule 01",
+        "tagline": "Ambition Tonic",
+        "headline_line1": "Too much",
+        "headline_line2": "Ambition",
+        "sub": "For a t-shirt. For a hoodie. For a pair of jeans.",
+        "price": "₹3,000",
+        "price_note": "One price, whichever one you take.",
+        "sizes": "S · M · L",
+        "fit": "Cut oversized. Take the size you always take.",
+        "cta_text": "Join the drop",
+        "marquee_items": "[kicker]\nWashed black\nCut oversized\nTorn, not finished\n[sizes]\n[price]\nLimited run",
+        "drop_title": "The drop",
+        "drop_body": "Three pieces, made once. When the run is gone there is no second one — the list gets the morning it lands, and nobody else gets told.",
+        "drop_line": "Drops land without warning. If you are not on the list, you will miss it.",
+        "shop_cta_text": "Shop the capsule",
+        "shop_body": "Three pieces, made once. When the run is gone there is no second one.",
+        "modal_title": "On the list",
+        "modal_body": "One mail, the morning the drop goes live. Nothing else, ever.",
+        "modal_placeholder": "Your email address",
+        "modal_cta": "Notify me",
+        "modal_success": "You're on. Watch your inbox the morning it lands.",
+        "modal_error": "That address didn't look right. Try again?",
+        "waitlist_tags": "merch_waitlist",
+        "label_pieces": "pieces",
+        "label_each": "each",
+        "label_front": "Front",
+        "label_back": "Back",
+        "label_turn": "Turn it over",
+        "label_sizes_group": "Size selection",
+        "label_fit": "Fit",
+        "label_sizes": "Sizes",
+        "label_drop": "The drop",
+        "label_close": "Close",
+        "label_add": "Add to bag",
+        "label_pick_size": "Pick a size first",
+        "label_adding": "Adding…",
+        "label_added": "In your bag",
+        "label_sold_out": "Sold out",
+        "label_add_error": "That didn't go through. Try again?"
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
-      "settings": {}
+      "disabled": true,
+      "settings": {
+        "brand_name": "ASMAAN",
+        "title": "Join the first batch",
+        "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
+        "placeholder": "Your email address",
+        "cta_text": "Sign up",
+        "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
+        "instagram_url": "",
+        "legal_link": "",
+        "terms_link": "",
+        "privacy_link": ""
+      }
     }
   },
   "order": [
