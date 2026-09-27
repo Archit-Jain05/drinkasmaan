@@ -32,7 +32,21 @@
   --asmaan-track-display: -0.04em;
   --asmaan-track-body: -0.02em;
 
-  --asmaan-sky: linear-gradient(180deg, #04020b 0%, #07041a 16%, #0e0729 34%, #180c42 52%, #261263 70%, #391c89 86%, #5530a3 100%);
+  /* The top half stays near-black on every page (the moody "night sky" floor). The
+     bottom half — where the glow actually reads — blends toward the active flavour's
+     colours (--taste-primary/--taste-secondary, set on flavour change) instead of a
+     fixed violet, so the sky matches the can in focus. Falls back to Kala Jamun's
+     violet when no flavour context has set those variables. */
+  --asmaan-sky: linear-gradient(
+    180deg,
+    #04020b 0%,
+    #07041a 16%,
+    #0e0729 34%,
+    #180c42 52%,
+    color-mix(in srgb, var(--taste-primary, #2a1d4a) 70%, black) 70%,
+    var(--taste-primary, #2a1d4a) 86%,
+    var(--taste-secondary, #9089d3) 100%
+  );
 }
 
 /* --- Type ---------------------------------------------------------------- */
