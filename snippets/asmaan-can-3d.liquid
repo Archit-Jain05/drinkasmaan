@@ -17,6 +17,8 @@
     detail      - {String}  "high" or "low". Default "high"; use "low" in grids.
     draggable   - {Boolean} let the pointer turn the can. Default true.
     idle_spin   - {Number}  rad/s the can drifts at when left alone. Default 0.
+    auto_spin   - {Boolean} start drifting on load instead of holding its view
+                  until someone drags it. Needs idle_spin. Default false.
     view        - {String}  panel to open on: front, back, left, right.
     ratio       - {String}  CSS aspect-ratio for the box. Default "760 / 1950".
     id          - {String}  unique id, so the view buttons can find this can.
@@ -104,6 +106,7 @@
     {% if tint %}data-tint="{{ tint }}"{% endif %}
     {% if ground %}data-ground="{{ ground }}"{% endif %}
     {% if idle_spin %}data-idle-spin="{{ idle_spin }}"{% endif %}
+    {% if auto_spin %}data-auto-spin="true"{% endif %}
     {% if headroom %}data-headroom="{{ headroom }}"{% endif %}
     {% if reach %}data-reach="{{ reach }}"{% endif %}
     {% if fov %}data-fov="{{ fov }}"{% endif %}
