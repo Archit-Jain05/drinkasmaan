@@ -1,170 +1,177 @@
-{%- assign free_shipping_money = settings.free_shipping_threshold | money_without_trailing_zeros -%}
-<section class="asmaan-subpage-section pt-24 pb-20">
-  <div class="padding-global">
-    <div class="container-large max-w-4xl mx-auto px-4">
-      <div class="asmaan-subpage-hero text-left mb-16">
-        <span class="font-mono text-xs uppercase tracking-[0.25em] text-[#9089D3] block mb-2">{{ section.settings.kicker | default: 'Our Origins • Manifesto' }}</span>
-        <h1 class="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white mb-6">{{ section.settings.title | default: 'The Ambition Tonic' }}</h1>
-        <p class="text-white/80 text-base sm:text-lg leading-relaxed font-light">
-          {{ section.settings.intro | default: 'Energy drinks were engineered for extreme sports and nightclub floors: saturated in 30g of refined sugars, synthetic taurine, and jittery caffeine spikes designed for rapid heart rates rather than sustained, quiet cognitive concentration.' }}
-        </p>
+{%- comment -%}
+  About, first half: the title with the three cans standing over it, then the words printed on
+  the side of the can set large beside a crop of that panel, and who the drink is for.
+  Styles: assets/asmaan-about.css (shared with main-benefits).
+{%- endcomment -%}
+{{ 'asmaan-about.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign manifesto_lines = section.settings.manifesto | newline_to_br | split: '<br />'
+  assign people = section.settings.people | newline_to_br | split: '<br />'
+-%}
+
+<section class="about_hero" aria-labelledby="about-title-{{ section.id }}">
+  <h1 id="about-title-{{ section.id }}" class="about_title heading-style-display" data-about-reveal>
+    {{- section.settings.title | escape | newline_to_br -}}
+  </h1>
+  <div class="about_cans" aria-hidden="true">
+    <img class="about_can is-left" src="{{ 'asmaan-can-magenta.webp' | asset_url }}" width="760" height="1950" alt="" loading="eager" decoding="async">
+    <img class="about_can is-mid" src="{{ 'asmaan-can-jamun.webp' | asset_url }}" width="760" height="1950" alt="" loading="eager" decoding="async">
+    <img class="about_can is-right" src="{{ 'asmaan-can-mango.webp' | asset_url }}" width="760" height="1950" alt="" loading="eager" decoding="async">
+  </div>
+  {%- if section.settings.intro != blank -%}
+    <p class="about_intro" data-about-reveal>{{ section.settings.intro | escape }}</p>
+  {%- endif -%}
+</section>
+
+<section class="about_can-words" aria-labelledby="about-words-{{ section.id }}">
+  <h2 id="about-words-{{ section.id }}" class="sr-only">{{ section.settings.words_label | escape }}</h2>
+  <div class="about_can-words-grid">
+    <figure class="about_panel">
+      <div class="about_panel-frame">
+        <img src="{{ section.settings.panel_asset | default: 'jamun-left.webp' | asset_url }}" width="760" height="1950" alt="{{ section.settings.panel_alt | escape }}" loading="lazy" decoding="async">
       </div>
+      <figcaption>{{ section.settings.panel_caption | escape }}</figcaption>
+    </figure>
 
-      <div class="space-y-16 text-white/80 text-sm sm:text-base leading-relaxed">
-        <div class="p-8 sm:p-10 rounded-3xl bg-white/[0.02] border border-white/10 space-y-4 text-center">
-          <span class="font-mono text-xs uppercase tracking-widest text-emerald-400 block">The Premise</span>
-          <h2 class="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-white">{{ section.settings.premise_title | default: 'Engineered For Modern Creators' }}</h2>
-          <p>
-            {{ section.settings.premise_p1 | default: 'We built Asmaan for programmers writing code at 2 AM, designers obsessing over typography, writers finishing their fifth draft, and founders building companies from nothing.' }}
-          </p>
-          <p class="text-white/60 text-sm">
-            {{ section.settings.premise_p2 | default: "You don't need a heart-racing adrenaline spike. You need a calm, steady cognitive floor that holds you in flow state for four straight hours without anxiety, irritability, or an afternoon crash." }}
-          </p>
-        </div>
-
-        {%- if section.settings.show_pillars -%}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
-            <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-2">Pillar I</span>
-            <h3 class="text-xl font-bold uppercase text-white mb-2">Raw Green Coffee</h3>
-            <p class="text-white/60 text-xs leading-relaxed">
-              We extract 100mg of caffeine from raw unroasted green coffee beans rather than synthetic lab compounds. It metabolizes smoothly and prevents the jagged spikes of energy shots.
-            </p>
-          </div>
-
-          <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
-            <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-2">Pillar II</span>
-            <h3 class="text-xl font-bold uppercase text-white mb-2">Suntheanine &amp; KSM-66</h3>
-            <p class="text-white/60 text-xs leading-relaxed">
-              200mg L-theanine directly offsets peripheral jitters by stimulating alpha brain waves, while 300mg KSM-66 ashwagandha dampens stress and mental fatigue.
-            </p>
-          </div>
-
-          <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
-            <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-2">Pillar III</span>
-            <h3 class="text-xl font-bold uppercase text-white mb-2">Zero Sugar &bull; 10 Calories</h3>
-            <p class="text-white/60 text-xs leading-relaxed">
-              No insulin rollercoasters. No brain fog. Fruit botanicals (Kala Jamun, Alphonso Mango, Rose &amp; Guava) provide clean, natural acidity.
-            </p>
-          </div>
-
-          <div class="p-6 rounded-2xl bg-white/[0.02] border border-white/10">
-            <span class="font-mono text-xs uppercase tracking-widest text-[#9089D3] block mb-2">Pillar IV</span>
-            <h3 class="text-xl font-bold uppercase text-white mb-2">Pure Mountain Water</h3>
-            <p class="text-white/60 text-xs leading-relaxed">
-              Filtered Himalayan mineral water with balanced potassium and magnesium electrolytes to support neural transmission and all-day hydration.
-            </p>
-          </div>
-        </div>
-
-        {%- endif -%}
-
-        {%- if section.settings.show_batch -%}
-        <div class="p-8 sm:p-10 rounded-3xl bg-white/[0.03] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-8">
-          <div>
-            <h3 class="text-xl sm:text-2xl font-bold uppercase text-white mb-2">{{ section.settings.batch_title | default: 'Experience The Flagship Batch' }}</h3>
-            <p class="text-xs text-white/60">{{ section.settings.batch_sub | escape | replace: '[free_shipping_threshold]', free_shipping_money }}</p>
-          </div>
-          <a href="{{ section.settings.batch_cta_url | default: '/#range' }}" class="button is-primary is-small whitespace-nowrap">
-            {{ section.settings.batch_cta_label | default: 'Explore Flavors' }}
-          </a>
-        </div>
-        {%- endif -%}
-      </div>
+    <div class="about_words">
+      <blockquote class="about_quote" data-about-lines>
+        {%- for line in manifesto_lines -%}
+          {%- assign l = line | strip -%}
+          {%- if l != blank -%}<span class="about_quote-line">{{ l | escape }}</span>{%- endif -%}
+        {%- endfor -%}
+        <footer class="about_quote-sign">{% render 'asmaan-logo' %}</footer>
+      </blockquote>
     </div>
   </div>
 </section>
 
+<section class="about_people" aria-labelledby="about-people-{{ section.id }}">
+  <h2 id="about-people-{{ section.id }}" class="about_section-title heading-style-display" data-about-reveal>{{ section.settings.premise_title | escape | newline_to_br }}</h2>
+  <ul class="about_people-list">
+    {%- for person in people -%}
+      {%- assign p = person | strip -%}
+      {%- if p != blank -%}<li data-about-reveal>{{ p | escape }}</li>{%- endif -%}
+    {%- endfor -%}
+  </ul>
+  {%- if section.settings.premise_p2 != blank -%}
+    <p class="about_people-close" data-about-reveal>{{ section.settings.premise_p2 | escape }}</p>
+  {%- endif -%}
+</section>
+
+<script>
+  (function () {
+    // Entrances: each [data-about-reveal] rises in once, and the can's words light up line by
+    // line as they pass the middle of the screen. Everything is visible without JavaScript.
+    var root = document.documentElement;
+    if (root.dataset.aboutMotion) return;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return;
+    root.dataset.aboutMotion = 'on';
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px' });
+
+    function watch() {
+      document.querySelectorAll('[data-about-reveal]:not(.is-armed)').forEach(function (el) {
+        el.classList.add('is-armed');
+        io.observe(el);
+      });
+      document.querySelectorAll('[data-about-lines] .about_quote-line:not(.is-armed)').forEach(function (el) {
+        el.classList.add('is-armed');
+        lineIo.observe(el);
+      });
+    }
+
+    var lineIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { e.target.classList.toggle('is-lit', e.isIntersecting || e.boundingClientRect.top < 0); });
+    }, { rootMargin: '0px 0px -45% 0px' });
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch);
+    else watch();
+    document.addEventListener('shopify:section:load', watch);
+  })();
+</script>
+
 {% schema %}
 {
-  "name": "About Manifesto",
-  "tag": "section",
+  "name": "About: story",
+  "tag": "div",
   "class": "section-main-about",
   "settings": [
     {
-      "type": "text",
-      "id": "kicker",
-      "label": "Hero Kicker",
-      "default": "Our Origins • Manifesto"
-    },
-    {
-      "type": "text",
+      "type": "textarea",
       "id": "title",
-      "label": "Hero Title",
-      "default": "The Ambition Tonic"
+      "label": "Title",
+      "default": "The ambition\ntonic",
+      "info": "Each line break starts a new line."
     },
     {
       "type": "textarea",
       "id": "intro",
-      "label": "Hero Intro",
-      "default": "Energy drinks were engineered for extreme sports and nightclub floors: saturated in 30g of refined sugars, synthetic taurine, and jittery caffeine spikes designed for rapid heart rates rather than sustained, quiet cognitive concentration."
+      "label": "Intro",
+      "default": "Energy drinks were built for sport and for the night out: a spike, then a crash. Asmaan is built for the work in between — a drink for the hours you spend on one thing."
     },
     {
       "type": "header",
-      "content": "The Premise"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_pillars",
-      "label": "Show the four pillars",
-      "info": "Turn off when the Science & Benefits section is on the same page, which covers them in more depth.",
-      "default": true
+      "content": "The words on the can"
     },
     {
       "type": "text",
-      "id": "premise_title",
-      "label": "Premise Title",
-      "default": "Engineered For Modern Creators"
+      "id": "words_label",
+      "label": "Heading for screen readers",
+      "default": "Printed on the side of every can"
     },
     {
       "type": "textarea",
-      "id": "premise_p1",
-      "label": "Premise Paragraph 1",
-      "default": "We built Asmaan for programmers writing code at 2 AM, designers obsessing over typography, writers finishing their fifth draft, and founders building companies from nothing."
+      "id": "manifesto",
+      "label": "Lines",
+      "default": "If you're reading this, you're probably in the middle of something that matters.\nThe kind of work nobody applauds yet.\nKeep showing up.\nThe results will eventually introduce themselves.\nUntil then, protect the person building them.",
+      "info": "One line per line break. They light up one by one as the page scrolls."
+    },
+    {
+      "type": "text",
+      "id": "panel_asset",
+      "label": "Can panel image (theme asset)",
+      "default": "jamun-left.webp"
+    },
+    {
+      "type": "text",
+      "id": "panel_alt",
+      "label": "Can panel image description",
+      "default": "The side panel of a Kala Jamun can, where the same words are printed."
+    },
+    {
+      "type": "text",
+      "id": "panel_caption",
+      "label": "Caption",
+      "default": "Left panel, every can"
+    },
+    {
+      "type": "header",
+      "content": "Who it is for"
+    },
+    {
+      "type": "textarea",
+      "id": "premise_title",
+      "label": "Heading",
+      "default": "Made for\nthe work"
+    },
+    {
+      "type": "textarea",
+      "id": "people",
+      "label": "People",
+      "default": "Programmers writing code at 2 AM\nDesigners on their fifth pass at the type\nWriters finishing the fifth draft\nFounders building something from nothing",
+      "info": "One per line."
     },
     {
       "type": "textarea",
       "id": "premise_p2",
-      "label": "Premise Paragraph 2",
-      "default": "You don't need a heart-racing adrenaline spike. You need a calm, steady cognitive floor that holds you in flow state for four straight hours without anxiety, irritability, or an afternoon crash."
-    },
-    {
-      "type": "header",
-      "content": "Flagship Batch Callout"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_batch",
-      "label": "Show the callout",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "batch_title",
-      "label": "Callout Title",
-      "default": "Experience The Flagship Batch"
-    },
-    {
-      "type": "text",
-      "id": "batch_sub",
-      "label": "Callout Subtext",
-      "default": "Dispatched direct from our studio with free express delivery over [free_shipping_threshold]."
-    },
-    {
-      "type": "text",
-      "id": "batch_cta_label",
-      "label": "Callout Button Label",
-      "default": "Explore Flavors"
-    },
-    {
-      "type": "url",
-      "id": "batch_cta_url",
-      "label": "Callout Button Link"
-    }
-  ],
-  "presets": [
-    {
-      "name": "About Manifesto"
+      "label": "Closing line",
+      "default": "Not a heart-racing spike. A steady floor that holds for about four hours, then lets you down gently."
     }
   ]
 }

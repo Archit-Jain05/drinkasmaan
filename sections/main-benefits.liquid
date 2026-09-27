@@ -1,198 +1,217 @@
-<section id="benefits" class="asmaan-subpage-section">
-  <div class="padding-global">
-    <div class="container-large max-w-5xl mx-auto px-4">
-      <div class="asmaan-subpage-hero">
-        <span class="asmaan-subpage-tag">{{ section.settings.tag | default: 'Formulated for Performance' }}</span>
-        <h2 class="asmaan-subpage-title">{{ section.settings.title | default: 'The Science of Asmaan' }}</h2>
-        <p class="asmaan-subpage-sub">
-          {{ section.settings.subtitle | default: 'Energy drinks were engineered for athletes and video gamers. Asmaan is engineered for creators, builders, and deep thinkers who need sustained focus without jitters or burnout.' }}
-        </p>
-      </div>
+{%- comment -%}
+  About, second half: what is in the can. Each "Benefit" block is a dose, a headline and a
+  paragraph; on desktop a sticky panel beside them shows that benefit's can on a solid panel of
+  its flavour colour and swaps as the page scrolls. On phones each benefit carries its own panel.
+  Then the comparison table (cards on phones, see asmaan-mobile.css) and the range link.
+  Styles: assets/asmaan-about.css.
+{%- endcomment -%}
+{{ 'asmaan-about.css' | asset_url | stylesheet_tag }}
 
-      <!-- 4 Pillars Deep-Dive Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-        <!-- Pillar 1 -->
-        <div class="asmaan-pillar-item p-6 md:p-8">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="asmaan-pillar-icon h-8 w-8">
-              {% render 'asmaan-icons', name: 'benefit', icon: 'sugar', class: 'h-4 w-4' %}
-            </span>
-            <div>
-              <span class="font-mono text-xs text-white/50 uppercase tracking-widest">Pillar 01</span>
-              <h2 class="text-xl font-bold uppercase tracking-tight text-white">Zero Sugar &bull; 10 Calories</h2>
-            </div>
-          </div>
-          <p class="text-white/70 leading-relaxed text-sm">
-            Sugar causes insulin spikes followed by debilitating mental fog. Asmaan contains 0g added sugar and only 10 calories per can. The subtle flavor comes entirely from cold-pressed Himalayan fruit essences and botanicals.
-          </p>
-          <div class="mt-4 pt-4 border-t border-white/10 font-mono text-xs uppercase tracking-widest text-[#9089D3]">
-            10 kcal per 250ml &bull; Low Glycemic
-          </div>
-        </div>
-
-        <!-- Pillar 2 -->
-        <div class="asmaan-pillar-item p-6 md:p-8">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="asmaan-pillar-icon h-8 w-8">
-              {% render 'asmaan-icons', name: 'benefit', icon: 'bean', class: 'h-4 w-4' %}
-            </span>
-            <div>
-              <span class="font-mono text-xs text-white/50 uppercase tracking-widest">Pillar 02</span>
-              <h2 class="text-xl font-bold uppercase tracking-tight text-white">Clean Botanical Caffeine</h2>
-            </div>
-          </div>
-          <p class="text-white/70 leading-relaxed text-sm">
-            Standard energy drinks use harsh synthetic caffeine anhydrous. We extract 100mg of natural caffeine directly from unroasted green coffee beans. It metabolizes smoothly over 4–6 hours without the steep spike or abrupt crash.
-          </p>
-          <div class="mt-4 pt-4 border-t border-white/10 font-mono text-xs uppercase tracking-widest text-[#EFB36B]">
-            100mg Raw Green Coffee &bull; Smooth Curve
-          </div>
-        </div>
-
-        <!-- Pillar 3 -->
-        <div class="asmaan-pillar-item p-6 md:p-8">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="asmaan-pillar-icon h-8 w-8">
-              {% render 'asmaan-icons', name: 'benefit', icon: 'curve', class: 'h-4 w-4' %}
-            </span>
-            <div>
-              <span class="font-mono text-xs text-white/50 uppercase tracking-widest">Pillar 03</span>
-              <h2 class="text-xl font-bold uppercase tracking-tight text-white">L-Theanine + Ashwagandha</h2>
-            </div>
-          </div>
-          <p class="text-white/70 leading-relaxed text-sm">
-            The golden 2:1 ratio. 200mg of fermented L-Theanine stimulates alpha brain waves, smoothing out caffeine's nervous edge. Paired with 300mg of KSM-66 Ashwagandha to balance cortisol and maintain relaxed mental composure.
-          </p>
-          <div class="mt-4 pt-4 border-t border-white/10 font-mono text-xs uppercase tracking-widest text-[#E6A0E8]">
-            200mg L-Theanine &bull; 300mg KSM-66
-          </div>
-        </div>
-
-        <!-- Pillar 4 -->
-        <div class="asmaan-pillar-item p-6 md:p-8">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="asmaan-pillar-icon h-8 w-8">
-              {% render 'asmaan-icons', name: 'cross', class: 'h-4 w-4' %}
-            </span>
-            <div>
-              <span class="font-mono text-xs text-white/50 uppercase tracking-widest">Pillar 04</span>
-              <h2 class="text-xl font-bold uppercase tracking-tight text-white">Clean Label &bull; No Synthetic Dyes</h2>
-            </div>
-          </div>
-          <p class="text-white/70 leading-relaxed text-sm">
-            Zero artificial food coloring, no Red 40, no Yellow 5, no proprietary blends. Every single milligram is printed directly on the front of the can. The deep purple and golden colors come naturally from the fruit itself.
-          </p>
-          <div class="mt-4 pt-4 border-t border-white/10 font-mono text-xs uppercase tracking-widest text-white/50">
-            100% Vegan &bull; Non-GMO &bull; Gluten Free
-          </div>
-        </div>
-      </div>
-
-      <!-- Comparative Table -->
-      <div class="mb-16">
-        <div class="text-center mb-8">
-          <span class="font-mono text-xs uppercase tracking-widest text-white/50">Direct Comparison</span>
-          <h2 class="text-2xl sm:text-3xl font-bold uppercase tracking-tight text-white mt-1">How Asmaan Compares</h2>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="asmaan-comp-table">
-            <thead>
-              <tr>
-                <th>Feature</th>
-                <th class="brand-col bg-white/10">ASMAAN TONIC</th>
-                <th>Standard Energy Drink</th>
-                <th>Cold Brew Coffee</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="highlight">
-                <td class="font-medium text-white">Added Sugar</td>
-                <td data-label="Asmaan" class="brand-col text-[#9089D3] font-bold">0g (10 kcal)</td>
-                <td data-label="Standard energy drink" class="text-white/60">27g - 54g (High)</td>
-                <td data-label="Cold brew coffee" class="text-white/60">0g</td>
-              </tr>
-              <tr>
-                <td class="font-medium text-white">Caffeine Source</td>
-                <td data-label="Asmaan" class="brand-col text-white font-bold">Green Coffee Bean (100mg)</td>
-                <td data-label="Standard energy drink" class="text-white/60">Synthetic Anhydrous (160mg+)</td>
-                <td data-label="Cold brew coffee" class="text-white/60">Roasted Beans (150-200mg)</td>
-              </tr>
-              <tr class="highlight">
-                <td class="font-medium text-white">Jitters &amp; Crash</td>
-                <td data-label="Asmaan" class="brand-col text-emerald-400 font-bold">Zero (L-Theanine smoothed)</td>
-                <td data-label="Standard energy drink" class="text-rose-400">Severe Jitters &amp; Crash</td>
-                <td data-label="Cold brew coffee" class="text-amber-400">Moderate Jitters</td>
-              </tr>
-              <tr>
-                <td class="font-medium text-white">Nootropics &amp; Adaptogens</td>
-                <td data-label="Asmaan" class="brand-col text-emerald-400 font-bold">L-Theanine + KSM-66</td>
-                <td data-label="Standard energy drink" class="text-white/40">None</td>
-                <td data-label="Cold brew coffee" class="text-white/40">None</td>
-              </tr>
-              <tr class="highlight">
-                <td class="font-medium text-white">Artificial Dyes</td>
-                <td data-label="Asmaan" class="brand-col text-emerald-400 font-bold">None (100% Real Fruit)</td>
-                <td data-label="Standard energy drink" class="text-rose-400">Red 40, Yellow 5, Blue 1</td>
-                <td data-label="Cold brew coffee" class="text-white/60">None</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Action Footer -->
-      <div class="text-center py-8">
-        <a href="{{ section.settings.cta_url | default: '/#range' }}" class="button is-hero is-primary">
-          <span>{{ section.settings.cta_label | default: 'Taste the Difference • Shop Range' }}</span>
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </a>
-      </div>
+{%- capture panels -%}
+  {%- for block in section.blocks -%}
+    {%- assign assets = block.settings.assets | split: ',' -%}
+    {%- assign bands = block.settings.bands | split: ',' -%}
+    <div class="science_panel{% if assets.size > 1 %} is-trio{% endif %}" data-science-panel="{{ forloop.index0 }}" style="--panel: {{ block.settings.surface }};">
+      {%- if assets.size > 1 -%}
+        {%- for a in assets -%}
+          {%- assign band = bands[forloop.index0] | strip | default: block.settings.surface -%}
+          <span class="science_band" style="--band: {{ band }};">
+            <img src="{{ a | strip | asset_url }}" width="760" height="1950" alt="" loading="lazy" decoding="async">
+          </span>
+        {%- endfor -%}
+      {%- else -%}
+        <img src="{{ assets.first | strip | asset_url }}" width="760" height="1950" alt="" loading="lazy" decoding="async">
+      {%- endif -%}
     </div>
+  {%- endfor -%}
+{%- endcapture -%}
+
+<section id="benefits" class="science" aria-labelledby="science-title-{{ section.id }}">
+  <header class="science_head">
+    <h2 id="science-title-{{ section.id }}" class="about_section-title heading-style-display" data-about-reveal>{{ section.settings.title | escape | newline_to_br }}</h2>
+    {%- if section.settings.subtitle != blank -%}
+      <p class="about_lede" data-about-reveal>{{ section.settings.subtitle | escape }}</p>
+    {%- endif -%}
+  </header>
+
+  <div class="science_spread" data-science>
+    <div class="science_media" aria-hidden="true">
+      <div class="science_media-sticky">{{ panels }}</div>
+    </div>
+
+    <ol class="science_list">
+      {%- for block in section.blocks -%}
+        {%- assign assets = block.settings.assets | split: ',' -%}
+        {%- assign bands = block.settings.bands | split: ',' -%}
+        <li class="science_item" data-science-item="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          <div class="science_item-media" aria-hidden="true">
+            <div class="science_panel{% if assets.size > 1 %} is-trio{% endif %}" style="--panel: {{ block.settings.surface }};">
+              {%- if assets.size > 1 -%}
+                {%- for a in assets -%}
+                  {%- assign band = bands[forloop.index0] | strip | default: block.settings.surface -%}
+                  <span class="science_band" style="--band: {{ band }};"><img src="{{ a | strip | asset_url }}" width="760" height="1950" alt="" loading="lazy" decoding="async"></span>
+                {%- endfor -%}
+              {%- else -%}
+                <img src="{{ assets.first | strip | asset_url }}" width="760" height="1950" alt="" loading="lazy" decoding="async">
+              {%- endif -%}
+            </div>
+          </div>
+          <p class="science_figure" style="--ink: {{ block.settings.ink }};">
+            {{- block.settings.figure | escape -}}
+            {%- if block.settings.unit != blank %}<span>{{ block.settings.unit | escape }}</span>{% endif -%}
+          </p>
+          <h3 class="science_title">{{ block.settings.title | escape }}</h3>
+          <p class="science_body">{{ block.settings.body | escape }}</p>
+          {%- if block.settings.note != blank -%}
+            <p class="science_note">{{ block.settings.note | escape }}</p>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ol>
   </div>
 </section>
 
+<section class="compare" aria-labelledby="compare-title-{{ section.id }}">
+  <h2 id="compare-title-{{ section.id }}" class="about_section-title heading-style-display" data-about-reveal>{{ section.settings.compare_title | escape | newline_to_br }}</h2>
+
+  <div class="compare_wrap" data-about-reveal>
+    <table class="asmaan-comp-table compare_table">
+      <thead>
+        <tr>
+          <th scope="col"><span class="sr-only">Feature</span></th>
+          <th scope="col" class="brand-col">Asmaan</th>
+          <th scope="col">Standard energy drink</th>
+          <th scope="col">Cold brew coffee</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Added sugar</th>
+          <td data-label="Asmaan" class="brand-col">0 g (10 kcal)</td>
+          <td data-label="Standard energy drink">27–54 g</td>
+          <td data-label="Cold brew coffee">0 g</td>
+        </tr>
+        <tr>
+          <th scope="row">Caffeine</th>
+          <td data-label="Asmaan" class="brand-col">100 mg, from green coffee</td>
+          <td data-label="Standard energy drink">160 mg+, synthetic</td>
+          <td data-label="Cold brew coffee">150–200 mg, roasted beans</td>
+        </tr>
+        <tr>
+          <th scope="row">Jitters and crash</th>
+          <td data-label="Asmaan" class="brand-col">Smoothed by L-theanine</td>
+          <td data-label="Standard energy drink">Common</td>
+          <td data-label="Cold brew coffee">Moderate</td>
+        </tr>
+        <tr>
+          <th scope="row">Adaptogens</th>
+          <td data-label="Asmaan" class="brand-col">L-theanine + KSM-66</td>
+          <td data-label="Standard energy drink">None</td>
+          <td data-label="Cold brew coffee">None</td>
+        </tr>
+        <tr>
+          <th scope="row">Artificial colour</th>
+          <td data-label="Asmaan" class="brand-col">None, colour from food</td>
+          <td data-label="Standard energy drink">Often</td>
+          <td data-label="Cold brew coffee">None</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {%- if section.settings.cta_label != blank -%}
+    <p class="compare_cta">
+      <a href="{{ section.settings.cta_url | default: '/#range' }}" class="button is-hero is-primary">
+        <span>{{ section.settings.cta_label | escape }}</span>
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="square" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    </p>
+  {%- endif -%}
+</section>
+
+<script>
+  (function () {
+    // Desktop: light the sticky panel for whichever benefit is crossing the middle of the screen.
+    var spread = document.querySelector('[data-science]');
+    if (!spread || spread.dataset.bound) return;
+    spread.dataset.bound = 'true';
+    var panels = spread.querySelectorAll('.science_media [data-science-panel]');
+    var items = spread.querySelectorAll('[data-science-item]');
+    function show(i) {
+      panels.forEach(function (p) { p.classList.toggle('is-active', p.getAttribute('data-science-panel') === String(i)); });
+      items.forEach(function (it) { it.classList.toggle('is-active', it.getAttribute('data-science-item') === String(i)); });
+    }
+    show(0);
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) show(e.target.getAttribute('data-science-item')); });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    items.forEach(function (it) { io.observe(it); });
+  })();
+</script>
+
 {% schema %}
 {
-  "name": "Science & Benefits",
-  "tag": "section",
+  "name": "About: what is in it",
+  "tag": "div",
   "class": "section-main-benefits",
   "settings": [
     {
-      "type": "text",
-      "id": "tag",
-      "label": "Hero Tagline",
-      "default": "Formulated for Performance"
-    },
-    {
-      "type": "text",
+      "type": "textarea",
       "id": "title",
-      "label": "Hero Title",
-      "default": "The Science of Asmaan"
+      "label": "Heading",
+      "default": "What is\nin the can"
     },
     {
       "type": "textarea",
       "id": "subtitle",
-      "label": "Hero Subtitle",
-      "default": "Energy drinks were engineered for athletes and video gamers. Asmaan is engineered for creators, builders, and deep thinkers who need sustained focus without jitters or burnout."
+      "label": "Intro",
+      "default": "Five actives at doses worth printing, no proprietary blend, and nothing in there to make the label look longer."
+    },
+    {
+      "type": "header",
+      "content": "Comparison"
+    },
+    {
+      "type": "textarea",
+      "id": "compare_title",
+      "label": "Heading",
+      "default": "How it\ncompares"
     },
     {
       "type": "text",
       "id": "cta_label",
-      "label": "CTA Button Label",
-      "default": "Taste the Difference • Shop Range"
+      "label": "Button label",
+      "default": "Shop the range"
     },
     {
       "type": "url",
       "id": "cta_url",
-      "label": "CTA Button Link"
+      "label": "Button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        { "type": "text", "id": "figure", "label": "Figure", "default": "0" },
+        { "type": "text", "id": "unit", "label": "Unit", "default": "g" },
+        { "type": "text", "id": "title", "label": "Headline", "default": "Zero sugar" },
+        { "type": "textarea", "id": "body", "label": "Text" },
+        { "type": "text", "id": "note", "label": "Small print" },
+        { "type": "text", "id": "assets", "label": "Can image(s)", "default": "mango-front.webp", "info": "Theme asset file names. Separate two or three with commas to stand the cans side by side." },
+        { "type": "color", "id": "surface", "label": "Panel colour", "default": "#5A2A00" },
+        { "type": "text", "id": "bands", "label": "Band colours", "info": "With several cans: one colour per can, separated by commas." },
+        { "type": "color", "id": "ink", "label": "Figure colour", "default": "#EFB36B" }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Science & Benefits"
+      "name": "About: what is in it"
     }
   ]
 }

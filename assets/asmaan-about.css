@@ -1,0 +1,506 @@
+/* ---------------------------------------------------------------------------
+   Asmaan — About page (sections/main-about.liquid, sections/main-benefits.liquid).
+
+   Sharp rectangles, the product photographed, and the flavour colours used as
+   solid panels rather than accents. Headings are centred like the rest of the
+   site. Selectors lead with `body` so they beat asmaan-prototype.css.
+--------------------------------------------------------------------------- */
+
+body .about_hero,
+body .about_can-words,
+body .about_people,
+body .science,
+body .compare {
+  position: relative;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: #fff;
+}
+
+body .about_section-title {
+  margin: 0 0 clamp(2rem, 4vw, 3.5rem);
+  font-size: clamp(2.75rem, 8vw, 7.5rem);
+  line-height: 0.86;
+  text-align: center;
+}
+
+body .about_lede {
+  max-width: 38rem;
+  margin: 0 auto;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* --- Hero: the title with the cans standing over its last line ----------- */
+body .about_hero {
+  padding-top: calc(var(--asmaan-header-h, 90px) + clamp(2.5rem, 6vw, 5rem));
+  text-align: center;
+  overflow: hidden;
+}
+
+body .about_title {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: clamp(3.5rem, 13.5vw, 14rem);
+  line-height: 0.84;
+  text-align: center;
+}
+
+body .about_cans {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: clamp(17rem, 40vw, 34rem);
+  margin-top: calc(-1 * clamp(0.75rem, 3.4vw, 3.5rem));
+}
+
+body .about_can {
+  height: 100%;
+  width: auto;
+  filter: drop-shadow(0 28px 36px rgba(0, 0, 0, 0.5));
+}
+
+body .about_can.is-mid {
+  position: relative;
+  z-index: 1;
+}
+
+body .about_can.is-left {
+  height: 86%;
+  margin-right: -6%;
+  transform: rotate(-9deg) translateY(5%);
+}
+
+body .about_can.is-right {
+  height: 86%;
+  margin-left: -6%;
+  transform: rotate(9deg) translateY(5%);
+}
+
+body .about_intro {
+  max-width: 40rem;
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- The words on the can -------------------------------------------------- */
+body .about_can-words {
+  padding-top: clamp(5rem, 11vw, 10rem);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+body .about_can-words-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2.5rem, 6vw, 6rem);
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Printer's crop marks around the photograph. */
+body .about_panel {
+  position: relative;
+  margin: 0;
+  padding: 14px;
+}
+
+body .about_panel::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 1.75rem;
+  pointer-events: none;
+  opacity: 0.55;
+  background:
+    linear-gradient(#fff, #fff) top left / 14px 1px no-repeat,
+    linear-gradient(#fff, #fff) top left / 1px 14px no-repeat,
+    linear-gradient(#fff, #fff) top right / 14px 1px no-repeat,
+    linear-gradient(#fff, #fff) top right / 1px 14px no-repeat,
+    linear-gradient(#fff, #fff) bottom left / 14px 1px no-repeat,
+    linear-gradient(#fff, #fff) bottom left / 1px 14px no-repeat,
+    linear-gradient(#fff, #fff) bottom right / 14px 1px no-repeat,
+    linear-gradient(#fff, #fff) bottom right / 1px 14px no-repeat;
+}
+
+body .about_panel-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #9089d3;
+}
+
+body .about_panel-frame img {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 125%;
+  max-width: none;
+  height: auto;
+  transform: translate(-55.5%, -11.5%);
+}
+
+body .about_panel figcaption {
+  margin-top: 0.75rem;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+body .about_quote {
+  margin: 0;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 3.3vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+body .about_quote-line {
+  display: block;
+  color: #fff;
+  transition: color 0.6s ease;
+}
+
+body .about_quote-line + .about_quote-line {
+  margin-top: 0.4em;
+}
+
+html[data-about-motion] body .about_quote-line:not(.is-lit) {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+body .about_quote-sign {
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 0;
+  color: #fff;
+}
+
+body .about_quote-sign .asmaan-logo {
+  width: auto;
+  height: clamp(28px, 3vw, 40px);
+}
+
+/* --- Who it is for ---------------------------------------------------------- */
+body .about_people {
+  padding-top: clamp(4rem, 8vw, 7rem);
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+  text-align: center;
+}
+
+body .about_people-list {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+body .about_people-list li {
+  padding: clamp(1rem, 2vw, 1.5rem) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: clamp(1.25rem, 2.6vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+
+body .about_people-close {
+  max-width: 36rem;
+  margin: clamp(2rem, 4vw, 3rem) auto 0;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* --- What is in the can: a sticky flavour panel beside the list ----------- */
+body .science {
+  padding-top: clamp(5rem, 9vw, 8rem);
+}
+
+body .science_head {
+  max-width: 60rem;
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+  text-align: center;
+}
+
+body .science_spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+body .science_media-sticky {
+  position: sticky;
+  top: calc(var(--asmaan-header-h, 90px) + 2rem);
+  height: min(calc(100svh - var(--asmaan-header-h, 90px) - 4rem), 760px);
+}
+
+body .science_panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--panel);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+body .science_panel.is-active {
+  opacity: 1;
+}
+
+body .science_panel > img {
+  width: auto;
+  height: 84%;
+  transform: translateY(6%);
+  filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.45));
+}
+
+body .science_panel.is-trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+}
+
+body .science_band {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  background: var(--band);
+}
+
+body .science_band img {
+  width: auto;
+  height: 74%;
+  transform: translateY(10%);
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.35));
+}
+
+body .science_list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body .science_item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 78svh;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  transition: opacity 0.5s ease;
+}
+
+body .science_item:first-child {
+  border-top: 0;
+}
+
+body .science_item:not(.is-active) {
+  opacity: 0.35;
+}
+
+body .science_item-media {
+  display: none;
+}
+
+body .science_figure {
+  margin: 0 0 1rem;
+  font-family: var(--font-heading);
+  font-size: clamp(4rem, 8.5vw, 8.5rem);
+  font-style: italic;
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  color: var(--ink, #fff);
+}
+
+body .science_figure span {
+  margin-left: 0.25em;
+  font-size: 0.26em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+body .science_title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+body .science_body {
+  max-width: 32rem;
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+body .science_note {
+  margin: 1.25rem 0 0;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* --- Comparison ---------------------------------------------------------------- */
+body .compare {
+  padding-top: clamp(5rem, 9vw, 8rem);
+  padding-bottom: clamp(4rem, 7vw, 6rem);
+}
+
+body .compare_wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+body .compare_table {
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  border-collapse: collapse;
+  background: none;
+  font-size: 1rem;
+}
+
+body .compare_table th,
+body .compare_table td {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  text-align: left;
+  vertical-align: top;
+}
+
+body .compare_table thead th {
+  background: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body .compare_table tbody th {
+  font-weight: 600;
+  color: #fff;
+}
+
+body .compare_table td {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+body .compare_table .brand-col,
+body .compare_table thead .brand-col {
+  background: #9089d3;
+  color: #0d0820;
+  font-weight: 700;
+}
+
+body .compare_cta {
+  margin: clamp(2.5rem, 5vw, 3.5rem) 0 0;
+  text-align: center;
+}
+
+/* --- Entrances (only once asmaan JS has armed them) ---------------------------- */
+html[data-about-motion] body [data-about-reveal] {
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+html[data-about-motion] body [data-about-reveal].is-armed:not(.is-in) {
+  opacity: 0;
+  transform: translateY(28px);
+}
+
+/* --- Tablets and phones ------------------------------------------------------ */
+@media (max-width: 899px) {
+  body .about_can-words-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body .about_panel {
+    max-width: 22rem;
+    margin: 0 auto;
+  }
+
+  body .science_spread {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body .science_media {
+    display: none;
+  }
+
+  body .science_item {
+    min-height: 0;
+    padding: 2.5rem 0;
+    opacity: 1 !important;
+  }
+
+  body .science_item-media {
+    display: block;
+    margin-bottom: 1.75rem;
+  }
+
+  body .science_item-media .science_panel {
+    position: relative;
+    aspect-ratio: 5 / 4;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 767px) {
+  /* The comparison stacks into one card per row (asmaan-mobile.css); here the
+     row heading is a th, and the Asmaan line keeps its violet fill. */
+  body .compare_table th[scope='row'] {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+
+  body .compare_table tr {
+    border-radius: 0;
+  }
+
+  body .compare_table td.brand-col {
+    margin: 0.25rem -0.5rem;
+    padding: 0.6rem 0.5rem;
+    border-top: 0;
+  }
+
+  body .compare_table td.brand-col::before {
+    color: rgba(13, 8, 32, 0.65);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .science_panel,
+  body .science_item,
+  body .about_quote-line {
+    transition: none;
+  }
+}

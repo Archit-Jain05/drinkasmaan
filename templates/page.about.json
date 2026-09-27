@@ -2,14 +2,75 @@
   "sections": {
     "main": {
       "type": "main-about",
-      "settings": {
-        "show_pillars": false,
-        "show_batch": false
-      }
+      "settings": {}
     },
     "benefits": {
       "type": "main-benefits",
-      "settings": {}
+      "settings": {},
+      "blocks": {
+        "b_sugar": {
+          "type": "benefit",
+          "settings": {
+            "figure": "0",
+            "unit": "g sugar",
+            "title": "Zero sugar",
+            "body": "Ten calories a can. Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
+            "note": "10 kcal per 250 ml",
+            "assets": "mango-front.webp",
+            "surface": "#5a2a00",
+            "ink": "#efb36b",
+            "bands": ""
+          }
+        },
+        "b_caffeine": {
+          "type": "benefit",
+          "settings": {
+            "figure": "100",
+            "unit": "mg caffeine",
+            "title": "From green coffee",
+            "body": "100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.",
+            "note": "About a strong cup of coffee",
+            "assets": "jamun-front.webp",
+            "surface": "#2a1d4a",
+            "ink": "#9089d3",
+            "bands": ""
+          }
+        },
+        "b_calm": {
+          "type": "benefit",
+          "settings": {
+            "figure": "200 + 300",
+            "unit": "mg",
+            "title": "L-theanine and KSM-66 ashwagandha",
+            "body": "200 mg of L-theanine to take the edge off the caffeine, and 300 mg of KSM-66 ashwagandha under it. The curve climbs instead of spiking, then comes down flat.",
+            "note": "Peaks about forty minutes in, holds for about four hours",
+            "assets": "asmaan-can-magenta.webp",
+            "surface": "#4e0749",
+            "ink": "#e6a0e8",
+            "bands": ""
+          }
+        },
+        "b_colour": {
+          "type": "benefit",
+          "settings": {
+            "figure": "0",
+            "unit": "dyes",
+            "title": "Colour from food",
+            "body": "No synthetic dyes and no proprietary blend. Every milligram in the can is printed on the can, and the colour comes from what is already in it.",
+            "note": "Vegan",
+            "assets": "asmaan-can-jamun.webp, asmaan-can-mango.webp, asmaan-can-magenta.webp",
+            "surface": "#2a1d4a",
+            "ink": "#ffffff",
+            "bands": "#9089d3, #efb36b, #e6a0e8"
+          }
+        }
+      },
+      "block_order": [
+        "b_sugar",
+        "b_caffeine",
+        "b_calm",
+        "b_colour"
+      ]
     },
     "faq": {
       "type": "asmaan-faq",
