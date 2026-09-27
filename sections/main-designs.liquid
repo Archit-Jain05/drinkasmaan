@@ -13,13 +13,13 @@
 -%}
 
 <div data-surface="dark" class="min-h-dvh text-neutral-900 designs-page-wrapper">
-  <header class="mx-auto flex max-w-[1400px] flex-wrap items-end justify-between gap-6 px-6 pt-10 pb-8 sm:px-10">
+  <header class="mx-auto flex max-w-[1400px] flex-col items-center gap-6 px-6 pt-10 pb-8 text-center sm:px-10">
     <div>
       <p class="font-mono text-[11px] tracking-[0.22em] text-neutral-400 uppercase">{{ section.settings.kicker | escape }}</p>
       <h1 class="mt-2 font-serif text-4xl font-light tracking-tight sm:text-5xl text-neutral-900">{{ section.settings.title | escape }}</h1>
     </div>
 
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center justify-center gap-2">
       <div class="flex rounded-full bg-neutral-100 p-1" role="tablist" aria-label="{{ section.settings.label_mode | escape }}">
         <button type="button" class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors bg-white text-neutral-900 shadow-sm" data-mode="can" aria-pressed="true">{{ section.settings.label_can | escape }}</button>
         <button type="button" class="designs-mode-btn rounded-full px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] uppercase transition-colors text-neutral-400 hover:text-neutral-700" data-mode="flat" aria-pressed="false">{{ section.settings.label_flat | escape }}</button>
@@ -41,7 +41,7 @@
 
   <main class="mx-auto max-w-[1400px] px-6 pb-24 sm:px-10">
     <div id="designs-can-mode" class="block">
-      <p id="designs-panel-label" class="font-mono text-[11px] tracking-[0.18em] text-neutral-400 uppercase">{{ section.settings.panel_front | escape }}</p>
+      <p id="designs-panel-label" class="font-mono text-[11px] tracking-[0.18em] text-neutral-400 uppercase text-center">{{ section.settings.panel_front | escape }}</p>
 
       <div class="mt-6 grid gap-x-8 gap-y-14 sm:grid-cols-3">
         {%- for block in section.blocks -%}

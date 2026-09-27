@@ -49,6 +49,25 @@
   );
 }
 
+/* --- Centred section headings ---------------------------------------------
+   Section and page titles sit on the centre line, with the intro under them.
+   Headings in a side column next to a can or product (the benefit close-ups,
+   the Drink and product buy panels, the pack scene, merch items, the contact
+   hero) keep their column's alignment. */
+body #range-section h2.heading-style-display,
+body section#range h2.heading-style-display,
+body section#faq h2.heading-style-display,
+body .drink_formula-head,
+body .drink_formula-head h2.heading-style-display {
+  text-align: center;
+}
+body section#range h2.heading-style-display + p,
+body .drink_formula-head p {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
 /* --- Type ---------------------------------------------------------------- */
 body {
   font-family: var(--asmaan-font-primary);

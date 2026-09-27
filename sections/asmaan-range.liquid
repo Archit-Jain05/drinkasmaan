@@ -34,6 +34,7 @@
                   assign c_title = item.settings.title | default: p.title
                   assign c_tag = item.settings.tag | default: p.metafields.custom.tagline.value
                   assign c_img = item.settings.image | default: p.featured_media | default: p.featured_image
+                  assign c_label = item.settings.label_image | default: p.images.last
                   assign c_url = item.settings.url | default: p.url
                   assign c_color_sec = item.settings.accent_secondary | default: p.metafields.custom.accent_color.value
                   assign c_color_pri = item.settings.accent_primary | default: p.metafields.custom.primary_color.value
@@ -43,6 +44,7 @@
                   assign c_title = p.title
                   assign c_tag = p.metafields.custom.tagline.value
                   assign c_img = p.featured_media | default: p.featured_image
+                  assign c_label = p.images.last
                   assign c_url = p.url
                   assign c_color_sec = p.metafields.custom.accent_color.value
                   assign c_color_pri = p.metafields.custom.primary_color.value
@@ -69,16 +71,26 @@
                     class="pointer-events-none absolute inset-x-6 bottom-0 h-2/3 rounded-[50%] opacity-45 blur-3xl transition-opacity duration-500 group-hover:opacity-70"
                     style="background: radial-gradient(circle at 50% 100%, {{ c_color_sec }}, {{ c_color_pri }} 55%, transparent 75%);"
                   ></span>
-                  {%- if c_img != blank -%}
-                    <img
-                      alt="{{ c_title | escape }}"
-                      loading="lazy"
-                      width="520"
-                      height="1040"
-                      decoding="async"
-                      class="asmaan-range-can relative w-auto object-contain transition-transform duration-500 group-hover:-translate-y-2"
-                      src="{{ c_img | image_url: width: 520 }}"
-                    >
+                  {%- comment -%}
+                    A turning 3D can wearing the flavour's 360° print (the product's last image,
+                    as on the stage), with the photo as its poster until the engine is ready.
+                    Not draggable: the whole card is the button.
+                  {%- endcomment -%}
+                  {%- assign c_poster = c_img.preview_image | default: c_img -%}
+                  {%- if c_label != blank or c_poster != blank -%}
+                    <span class="asmaan-range-can relative block transition-transform duration-500 group-hover:-translate-y-2">
+                      {%- render 'asmaan-can-3d',
+                        label: c_label,
+                        poster: c_poster,
+                        alt: c_title,
+                        tint: c_color_sec,
+                        detail: 'low',
+                        draggable: false,
+                        idle_spin: section.settings.can_spin,
+                        view: 'front',
+                        ratio: '760 / 1950'
+                      -%}
+                    </span>
                   {%- endif -%}
                   <span class="asmaan-range-title relative heading-style-h3">{{ c_title | escape }}</span>
                   {%- if c_tag != blank -%}
@@ -105,7 +117,8 @@
     grid-template-columns: repeat({{ section.settings.columns }}, minmax(0, 1fr));
     gap: var(--pad-l);
   }
-  #shopify-section-{{ section.id }} .asmaan-range-can { height: 38svh; }
+  #shopify-section-{{ section.id }} .asmaan-range-can { height: 38svh; aspect-ratio: 760 / 1950; }
+  #shopify-section-{{ section.id }} .asmaan-range-can > * { width: 100%; max-width: none; height: 100%; }
 
   @media (max-width: 749px) {
     #shopify-section-{{ section.id }} .asmaan-range-grid[data-mobile-row="false"] { grid-template-columns: minmax(0, 1fr); }
@@ -134,6 +147,7 @@
   "class": "asmaan-range-section",
   "settings": [
     { "type": "textarea", "id": "title", "label": "Heading", "default": "The range" },
+    { "type": "range", "id": "can_spin", "label": "Can spin speed", "min": 0, "max": 1.5, "step": 0.1, "default": 0.6, "info": "Radians per second. 0 stops the cans turning." },
     {
       "type": "select",
       "id": "card_source",
@@ -162,7 +176,8 @@
         { "type": "paragraph", "content": "Leave the fields below empty to use the product's own data." },
         { "type": "text", "id": "title", "label": "Title override" },
         { "type": "text", "id": "tag", "label": "Tagline override" },
-        { "type": "image_picker", "id": "image", "label": "Image override" },
+        { "type": "image_picker", "id": "image", "label": "Image override", "info": "Shown until the 3D can has loaded." },
+        { "type": "image_picker", "id": "label_image", "label": "3D label override", "info": "The flat 360° print. Defaults to the product's last image." },
         { "type": "color", "id": "accent_secondary", "label": "Glow colour override" },
         { "type": "color", "id": "accent_primary", "label": "Glow base colour override" },
         { "type": "url", "id": "url", "label": "Link override" }
