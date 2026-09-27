@@ -12,19 +12,32 @@
     "main": {
       "type": "main-about",
       "settings": {
+        "kicker": "Our Origins • Manifesto",
+        "title": "The Ambition Tonic",
+        "intro": "Energy drinks were engineered for extreme sports and nightclub floors: saturated in 30g of refined sugars, synthetic taurine, and jittery caffeine spikes designed for rapid heart rates rather than sustained, quiet cognitive concentration.",
         "show_pillars": false,
-        "show_batch": false
+        "premise_title": "Engineered For Modern Creators",
+        "premise_p1": "We built Asmaan for programmers writing code at 2 AM, designers obsessing over typography, writers finishing their fifth draft, and founders building companies from nothing.",
+        "premise_p2": "You don't need a heart-racing adrenaline spike. You need a calm, steady cognitive floor that holds you in flow state for four straight hours without anxiety, irritability, or an afternoon crash.",
+        "show_batch": false,
+        "batch_title": "Experience The Flagship Batch",
+        "batch_sub": "Dispatched direct from our studio with free express delivery over [free_shipping_threshold].",
+        "batch_cta_label": "Explore Flavors",
+        "batch_cta_url": ""
       }
     },
     "benefits": {
       "type": "main-benefits",
-      "settings": {}
+      "settings": {
+        "tag": "Formulated for Performance",
+        "title": "The Science of Asmaan",
+        "subtitle": "Energy drinks were engineered for athletes and video gamers. Asmaan is engineered for creators, builders, and deep thinkers who need sustained focus without jitters or burnout.",
+        "cta_label": "Taste the Difference • Shop Range",
+        "cta_url": ""
+      }
     },
     "faq": {
       "type": "asmaan-faq",
-      "settings": {
-        "title": "Frequently asked\nquestions"
-      },
       "blocks": {
         "faq_1": {
           "type": "faq_item",
@@ -100,15 +113,35 @@
         "faq_7",
         "faq_8",
         "faq_9"
-      ]
+      ],
+      "settings": {
+        "title": "Frequently asked\nquestions"
+      }
     },
     "support": {
       "type": "main-faq-support",
-      "settings": {}
+      "settings": {
+        "title": "Still need help?",
+        "subtitle": "Our studio support team is on standby to assist with custom orders, dietary questions, or stockist queries.",
+        "cta_label": "Contact Studio Support",
+        "cta_url": ""
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
-      "settings": {}
+      "disabled": true,
+      "settings": {
+        "brand_name": "ASMAAN",
+        "title": "Join the first batch",
+        "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
+        "placeholder": "Your email address",
+        "cta_text": "Sign up",
+        "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
+        "instagram_url": "",
+        "legal_link": "",
+        "terms_link": "",
+        "privacy_link": ""
+      }
     }
   },
   "order": [
