@@ -17,8 +17,8 @@
           "settings": {
             "name": "Orders & Support",
             "blurb": "Deliveries, subscriptions, a dented can — anything about an order you've placed.",
-            "color": "#9089D3",
-            "ink": "#1A1030"
+            "color": "#9089d3",
+            "ink": "#1a1030"
           }
         },
         "topic_wholesale": {
@@ -26,8 +26,8 @@
           "settings": {
             "name": "Wholesale & Retail",
             "blurb": "Stocking Asmaan in your cafe, gym, office or store.",
-            "color": "#E6A0E8",
-            "ink": "#3A0536"
+            "color": "#e6a0e8",
+            "ink": "#3a0536"
           }
         },
         "topic_press": {
@@ -35,8 +35,8 @@
           "settings": {
             "name": "Press & Creators",
             "blurb": "Stories, shoots, collaborations and samples for review.",
-            "color": "#EFB36B",
-            "ink": "#3D1C00"
+            "color": "#efb36b",
+            "ink": "#3d1c00"
           }
         },
         "topic_other": {
@@ -44,7 +44,7 @@
           "settings": {
             "name": "Something Else",
             "blurb": "Ideas, feedback, or just saying hi.",
-            "color": "#FFFFFF",
+            "color": "#ffffff",
             "ink": "#000000"
           }
         }
@@ -55,11 +55,48 @@
         "topic_press",
         "topic_other"
       ],
-      "settings": {}
+      "settings": {
+        "tag": "Direct Communication",
+        "title": "Get in\nTouch",
+        "subtitle": "Have questions regarding order status, wholesale distribution, press requests, or studio partnerships? We respond within 24 business hours.",
+        "can_asset_1": "asmaan-can-magenta.webp",
+        "can_asset_2": "asmaan-can-jamun.webp",
+        "can_asset_3": "asmaan-can-mango.webp",
+        "band_items": "Replies within 24 business hours\nMon – Fri 09:00 – 19:00 IST\nBandra West, Mumbai\nhello@drinkasmaan.com",
+        "email_label": "Email Directly",
+        "email": "hello@drinkasmaan.com",
+        "address_label": "Studio Inquiries",
+        "address": "Asmaan Botanical Labs\nBandra West, Mumbai • 400050",
+        "hours_label": "Response Hours",
+        "hours": "Mon – Fri: 09:00 – 19:00 IST",
+        "form_title": "Drop us a line",
+        "label_inquiry": "What's it about?",
+        "label_name": "Name",
+        "placeholder_name": "Your name",
+        "label_email": "Email Address",
+        "placeholder_email": "your.email@domain.com",
+        "label_message": "Message",
+        "placeholder_message": "How can we help?",
+        "submit_text": "Send Message",
+        "success_title": "Message sent",
+        "success_body": "Thank you for writing to Asmaan. Our team will review your inquiry and follow up promptly."
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
-      "settings": {}
+      "disabled": true,
+      "settings": {
+        "brand_name": "ASMAAN",
+        "title": "Join the first batch",
+        "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
+        "placeholder": "Your email address",
+        "cta_text": "Sign up",
+        "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
+        "instagram_url": "",
+        "legal_link": "",
+        "terms_link": "",
+        "privacy_link": ""
+      }
     }
   },
   "order": [
