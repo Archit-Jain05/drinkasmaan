@@ -57,12 +57,14 @@
   var LEAN_Y = 0.28;
   var LEAN_Z = 0.06;
   var TRACK_FOLLOW = 7;
-  var CLOSE_UP_DOLLY = 0.62; // close-up camera distance as a share of the stage framing; frames the whole can
+  var CLOSE_UP_DOLLY = 0.62; // phones: close-up camera distance as a share of the stage framing
   var CLOSE_UP_CAM_PITCH = 0.06;
-  // Framed that wide the whole can is in view, so the camera rests near its top (lid just under
-  // the header, base running off the bottom) and follows each icon only a little; the spot does
-  // the travelling down the column.
-  var CLOSE_UP_AIM = 0.62; // resting aim, as a share of the can's height up from its base
+  // Desktop frames the can itself rather than a share of the stage distance, which made it 1.6
+  // screens tall on a wide, short window. As on ciaoenergy.com: the can stands about a screen
+  // tall, lid a little under the header and base running off the bottom, and the camera follows
+  // each icon only a little; the spot does the travelling down the column.
+  var CLOSE_UP_FILL = 0.96; // desktop: the can's height as a share of the screen's
+  var CLOSE_UP_LID = 0.15; // desktop: the lid's distance down from the top, as a share of the screen
   var CLOSE_UP_FOLLOW = 0.2; // share of the icon's travel the camera follows
   // The label's benefit icon column: its u on the print, and each icon's centre measured down
   // from the top of the print (research, cortisol, zero sugar, focus). The close-up turns that
@@ -1165,6 +1167,8 @@
     var lastScrollProgress = -1;
     var lastHostLit = -1;
     var lastSkyFlavour = -1;
+    var copyRight = 0; // right edge of the benefit copy, px (read pass, used next frame)
+    var railLeft = 0; // left edge of the benefit icon rail, px
     var lastTasteActive = false;
     var lastTasteDim = false;
     var lastShowNav = null;
@@ -1292,12 +1296,29 @@
 
           // Camera Dolly for Close-up: aimed near the top of the can, pitched up a touch. On phones
           // the copy sits over the middle of the screen, so the icon is framed in the upper part instead.
-          var camZ = cDist * (1 - closeUp * (1 - CLOSE_UP_DOLLY));
+          var halfTan = Math.tan((stage3D.camera.fov * Math.PI) / 360);
+          var canH = pose.scale * HEIGHT * (railInner ? railInner.scale.y : 1);
+          var closeZ = windowW < 992 ? cDist * CLOSE_UP_DOLLY : canH / (CLOSE_UP_FILL * 2 * halfTan);
+          var camZ = lerp(cDist, closeZ, closeUp);
           var camPitch = closeUp * CLOSE_UP_CAM_PITCH;
-          var iconLift = windowW < 992 ? ICON_LIFT_MOBILE * camZ * Math.tan((stage3D.camera.fov * Math.PI) / 360) : 0;
-          var restY = pose.y * u + pose.scale * (CLOSE_UP_AIM - 0.5) * HEIGHT * (railInner ? railInner.scale.y : 1);
+          var iconLift = windowW < 992 ? ICON_LIFT_MOBILE * camZ * halfTan : 0;
+          var restY = pose.y * u + canH / 2 - (1 - 2 * CLOSE_UP_LID) * closeZ * halfTan;
+          // Desktop: slide the view so the can clears the copy on the left (and the icon rail on
+          // the right) instead of sitting under the text on a narrow window.
+          var camX = 0;
+          if (windowW >= 992 && copyRight > 0) {
+            var pxPerUnit = windowH / (2 * halfTan * closeZ);
+            var canHalfPx = pose.scale * CAN_RADIUS * (railInner ? railInner.scale.x : 1) * pxPerUnit;
+            var canPx = windowW / 2 + pose.x * u * pxPerUnit;
+            var clearLeft = copyRight + 40 + canHalfPx;
+            var clearRight = railLeft - 40 - canHalfPx;
+            var wantPx = clearLeft <= clearRight
+              ? Math.min(Math.max(canPx, clearLeft), clearRight)
+              : (copyRight + railLeft) / 2;
+            camX = -(wantPx - canPx) / pxPerUnit;
+          }
           var aimY = windowW < 992 ? iconY : lerp(restY, iconY, CLOSE_UP_FOLLOW);
-          stage3D.camera.position.set(0, closeUp * (aimY - Math.tan(camPitch) * camZ - iconLift), camZ);
+          stage3D.camera.position.set(closeUp * camX, closeUp * (aimY - Math.tan(camPitch) * camZ - iconLift), camZ);
           stage3D.camera.rotation.set(camPitch, 0, 0);
 
           // Dramatic Close-Up Lighting:
@@ -1463,6 +1484,10 @@
 
       for (var bi = 0; bi < benefitCache.length; bi++) {
         benefitCache[bi].amount = pinAmount(benefitCache[bi].el.getBoundingClientRect(), windowH).amount;
+      }
+      if (windowW >= 992 && benefitCache.length && benefitCache[0].box) {
+        copyRight = benefitCache[0].box.getBoundingClientRect().right;
+        railLeft = benefitsNav ? benefitsNav.getBoundingClientRect().left : windowW;
       }
 
       // 4. WRITE PASS: Update styles/classes with zero forced synchronous layout
