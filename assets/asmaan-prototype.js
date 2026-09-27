@@ -1164,6 +1164,7 @@
     var lastTime = performance.now();
     var lastScrollProgress = -1;
     var lastHostLit = -1;
+    var lastSkyFlavour = -1;
     var lastTasteActive = false;
     var lastTasteDim = false;
     var lastShowNav = null;
@@ -1479,6 +1480,19 @@
             manifestoLayer.setAttribute('data-active', String(showM));
           }
         }
+      }
+
+      // Sky flavour (asmaan-brand.css): full through the hero and benefits, gone once the
+      // manifesto has faded in. Uses its own dirty check, since a jump from above the
+      // manifesto to below it leaves the pin amount at 0 on both sides.
+      for (var si = 0; si < pinnedCache.length; si++) {
+        if (!pinnedCache[si].isManifesto) continue;
+        var skyFlavour = 1 - pinnedCache[si].enter;
+        if (Math.abs(skyFlavour - lastSkyFlavour) > 0.004 || (skyFlavour !== lastSkyFlavour && (skyFlavour === 0 || skyFlavour === 1))) {
+          lastSkyFlavour = skyFlavour;
+          document.documentElement.style.setProperty('--asmaan-sky-flavour', skyFlavour.toFixed(3));
+        }
+        break;
       }
 
       if (pRect) {

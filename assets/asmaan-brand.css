@@ -143,6 +143,52 @@ body .asmaan-contact__submit-label {
   0%, 100% { transform: translate(0, 0) scale(1.08); }
   50% { transform: translate(-8vw, -9vh) scale(1); }
 }
+/* Homepage: the sky wears the flavour in focus through the hero and the benefits —
+   Kala Jamun violet, Alphonso Mango amber to gold, Wild Magenta plum to pink — and hands
+   back to the night-sky gradient as "Nothing hidden" comes in. The base sky and its orbs
+   stay the untinted violet here; the flavour lives on its own layer above the orbs, so
+   no violet shows through a mango or magenta sky. asmaan-prototype.js drives
+   --asmaan-sky-flavour from 1 to 0 with the manifesto's fade-in, and the colours
+   cross-fade on a flavour change through the registered properties below. */
+@property --asmaan-sky-deep {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #2a1d4a;
+}
+@property --asmaan-sky-glow {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #9089d3;
+}
+body.template-index {
+  --asmaan-sky: linear-gradient(180deg, #04020b 0%, #07041a 16%, #0e0729 34%, #180c42 52%, #261263 70%, #391c89 86%, #5530a3 100%);
+}
+body.template-index .asmaan-sky__orb.is-1 {
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.6), transparent 68%);
+}
+body.template-index .asmaan-sky__orb.is-2 {
+  background: radial-gradient(circle, rgba(200, 110, 255, 0.48), transparent 68%);
+}
+.asmaan-sky__flavour {
+  display: none;
+}
+body.template-index .asmaan-sky__flavour {
+  --asmaan-sky-deep: var(--taste-primary, #2a1d4a);
+  --asmaan-sky-glow: var(--taste-secondary, #9089d3);
+  display: block;
+  position: absolute;
+  inset: 0;
+  opacity: var(--asmaan-sky-flavour, 1);
+  background:
+    radial-gradient(70% 45% at 50% 100%, color-mix(in oklab, var(--asmaan-sky-glow) 55%, transparent), transparent 100%),
+    linear-gradient(180deg,
+      #04020b 0%,
+      color-mix(in oklab, var(--asmaan-sky-deep) 45%, #04020b) 22%,
+      var(--asmaan-sky-deep) 48%,
+      color-mix(in oklab, var(--asmaan-sky-glow) 45%, var(--asmaan-sky-deep)) 78%,
+      color-mix(in oklab, var(--asmaan-sky-glow) 80%, var(--asmaan-sky-deep)) 100%);
+  transition: --asmaan-sky-deep 0.9s ease, --asmaan-sky-glow 0.9s ease;
+}
 .asmaan-sky__stars { position: absolute; inset: 0; }
 .asmaan-sky__star {
   position: absolute;
