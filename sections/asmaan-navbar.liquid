@@ -106,6 +106,14 @@
   <nav class="navbar_link-list" aria-label="Primary" style="--menu-cols: {{ section.settings.menu_columns }};">
     {%- assign menu_links = linklists[section.settings.menu].links | default: linklists['main-menu'].links -%}
     {%- for link in menu_links -%}
+      {%- comment -%}
+        Skip links to a page that is hidden or deleted, so hiding a page in the admin also takes
+        it out of the menu instead of leaving a link to a 404.
+      {%- endcomment -%}
+      {%- if link.url contains '/pages/' -%}
+        {%- assign link_handle = link.url | split: '/pages/' | last | split: '#' | first | split: '?' | first -%}
+        {%- if pages[link_handle] == empty -%}{%- continue -%}{%- endif -%}
+      {%- endif -%}
       <a class="navbar_link" tabindex="-1" href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
     {%- endfor -%}
   </nav>
