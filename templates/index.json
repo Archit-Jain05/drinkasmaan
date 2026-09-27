@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "splash": {
@@ -11,8 +20,54 @@
     },
     "stage": {
       "type": "asmaan-stage",
+      "blocks": {
+        "flavour_1": {
+          "type": "flavour_slide",
+          "settings": {
+            "product": "kala-jamun",
+            "line1": "",
+            "line2": "",
+            "tag": "",
+            "blurb": "",
+            "primary_color": "",
+            "secondary_color": ""
+          }
+        },
+        "flavour_2": {
+          "type": "flavour_slide",
+          "settings": {
+            "product": "alphonso-mango",
+            "line1": "",
+            "line2": "",
+            "tag": "",
+            "blurb": "",
+            "primary_color": "",
+            "secondary_color": ""
+          }
+        },
+        "flavour_3": {
+          "type": "flavour_slide",
+          "settings": {
+            "product": "wild-magenta",
+            "line1": "",
+            "line2": "",
+            "tag": "",
+            "blurb": "",
+            "primary_color": "",
+            "secondary_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "flavour_1",
+        "flavour_2",
+        "flavour_3"
+      ],
       "settings": {
         "collection": "frontpage",
+        "fallback_primary": "#2a1d4a",
+        "fallback_secondary": "#9089d3",
+        "default_tag": "Ambition Tonic",
         "seo_h1": "Asmaan — the ambition tonic",
         "discover_text": "Scroll to discover",
         "b1_struck": "Sugar",
@@ -34,56 +89,42 @@
         "manifesto_line1": "Nothing",
         "manifesto_line2": "Hidden",
         "manifesto_label": "Nothing hidden — every milligram is printed on the can."
-      },
-      "blocks": {
-        "flavour_1": {
-          "type": "flavour_slide",
-          "settings": {
-            "product": "kala-jamun"
-          }
-        },
-        "flavour_2": {
-          "type": "flavour_slide",
-          "settings": {
-            "product": "alphonso-mango"
-          }
-        },
-        "flavour_3": {
-          "type": "flavour_slide",
-          "settings": {
-            "product": "wild-magenta"
-          }
-        }
-      },
-      "block_order": [
-        "flavour_1",
-        "flavour_2",
-        "flavour_3"
-      ]
+      }
     },
     "range": {
       "type": "asmaan-range",
-      "settings": {
-        "title": "The range",
-        "card_source": "blocks"
-      },
       "blocks": {
         "range_card_1": {
           "type": "product_card",
           "settings": {
-            "product": "kala-jamun"
+            "product": "kala-jamun",
+            "title": "",
+            "tag": "",
+            "accent_secondary": "",
+            "accent_primary": "",
+            "url": ""
           }
         },
         "range_card_2": {
           "type": "product_card",
           "settings": {
-            "product": "alphonso-mango"
+            "product": "alphonso-mango",
+            "title": "",
+            "tag": "",
+            "accent_secondary": "",
+            "accent_primary": "",
+            "url": ""
           }
         },
         "range_card_3": {
           "type": "product_card",
           "settings": {
-            "product": "wild-magenta"
+            "product": "wild-magenta",
+            "title": "",
+            "tag": "",
+            "accent_secondary": "",
+            "accent_primary": "",
+            "url": ""
           }
         }
       },
@@ -91,22 +132,36 @@
         "range_card_1",
         "range_card_2",
         "range_card_3"
-      ]
+      ],
+      "settings": {
+        "title": "The range",
+        "card_source": "blocks",
+        "collection": "",
+        "default_tag": "Ambition Tonic",
+        "fallback_secondary": "#9089d3",
+        "fallback_primary": "#2a1d4a",
+        "columns": 3,
+        "mobile_one_row": true
+      }
     },
     "wear": {
       "type": "asmaan-wear",
       "settings": {
-        "tag": "Studio Uniform",
         "title": "Asmaan Studio Wear",
-        "subtitle": "Architectural apparel designed for long sessions of creative discipline. Heavyweight textiles, minimal branding, and tailored utilitarian cuts.",
-        "item_cta": "Join Drop Waitlist"
+        "wordmark": "ASMAAN",
+        "cta_text": "Get notified",
+        "line_text": "Drops land without warning. If you are not on the list, you will miss it.",
+        "modal_title": "On the list",
+        "modal_body": "One mail, the morning the drop goes live. Nothing else, ever.",
+        "modal_placeholder": "Your email address",
+        "modal_cta": "Notify me",
+        "modal_close_text": "Close",
+        "modal_success": "You're on. Watch your inbox the morning it lands.",
+        "waitlist_tags": "newsletter,wear-drop-waitlist"
       }
     },
     "faq": {
       "type": "asmaan-faq",
-      "settings": {
-        "title": "Frequently asked\nquestions"
-      },
       "blocks": {
         "faq_1": {
           "type": "faq_item",
@@ -182,10 +237,14 @@
         "faq_7",
         "faq_8",
         "faq_9"
-      ]
+      ],
+      "settings": {
+        "title": "Frequently asked\nquestions"
+      }
     },
     "newsletter": {
       "type": "asmaan-newsletter",
+      "disabled": true,
       "settings": {
         "brand_name": "ASMAAN",
         "title": "Join the first batch",
