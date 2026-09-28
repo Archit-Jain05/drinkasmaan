@@ -1,0 +1,89 @@
+{%- comment -%}
+  One shoppable garment card, used by the merch page's shop grid and by "the rest of the
+  capsule" on a merch product page. Sizes are the product's own variants (radios named `id`),
+  so the form still adds to the cart without JavaScript; asmaan-merch-shop.js takes it over.
+
+  Accepts:
+  - product: the product (required)
+  - primary / secondary: the piece's colours (surface behind the photo, accent)
+  - title: display name (defaults to product.title)
+  - tag: short line under the name
+  - front_asset / back_asset: theme asset fallbacks when the product has no images
+  - label_add, label_sold_out, label_sizes, label_view: button and group labels
+  - heading_level: 2 or 3 (default 3)
+  - index: used to keep radio ids unique on the page
+{%- endcomment -%}
+
+{%- liquid
+  assign p = product
+  assign card_title = title | default: p.title
+  assign lvl = heading_level | default: 3
+  assign uid = 'mc-' | append: p.id | append: '-' | append: index
+
+  assign size_pos = -1
+  for option in p.options_with_values
+    assign option_name = option.name | downcase
+    if option_name == 'size'
+      assign size_pos = option.position | minus: 1
+    endif
+  endfor
+
+  assign front_img = p.images[0]
+  assign back_img = p.images[1]
+-%}
+
+<article
+  class="mshop_card{% if p.available == false %} is-sold-out{% endif %}"
+  style="--piece: {{ primary | default: '#2a1d4a' }}; --piece-hi: {{ secondary | default: '#9089d3' }};"
+>
+  <a class="mshop_media" href="{{ p.url }}" aria-label="{{ label_view | default: 'View' | escape }} — {{ card_title | escape }}">
+    {%- if front_img != blank -%}
+      {{ front_img | image_url: width: 900 | image_tag: alt: card_title, class: 'mshop_img', loading: 'lazy', sizes: '(min-width: 992px) 30vw, 90vw' }}
+    {%- elsif front_asset != blank -%}
+      <img class="mshop_img" src="{{ front_asset | asset_url }}" alt="{{ card_title | escape }}" loading="lazy">
+    {%- endif -%}
+    {%- if back_img != blank -%}
+      {{ back_img | image_url: width: 900 | image_tag: alt: '', class: 'mshop_img is-back', loading: 'lazy', sizes: '(min-width: 992px) 30vw, 90vw' }}
+    {%- elsif back_asset != blank -%}
+      <img class="mshop_img is-back" src="{{ back_asset | asset_url }}" alt="" loading="lazy">
+    {%- endif -%}
+    {%- unless p.available -%}<span class="mshop_flag">{{ label_sold_out | default: 'Sold out' | escape }}</span>{%- endunless -%}
+  </a>
+
+  <div class="mshop_body">
+    <div class="mshop_row">
+      <h{{ lvl }} class="mshop_name"><a href="{{ p.url }}">{{ card_title | escape }}</a></h{{ lvl }}>
+      <span class="mshop_price">{{ p.price | money_without_trailing_zeros }}</span>
+    </div>
+    {%- if tag != blank -%}<p class="mshop_tag">{{ tag | escape }}</p>{%- endif -%}
+
+    <form class="mshop_buy" action="{{ routes.cart_add_url }}" method="post" data-merch-buy>
+      {%- if size_pos >= 0 -%}
+        <fieldset class="mshop_sizes">
+          <legend class="sr-only">{{ label_sizes | default: 'Size' | escape }} — {{ card_title | escape }}</legend>
+          {%- for v in p.variants -%}
+            <input
+              type="radio"
+              class="mshop_size-input"
+              name="id"
+              value="{{ v.id }}"
+              id="{{ uid }}-{{ v.id }}"
+              {% unless v.available %}disabled{% endunless %}
+              required
+            >
+            <label class="mshop_size" for="{{ uid }}-{{ v.id }}">{{ v.options[size_pos] | escape }}</label>
+          {%- endfor -%}
+        </fieldset>
+      {%- else -%}
+        <input type="hidden" name="id" value="{{ p.selected_or_first_available_variant.id }}">
+      {%- endif -%}
+      <input type="hidden" name="quantity" value="1">
+      {%- if p.available -%}
+        <button type="submit" class="mshop_add">{{ label_add | default: 'Add to bag' | escape }}</button>
+      {%- else -%}
+        <button type="button" class="mshop_add" disabled>{{ label_sold_out | default: 'Sold out' | escape }}</button>
+      {%- endif -%}
+      <p class="mshop_status" role="status" aria-live="polite" hidden></p>
+    </form>
+  </div>
+</article>

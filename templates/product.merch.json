@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-merch-product",
+      "settings": {
+        "kicker": "Capsule 01",
+        "back_link": "shopify://pages/merch",
+        "back_label": "Merch",
+        "piece_styles": "starfall-tee | #2a1d4a | #9089d3 | Washed black · raw hem\nambition-hoodie | #4e0749 | #e6a0e8 | Full zip · faded black\nambition-denim | #16233f | #8aa8d8 | Mid wash · wide leg",
+        "fit": "Cut oversized. Take the size you always take.",
+        "promise_1": "Free shipping across India",
+        "promise_2": "Made once. No restock.",
+        "fit_title": "Fit & sizing",
+        "fit_body": "<p>Every piece is cut oversized: boxy through the body up top, wide from the hip down on the denim. Take the size you always take.</p>",
+        "shipping_title": "Shipping & returns",
+        "shipping_body": "<p>Free shipping across India.</p>",
+        "rest_title": "The rest of the capsule",
+        "capsule": ["starfall-tee", "ambition-hoodie", "ambition-denim"]
+      }
+    }
+  },
+  "order": ["main"]
+}

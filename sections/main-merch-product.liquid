@@ -1,0 +1,244 @@
+{{ 'asmaan-merch-shop.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-merch-shop.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  Product page for the merch capsule (template product.merch). Gallery of the product's own
+  photos on the piece's colour, a sticky buy panel, and the rest of the capsule underneath.
+  Per-piece colours and the short tag line come from "Piece styles", one line per product:
+  handle | primary colour | accent colour | tag
+{%- endcomment -%}
+
+{%- liquid
+  assign primary = '#2a1d4a'
+  assign secondary = '#9089d3'
+  assign tag = ''
+  assign style_lines = section.settings.piece_styles | newline_to_br | split: '<br />'
+  for line in style_lines
+    assign parts = line | split: '|'
+    assign handle = parts[0] | strip
+    if handle == product.handle
+      assign primary = parts[1] | strip | default: primary
+      assign secondary = parts[2] | strip | default: secondary
+      assign tag = parts[3] | strip
+    endif
+  endfor
+
+  assign size_pos = -1
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name == 'size'
+      assign size_pos = option.position | minus: 1
+    endif
+  endfor
+
+  assign variant = product.selected_variant
+  assign back_url = section.settings.back_link | default: routes.root_url
+-%}
+
+<div
+  class="mpdp"
+  style="--piece: {{ primary }}; --piece-hi: {{ secondary }};"
+  data-merch-labels
+  data-label-pick="{{ section.settings.label_pick_size | escape }}"
+  data-label-adding="{{ section.settings.label_adding | escape }}"
+  data-label-added="{{ section.settings.label_added | escape }}"
+  data-label-error="{{ section.settings.label_add_error | escape }}"
+>
+  <nav class="mpdp_crumbs" aria-label="Breadcrumb">
+    <a href="{{ back_url }}">{{ section.settings.back_label | escape }}</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ product.title | escape }}</span>
+  </nav>
+
+  <div class="mpdp_grid">
+    <div class="mpdp_gallery" data-mpdp-gallery>
+      <div class="mpdp_shots">
+        {%- for image in product.images -%}
+          <figure class="mpdp_shot">
+            {%- liquid
+              if forloop.first
+                assign shot_loading = 'eager'
+              else
+                assign shot_loading = 'lazy'
+              endif
+              assign shot_alt = image.alt | default: product.title
+            -%}
+            {{ image | image_url: width: 1600 | image_tag: alt: shot_alt, loading: shot_loading, sizes: '(min-width: 992px) 55vw, 100vw' }}
+            {%- if product.images.size == 2 -%}
+              <figcaption>{% if forloop.first %}{{ section.settings.label_front | escape }}{% else %}{{ section.settings.label_back | escape }}{% endif %}</figcaption>
+            {%- endif -%}
+          </figure>
+        {%- else -%}
+          <figure class="mpdp_shot">{{ 'product-apparel-1' | placeholder_svg_tag }}</figure>
+        {%- endfor -%}
+      </div>
+      {%- if product.images.size > 1 -%}
+        <p class="mpdp_count" aria-hidden="true"><span data-mpdp-current>1</span> / {{ product.images.size }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="mpdp_panel">
+      <div class="mpdp_panel-inner">
+        {%- if section.settings.kicker != blank -%}<p class="mpdp_kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
+        <h1 class="mpdp_title">{{ product.title | escape }}</h1>
+        {%- if tag != blank -%}<p class="mpdp_tag">{{ tag | escape }}</p>{%- endif -%}
+
+        <div class="mpdp_price-row">
+          <span class="mpdp_price">{{ variant.price | default: product.price | money_without_trailing_zeros }}</span>
+        </div>
+
+        <form class="mpdp_buy" action="{{ routes.cart_add_url }}" method="post" data-merch-buy>
+          {%- if size_pos >= 0 -%}
+            <fieldset class="mpdp_sizes">
+              <legend class="mpdp_label">
+                <span>{{ section.settings.label_size | escape }}</span>
+                {%- if section.settings.fit != blank -%}<span class="mpdp_fit">{{ section.settings.fit | escape }}</span>{%- endif -%}
+              </legend>
+              <div class="mpdp_size-row">
+                {%- for v in product.variants -%}
+                  <input
+                    type="radio"
+                    class="mshop_size-input"
+                    name="id"
+                    value="{{ v.id }}"
+                    id="mpdp-{{ v.id }}"
+                    {% unless v.available %}disabled{% endunless %}
+                    {% if product.variants.size == 1 and v.available %}checked{% endif %}
+                    required
+                  >
+                  <label class="mshop_size" for="mpdp-{{ v.id }}">
+                    {{ v.options[size_pos] | escape }}
+                    {%- unless v.available %}<span class="sr-only"> — {{ section.settings.label_sold_out | escape }}</span>{% endunless -%}
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- else -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          {%- endif -%}
+          <input type="hidden" name="quantity" value="1">
+
+          {%- if product.available -%}
+            <button type="submit" class="mshop_add is-large">{{ section.settings.label_add | escape }}</button>
+          {%- else -%}
+            <button type="button" class="mshop_add is-large" disabled>{{ section.settings.label_sold_out | escape }}</button>
+          {%- endif -%}
+          <p class="mshop_status" role="status" aria-live="polite" hidden></p>
+        </form>
+
+        {%- if section.settings.promise_1 != blank or section.settings.promise_2 != blank -%}
+          <ul class="mpdp_promises">
+            {%- if section.settings.promise_1 != blank -%}<li>{{ section.settings.promise_1 | escape }}</li>{%- endif -%}
+            {%- if section.settings.promise_2 != blank -%}<li>{{ section.settings.promise_2 | escape }}</li>{%- endif -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if product.description != blank -%}
+          <div class="mpdp_copy rte">{{ product.description }}</div>
+        {%- endif -%}
+
+        <div class="mpdp_more">
+          {%- if section.settings.fit_body != blank -%}
+            <details class="mpdp_details">
+              <summary>{{ section.settings.fit_title | escape }}</summary>
+              <div class="rte">{{ section.settings.fit_body }}</div>
+            </details>
+          {%- endif -%}
+          {%- if section.settings.shipping_body != blank -%}
+            <details class="mpdp_details">
+              <summary>{{ section.settings.shipping_title | escape }}</summary>
+              <div class="rte">
+                {{ section.settings.shipping_body }}
+                {%- if shop.refund_policy != blank %}
+                  <p><a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title | escape }}</a></p>
+                {%- endif -%}
+              </div>
+            </details>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.capsule.size > 1 -%}
+    <section class="mpdp_rest" aria-labelledby="mpdp-rest-title">
+      <div class="mshop_head">
+        <h2 id="mpdp-rest-title" class="mshop_title">{{ section.settings.rest_title | escape }}</h2>
+      </div>
+      <div class="mshop_grid is-pair">
+        {%- for other in section.settings.capsule -%}
+          {%- if other.id == product.id -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign o_primary = ''
+            assign o_secondary = ''
+            assign o_tag = ''
+            for line in style_lines
+              assign parts = line | split: '|'
+              assign handle = parts[0] | strip
+              if handle == other.handle
+                assign o_primary = parts[1] | strip
+                assign o_secondary = parts[2] | strip
+                assign o_tag = parts[3] | strip
+              endif
+            endfor
+          -%}
+          {%- render 'asmaan-merch-card',
+            product: other,
+            primary: o_primary,
+            secondary: o_secondary,
+            tag: o_tag,
+            index: forloop.index,
+            label_add: section.settings.label_add,
+            label_sold_out: section.settings.label_sold_out,
+            label_sizes: section.settings.label_size,
+            label_view: section.settings.label_view
+          -%}
+        {%- endfor -%}
+      </div>
+    </section>
+  {%- endif -%}
+</div>
+
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+{% schema %}
+{
+  "name": "Merch product",
+  "tag": "section",
+  "class": "section-merch-product",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Capsule 01" },
+    { "type": "url", "id": "back_link", "label": "Breadcrumb link" },
+    { "type": "text", "id": "back_label", "label": "Breadcrumb label", "default": "Merch" },
+    {
+      "type": "textarea",
+      "id": "piece_styles",
+      "label": "Piece styles",
+      "info": "One line per product: handle | primary colour | accent colour | tag"
+    },
+    { "type": "text", "id": "fit", "label": "Fit line", "default": "Cut oversized. Take the size you always take." },
+    { "type": "text", "id": "promise_1", "label": "Promise 1", "default": "Free shipping across India" },
+    { "type": "text", "id": "promise_2", "label": "Promise 2", "default": "Made once. No restock." },
+    { "type": "text", "id": "fit_title", "label": "Fit tab title", "default": "Fit & sizing" },
+    { "type": "richtext", "id": "fit_body", "label": "Fit tab" },
+    { "type": "text", "id": "shipping_title", "label": "Shipping tab title", "default": "Shipping & returns" },
+    { "type": "richtext", "id": "shipping_body", "label": "Shipping tab" },
+    { "type": "header", "content": "The rest of the capsule" },
+    { "type": "text", "id": "rest_title", "label": "Title", "default": "The rest of the capsule" },
+    { "type": "product_list", "id": "capsule", "label": "Capsule products", "limit": 12 },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "label_size", "label": "Size", "default": "Size" },
+    { "type": "text", "id": "label_front", "label": "Front", "default": "Front" },
+    { "type": "text", "id": "label_back", "label": "Back", "default": "Back" },
+    { "type": "text", "id": "label_add", "label": "Add to bag", "default": "Add to bag" },
+    { "type": "text", "id": "label_pick_size", "label": "Pick a size", "default": "Pick a size first" },
+    { "type": "text", "id": "label_adding", "label": "Adding", "default": "Adding…" },
+    { "type": "text", "id": "label_added", "label": "Added", "default": "In your bag" },
+    { "type": "text", "id": "label_sold_out", "label": "Sold out", "default": "Sold out" },
+    { "type": "text", "id": "label_add_error", "label": "Add error", "default": "That didn't go through. Try again?" },
+    { "type": "text", "id": "label_view", "label": "View piece", "default": "View" }
+  ]
+}
+{% endschema %}

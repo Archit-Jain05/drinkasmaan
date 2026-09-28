@@ -183,9 +183,14 @@
       return state;
     });
 
-    // "Shop the capsule" on the closing screen: back up to the first piece.
+    // "Shop the capsule" on the closing screen: back up to the shop grid, or the first piece.
     document.querySelectorAll('[data-merch-shop]').forEach(function(btn) {
       btn.addEventListener('click', function() {
+        var shopGrid = document.getElementById('shop');
+        if (shopGrid) {
+          shopGrid.scrollIntoView({ behavior: root.dataset.motion === 'off' ? 'auto' : 'smooth' });
+          return;
+        }
         if (!run) return;
         var runTop = run.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
         var travel = run.offsetHeight - window.innerHeight;

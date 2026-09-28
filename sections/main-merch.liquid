@@ -1,4 +1,6 @@
 {{ 'asmaan-merch.css' | asset_url | stylesheet_tag }}
+{{ 'asmaan-merch-shop.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-merch-shop.js' | asset_url }}" defer></script>
 
 {%- comment -%}
   Merch capsule page. Each "Garment piece" block can point at a Shopify product; the product
@@ -77,6 +79,10 @@
       <h1 class="sr-only">{{ shop.name | escape }} — {{ section.settings.kicker | escape }}</h1>
       <p class="max-width-medium text-size-medium text-white/70">{{ section.settings.sub | escape }}</p>
 
+      <div class="merch_hero-buy">
+      {%- if shop_open -%}
+        <a href="#shop" class="button is-small merch_hero-cta">{{ section.settings.shop_cta_text | escape }}</a>
+      {%- endif -%}
       <div class="merch_meta">
         <span><b>{{ piece_count }}</b> {{ section.settings.label_pieces | escape }}</span>
         {%- if capsule_price != blank %}
@@ -87,6 +93,7 @@
           <span aria-hidden="true">·</span>
           <span>{{ capsule_sizes | escape }}</span>
         {%- endif %}
+      </div>
       </div>
     </div>
   </section>
@@ -105,6 +112,53 @@
         </div>
       {%- endfor -%}
     </div>
+  {%- endif -%}
+
+  {%- if shop_open -%}
+    <section
+      id="shop"
+      class="mshop"
+      aria-labelledby="shop-title"
+      data-merch-labels
+      data-label-pick="{{ section.settings.label_pick_size | escape }}"
+      data-label-adding="{{ section.settings.label_adding | escape }}"
+      data-label-added="{{ section.settings.label_added | escape }}"
+      data-label-error="{{ section.settings.label_add_error | escape }}"
+    >
+      <div class="mshop_head">
+        <h2 id="shop-title" class="mshop_title">{{ section.settings.shop_cta_text | escape }}</h2>
+        <p class="mshop_facts">
+          <span><b>{{ piece_count }}</b> {{ section.settings.label_pieces | escape }}</span>
+          {%- if capsule_price != blank -%}<span><b>{{ capsule_price }}</b> {{ section.settings.label_each | escape }}</span>{%- endif -%}
+          {%- if capsule_sizes != blank -%}<span>{{ capsule_sizes | escape }}</span>{%- endif -%}
+          {%- if section.settings.shop_note != blank -%}<span>{{ section.settings.shop_note | escape }}</span>{%- endif -%}
+        </p>
+      </div>
+      <div class="mshop_grid">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.product == blank -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign card_title = block.settings.line1 | append: ' ' | append: block.settings.line2 | strip
+            assign card_tag = block.settings.tag | default: block.settings.product.metafields.custom.tagline.value
+          -%}
+          {%- render 'asmaan-merch-card',
+            product: block.settings.product,
+            title: card_title,
+            tag: card_tag,
+            primary: block.settings.primary_color,
+            secondary: block.settings.secondary_color,
+            front_asset: block.settings.front_asset,
+            back_asset: block.settings.back_asset,
+            index: forloop.index,
+            heading_level: 3,
+            label_add: section.settings.label_add,
+            label_sold_out: section.settings.label_sold_out,
+            label_sizes: section.settings.label_sizes_group,
+            label_view: section.settings.label_view
+          -%}
+        {%- endfor -%}
+      </div>
+    </section>
   {%- endif -%}
 
   {%- if piece_count > 0 -%}
@@ -282,6 +336,9 @@
                 {%- if section.settings.fit != blank -%}
                   <p class="text-size-tiny max-width-xsmall text-white/40">{{ section.settings.fit | escape }}</p>
                 {%- endif -%}
+                {%- if p != blank -%}
+                  <a class="merch_details" href="{{ p.url }}">{{ section.settings.label_view | escape }}</a>
+                {%- endif -%}
               </div>
             </div>
           </section>
@@ -434,6 +491,8 @@
     { "type": "header", "content": "Closing screen — on sale", "info": "Used instead of the drop copy above once any piece is linked to a product that's in stock." },
     { "type": "text", "id": "shop_cta_text", "label": "Button text", "default": "Shop the capsule" },
     { "type": "textarea", "id": "shop_body", "label": "Text", "default": "Three pieces, made once. When the run is gone there is no second one." },
+    { "type": "text", "id": "shop_note", "label": "Shop grid note", "default": "Free shipping across India" },
+    { "type": "text", "id": "label_view", "label": "Product page link", "default": "View details" },
     { "type": "header", "content": "Waitlist modal" },
     { "type": "text", "id": "modal_title", "label": "Title", "default": "On the list" },
     { "type": "textarea", "id": "modal_body", "label": "Text", "default": "One mail, the morning the drop goes live. Nothing else, ever." },
