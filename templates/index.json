@@ -86,8 +86,8 @@
         "b4_title": "Colour from food",
         "b4_body": "No synthetic dyes and no proprietary blend. Every milligram in the can is printed on the can, and the colour comes from what is already in it.",
         "b4_note": "Vegan · no artificial colour",
-        "manifesto_line1": "Nothing",
-        "manifesto_line2": "Hidden",
+        "manifesto_line1": "Ambition",
+        "manifesto_line2": "Tonic",
         "manifesto_label": "Nothing hidden — every milligram is printed on the can."
       }
     },
@@ -135,6 +135,7 @@
       ],
       "settings": {
         "title": "The range",
+        "can_spin": 0.6,
         "card_source": "blocks",
         "collection": "",
         "default_tag": "Ambition Tonic",
