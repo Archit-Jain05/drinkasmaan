@@ -147,6 +147,7 @@
     },
     "wear": {
       "type": "asmaan-wear",
+      "disabled": true,
       "settings": {
         "title": "Asmaan Studio Wear",
         "wordmark": "ASMAAN",
