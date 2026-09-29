@@ -1473,13 +1473,25 @@
           // fixed can used to hang over the range block and the sections after it. Go by
           // where the range block really is instead: once it is on screen, send the stage
           // behind the sky at once.
-          var behind = rangeBlock ? rangeBlock.getBoundingClientRect().top < windowH : targetProgress >= 1;
+          // The fade is read straight off the range block's position (not the eased progress),
+          // so it tracks the scroll exactly: slow scrolling fades slowly, a fast fling fades
+          // just as fast, and it can neither pop nor trail behind. It runs from the block
+          // sitting a little below the fold to it being 40% up the screen, then the stage is
+          // sent behind the sky. Scrolling back up runs the same curve in reverse.
+          var fade = 1;
+          if (rangeBlock) {
+            var fadeT = Math.min(Math.max((rangeBlock.getBoundingClientRect().top - windowH * 0.4) / (windowH * 0.75), 0), 1);
+            fade = fadeT * fadeT * (3 - 2 * fadeT);
+          } else {
+            fade = targetProgress >= 1 ? 0 : 1;
+          }
+          var behind = fade <= 0.001;
           if (behind !== lastStageBehind) {
             lastStageBehind = behind;
             canStageHost.style.zIndex = behind ? '-2' : '';
             canStageHost.style.visibility = behind ? 'hidden' : '';
           }
-          var lit = 1 - range(eased, 0.99, 1);
+          var lit = Math.min(fade, 1 - range(eased, 0.99, 1));
           if (Math.abs(lit - lastHostLit) > 0.002) {
             lastHostLit = lit;
             canStageHost.style.opacity = String(lit);
