@@ -21,36 +21,6 @@
             "product": "wild-magenta"
           }
         },
-        "pack_12": {
-          "type": "pack",
-          "settings": {
-            "cans": 12,
-            "tag": "Starter",
-            "note": "Two weeks of mornings.",
-            "price": 2400,
-            "featured": false
-          }
-        },
-        "pack_24": {
-          "type": "pack",
-          "settings": {
-            "cans": 24,
-            "tag": "Most taken",
-            "note": "The one people come back for.",
-            "price": 4320,
-            "featured": true
-          }
-        },
-        "pack_36": {
-          "type": "pack",
-          "settings": {
-            "cans": 36,
-            "tag": "Deep work",
-            "note": "A quarter, priced like it.",
-            "price": 5760,
-            "featured": false
-          }
-        },
         "badge_1": {
           "type": "badge",
           "settings": {
@@ -213,15 +183,34 @@
             "question": "Is Asmaan sugar free?",
             "answer": "<p>Yes. Zero sugar and only ten calories per 250 ml can.</p>"
           }
+        },
+        "pack_6": {
+          "type": "pack",
+          "settings": {
+            "cans": 6,
+            "tag": "Starter",
+            "note": "A week of mornings.",
+            "price": 599,
+            "featured": false
+          }
+        },
+        "pack_12": {
+          "type": "pack",
+          "settings": {
+            "cans": 12,
+            "tag": "Most taken",
+            "note": "The one people come back for.",
+            "price": 1199,
+            "featured": true
+          }
         }
       },
       "block_order": [
         "flavour_jamun",
         "flavour_mango",
         "flavour_magenta",
+        "pack_6",
         "pack_12",
-        "pack_24",
-        "pack_36",
         "badge_1",
         "badge_2",
         "badge_3",
@@ -247,7 +236,7 @@
       "settings": {
         "show_reviews": false,
         "reviews_note": "",
-        "show_stock": false
+        "show_stock": true
       }
     }
   },

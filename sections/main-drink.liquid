@@ -44,6 +44,17 @@
   assign view_names = 'front,right,back,left' | split: ','
 -%}
 
+{%- comment -%} Live batch counter: units still in stock across every flavour, capped to the batch size. {%- endcomment -%}
+{%- assign stock_left = 0 -%}
+{%- for item in flavour_source -%}
+  {%- if use_blocks -%}{%- assign sp = item.settings.product -%}{%- else -%}{%- assign sp = item -%}{%- endif -%}
+  {%- for sv in sp.variants -%}
+    {%- if sv.inventory_quantity > 0 -%}{%- assign stock_left = stock_left | plus: sv.inventory_quantity -%}{%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+{%- assign stock_total = section.settings.stock_total | default: 1000 -%}
+{%- if stock_left > stock_total -%}{%- assign stock_left = stock_total -%}{%- endif -%}
+
 {%- for item in flavour_source -%}
   {%- liquid
     if use_blocks
@@ -370,11 +381,12 @@
             {%- endif -%}
 
             {%- if section.settings.show_stock -%}
-              {%- assign sold = section.settings.stock_sold_percent | divided_by: 100.0 -%}
-              <div class="drink_stock">
+              {%- assign sold = stock_total | minus: stock_left | times: 1.0 | divided_by: stock_total -%}
+              <div class="drink_stock" data-drink-stock>
                 <div class="drink_stock-bar"><span style="--sold: {{ sold }};" aria-hidden="true"></span></div>
-                <p class="drink_stock-note">
-                  <b>{{ section.settings.stock_left }}</b> {{ section.settings.stock_note | escape }}
+                <p class="drink_stock-note" aria-live="polite">
+                  <span class="drink_stock-dot" aria-hidden="true"></span>
+                  <b data-stock-left>{{ stock_left }}</b> of {{ stock_total }} {{ section.settings.stock_note | escape }}
                 </p>
               </div>
             {%- endif -%}
@@ -690,8 +702,12 @@
         {%- endif -%}
 
         <div class="drop-form-wrapper mt-[var(--pad-l)] text-left">
-          {%- form 'customer', class: 'drop-customer-form', id: 'DrinkDropForm' -%}
+          {%- form 'contact', class: 'drop-customer-form', id: 'DrinkDropForm' -%}
             <input type="hidden" name="contact[tags]" value="{{ section.settings.waitlist_tags | escape }}">
+            <input type="hidden" name="contact[subject]" value="Asmaan first batch request">
+            <input type="hidden" name="contact[flavour]" value="" data-drop-flavour>
+            <input type="hidden" name="contact[pack]" value="" data-drop-pack>
+            <input type="hidden" name="contact[quantity]" value="" data-drop-qty>
 
             {%- if form.posted_successfully? -%}
               <p class="text-size-medium text-center text-white" role="status" aria-live="polite">{{ section.settings.waitlist_success | escape }}</p>
@@ -699,19 +715,18 @@
               {%- if form.errors -%}
                 <p class="text-size-small text-white/70" role="alert">{{ form.errors | default_errors }}</p>
               {%- endif -%}
+              <p class="drop_summary text-size-small text-white/60" data-drop-summary hidden></p>
               <div class="newsletter_field relative">
-                <input
-                  id="drop-email"
-                  type="email"
-                  name="contact[email]"
-                  required
-                  autocomplete="email"
-                  placeholder=" "
-                  class="newsletter_input"
-                  value="{{ form.email }}"
-                  aria-required="true"
-                >
+                <input id="drop-email" type="email" name="contact[email]" required autocomplete="email" placeholder=" " class="newsletter_input" value="{{ form.email }}" aria-required="true">
                 <label for="drop-email" class="newsletter_label">{{ section.settings.waitlist_email_label | escape }}</label>
+              </div>
+              <div class="newsletter_field relative mt-[var(--pad-s)]">
+                <input id="drop-phone" type="tel" name="contact[phone]" required autocomplete="tel" inputmode="tel" minlength="7" placeholder=" " class="newsletter_input" aria-required="true">
+                <label for="drop-phone" class="newsletter_label">{{ section.settings.waitlist_phone_label | escape }}</label>
+              </div>
+              <div class="newsletter_field relative mt-[var(--pad-s)]">
+                <input id="drop-instagram" type="text" name="contact[instagram]" required autocomplete="off" autocapitalize="none" placeholder=" " class="newsletter_input" aria-required="true">
+                <label for="drop-instagram" class="newsletter_label">{{ section.settings.waitlist_instagram_label | escape }}</label>
               </div>
 
               <button type="submit" class="button is-full mt-[var(--pad-m)]">{{ section.settings.waitlist_button | escape }}</button>
@@ -1011,24 +1026,15 @@
     {
       "type": "checkbox",
       "id": "show_stock",
-      "label": "Show batch stock meter",
-      "default": false
+      "label": "Show live batch counter",
+      "default": true
     },
     {
       "type": "number",
-      "id": "stock_left",
-      "label": "Packs left",
-      "default": 47
-    },
-    {
-      "type": "range",
-      "id": "stock_sold_percent",
-      "label": "Meter filled (%)",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "%",
-      "default": 80
+      "id": "stock_total",
+      "label": "Batch size (packs)",
+      "default": 1000,
+      "info": "The counter shows packs still in stock across all flavours (Shopify inventory), capped at this number."
     },
     {
       "type": "text",
@@ -1256,13 +1262,13 @@
       "type": "text",
       "id": "waitlist_heading",
       "label": "Heading",
-      "default": "First in line"
+      "default": "Reserve your pack"
     },
     {
       "type": "textarea",
       "id": "waitlist_body",
       "label": "Text",
-      "default": "Leave an address and the batch is yours to claim the morning checkout opens. One mail, nothing else."
+      "default": "Checkout opens soon. Leave your details and the Asmaan team will take it from here."
     },
     {
       "type": "text",
@@ -1272,21 +1278,33 @@
     },
     {
       "type": "text",
+      "id": "waitlist_phone_label",
+      "label": "Phone field label",
+      "default": "Phone number"
+    },
+    {
+      "type": "text",
+      "id": "waitlist_instagram_label",
+      "label": "Instagram field label",
+      "default": "Instagram handle"
+    },
+    {
+      "type": "text",
       "id": "waitlist_button",
       "label": "Button",
-      "default": "Claim a pack"
+      "default": "Reserve my pack"
     },
     {
       "type": "text",
       "id": "waitlist_success",
       "label": "Success message",
-      "default": "Held. We'll write the morning the first batch ships."
+      "default": "Thank you! The Asmaan team will reach out to you shortly."
     },
     {
       "type": "text",
       "id": "waitlist_tags",
       "label": "Customer tags",
-      "default": "newsletter,drink-first-batch"
+      "default": "drink-first-batch,lead"
     },
     {
       "type": "header",

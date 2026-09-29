@@ -4101,3 +4101,34 @@ body.has-sticky-drink-bar .asmaan-footer {
 
 
 
+
+/* --- Live batch counter dot + lead sheet --- */
+.drink_stock-dot {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+  animation: drink-live-pulse 2s ease-out infinite;
+}
+
+@keyframes drink-live-pulse {
+  70% { box-shadow: 0 0 0 0.45rem rgba(74, 222, 128, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drink_stock-dot { animation: none; }
+}
+
+.drop_sheet {
+  max-height: calc(100dvh - 2 * var(--page-padding));
+  overflow-y: auto;
+}
+
+.drop_summary {
+  margin-bottom: var(--pad-s);
+  text-align: center;
+}

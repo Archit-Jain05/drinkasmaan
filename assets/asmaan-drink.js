@@ -500,12 +500,30 @@
     // Waitlist modal (pre-launch mode)
     var dropModal = document.getElementById('drop-modal');
 
+    // Record what the visitor was looking at so the team knows what to invoice.
+    function fillLead() {
+      var order = calculateOrder();
+      var fl = currentFlavour();
+      var name = (fl && fl.title) || '';
+      var pack = order.pack.cans + ' cans';
+      var set = function(sel, v) { var el = dropModal.querySelector(sel); if (el) el.value = v; };
+      set('[data-drop-flavour]', name);
+      set('[data-drop-pack]', pack + ' (' + formatMoney(order.basePackPrice) + ')');
+      set('[data-drop-qty]', String(state.quantity));
+      var sum = dropModal.querySelector('[data-drop-summary]');
+      if (sum) {
+        sum.textContent = state.quantity + ' × ' + name + ', ' + pack + ' · ' + formatMoney(order.total);
+        sum.hidden = false;
+      }
+    }
+
     function setModal(open) {
       if (!dropModal) return;
       dropModal.setAttribute('data-open', open ? 'true' : 'false');
       dropModal.setAttribute('aria-hidden', open ? 'false' : 'true');
       document.body.style.overflow = open ? 'hidden' : '';
       if (open) {
+        fillLead();
         var input = dropModal.querySelector('#drop-email');
         if (input) setTimeout(function() { input.focus(); }, 100);
       }
@@ -519,9 +537,29 @@
         if (e.key === 'Escape' && dropModal.getAttribute('data-open') === 'true') setModal(false);
       });
       // After the customer form posts, the page reloads — reopen so the result is visible.
-      if (/[?&]customer_posted=true/.test(window.location.search) || dropModal.querySelector('[role="alert"]')) {
+      if (/[?&](customer|contact)_posted=true/.test(window.location.search) || dropModal.querySelector('[role="alert"]')) {
         setModal(true);
       }
+    }
+
+    // Live counter: re-read the rendered count from the server so sales show up without a reload.
+    var stockEl = document.querySelector('[data-stock-left]');
+    if (stockEl && window.fetch) {
+      var stockBar = document.querySelector('.drink_stock-bar span');
+      var pollStock = function() {
+        if (document.hidden) return;
+        fetch(window.location.pathname, { credentials: 'same-origin' })
+          .then(function(r) { return r.text(); })
+          .then(function(html) {
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var next = doc.querySelector('[data-stock-left]');
+            var bar = doc.querySelector('.drink_stock-bar span');
+            if (next && next.textContent !== stockEl.textContent) stockEl.textContent = next.textContent;
+            if (bar && stockBar) stockBar.setAttribute('style', bar.getAttribute('style'));
+          })
+          .catch(function() {});
+      };
+      setInterval(pollStock, 30000);
     }
 
     // Add to cart
