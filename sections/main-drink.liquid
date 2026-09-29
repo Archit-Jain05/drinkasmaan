@@ -381,13 +381,13 @@
             {%- endif -%}
 
             {%- if section.settings.show_stock -%}
-              {%- assign sold = stock_total | minus: stock_left | times: 1.0 | divided_by: stock_total -%}
+              {%- assign left_share = stock_left | times: 1.0 | divided_by: stock_total -%}
               <div class="drink_stock" data-drink-stock>
-                <div class="drink_stock-bar"><span style="--sold: {{ sold }};" aria-hidden="true"></span></div>
-                <p class="drink_stock-note" aria-live="polite">
-                  <span class="drink_stock-dot" aria-hidden="true"></span>
-                  <b data-stock-left>{{ stock_left }}</b> of {{ stock_total }} {{ section.settings.stock_note | escape }}
-                </p>
+                <div class="drink_stock-head">
+                  <span class="drink_stock-label">{{ section.settings.stock_note | escape }}</span>
+                  <span class="drink_stock-count" aria-live="polite"><b data-stock-left>{{ stock_left }}</b><span> / {{ stock_total }}</span></span>
+                </div>
+                <div class="drink_stock-bar"><span style="--left: {{ left_share }};" aria-hidden="true"></span></div>
               </div>
             {%- endif -%}
           </div>
