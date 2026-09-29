@@ -1491,7 +1491,7 @@
             canStageHost.style.zIndex = behind ? '-2' : '';
             canStageHost.style.visibility = behind ? 'hidden' : '';
           }
-          var lit = Math.min(fade, 1 - range(eased, 0.99, 1));
+          var lit = fade;
           if (Math.abs(lit - lastHostLit) > 0.002) {
             lastHostLit = lit;
             canStageHost.style.opacity = String(lit);
