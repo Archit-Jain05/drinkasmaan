@@ -44,8 +44,8 @@
     #0e0729 34%,
     #180c42 52%,
     color-mix(in srgb, var(--taste-primary, #2a1d4a) 70%, black) 70%,
-    var(--taste-primary, #2a1d4a) 86%,
-    var(--taste-secondary, #9089d3) 100%
+    var(--taste-primary, #2a1d4a) 88%,
+    color-mix(in srgb, var(--taste-secondary, #9089d3) 32%, var(--taste-primary, #2a1d4a)) 100%
   );
 }
 
@@ -206,13 +206,13 @@ body.template-index .asmaan-sky__flavour {
   inset: 0;
   opacity: var(--asmaan-sky-flavour, 1);
   background:
-    radial-gradient(70% 45% at 50% 100%, color-mix(in oklab, var(--asmaan-sky-glow) 55%, transparent), transparent 100%),
+    radial-gradient(60% 32% at 50% 100%, color-mix(in oklab, var(--asmaan-sky-glow) 24%, transparent), transparent 100%),
     linear-gradient(180deg,
       #04020b 0%,
       color-mix(in oklab, var(--asmaan-sky-deep) 45%, #04020b) 22%,
       var(--asmaan-sky-deep) 48%,
-      color-mix(in oklab, var(--asmaan-sky-glow) 45%, var(--asmaan-sky-deep)) 78%,
-      color-mix(in oklab, var(--asmaan-sky-glow) 80%, var(--asmaan-sky-deep)) 100%);
+      color-mix(in oklab, var(--asmaan-sky-glow) 18%, var(--asmaan-sky-deep)) 80%,
+      color-mix(in oklab, var(--asmaan-sky-glow) 34%, var(--asmaan-sky-deep)) 100%);
   transition: --asmaan-sky-deep 0.9s ease, --asmaan-sky-glow 0.9s ease;
 }
 .asmaan-sky__stars { position: absolute; inset: 0; }
