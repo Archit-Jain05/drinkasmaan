@@ -5,14 +5,12 @@ turn the password off (Online Store > Preferences) to launch the real site.
 
 The form posts to the Google Apps Script web app in `templates/password.json` (`sheet_url`).
 
-0. Create a **new, separate Google Sheet** for the free-sample sign-ups (for example "Asmaan Free Samples").
-   Copy its ID from the address bar: docs.google.com/spreadsheets/d/**THIS-PART**/edit. The ambassador sheet is not touched.
-1. Open the ambassador Google Sheet, then Extensions > Apps Script (the script the website already talks to).
+1. Open the Google Sheet, then Extensions > Apps Script. Free-sample sign-ups go to their own tab,
+   **Prelaunch**, created automatically. The ambassador tab is not touched.
 2. Keep your existing `doPost`. Add this as its **first line**, before any `try`:
    `if (e.parameter.source === 'prelaunch-free-sample') return prelaunch(e.parameter);`
 3. Paste everything in the code block below at the bottom of the file. If you already have a
-   `doGet`, keep only one (the one below feeds the live counter). Put the new sheet's ID in
-   `FREE_SAMPLES_SHEET_ID` at the top of the block.
+   `doGet`, keep only one (the one below feeds the live counter).
 4. Save. Then, in the function menu at the top of the editor, choose **authorizeOnce** and click **Run**.
    Google asks for permission (Review permissions > your account > Advanced > Go to project > Allow).
    Without this step the sign-up is saved but no emails are sent.
@@ -20,8 +18,6 @@ The form posts to the Google Apps Script web app in `templates/password.json` (`
    The URL stays the same. Access must be "Anyone", execute as "Me".
 
 ```js
-// The free-sample sign-ups live in their own spreadsheet, separate from the ambassador one.
-const FREE_SAMPLES_SHEET_ID = 'PASTE-THE-NEW-SHEET-ID-HERE';
 const TEAM = ['rbm299@gmail.com', 'drinkasmaan@gmail.com'];
 const INSTAGRAM = 'https://www.instagram.com/drinkasmaan';
 // Front of each can: Wild Magenta, Kala Jamun, Alphonso Mango. Served as PNG so every email app can show them.
@@ -35,29 +31,14 @@ const CANS = [
 // It makes Google ask for permission to send email, which the site's submissions need.
 function authorizeOnce() {
   MailApp.getRemainingDailyQuota();
-  freeSamplesSheet(); // also checks the sheet ID works
-}
-
-// The sign-ups tab of the free-samples spreadsheet.
-function freeSamplesSheet() {
-  if (!FREE_SAMPLES_SHEET_ID || FREE_SAMPLES_SHEET_ID.indexOf('PASTE') === 0) {
-    throw new Error('Set FREE_SAMPLES_SHEET_ID at the top of the script first.');
-  }
-  const ss = SpreadsheetApp.openById(FREE_SAMPLES_SHEET_ID);
-  let sheet = ss.getSheetByName('Registrations');
-  if (!sheet) { sheet = ss.getSheets()[0]; sheet.setName('Registrations'); }
-  return sheet;
+  SpreadsheetApp.getActiveSpreadsheet();
 }
 
 // Live counter on the prelaunch page: number of registrations (rows under the header).
 function doGet() {
-  let out;
-  try {
-    out = { count: Math.max(0, freeSamplesSheet().getLastRow() - 1) };
-  } catch (err) {
-    out = { error: String(err) }; // the page keeps the counter hidden if there is no count
-  }
-  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Prelaunch');
+  const count = sh ? Math.max(0, sh.getLastRow() - 1) : 0;
+  return ContentService.createTextOutput(JSON.stringify({ count })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function esc(s) {
@@ -69,7 +50,8 @@ function escBr(s) {
 }
 
 function prelaunch(p) {
-  const sheet = freeSamplesSheet();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Prelaunch') || ss.insertSheet('Prelaunch');
   if (sheet.getLastRow() === 0) sheet.appendRow(['Time', 'Name', 'Email', 'Address line 1', 'Address line 2', 'City', 'State', 'PIN code', 'Full address']);
   // All the address fields on one line, e.g. "12 Marine Drive, Flat 4B, Mumbai, Maharashtra 400020, India"
   const fullAddress = p.address1
