@@ -16,6 +16,12 @@ The form posts to the Google Apps Script web app in `templates/password.json` (`
 ```js
 const TEAM = ['rbm299@gmail.com', 'drinkasmaan@gmail.com'];
 const INSTAGRAM = 'https://www.instagram.com/drinkasmaan';
+// Front of each can: Wild Magenta, Kala Jamun, Alphonso Mango. Served as PNG so every email app can show them.
+const CANS = [
+  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image.webp?v=1789322428',
+  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_d49a29a3-72dc-4aa7-a49f-4bd438390958.webp?v=1789322504',
+  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_9cc3ceb6-1495-47b1-88b1-b96bd5b9baea.webp?v=1789322526'
+].map(u => u + '&format=png&width=240');
 
 // Live counter on the prelaunch page: number of registrations (rows under the header).
 function doGet() {
@@ -46,7 +52,7 @@ function prelaunch(p) {
     to: p.email,
     name: 'Asmaan',
     replyTo: TEAM[1],
-    subject: "You're on the Asmaan list, " + String(p.name).split(' ')[0],
+    subject: "Thank you for registering, " + String(p.name).split(' ')[0],
     body: 'Thank you, ' + p.name + '! We have your request for a free Asmaan sample. Our team will reach out to you soon.',
     htmlBody: confirmHtml(p, n)
   });
@@ -87,16 +93,25 @@ function confirmHtml(p, n) {
     </td></tr>
 
     <tr><td align="center" style="padding:36px 8px 8px">
-      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:34px;line-height:38px;letter-spacing:-1px;color:#ffffff">You're in, ${first}.</div>
-      <div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#cfcaef;padding-top:12px">We saved you a spot in the first batch.<br>Our team will reach out to you soon.</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-weight:bold;font-size:34px;line-height:38px;letter-spacing:-1px;color:#ffffff">Thank you for registering, ${first}.</div>
+    </td></tr>
+
+    <tr><td align="center" style="padding:18px 0 4px">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        ${CANS.map(u => `<td align="center" width="33%" style="padding:0 4px"><img src="${u}" alt="Asmaan can" width="150" style="display:block;width:100%;max-width:150px;height:auto;border:0"></td>`).join('')}
+      </tr></table>
+    </td></tr>
+
+    <tr><td align="center" style="padding:18px 8px 8px">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:26px;color:#cfcaef">We saved you a spot in the first batch.<br><b style="color:#ffffff">Our team will reach out to you soon.</b></div>
     </td></tr>
 
     <tr><td style="padding:28px 0 8px">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#0e0c14" style="background:#0e0c14;border:1px solid #3a3266;border-radius:22px">
         <tr><td style="padding:24px 26px 6px">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-            <td style="font-family:Georgia,serif;font-size:11px;letter-spacing:3px;color:#9089d3">FIRST BATCH PASS</td>
-            <td align="right" style="font-family:'Arial Black',Arial,sans-serif;font-style:italic;font-weight:900;font-size:30px;letter-spacing:-1px;color:#ffffff">No. ${num}</td>
+            <td style="font-family:Georgia,serif;font-size:11px;letter-spacing:2px;color:#9089d3">FIRST BATCH PASS</td>
+            <td align="right" style="font-family:'Arial Black',Arial,sans-serif;font-style:italic;font-weight:900;font-size:24px;letter-spacing:-1px;color:#ffffff">No. ${num}</td>
           </tr></table>
         </td></tr>
         <tr><td style="padding:0 26px"><div style="border-top:2px dashed #3a3266;height:1px;line-height:1px;font-size:1px">&nbsp;</div></td></tr>
