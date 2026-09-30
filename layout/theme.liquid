@@ -64,6 +64,11 @@
       Skip to content
     </a>
 
+    {%- comment -%} The prelaunch (password) page is a bare page: no navbar, footer, cart or site scripts. {%- endcomment -%}
+    {%- assign bare = false -%}
+    {%- if template.name == 'password' -%}{%- assign bare = true -%}{%- endif -%}
+
+    {%- unless bare -%}
     {% section 'asmaan-navbar' %}
     <script>
       // Expose the fixed navbar height as --asmaan-header-h for sections that sit below it.
@@ -77,12 +82,14 @@
     </script>
 
     <script src="{{ 'three.min.js' | asset_url }}" defer></script>
+    {%- endunless -%}
     <div id="top">
       <main id="MainContent" role="main" tabindex="-1">
         {{ content_for_layout }}
       </main>
     </div>
 
+    {%- unless bare -%}
     {% section 'asmaan-footer' %}
 
     {% section 'cart-drawer' %}
@@ -92,5 +99,6 @@
     <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
     <script src="{{ 'asmaan-can-3d.js' | asset_url }}" defer></script>
     <script src="{{ 'asmaan-prototype.js' | asset_url }}" defer></script>
+    {%- endunless -%}
   </body>
 </html>
