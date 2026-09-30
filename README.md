@@ -236,7 +236,7 @@ git push origin main
 - **100 mg** caffeine from raw green coffee beans (not synthetic)
 - **200 mg** L-theanine (Suntheanine) for smooth, jitter-free focus
 - **300 mg** KSM-66 ashwagandha to dampen stress and mental fatigue
-- **10 kcal** — no sugar, no crash, no artificial colour
+- **0 g sugar** — no crash, no artificial colour
 - Himalayan mineral water base with balanced electrolytes
 
 Available in three flavours: **Kala Jamun**, **Alphonso Mango**, **Wild Magenta**

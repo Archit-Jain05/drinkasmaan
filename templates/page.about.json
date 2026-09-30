@@ -33,8 +33,8 @@
             "figure": "0",
             "unit": "g sugar",
             "title": "Zero sugar",
-            "body": "Ten calories a can. Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
-            "note": "10 kcal per 250 ml",
+            "body": "Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
+            "note": "0 g sugar per 250 ml",
             "assets": "mango-front.webp",
             "surface": "#5a2a00",
             "bands": "",
@@ -126,7 +126,7 @@
           "type": "faq_item",
           "settings": {
             "question": "Is Asmaan sugar free?",
-            "answer": "Yes. Zero sugar and ten calories a can. There are no artificial colours either — the colour comes from food, not from dye."
+            "answer": "Yes. Zero sugar in every can. There are no artificial colours either — the colour comes from food, not from dye."
           }
         },
         "faq_5": {

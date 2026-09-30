@@ -39,7 +39,7 @@
           "type": "badge",
           "settings": {
             "title": "No crash",
-            "text": "Zero sugar, ten calories."
+            "text": "Zero sugar, no artificial colours."
           }
         },
         "badge_4": {
@@ -102,13 +102,6 @@
           "settings": {
             "label": "Volume",
             "value": "250 ml"
-          }
-        },
-        "fact_2": {
-          "type": "fact",
-          "settings": {
-            "label": "Energy",
-            "value": "10 kcal"
           }
         },
         "fact_3": {
@@ -181,7 +174,7 @@
           "type": "faq",
           "settings": {
             "question": "Is Asmaan sugar free?",
-            "answer": "<p>Yes. Zero sugar and only ten calories per 250 ml can.</p>"
+            "answer": "<p>Yes. Zero sugar in every 250 ml can.</p>"
           }
         },
         "pack_6": {
@@ -221,7 +214,6 @@
         "active_4",
         "active_5",
         "fact_1",
-        "fact_2",
         "fact_3",
         "fact_4",
         "fact_5",

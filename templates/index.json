@@ -72,8 +72,8 @@
         "discover_text": "Scroll to discover",
         "b1_struck": "Sugar",
         "b1_title": "Zero sugar",
-        "b1_body": "Ten calories a can. Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
-        "b1_note": "10 kcal per 250 ml",
+        "b1_body": "Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
+        "b1_note": "0 g sugar per 250 ml",
         "b2_struck": "Synthetic caffeine",
         "b2_title": "Caffeine from green coffee",
         "b2_body": "100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.",
@@ -190,7 +190,7 @@
           "type": "faq_item",
           "settings": {
             "question": "Is Asmaan sugar free?",
-            "answer": "Yes. Zero sugar and ten calories a can. There are no artificial colours either — the colour comes from food, not from dye."
+            "answer": "Yes. Zero sugar in every can. There are no artificial colours either — the colour comes from food, not from dye."
           }
         },
         "faq_5": {
