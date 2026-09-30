@@ -251,7 +251,7 @@
   .batch-count_bar i { display: block; height: 100%; width: 100%; background: var(--taste-secondary, #9089d3); transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
 </style>
 
-<section class="product-page-wrap">
+<section class="product-page-wrap" id="buy">
   <div class="product-grid-layout">
     <!-- Product Visual Gallery & 3D Interactive Stage -->
     <div class="product-gallery-stage{% unless section.settings.enable_sticky_gallery %} !static{% endunless %}" data-asmaan-can-group>
@@ -606,48 +606,73 @@
       return cache[url];
     }
 
-    function swap(url, push) {
-      var sec = sectionEl();
-      if (!sec) { window.location.href = url; return; }
-      sec.setAttribute('aria-busy', 'true');
-      sec.style.transition = 'opacity 0.18s ease';
-      sec.style.opacity = '0.35';
+    // The sections on this page that depend on the flavour: the product itself and the story
+    // below it (its pack prices and "in your pack" card follow the product).
+    function swappable() {
+      var list = [];
+      var main = sectionEl();
+      var story = document.querySelector('.product-story');
+      if (main) list.push(main);
+      if (story && story.closest('.shopify-section')) list.push(story.closest('.shopify-section'));
+      return list;
+    }
+
+    function swap(url, push, toTop) {
+      var secs = swappable();
+      if (!secs.length) { window.location.href = url; return; }
+      secs.forEach(function (sec) {
+        sec.setAttribute('aria-busy', 'true');
+        sec.style.transition = 'opacity 0.18s ease';
+        sec.style.opacity = '0.35';
+      });
       load(url).then(function (html) {
         var doc = new DOMParser().parseFromString(html, 'text/html');
-        var next = doc.getElementById(sec.id);
-        if (!next) throw new Error('section not found');
-        sec.dispatchEvent(new CustomEvent('shopify:section:unload', { bubbles: true }));
-        sec.innerHTML = next.innerHTML;
-        // Scripts set through innerHTML do not run; recreate them so they do.
-        sec.querySelectorAll('script').forEach(function (old) {
-          var fresh = document.createElement('script');
-          if (old.src) fresh.src = old.src; else fresh.textContent = old.textContent;
-          old.replaceWith(fresh);
+        var pairs = secs.map(function (sec) {
+          var next = doc.getElementById(sec.id);
+          if (!next) throw new Error('section not found');
+          return [sec, next];
+        });
+        pairs.forEach(function (pair) {
+          var sec = pair[0];
+          sec.dispatchEvent(new CustomEvent('shopify:section:unload', { bubbles: true }));
+          sec.innerHTML = pair[1].innerHTML;
+          // Scripts set through innerHTML do not run; recreate them so they do.
+          sec.querySelectorAll('script').forEach(function (old) {
+            var fresh = document.createElement('script');
+            if (old.src) fresh.src = old.src; else fresh.textContent = old.textContent;
+            old.replaceWith(fresh);
+          });
         });
         document.title = doc.title;
         if (push) history.pushState({ flavour: true }, '', url);
-        sec.dispatchEvent(new CustomEvent('shopify:section:load', { bubbles: true }));
-        sec.style.opacity = '';
-        sec.removeAttribute('aria-busy');
+        pairs.forEach(function (pair) {
+          pair[0].dispatchEvent(new CustomEvent('shopify:section:load', { bubbles: true }));
+          pair[0].style.opacity = '';
+          pair[0].removeAttribute('aria-busy');
+        });
+        if (toTop) {
+          var buy = document.getElementById('buy');
+          if (buy) buy.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }).catch(function () { window.location.href = url; });
     }
 
     document.addEventListener('click', function (e) {
-      var a = e.target.closest && e.target.closest('a.flavour-chip');
+      var a = e.target.closest && e.target.closest('a.flavour-chip, a[data-flavour-swap]');
       if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       e.preventDefault();
       if (a.getAttribute('aria-current') === 'page') return;
-      swap(a.href, true);
+      swap(a.href, true, a.hasAttribute('data-flavour-swap'));
     });
     // Start fetching as soon as someone points at a flavour, so the swap feels instant.
     ['pointerenter', 'focusin'].forEach(function (ev) {
       document.addEventListener(ev, function (e) {
-        var a = e.target.closest && e.target.closest('a.flavour-chip');
+        var a = e.target.closest && e.target.closest('a.flavour-chip, a[data-flavour-swap]');
         if (a && a.getAttribute('aria-current') !== 'page') load(a.href).catch(function () {});
       }, true);
     });
     window.addEventListener('popstate', function () {
-      if (sectionEl()) swap(window.location.href, false);
+      if (sectionEl()) swap(window.location.href, false, false);
     });
   })();
 </script>

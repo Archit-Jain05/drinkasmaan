@@ -1,0 +1,891 @@
+{%- comment -%}
+  Product story: everything that follows the buy box on the Drink page, for the product page.
+  Formula and doses, the 3D pack scene, the first-batch story, the flavour range, reviews and FAQ.
+  Built from the Drink section (main-drink.liquid), minus the buy box, sticky bar and waitlist
+  form, which the product page has its own versions of. Content comes from this section's own
+  settings and blocks, so it is edited here in the theme editor.
+{%- endcomment -%}
+<script src="{{ 'asmaan-product-story.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign flavour_blocks = section.blocks | where: 'type', 'flavour'
+  assign pack_blocks = section.blocks | where: 'type', 'pack'
+  assign flavour_collection = section.settings.collection | default: settings.featured_can_collection
+  assign use_blocks = true
+  assign flavour_source = flavour_blocks
+  if flavour_blocks.size == 0
+    assign use_blocks = false
+    assign flavour_source = flavour_collection.products
+  endif
+
+  assign current_accent = product.metafields.custom.accent_color.value | default: section.settings.fallback_accent
+
+  assign default_pack = 0
+  for pb in pack_blocks
+    if pb.settings.featured
+      assign default_pack = forloop.index0
+      break
+    endif
+  endfor
+
+  assign idx_front = section.settings.image_position_front | minus: 1
+
+  comment
+    Price for each pack tier: the variant of THIS product whose option value contains the tier's
+    can count (e.g. "12 Cans"); the block's own price is the fallback.
+  endcomment
+  assign tier_prices = ''
+  for pb in pack_blocks
+    assign cans_str = pb.settings.cans | append: ''
+    assign pp = pb.settings.price | times: 100
+    for v in product.variants
+      for opt in v.options
+        assign toks = opt | downcase | replace: 'can', ' can' | replace: 'pack', ' pack' | replace: '-', ' ' | replace: '×', ' ' | split: ' '
+        if toks contains cans_str
+          assign pp = v.price
+        endif
+      endfor
+    endfor
+    assign tier_prices = tier_prices | append: pp | append: ','
+  endfor
+  assign tier_prices = tier_prices | split: ','
+  assign default_pack_block = pack_blocks[default_pack]
+  assign default_price = tier_prices[default_pack] | plus: 0
+-%}
+
+{%- assign flavour_count = 0 -%}
+{%- capture range_html -%}
+  {%- for item in flavour_source -%}
+    {%- liquid
+      if use_blocks
+        assign p = item.settings.product
+        assign o_title = item.settings.title
+        assign o_tag = item.settings.tag
+        assign o_blurb = item.settings.blurb
+        assign o_accent = item.settings.accent
+        assign o_deep = item.settings.deep
+        assign block_attrs = item.shopify_attributes
+      else
+        assign p = item
+        assign o_title = ''
+        assign o_tag = ''
+        assign o_blurb = ''
+        assign o_accent = ''
+        assign o_deep = ''
+        assign block_attrs = ''
+      endif
+
+      if p == blank and o_title == blank
+        continue
+      endif
+
+      assign f_title = o_title | default: p.title
+      assign f_tag = o_tag | default: p.metafields.custom.tagline.value
+      assign f_blurb = o_blurb | default: p.metafields.custom.blurb.value
+      if f_blurb == blank and p.description != blank
+        assign f_blurb = p.description | strip_html | strip | truncatewords: 40
+      endif
+      assign f_accent = o_accent | default: p.metafields.custom.accent_color.value | default: section.settings.fallback_accent
+      assign f_deep = o_deep | default: p.metafields.custom.primary_color.value | default: section.settings.fallback_deep
+      assign img_front = p.images[idx_front] | default: p.featured_image
+      assign is_current = false
+      if p != blank and p.id == product.id
+        assign is_current = true
+      endif
+      assign title_words = f_title | split: ' '
+      assign flavour_count = flavour_count | plus: 1
+    -%}
+    <li class="drink_flavour" data-chosen="{{ is_current }}" style="--swatch: {{ f_accent }}; --swatch-deep: {{ f_deep }};" {{ block_attrs }}>
+      <div class="drink_flavour-shot">
+        <span class="merch_glow" style="--glow: {{ f_accent }};" aria-hidden="true"></span>
+        {%- if img_front != blank -%}
+          {{ img_front | image_url: width: 800 | image_tag: loading: 'lazy', alt: f_title }}
+        {%- endif -%}
+      </div>
+      {%- if f_tag != blank -%}<span class="merch_tag">{{ f_tag | escape }}</span>{%- endif -%}
+      <h3 class="heading-style-h3">{{ title_words.first | escape }}{% if title_words.size > 1 %}<br>{{ f_title | remove_first: title_words.first | strip | escape }}{% endif %}</h3>
+      {%- if f_blurb != blank -%}<p class="text-white/60">{{ f_blurb | escape }}</p>{%- endif -%}
+      {%- if is_current or p == blank -%}
+        <a href="#buy" class="drink_flavour-cta">{{ section.settings.label_in_pack }}</a>
+      {%- else -%}
+        <a href="{{ p.url }}" class="drink_flavour-cta" data-flavour-swap>{{ section.settings.label_take_this }}</a>
+      {%- endif -%}
+    </li>
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="product-story drink-page-wrapper" style="--drink-air: {{ section.settings.spacing | default: 100 | divided_by: 100.0 }};">
+  <div class="product-story_body">
+    <!-- 2. FORMULA & DOSES SECTION -->
+    {%- assign active_blocks = section.blocks | where: 'type', 'active' -%}
+    {%- assign fact_blocks = section.blocks | where: 'type', 'fact' -%}
+    {%- if section.settings.show_formula -%}
+      <section id="formula" class="section relative bg-black border-t border-white/10">
+        <div class="padding-global">
+          <div class="container-large">
+            <div class="padding-section-large">
+              <div class="drink_formula">
+                <div class="drink_formula-head">
+                  <h2 class="heading-style-display">{{ section.settings.formula_heading | escape | newline_to_br }}</h2>
+                  {%- if section.settings.formula_intro != blank -%}
+                    <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">{{ section.settings.formula_intro | escape }}</p>
+                  {%- endif -%}
+                </div>
+
+                <ol class="drink_actives">
+                  {%- for a in active_blocks -%}
+                    <li {{ a.shopify_attributes }}>
+                      <span class="drink_dose">{{ a.settings.dose | escape }}</span>
+                      <div>
+                        <b class="heading-style-h5">{{ a.settings.name | escape }}</b>
+                        {%- if a.settings.description != blank -%}
+                          <p class="mt-[var(--pad-xxs)] text-white/60">{{ a.settings.description | escape }}</p>
+                        {%- endif -%}
+                      </div>
+                    </li>
+                  {%- endfor -%}
+                </ol>
+
+                {%- if fact_blocks.size > 0 or section.settings.facts_note != blank -%}
+                  <div class="drink_facts">
+                    <h3 class="drink_legend">{{ section.settings.facts_heading | escape }}</h3>
+                    <dl>
+                      {%- for fb in fact_blocks -%}
+                        <div {{ fb.shopify_attributes }}>
+                          <dt>{{ fb.settings.label | escape }}</dt>
+                          <dd>{{ fb.settings.value | escape }}</dd>
+                        </div>
+                      {%- endfor -%}
+                    </dl>
+                    {%- if section.settings.facts_note != blank -%}
+                      <p class="text-size-tiny mt-[var(--pad-m)] text-white/40">{{ section.settings.facts_note | escape }}</p>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+
+    <!-- 3. INTERACTIVE 3D PACK SCENE -->
+    {%- if section.settings.show_pack_scene -%}
+      <section id="pack" class="pack_run">
+        <div class="pack_hold">
+          <div class="pack_grid">
+            <div class="pack_copy">
+              <span class="merch_meta">{{ section.settings.pack_eyebrow | escape }}</span>
+              <h2 class="heading-style-display">{{ section.settings.pack_heading | escape }}</h2>
+              {%- if section.settings.pack_body != blank -%}
+                <p class="max-width-custom text-size-medium text-white/65">{{ section.settings.pack_body | escape }}</p>
+              {%- endif -%}
+
+              <div class="pack_tiers" role="group" aria-label="{{ section.settings.label_pack | escape }}">
+                {%- for pb in pack_blocks -%}
+                  {%- assign pp = tier_prices[forloop.index0] | plus: 0 -%}
+                  {%- assign each = pp | divided_by: pb.settings.cans -%}
+                  <button type="button" class="pack_tier" data-pack-index="{{ forloop.index0 }}" data-tag="{{ pb.settings.tag | escape }}" data-inside="{{ pb.settings.cans }} × {{ product.title | escape }}" data-price="{{ pp | money_without_trailing_zeros }}" aria-pressed="{% if forloop.index0 == default_pack %}true{% else %}false{% endif %}">
+                    <b>{{ pb.settings.cans }}</b>
+                    <span>{{ each | money_without_trailing_zeros }} / {{ section.settings.label_can | escape }}</span>
+                  </button>
+                {%- endfor -%}
+              </div>
+
+              <dl class="pack_spec">
+                <div>
+                  <dt>{{ section.settings.label_spec_tier | escape }}</dt>
+                  <dd id="pack-spec-tier">{{ default_pack_block.settings.tag | escape }}</dd>
+                </div>
+                <div>
+                  <dt>{{ section.settings.label_spec_inside | escape }}</dt>
+                  <dd id="pack-spec-inside">{{ default_pack_block.settings.cans }} × {{ product.title | escape }}</dd>
+                </div>
+                <div>
+                  <dt>{{ section.settings.label_spec_price | escape }}</dt>
+                  <dd id="pack-spec-price">{{ default_price | money_without_trailing_zeros }}</dd>
+                </div>
+              </dl>
+
+              {%- if section.settings.pack_cta != blank -%}
+                <a href="#buy" class="drink_flavour-cta" data-drink-to-buy>{{ section.settings.pack_cta | escape }}</a>
+              {%- endif -%}
+            </div>
+
+            <div class="pack_stage">
+              <span class="merch_glow" style="--glow: {{ current_accent }};" aria-hidden="true"></span>
+
+              <div
+                id="pack-canvas-stage"
+                class="pack_canvas-container"
+                aria-hidden="true"
+                data-total-frames="{{ section.settings.pack_frame_count }}"
+                data-first-frame="{{ 'pack-frame-01.webp' | asset_url }}"
+              >
+                <img
+                  id="pack-scroll-poster"
+                  class="pack_scroll-poster"
+                  src="{{ 'pack-frame-01.webp' | asset_url }}"
+                  alt=""
+                  width="720"
+                  height="405"
+                  loading="eager"
+                >
+                <canvas id="pack-scroll-canvas" class="pack_scroll-canvas"></canvas>
+              </div>
+
+              <div class="pack_actives-callout" aria-hidden="true">
+                {%- assign card_i = 0 -%}
+                {%- for a in active_blocks -%}
+                  {%- if a.settings.show_in_pack_scene and card_i < 3 -%}
+                    <div class="pack_active-card" style="--card-i: {{ card_i }};">
+                      <div class="pack_active-head">
+                        <b>{{ a.settings.name | upcase | escape }}</b>
+                        <span>({{ a.settings.dose | upcase | escape }})</span>
+                      </div>
+                      <p>{{ a.settings.pack_scene_text | default: a.settings.description | escape }}</p>
+                    </div>
+                    {%- assign card_i = card_i | plus: 1 -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+
+    <!-- 4. FIRST BATCH STORY SECTION -->
+    {%- if section.settings.show_story -%}
+      <section class="drink_story">
+        <span class="merch_meta">{{ section.settings.story_eyebrow | escape }}</span>
+        <p class="drink_story-type" aria-hidden="true">
+          <span>{{ section.settings.story_word_1 | escape }}</span>
+          <span>{{ section.settings.story_word_2 | escape }}</span>
+        </p>
+        <h2 class="sr-only">{{ section.settings.story_word_1 | escape }} {{ section.settings.story_word_2 | escape }}</h2>
+        {%- if section.settings.story_body != blank -%}
+          <p class="max-width-medium text-size-medium text-white/70">{{ section.settings.story_body | escape }}</p>
+        {%- endif -%}
+      </section>
+    {%- endif -%}
+
+    <!-- 5. THE FLAVOURS RANGE SECTION -->
+    {%- if section.settings.show_range and flavour_count > 0 -%}
+      <section id="range" class="section relative bg-black border-t border-white/10">
+        <div class="padding-global">
+          <div class="container-large">
+            <div class="padding-section-large">
+              <h2 class="heading-style-display">{{ section.settings.range_heading | escape | newline_to_br }}</h2>
+              {%- if section.settings.range_intro != blank -%}
+                <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">{{ section.settings.range_intro | escape }}</p>
+              {%- endif -%}
+              <ul class="drink_flavours">{{ range_html }}</ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+
+    <!-- 6. REVIEWS SECTION -->
+    {%- liquid
+      assign review_count = 0
+      for b in section.blocks
+        if b.type == 'review' or b.type == '@app'
+          assign review_count = review_count | plus: 1
+        endif
+      endfor
+    -%}
+    {%- if section.settings.show_reviews and review_count > 0 -%}
+      <section class="section relative bg-black border-t border-white/10">
+        <div class="padding-global">
+          <div class="container-large">
+            <div class="padding-section-large">
+              <h2 class="heading-style-h3">{{ section.settings.reviews_heading | escape }}</h2>
+              {%- if section.settings.reviews_note != blank -%}
+                <p class="text-size-small mt-[var(--pad-s)] max-width-medium text-white/40">{{ section.settings.reviews_note | escape }}</p>
+              {%- endif -%}
+
+              <ul class="drink_reviews">
+                {%- for b in section.blocks -%}
+                  {%- if b.type == 'review' -%}
+                    <li {{ b.shopify_attributes }}>
+                      {% render 'asmaan-icons', name: 'star', class: 'h-4 w-4 text-[var(--taste-secondary)]' %}
+                      <blockquote class="text-size-medium">“{{ b.settings.quote | escape }}”</blockquote>
+                      <footer class="merch_meta">
+                        <span>{{ b.settings.name | escape }}</span>
+                        {%- if b.settings.role != blank -%}
+                          <span aria-hidden="true">·</span>
+                          <span>{{ b.settings.role | escape }}</span>
+                        {%- endif -%}
+                      </footer>
+                    </li>
+                  {%- endif -%}
+                {%- endfor -%}
+              </ul>
+
+              {%- for block in section.blocks -%}
+                {%- if block.type == '@app' -%}
+                  <div class="mt-[var(--pad-l)]">{% render block %}</div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+
+    <!-- 7. FAQ SECTION -->
+    {%- assign faq_blocks = section.blocks | where: 'type', 'faq' -%}
+    {%- if faq_blocks.size > 0 -%}
+      <section id="faq" class="section relative bg-black border-t border-white/10">
+        <div class="padding-global">
+          <div class="container-large">
+            <div class="padding-section-large">
+              <div class="mb-[var(--pad-xxl)]">
+                <h2 class="heading-style-display whitespace-pre-line">{{ section.settings.faq_heading | escape }}</h2>
+              </div>
+              <div class="max-width-large align-center">
+                <div class="faq_list">
+                  {%- for q in faq_blocks -%}
+                    <div {{ q.shopify_attributes }}>
+                      <div class="faq_separator"></div>
+                      <div class="faq_accordion">
+                        <button type="button" class="faq_question" aria-expanded="{{ forloop.first }}" aria-controls="drink-faq-{{ q.id }}">
+                          <span class="heading-style-h5">{{ q.settings.question | escape }}</span>
+                          <span class="faq_icon-wrapper">{% render 'asmaan-icons', name: 'plus', class: 'h-6 w-6' %}</span>
+                        </button>
+                        <div class="faq_answer" id="drink-faq-{{ q.id }}" data-open="{{ forloop.first }}">
+                          <div><div class="text-size-medium pb-[var(--pad-s)] text-white/70">{{ q.settings.answer }}</div></div>
+                        </div>
+                      </div>
+                    </div>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  /* Breathing room: every gap below scales with the "Page spacing" setting (--drink-air). */
+  .drink-page-wrapper [data-drink-blurb] { line-height: 1.65; margin-top: calc(var(--pad-m) * var(--drink-air)); }
+  .drink-page-wrapper .drink_field { margin-top: calc(var(--pad-l) * var(--drink-air)); }
+  .drink-page-wrapper .drink_legend { margin-bottom: calc(var(--pad-xs, 0.5rem) * var(--drink-air)); }
+  .drink-page-wrapper .drink_packs,
+  .drink-page-wrapper .drink_modes { gap: calc(var(--pad-s) * var(--drink-air)); }
+  .drink-page-wrapper .drink_total {
+    margin: calc(var(--pad-l) * var(--drink-air)) 0 calc(var(--pad-l) * var(--drink-air));
+    padding-top: calc(var(--pad-l) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_trust {
+    margin-top: calc(var(--pad-l) * var(--drink-air));
+    gap: calc(var(--pad-s) * var(--drink-air)) calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_stock {
+    margin-top: calc(var(--pad-l) * var(--drink-air));
+    padding-top: calc(var(--pad-l) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_badges {
+    margin-top: calc(var(--pad-xl) * var(--drink-air));
+    padding-top: calc(var(--pad-xl) * var(--drink-air));
+    gap: calc(var(--pad-l) * var(--drink-air)) calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_product { padding-bottom: calc(var(--pad-xxl) * var(--drink-air)); }
+  .drink-page-wrapper .drink_actives li {
+    padding: calc(var(--pad-m) * var(--drink-air)) 0;
+    gap: calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_actives li p { line-height: 1.6; }
+  .drink-page-wrapper .drink_facts dl > div { padding-block: calc(0.35rem * var(--drink-air)); }
+  .drink-page-wrapper .drink_flavours { margin-top: calc(var(--pad-xxl) * var(--drink-air)); gap: calc(var(--pad-xl) * var(--drink-air)); }
+  .drink-page-wrapper .faq_list > div + div { margin-top: calc(0.25rem * var(--drink-air)); }
+  .drink-page-wrapper #formula .padding-section-large,
+  .drink-page-wrapper #range .padding-section-large,
+  .drink-page-wrapper #faq .padding-section-large {
+    padding-top: calc(var(--pad-xxl) * 1.25 * var(--drink-air));
+    padding-bottom: calc(var(--pad-xxl) * 1.25 * var(--drink-air));
+  }
+
+  .drink_can-mount {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drink_can-mount > * {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+  }
+
+  /* The navbar is fixed over the top of the page; sit the banner just below it and take the
+     banner space out of the product section's own header clearance. */
+  .drink-page-wrapper.has-banner .drink_banner {
+    position: relative;
+    z-index: 1;
+    margin-top: var(--asmaan-header-h, 90px);
+  }
+  .drink-page-wrapper.has-banner #buy {
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+  }
+</style>
+
+
+{% schema %}
+{
+  "name": "Product story",
+  "tag": "section",
+  "class": "product-story-section",
+  "max_blocks": 50,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Flavour collection",
+      "info": "Used only when there are no Flavour blocks. Falls back to the homepage collection in Theme settings."
+    },
+    {
+      "type": "range",
+      "id": "image_position_front",
+      "label": "Product image position: front",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "fallback_accent",
+      "label": "Fallback accent colour",
+      "default": "#9089D3"
+    },
+    {
+      "type": "color",
+      "id": "fallback_deep",
+      "label": "Fallback deep colour",
+      "default": "#2A1D4A"
+    },
+    {
+      "type": "header",
+      "content": "Gallery"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Page spacing",
+      "min": 100,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 130,
+      "info": "Scales the space between elements on this page."
+    },
+    {
+      "type": "header",
+      "content": "Formula"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_formula",
+      "label": "Show formula",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "formula_heading",
+      "label": "Heading",
+      "default": "What is\nin it"
+    },
+    {
+      "type": "textarea",
+      "id": "formula_intro",
+      "label": "Intro",
+      "default": "Five actives, at doses worth printing. No proprietary blend, nothing rounded up, and nothing in there to make the label look longer."
+    },
+    {
+      "type": "text",
+      "id": "facts_heading",
+      "label": "Facts heading",
+      "default": "On the can"
+    },
+    {
+      "type": "textarea",
+      "id": "facts_note",
+      "label": "Facts note",
+      "default": "Serve cold enough that the first sip is a decision. Once open, keep it refrigerated and finish it the same day."
+    },
+    {
+      "type": "header",
+      "content": "Pack scene"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pack_scene",
+      "label": "Show pack scene",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "pack_eyebrow",
+      "label": "Eyebrow",
+      "default": "The pack"
+    },
+    {
+      "type": "textarea",
+      "id": "pack_heading",
+      "label": "Heading",
+      "default": "Twelve\nat a time"
+    },
+    {
+      "type": "textarea",
+      "id": "pack_body",
+      "label": "Text",
+      "default": "Cans ship in a plain shipper, four across and as deep as the tier you take. Nothing printed on it but the wordmark and a number — what is worth looking at is inside it."
+    },
+    {
+      "type": "text",
+      "id": "pack_cta",
+      "label": "Link text",
+      "default": "Take it to the bag"
+    },
+    {
+      "type": "number",
+      "id": "pack_frame_count",
+      "label": "Animation frame count",
+      "default": 150,
+      "info": "Number of pack-frame-XX.webp files in the theme assets."
+    },
+    {
+      "type": "text",
+      "id": "label_spec_tier",
+      "label": "Spec label: tier",
+      "default": "Tier"
+    },
+    {
+      "type": "text",
+      "id": "label_spec_inside",
+      "label": "Spec label: inside",
+      "default": "Inside"
+    },
+    {
+      "type": "text",
+      "id": "label_spec_price",
+      "label": "Spec label: price",
+      "default": "Price"
+    },
+    {
+      "type": "header",
+      "content": "First batch story"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_story",
+      "label": "Show story",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "story_eyebrow",
+      "label": "Eyebrow",
+      "default": "The first batch"
+    },
+    {
+      "type": "text",
+      "id": "story_word_1",
+      "label": "Big word 1",
+      "default": "Made"
+    },
+    {
+      "type": "text",
+      "id": "story_word_2",
+      "label": "Big word 2",
+      "default": "Once"
+    },
+    {
+      "type": "textarea",
+      "id": "story_body",
+      "label": "Text",
+      "default": "Two hundred and forty packs, hand-numbered, brewed in one run. No second batch at this recipe — what is in the first is what the first tastes like. The list is told the morning it ships, and nobody else is told at all."
+    },
+    {
+      "type": "header",
+      "content": "Range"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_range",
+      "label": "Show range",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "range_heading",
+      "label": "Heading",
+      "default": "The range"
+    },
+    {
+      "type": "textarea",
+      "id": "range_intro",
+      "label": "Intro",
+      "default": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it."
+    },
+    {
+      "type": "header",
+      "content": "Reviews"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show reviews",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "reviews_heading",
+      "label": "Heading",
+      "default": "From the first tasting"
+    },
+    {
+      "type": "textarea",
+      "id": "reviews_note",
+      "label": "Note",
+      "info": "Optional line under the heading."
+    },
+    {
+      "type": "header",
+      "content": "FAQ"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_heading",
+      "label": "Heading",
+      "default": "Frequently asked\nquestions"
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "text",
+      "id": "label_pack",
+      "label": "Pack",
+      "default": "Pack"
+    },
+    {
+      "type": "text",
+      "id": "label_can",
+      "label": "Per can",
+      "default": "can"
+    },
+    {
+      "type": "text",
+      "id": "label_in_pack",
+      "label": "Range: selected flavour",
+      "default": "In your pack"
+    },
+    {
+      "type": "text",
+      "id": "label_take_this",
+      "label": "Range: other flavour",
+      "default": "Take this one"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "flavour",
+      "name": "Flavour",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "paragraph",
+          "content": "Leave the fields below empty to use the product's own data."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name override"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tagline override"
+        },
+        {
+          "type": "textarea",
+          "id": "blurb",
+          "label": "Description override"
+        },
+        {
+          "type": "color",
+          "id": "accent",
+          "label": "Accent colour override"
+        },
+        {
+          "type": "color",
+          "id": "deep",
+          "label": "Deep colour override"
+        },
+        {
+          "type": "image_picker",
+          "id": "label_image",
+          "label": "3D label texture override",
+          "info": "The unwrapped 360° can print. Defaults to the product's last image."
+        }
+      ]
+    },
+    {
+      "type": "pack",
+      "name": "Pack tier",
+      "settings": [
+        {
+          "type": "number",
+          "id": "cans",
+          "label": "Cans in pack",
+          "default": 12
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tag",
+          "default": "Starter"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Note"
+        },
+        {
+          "type": "number",
+          "id": "price",
+          "label": "Fallback price",
+          "default": 2400,
+          "info": "In whole currency units. Shown only when no matching product variant exists."
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Selected by default",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "active",
+      "name": "Active ingredient",
+      "settings": [
+        {
+          "type": "text",
+          "id": "dose",
+          "label": "Dose",
+          "default": "300 mg"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Ingredient"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_in_pack_scene",
+          "label": "Show as card in pack scene",
+          "default": false,
+          "info": "Up to three cards are shown."
+        },
+        {
+          "type": "textarea",
+          "id": "pack_scene_text",
+          "label": "Pack scene card text",
+          "info": "Uses the description when empty."
+        }
+      ]
+    },
+    {
+      "type": "fact",
+      "name": "Can fact",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Volume"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "default": "250 ml"
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Write a review."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Name",
+          "default": "Name"
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "Role or city"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Answer</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product story"
+    }
+  ]
+}
+{% endschema %}

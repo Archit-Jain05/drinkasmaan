@@ -1,12 +1,12 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -51,24 +51,207 @@
         "acc_3_content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over [free_shipping_threshold]."
       }
     },
-    "newsletter": {
-      "type": "asmaan-newsletter",
+    "story": {
+      "type": "product-story",
+      "blocks": {
+        "story_flavour_jamun": {
+          "type": "flavour",
+          "settings": {
+            "product": "kala-jamun"
+          }
+        },
+        "story_flavour_mango": {
+          "type": "flavour",
+          "settings": {
+            "product": "alphonso-mango"
+          }
+        },
+        "story_flavour_magenta": {
+          "type": "flavour",
+          "settings": {
+            "product": "wild-magenta"
+          }
+        },
+        "story_pack_6": {
+          "type": "pack",
+          "settings": {
+            "cans": 6,
+            "tag": "Starter",
+            "note": "A week of mornings.",
+            "price": 599,
+            "featured": false
+          }
+        },
+        "story_pack_12": {
+          "type": "pack",
+          "settings": {
+            "cans": 12,
+            "tag": "Most taken",
+            "note": "The one people come back for.",
+            "price": 1199,
+            "featured": true
+          }
+        },
+        "story_active_1": {
+          "type": "active",
+          "settings": {
+            "dose": "300 mg",
+            "name": "KSM-66 ashwagandha",
+            "description": "Root extract, at the dose the research is run on. It sits under the caffeine and takes the edge off the push.",
+            "show_in_pack_scene": true,
+            "pack_scene_text": "Root extract at clinical dose. Sustains calm focus and cognitive endurance during intense creative sessions."
+          }
+        },
+        "story_active_2": {
+          "type": "active",
+          "settings": {
+            "dose": "200 mg",
+            "name": "L-theanine",
+            "description": "From green tea. Smooths the front of the curve, so the lift arrives as attention rather than pressure.",
+            "show_in_pack_scene": true,
+            "pack_scene_text": "From organic green tea. Smooths the caffeine curve into alert, clear-headed flow with zero jitters."
+          }
+        },
+        "story_active_3": {
+          "type": "active",
+          "settings": {
+            "dose": "100 mg",
+            "name": "Natural caffeine",
+            "description": "Drawn from green coffee beans rather than synthesised. Slower in, longer held, about a third less than the category.",
+            "show_in_pack_scene": true,
+            "pack_scene_text": "Clean lift from green coffee beans. Slower release, longer sustained attention, zero crash."
+          }
+        },
+        "story_active_4": {
+          "type": "active",
+          "settings": {
+            "dose": "60 mg",
+            "name": "Magnesium bisglycinate",
+            "description": "The form that is actually absorbed, rather than the cheap oxide that mostly is not.",
+            "show_in_pack_scene": false
+          }
+        },
+        "story_active_5": {
+          "type": "active",
+          "settings": {
+            "dose": "1.4 mg",
+            "name": "B6 with 2.5 µg B12",
+            "description": "For normal energy metabolism — the quiet half of the formula, and the half everyone forgets.",
+            "show_in_pack_scene": false
+          }
+        },
+        "story_fact_1": {
+          "type": "fact",
+          "settings": {
+            "label": "Volume",
+            "value": "250 ml"
+          }
+        },
+        "story_fact_3": {
+          "type": "fact",
+          "settings": {
+            "label": "Sugar",
+            "value": "0 g"
+          }
+        },
+        "story_fact_4": {
+          "type": "fact",
+          "settings": {
+            "label": "Caffeine",
+            "value": "100 mg (40 mg / 100 ml)"
+          }
+        },
+        "story_fact_5": {
+          "type": "fact",
+          "settings": {
+            "label": "Colour",
+            "value": "From food, not dye"
+          }
+        },
+        "story_fact_6": {
+          "type": "fact",
+          "settings": {
+            "label": "Diet",
+            "value": "Vegan"
+          }
+        },
+        "story_review_1": {
+          "type": "review",
+          "settings": {
+            "quote": "The only one I have had that does not announce itself. Twenty minutes in I noticed I had stopped checking my phone.",
+            "name": "Ritika",
+            "role": "Studio founder, Bombay"
+          }
+        },
+        "story_review_2": {
+          "type": "review",
+          "settings": {
+            "quote": "Jamun is the one. Tart, dry, nothing like the syrup I expected from a can this colour.",
+            "name": "Arjun",
+            "role": "Music producer"
+          }
+        },
+        "story_review_3": {
+          "type": "review",
+          "settings": {
+            "quote": "Four hours on one thing, then nothing to come down from. That is the whole pitch and it holds.",
+            "name": "Meher",
+            "role": "Doctor, night rota"
+          }
+        },
+        "story_faq_1": {
+          "type": "faq",
+          "settings": {
+            "question": "What makes Asmaan different from other energy drinks?",
+            "answer": "<p>Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, paired with L-theanine and KSM-66 ashwagandha.</p>"
+          }
+        },
+        "story_faq_2": {
+          "type": "faq",
+          "settings": {
+            "question": "How much caffeine is in a can?",
+            "answer": "<p>100 mg per 250 ml can — about the same as a strong cup of coffee, with no jitters.</p>"
+          }
+        },
+        "story_faq_3": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Asmaan sugar free?",
+            "answer": "<p>Yes. Zero sugar in every 250 ml can.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "story_flavour_jamun",
+        "story_flavour_mango",
+        "story_flavour_magenta",
+        "story_pack_6",
+        "story_pack_12",
+        "story_active_1",
+        "story_active_2",
+        "story_active_3",
+        "story_active_4",
+        "story_active_5",
+        "story_fact_1",
+        "story_fact_3",
+        "story_fact_4",
+        "story_fact_5",
+        "story_fact_6",
+        "story_review_1",
+        "story_review_2",
+        "story_review_3",
+        "story_faq_1",
+        "story_faq_2",
+        "story_faq_3"
+      ],
       "settings": {
-        "brand_name": "ASMAAN",
-        "title": "Join the first batch",
-        "body": "The first run is limited and goes out to the list before anywhere else. No spam — one mail when the cans land.",
-        "placeholder": "Your email address",
-        "cta_text": "Sign up",
-        "warning_note": "Not suitable for children or for people who are pregnant or breastfeeding. Contains caffeine.",
-        "instagram_url": "",
-        "legal_link": "",
-        "terms_link": "",
-        "privacy_link": ""
+        "show_reviews": false,
+        "reviews_note": ""
       }
     }
   },
   "order": [
     "main",
-    "newsletter"
+    "story"
   ]
 }
