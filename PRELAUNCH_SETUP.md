@@ -10,7 +10,10 @@ The form posts to the Google Apps Script web app in `templates/password.json` (`
    `if (e.parameter.source === 'prelaunch-free-sample') return prelaunch(e.parameter);`
 3. Paste everything in the code block below at the bottom of the file. If you already have a
    `doGet`, keep only one (the one below feeds the live counter).
-4. Save, then Deploy > Manage deployments > pencil icon > New version > Deploy.
+4. Save. Then, in the function menu at the top of the editor, choose **authorizeOnce** and click **Run**.
+   Google asks for permission (Review permissions > your account > Advanced > Go to project > Allow).
+   Without this step the sign-up is saved but no emails are sent.
+5. Deploy > Manage deployments > pencil icon > New version > Deploy.
    The URL stays the same. Access must be "Anyone", execute as "Me".
 
 ```js
@@ -22,6 +25,13 @@ const CANS = [
   'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_d49a29a3-72dc-4aa7-a49f-4bd438390958.webp?v=1789322504',
   'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_9cc3ceb6-1495-47b1-88b1-b96bd5b9baea.webp?v=1789322526'
 ].map(u => u + '&format=png&width=240');
+
+// Run this ONCE from the editor (pick "authorizeOnce" in the function menu, click Run, then Allow).
+// It makes Google ask for permission to send email, which the site's submissions need.
+function authorizeOnce() {
+  MailApp.getRemainingDailyQuota();
+  SpreadsheetApp.getActiveSpreadsheet();
+}
 
 // Live counter on the prelaunch page: number of registrations (rows under the header).
 function doGet() {
