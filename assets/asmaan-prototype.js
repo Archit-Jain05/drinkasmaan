@@ -852,6 +852,7 @@
         }
       };
     })();
+    stage3D.spray = spray;
 
     // Build cans (ensure enough cans for smooth orbital ring)
     var copies = TASTES.length <= 1 ? 4 : (TASTES.length === 2 ? 3 : 2);
@@ -1598,13 +1599,13 @@
 
             // Spin speed of this can from its own spin (not the scroll pose). A jump this large in one
             // frame is the hand-over between carousel and single can, not real spinning.
-            if (!isMotionOff && dt > 0 && focus > 0.5 && config.enableCondensation !== false) {
+            if (stage3D.spray && !isMotionOff && dt > 0 && focus > 0.5 && config.enableCondensation !== false) {
               var dSpin = canObj.spinAngle - (canObj.prevSpin === undefined ? canObj.spinAngle : canObj.prevSpin);
-              if (Math.abs(dSpin) < 1.2) spray.emit(canObj, dSpin / dt, dt);
+              if (Math.abs(dSpin) < 1.2) stage3D.spray.emit(canObj, dSpin / dt, dt);
             }
             canObj.prevSpin = canObj.spinAngle;
           }
-          spray.update(isMotionOff ? 0 : dt);
+          if (stage3D.spray) stage3D.spray.update(isMotionOff ? 0 : dt);
 
           stage3D.renderer.render(stage3D.scene, stage3D.camera);
         }
