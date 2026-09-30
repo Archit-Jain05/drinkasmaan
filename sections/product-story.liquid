@@ -116,6 +116,7 @@
 
 <div class="product-story drink-page-wrapper" style="--drink-air: {{ section.settings.spacing | default: 100 | divided_by: 100.0 }};">
   <div class="product-story_body">
+    {%- capture part_formula -%}
     <!-- 2. FORMULA & DOSES SECTION -->
     {%- assign active_blocks = section.blocks | where: 'type', 'active' -%}
     {%- assign fact_blocks = section.blocks | where: 'type', 'fact' -%}
@@ -168,7 +169,9 @@
         </div>
       </section>
     {%- endif -%}
+    {%- endcapture -%}
 
+    {%- capture part_pack -%}
     <!-- 3. INTERACTIVE 3D PACK SCENE -->
     {%- if section.settings.show_pack_scene -%}
       <section id="pack" class="pack_run">
@@ -254,7 +257,9 @@
         </div>
       </section>
     {%- endif -%}
+    {%- endcapture -%}
 
+    {%- capture part_story -%}
     <!-- 4. FIRST BATCH STORY SECTION -->
     {%- if section.settings.show_story -%}
       <section class="drink_story">
@@ -269,7 +274,9 @@
         {%- endif -%}
       </section>
     {%- endif -%}
+    {%- endcapture -%}
 
+    {%- capture part_range -%}
     <!-- 5. THE FLAVOURS RANGE SECTION -->
     {%- if section.settings.show_range and flavour_count > 0 -%}
       <section id="range" class="section relative bg-black border-t border-white/10">
@@ -286,7 +293,9 @@
         </div>
       </section>
     {%- endif -%}
+    {%- endcapture -%}
 
+    {%- capture part_reviews -%}
     <!-- 6. REVIEWS SECTION -->
     {%- liquid
       assign review_count = 0
@@ -334,7 +343,9 @@
         </div>
       </section>
     {%- endif -%}
+    {%- endcapture -%}
 
+    {%- capture part_faq -%}
     <!-- 7. FAQ SECTION -->
     {%- assign faq_blocks = section.blocks | where: 'type', 'faq' -%}
     {%- if faq_blocks.size > 0 -%}
@@ -367,6 +378,14 @@
           </div>
         </div>
       </section>
+    {%- endif -%}
+    {%- endcapture -%}
+
+    {%- comment -%} Order: the flavour range can sit right under the product (setting), or in its original place. {%- endcomment -%}
+    {%- if section.settings.range_first -%}
+      {{ part_range }}{{ part_formula }}{{ part_pack }}{{ part_story }}{{ part_reviews }}{{ part_faq }}
+    {%- else -%}
+      {{ part_formula }}{{ part_pack }}{{ part_story }}{{ part_range }}{{ part_reviews }}{{ part_faq }}
     {%- endif -%}
   </div>
 </div>
@@ -444,6 +463,12 @@
   "class": "product-story-section",
   "max_blocks": 50,
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "range_first",
+      "label": "Show the flavour range right under the product",
+      "default": true
+    },
     {
       "type": "header",
       "content": "Products"
