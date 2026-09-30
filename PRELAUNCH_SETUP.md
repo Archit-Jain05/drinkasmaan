@@ -33,12 +33,16 @@ function doGet() {
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 }
+// Same, but keeps line breaks (for the multi-line address).
+function escBr(s) {
+  return esc(s).replace(/\n/g, '<br>');
+}
 
 function prelaunch(p) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('Prelaunch') || ss.insertSheet('Prelaunch');
-  if (sheet.getLastRow() === 0) sheet.appendRow(['Time', 'Name', 'Email', 'Address']);
-  sheet.appendRow([p.timestamp, p.name, p.email, p.address]);
+  if (sheet.getLastRow() === 0) sheet.appendRow(['Time', 'Name', 'Email', 'Address line 1', 'Address line 2', 'City', 'State', 'PIN code']);
+  sheet.appendRow([p.timestamp, p.name, p.email, p.address1 || p.address, p.address2 || '', p.city || '', p.state || '', p.pincode || '']);
   const n = sheet.getLastRow() - 1; // this person's registration number
 
   MailApp.sendEmail({
@@ -62,15 +66,14 @@ function prelaunch(p) {
 
 // Email to the team: plain and scannable.
 function teamHtml(p, n) {
-  const row = (k, v) => `<tr><td style="padding:10px 14px;color:#6b6b7a;width:110px;border-top:1px solid #eee">${k}</td><td style="padding:10px 14px;border-top:1px solid #eee"><b>${esc(v)}</b></td></tr>`;
+  const row = (k, v) => `<tr><td style="padding:10px 14px;color:#6b6b7a;width:110px;border-top:1px solid #eee">${k}</td><td style="padding:10px 14px;border-top:1px solid #eee"><b>${escBr(v)}</b></td></tr>`;
   return `<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;color:#14121c">
     <div style="background:#1c1236;color:#fff;padding:18px 20px;border-radius:14px 14px 0 0">
       <div style="font-size:12px;letter-spacing:2px;color:#b8b0ee">NEW FREE SAMPLE REQUEST</div>
       <div style="font-size:22px;font-weight:bold;margin-top:4px">#${n} &middot; ${esc(p.name)}</div>
     </div>
     <table style="border-collapse:collapse;width:100%;border:1px solid #eee;border-top:0;font-size:14px">
-      ${row('Name', p.name)}${row('Email', p.email)}${row('Address', p.address)}${row('Received', p.timestamp)}
-    </table>
+      ${row('Name', p.name)}${row('Email', p.email)}${row('Address', p.address)}${row('Received', p.timestamp)}    </table>
     <p style="font-size:12px;color:#8a8a98">Reply to this email to write to them directly.</p>
   </div>`;
 }
@@ -80,7 +83,7 @@ function confirmHtml(p, n) {
   const first = esc(String(p.name).split(' ')[0]);
   const num = ('0000' + n).slice(-4);
   const step = (t, d) => `<tr><td valign="top" style="padding:0 14px 16px 0;width:14px"><div style="width:10px;height:10px;border-radius:5px;background:#9089d3;margin-top:6px"></div></td><td style="padding:0 0 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#e8e5f7"><b style="color:#ffffff">${t}</b><br>${d}</td></tr>`;
-  const line = (k, v) => `<tr><td style="padding:9px 0;font-family:Georgia,serif;font-size:11px;letter-spacing:2px;color:#8d87b8;width:96px" valign="top">${k}</td><td style="padding:9px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:21px;color:#ffffff" valign="top">${esc(v)}</td></tr>`;
+  const line = (k, v) => `<tr><td style="padding:9px 0;font-family:Georgia,serif;font-size:11px;letter-spacing:2px;color:#8d87b8;width:96px" valign="top">${k}</td><td style="padding:9px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:21px;color:#ffffff" valign="top">${escBr(v)}</td></tr>`;
   return `<!doctype html><html><body style="margin:0;padding:0;background:#07050f">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#07050f">Your spot is saved. Our team will reach out to you soon.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#1c1236" style="background:#1c1236;background-image:linear-gradient(180deg,#07050f 0%,#1c1236 40%,#4a3d85 100%)">
