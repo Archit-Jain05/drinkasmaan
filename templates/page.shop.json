@@ -236,7 +236,7 @@
       "settings": {
         "show_reviews": false,
         "reviews_note": "",
-        "show_stock": true
+        "show_stock": false
       }
     }
   },

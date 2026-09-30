@@ -788,6 +788,71 @@
         );
     }
 
+    // Water flung off a can that is spun hard. Drops live in world space (not on the can), leave
+    // along the spin's tangent, fall under gravity and shrink away.
+    var spray = (function () {
+      var N = 60, GRAVITY = 6, THRESH = 5; // rad/s of spin before anything comes off
+      var group = new THREE.Group();
+      scene.add(group);
+      var mat = new THREE.MeshStandardMaterial({
+        color: 0xffffff, roughness: 0.05, metalness: 0.1, transparent: true,
+        opacity: 0.85, envMapIntensity: 2, depthWrite: false
+      });
+      var pool = [];
+      for (var i = 0; i < N; i++) {
+        var m = new THREE.Mesh(dropGeoShared, mat);
+        m.visible = false;
+        group.add(m);
+        pool.push({ mesh: m, v: new THREE.Vector3(), life: 0, r: 0 });
+      }
+      var pos = new THREE.Vector3(), vel = new THREE.Vector3(), out = new THREE.Vector3();
+      var cursor = 0;
+
+      return {
+        emit: function (can, omega, dt) {
+          var excess = Math.abs(omega) - THRESH;
+          if (excess <= 0) return;
+          var want = excess * 14 * dt;
+          var n = Math.floor(want) + (Math.random() < want % 1 ? 1 : 0);
+          var grp = can.group;
+          grp.updateMatrixWorld(true);
+          var s = grp.scale.x;
+          for (var k = 0; k < n; k++) {
+            var th = Math.random() * Math.PI * 2;
+            var y = 0.4 + Math.random() * 4.2;
+            var r = radiusAt(y);
+            pos.set(r * Math.sin(th), y, r * Math.cos(th));
+            can.inner.localToWorld(pos);
+            // surface speed of the spin, plus a little outward kick and lift
+            vel.set(Math.cos(th), 0, -Math.sin(th)).multiplyScalar(omega * r * 0.35);
+            out.set(Math.sin(th), 0, Math.cos(th)).multiplyScalar(0.8 + Math.random() * 1.4);
+            vel.add(out);
+            vel.y += (Math.random() - 0.2) * 1.6;
+            vel.applyQuaternion(grp.quaternion).multiplyScalar(s);
+            var d = pool[cursor];
+            cursor = (cursor + 1) % N;
+            d.mesh.position.copy(pos);
+            d.v.copy(vel);
+            d.r = (0.025 + Math.random() * 0.03) * s;
+            d.life = 0.5 + Math.random() * 0.5;
+            d.mesh.visible = true;
+            d.mesh.scale.setScalar(d.r);
+          }
+        },
+        update: function (dt) {
+          for (var i = 0; i < N; i++) {
+            var d = pool[i];
+            if (d.life <= 0) continue;
+            d.life -= dt;
+            if (d.life <= 0) { d.mesh.visible = false; continue; }
+            d.v.y -= GRAVITY * dt;
+            d.mesh.position.addScaledVector(d.v, dt);
+            d.mesh.scale.setScalar(d.r * Math.min(1, d.life / 0.25));
+          }
+        }
+      };
+    })();
+
     // Build cans (ensure enough cans for smooth orbital ring)
     var copies = TASTES.length <= 1 ? 4 : (TASTES.length === 2 ? 3 : 2);
     var cans = [];
@@ -1530,7 +1595,16 @@
             if (canObj.dropletSystem) {
               canObj.dropletSystem.update(dt, focus, isMotionOff, now, edgeFade);
             }
+
+            // Spin speed of this can from its own spin (not the scroll pose). A jump this large in one
+            // frame is the hand-over between carousel and single can, not real spinning.
+            if (!isMotionOff && dt > 0 && focus > 0.5 && config.enableCondensation !== false) {
+              var dSpin = canObj.spinAngle - (canObj.prevSpin === undefined ? canObj.spinAngle : canObj.prevSpin);
+              if (Math.abs(dSpin) < 1.2) spray.emit(canObj, dSpin / dt, dt);
+            }
+            canObj.prevSpin = canObj.spinAngle;
           }
+          spray.update(isMotionOff ? 0 : dt);
 
           stage3D.renderer.render(stage3D.scene, stage3D.camera);
         }
