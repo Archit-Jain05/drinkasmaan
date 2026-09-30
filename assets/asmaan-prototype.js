@@ -791,13 +791,25 @@
     // Water flung off a can that is spun hard. Drops live in world space (not on the can), leave
     // along the spin's tangent, fall under gravity and shrink away.
     var spray = (function () {
-      var N = 60, GRAVITY = 6, THRESH = 5; // rad/s of spin before anything comes off
+      var N = 150, GRAVITY = 7, THRESH = 5; // rad/s of spin before anything comes off
       var group = new THREE.Group();
       scene.add(group);
-      var mat = new THREE.MeshStandardMaterial({
-        color: 0xffffff, roughness: 0.05, metalness: 0.1, transparent: true,
-        opacity: 0.85, envMapIntensity: 2, depthWrite: false
-      });
+      // Clear water: nearly colourless and see-through, all the look comes from bright, sharp
+      // reflections of the studio environment on the surface (a white opaque bead reads as snow).
+      var mat;
+      try {
+        mat = new THREE.MeshPhysicalMaterial({
+          color: 0xdcecff, roughness: 0, metalness: 0, transparent: true, opacity: 0.45,
+          ior: 1.333, specularIntensity: 1, clearcoat: 1, clearcoatRoughness: 0,
+          envMapIntensity: 3.2, depthWrite: false
+        });
+      } catch (e) {
+        mat = new THREE.MeshStandardMaterial({
+          color: 0xdcecff, roughness: 0, metalness: 0.1, transparent: true,
+          opacity: 0.4, envMapIntensity: 3, depthWrite: false
+        });
+      }
+      var Z = new THREE.Vector3(0, 0, 1), dir = new THREE.Vector3();
       var pool = [];
       for (var i = 0; i < N; i++) {
         var m = new THREE.Mesh(dropGeoShared, mat);
@@ -833,7 +845,11 @@
             cursor = (cursor + 1) % N;
             d.mesh.position.copy(pos);
             d.v.copy(vel);
-            d.r = (0.025 + Math.random() * 0.03) * s;
+            // mostly fine spray, a few fat drops
+            var big = Math.random() < 0.15;
+            d.r = (big ? 0.045 + Math.random() * 0.03 : 0.016 + Math.random() * 0.024) * s;
+            // some of it comes at the viewer
+            if (Math.random() < 0.4) d.v.z += (1.5 + Math.random() * 2.5) * s;
             d.life = 0.5 + Math.random() * 0.5;
             d.mesh.visible = true;
             d.mesh.scale.setScalar(d.r);
@@ -847,7 +863,12 @@
             if (d.life <= 0) { d.mesh.visible = false; continue; }
             d.v.y -= GRAVITY * dt;
             d.mesh.position.addScaledVector(d.v, dt);
-            d.mesh.scale.setScalar(d.r * Math.min(1, d.life / 0.25));
+            // stretch each drop along its flight so it reads as a moving streak of water
+            var sp = d.v.length();
+            var k = d.r * Math.min(1, d.life / 0.25);
+            dir.copy(d.v).divideScalar(sp || 1);
+            d.mesh.quaternion.setFromUnitVectors(Z, dir);
+            d.mesh.scale.set(k, k, k * (1 + Math.min(sp * 0.35, 3)));
           }
         }
       };
