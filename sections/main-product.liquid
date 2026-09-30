@@ -200,6 +200,32 @@
     opacity: 0.45;
     cursor: not-allowed;
   }
+
+  .flavour-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1.25rem; }
+  .flavour-chip {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.5rem 0.9rem; border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.75); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  }
+  .flavour-chip:hover { border-color: rgba(255, 255, 255, 0.35); color: #fff; }
+  .flavour-chip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .flavour-chip.is-current { border-color: var(--chip); background: rgba(255, 255, 255, 0.1); color: #fff; }
+  .flavour-chip_dot { width: 10px; height: 10px; border-radius: 50%; background: var(--chip); flex: none; }
+
+  .batch-count {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.3rem 0.75rem;
+    margin: -0.5rem 0 1.5rem; max-width: 22rem;
+    font-family: var(--font-mono, monospace); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.6);
+  }
+  .batch-count[hidden] { display: none; }
+  .batch-count_num { margin-left: auto; font-size: 12px; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+  .batch-count_num b { color: #fff; font-size: 15px; font-weight: 700; }
+  .batch-count_bar { flex-basis: 100%; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
+  .batch-count_bar i { display: block; height: 100%; width: 100%; background: var(--taste-secondary, #9089d3); transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
 </style>
 
 <section class="product-page-wrap">
@@ -254,8 +280,8 @@
       {%- if section.settings.show_angle_controls -%}
         <div class="can-angle-btn-list" id="can-angle-controls">
           <button type="button" class="can-angle-btn is-active" data-asmaan-can-view="front" aria-pressed="true">Front</button>
-          <button type="button" class="can-angle-btn" data-asmaan-can-view="left" aria-pressed="false">Botanicals</button>
-          <button type="button" class="can-angle-btn" data-asmaan-can-view="back" aria-pressed="false">Nutrition</button>
+          <button type="button" class="can-angle-btn" data-asmaan-can-view="left" aria-pressed="false">Botanical</button>
+          <button type="button" class="can-angle-btn" data-asmaan-can-view="back" aria-pressed="false">Nutritional</button>
           <button type="button" class="can-angle-btn" data-asmaan-can-view="right" aria-pressed="false">Disclaimer</button>
         </div>
       {%- endif -%}
@@ -297,6 +323,21 @@
       <h1 style="font-size: clamp(2rem, 4vw, 3rem); font-weight: 900; text-transform: uppercase; letter-spacing: var(--asmaan-track-display); color: #fff; margin: 0 0 0.75rem;">
         {{ product.title | default: 'Asmaan Ambition Tonic' }}
       </h1>
+
+      {%- if section.settings.show_flavours -%}
+        {%- assign flavour_handles = section.settings.flavour_handles | split: ',' -%}
+        <div class="flavour-chips" role="group" aria-label="Flavour">
+          {%- for h in flavour_handles -%}
+            {%- assign fh = h | strip -%}
+            {%- assign fp = all_products[fh] -%}
+            {%- if fp != blank -%}
+              <a href="{{ fp.url }}" class="flavour-chip{% if fp.id == product.id %} is-current{% endif %}" style="--chip: {{ fp.metafields.custom.accent_color.value | default: '#9089D3' }};"{% if fp.id == product.id %} aria-current="page"{% endif %}>
+                <span class="flavour-chip_dot" aria-hidden="true"></span>{{ fp.title }}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
       
       <div style="font-size: 1.5rem; font-family: var(--font-mono, monospace); color: #fff; margin-bottom: 1.5rem; display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap;">
         <span id="product-price-display" style="font-weight: bold;">
@@ -316,6 +357,14 @@
           </span>
         {%- endif -%}
       </div>
+
+      {%- if section.settings.show_batch_counter and section.settings.counter_sheet_url != blank -%}
+        <div class="batch-count" data-batch-count data-sheet-url="{{ section.settings.counter_sheet_url }}" data-total="{{ section.settings.counter_total }}" data-per="{{ section.settings.counter_per }}" hidden>
+          <span>{{ section.settings.counter_label | escape }}</span>
+          <span class="batch-count_num" aria-live="polite"><b data-batch-left></b> / {{ section.settings.counter_total }}</span>
+          <span class="batch-count_bar" aria-hidden="true"><i data-batch-bar></i></span>
+        </div>
+      {%- endif -%}
 
       <div style="color: rgba(255,255,255,0.7); line-height: 1.6; font-size: 0.875rem; margin-bottom: 2rem;">
         {%- if product.description != blank -%}
@@ -363,16 +412,16 @@
       {%- if section.settings.show_spec_pills -%}
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono, monospace); font-size: 12px; color: rgba(255,255,255,0.7);">
           <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_1_title | default: section.settings.spec_1_title | default: '0g Sugar' }}</span> {{ product.metafields.custom.spec_1_subtitle | default: section.settings.spec_1_subtitle | default: '10 Calories per can' }}
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_1_title | default: section.settings.spec_1_title | default: 'No Sugar' }}</span> {{ product.metafields.custom.spec_1_subtitle | default: section.settings.spec_1_subtitle | default: '10 Calories per can' }}
           </div>
           <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_2_title | default: section.settings.spec_2_title | default: '100mg Caffeine' }}</span> {{ product.metafields.custom.spec_2_subtitle | default: section.settings.spec_2_subtitle | default: 'Raw Green Coffee' }}
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_2_title | default: section.settings.spec_2_title | default: '34.5mg Caffeine' }}</span> {{ product.metafields.custom.spec_2_subtitle | default: section.settings.spec_2_subtitle | default: 'Low caffeine' }}
           </div>
           <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_3_title | default: section.settings.spec_3_title | default: 'L-Theanine 200mg' }}</span> {{ product.metafields.custom.spec_3_subtitle | default: section.settings.spec_3_subtitle | default: 'Smooth Focus Curve' }}
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_3_title | default: section.settings.spec_3_title | default: '100mg L-Theanine' }}</span> {{ product.metafields.custom.spec_3_subtitle | default: section.settings.spec_3_subtitle | default: 'Crash free focus boost' }}
           </div>
           <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_4_title | default: section.settings.spec_4_title | default: 'KSM-66 300mg' }}</span> {{ product.metafields.custom.spec_4_subtitle | default: section.settings.spec_4_subtitle | default: 'Cortisol Modulation' }}
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_4_title | default: section.settings.spec_4_title | default: '300mg KSM-66 Ashwagandha' }}</span> {{ product.metafields.custom.spec_4_subtitle | default: section.settings.spec_4_subtitle | default: 'Manages cortisol and increases memory & brain function' }}
           </div>
         </div>
       {%- endif -%}
@@ -473,6 +522,104 @@
     </div>
   </div>
 </section>
+
+<script>
+  (function () {
+    var box = document.querySelector('[data-batch-count]');
+    if (!box) return;
+    var url = box.getAttribute('data-sheet-url');
+    var total = +box.getAttribute('data-total') || 1000;
+    var per = +box.getAttribute('data-per') || 6;
+    var left = box.querySelector('[data-batch-left]');
+    var bar = box.querySelector('[data-batch-bar]');
+    function poll() {
+      fetch(url + (url.indexOf('?') < 0 ? '?' : '&') + 't=' + Date.now())
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (typeof d.count !== 'number') return;
+          var n = Math.max(0, total - d.count * per);
+          left.textContent = n;
+          bar.style.width = (n / total * 100) + '%';
+          box.hidden = false;
+        })
+        .catch(function () {}); // stays hidden if the sheet can't be reached
+    }
+    poll();
+    clearInterval(window.__batchTimer);
+    window.__batchTimer = setInterval(poll, 30000);
+  })();
+</script>
+
+<script>
+  // Flavour switcher: swap the product on this page instead of loading another one.
+  // It fetches the other flavour's page, replaces this section with the copy from it, and
+  // restarts the things that live inside (3D can, pack buttons, counter). Any failure falls
+  // back to a normal page load, so the link always works.
+  (function () {
+    if (window.__asmaanFlavourSwap) return;
+    window.__asmaanFlavourSwap = true;
+    var cache = {};
+
+    function sectionEl() {
+      var chips = document.querySelector('.flavour-chips');
+      return chips && chips.closest('.shopify-section');
+    }
+    function load(url) {
+      if (!cache[url]) {
+        cache[url] = fetch(url, { credentials: 'same-origin' }).then(function (r) {
+          if (!r.ok) throw new Error(r.status);
+          return r.text();
+        });
+        cache[url].catch(function () { delete cache[url]; });
+      }
+      return cache[url];
+    }
+
+    function swap(url, push) {
+      var sec = sectionEl();
+      if (!sec) { window.location.href = url; return; }
+      sec.setAttribute('aria-busy', 'true');
+      sec.style.transition = 'opacity 0.18s ease';
+      sec.style.opacity = '0.35';
+      load(url).then(function (html) {
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        var next = doc.getElementById(sec.id);
+        if (!next) throw new Error('section not found');
+        sec.dispatchEvent(new CustomEvent('shopify:section:unload', { bubbles: true }));
+        sec.innerHTML = next.innerHTML;
+        // Scripts set through innerHTML do not run; recreate them so they do.
+        sec.querySelectorAll('script').forEach(function (old) {
+          var fresh = document.createElement('script');
+          if (old.src) fresh.src = old.src; else fresh.textContent = old.textContent;
+          old.replaceWith(fresh);
+        });
+        document.title = doc.title;
+        if (push) history.pushState({ flavour: true }, '', url);
+        sec.dispatchEvent(new CustomEvent('shopify:section:load', { bubbles: true }));
+        sec.style.opacity = '';
+        sec.removeAttribute('aria-busy');
+      }).catch(function () { window.location.href = url; });
+    }
+
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a.flavour-chip');
+      if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      if (a.getAttribute('aria-current') === 'page') return;
+      swap(a.href, true);
+    });
+    // Start fetching as soon as someone points at a flavour, so the swap feels instant.
+    ['pointerenter', 'focusin'].forEach(function (ev) {
+      document.addEventListener(ev, function (e) {
+        var a = e.target.closest && e.target.closest('a.flavour-chip');
+        if (a && a.getAttribute('aria-current') !== 'page') load(a.href).catch(function () {});
+      }, true);
+    });
+    window.addEventListener('popstate', function () {
+      if (sectionEl()) swap(window.location.href, false);
+    });
+  })();
+</script>
 
 <!-- Product Page UI Interactivity -->
 <script>
@@ -743,7 +890,7 @@
       "type": "text",
       "id": "spec_1_title",
       "label": "Spec 1 Title",
-      "default": "0g Sugar"
+      "default": "No Sugar"
     },
     {
       "type": "text",
@@ -755,37 +902,88 @@
       "type": "text",
       "id": "spec_2_title",
       "label": "Spec 2 Title",
-      "default": "100mg Caffeine"
+      "default": "34.5mg Caffeine"
     },
     {
       "type": "text",
       "id": "spec_2_subtitle",
       "label": "Spec 2 Subtitle",
-      "default": "Raw Green Coffee"
+      "default": "Low caffeine"
     },
     {
       "type": "text",
       "id": "spec_3_title",
       "label": "Spec 3 Title",
-      "default": "L-Theanine 200mg"
+      "default": "100mg L-Theanine"
     },
     {
       "type": "text",
       "id": "spec_3_subtitle",
       "label": "Spec 3 Subtitle",
-      "default": "Smooth Focus Curve"
+      "default": "Crash free focus boost"
     },
     {
       "type": "text",
       "id": "spec_4_title",
       "label": "Spec 4 Title",
-      "default": "KSM-66 300mg"
+      "default": "300mg KSM-66 Ashwagandha"
     },
     {
       "type": "text",
       "id": "spec_4_subtitle",
       "label": "Spec 4 Subtitle",
-      "default": "Cortisol Modulation"
+      "default": "Manages cortisol and increases memory & brain function"
+    },
+    {
+      "type": "header",
+      "content": "Flavour switcher"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_flavours",
+      "label": "Show the flavour buttons under the product name",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "flavour_handles",
+      "label": "Flavour product handles, in order",
+      "default": "kala-jamun, alphonso-mango, wild-magenta",
+      "info": "Comma separated. Each opens that product's page."
+    },
+    {
+      "type": "header",
+      "content": "Batch counter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_batch_counter",
+      "label": "Show the small cans-left counter under the price",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "counter_label",
+      "label": "Counter label",
+      "default": "First-batch cans left"
+    },
+    {
+      "type": "number",
+      "id": "counter_total",
+      "label": "Total cans",
+      "default": 1000
+    },
+    {
+      "type": "number",
+      "id": "counter_per",
+      "label": "Cans per registration",
+      "default": 6
+    },
+    {
+      "type": "text",
+      "id": "counter_sheet_url",
+      "label": "Google Apps Script URL",
+      "info": "Same web app URL as the prelaunch page. The count is the number of sample sign-ups."
     },
     {
       "type": "header",
