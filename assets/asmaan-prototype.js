@@ -708,13 +708,22 @@
             );
             d.mesh.rotation.y = d.angle;
 
-            var sX = d.baseRadius;
-            var sY = d.baseRadius * d.stretch;
-            var sZ = d.baseRadius * 0.75;
-            d.mesh.scale.set(sX, sY, sZ);
+            // Inside the close-up's dry patch a drop shrinks away rather than crossing the icon.
+            var wet = 1;
+            if (dryPatch.amount > 0) {
+              var dTheta = Math.abs(wrapAngle(d.angle - dryPatch.theta)) * radialDist;
+              var dY = currentY - dryPatch.y;
+              var dDist = Math.sqrt(dTheta * dTheta + dY * dY) / dryPatch.radius;
+              wet = 1 - dryPatch.amount * (1 - ease(range(dDist, 0.75, 1.1)));
+            }
+
+            var sX = d.baseRadius * wet;
+            var sY = d.baseRadius * d.stretch * wet;
+            var sZ = d.baseRadius * 0.75 * wet;
+            d.mesh.scale.set(Math.max(sX, 1e-4), Math.max(sY, 1e-4), Math.max(sZ, 1e-4));
 
             if (d.trailMesh) {
-              if (d.state === 'sliding' && d.trailLength > 0.04) {
+              if (d.state === 'sliding' && d.trailLength > 0.04 && wet > 0.5) {
                 d.trailMesh.visible = true;
                 var tHeight = d.trailLength;
                 var tY = currentY + tHeight * 0.5;
@@ -727,7 +736,7 @@
                   tR * Math.cos(d.angle)
                 );
                 d.trailMesh.rotation.y = d.angle;
-                d.trailMesh.scale.set(d.baseRadius * 0.38, tHeight, 1);
+                d.trailMesh.scale.set(d.baseRadius * 0.38 * wet, tHeight, 1);
               } else {
                 d.trailMesh.visible = false;
               }
@@ -735,6 +744,48 @@
           }
         }
       };
+    }
+
+    // Close-up dry patch: while the camera is in on the icon column, the pool of spotlight on the
+    // can is kept clear of condensation (the bumps in the label and shell, and the 3D droplets)
+    // so the icon and its caption read cleanly. `amount` follows the close-up; the patch travels
+    // down the column with the spot. Measured in the can's own space, so the label and the metal
+    // under it agree. Set each frame in onFrame.
+    var dryPatch = {
+      amount: 0,
+      y: 0,
+      theta: (ICON_COLUMN_U - 0.5) * Math.PI * 2,
+      radius: 0.5,
+      uniforms: {
+        uDry: { value: 0 },
+        uDryAt: { value: new THREE.Vector3((ICON_COLUMN_U - 0.5) * Math.PI * 2, 0, 0.5) } // theta, y, radius
+      }
+    };
+    stage3D.dryPatch = dryPatch;
+
+    function dryShader(shader) {
+      shader.uniforms.uDry = dryPatch.uniforms.uDry;
+      shader.uniforms.uDryAt = dryPatch.uniforms.uDryAt;
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', '#include <common>\nvarying vec3 vDryPos;')
+        .replace('#include <begin_vertex>', '#include <begin_vertex>\nvDryPos = position;');
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform float uDry;\nuniform vec3 uDryAt;\nvarying vec3 vDryPos;')
+        .replace(
+          '#include <normal_fragment_maps>',
+          THREE.ShaderChunk.normal_fragment_maps.replace(
+            'mapN.xy *= normalScale;',
+            [
+              'float dryTheta = atan( vDryPos.x, vDryPos.z ) - uDryAt.x;',
+              'dryTheta = abs( dryTheta - 6.2831853 * floor( dryTheta / 6.2831853 + 0.5 ) ) * length( vDryPos.xz );',
+              'float dryMask = 1.0 - smoothstep( 0.75, 1.1, length( vec2( dryTheta, vDryPos.y - uDryAt.y ) ) / uDryAt.z );',
+              // Blend the whole normal to flat: zeroing only xy leaves the droplet rims'
+              // near-zero z, which renders as black crescents.
+              'mapN.xy *= normalScale;',
+              'mapN = mix( mapN, vec3( 0.0, 0.0, 1.0 ), uDry * dryMask );'
+            ].join('\n')
+          )
+        );
     }
 
     // Build cans (ensure enough cans for smooth orbital ring)
@@ -745,6 +796,7 @@
         var taste = TASTES[t];
         var canShellMat = shellMat.clone();
         canShellMat.transparent = true;
+        if (condensationNormalMap) canShellMat.onBeforeCompile = dryShader;
 
         var labelMat = new THREE.MeshStandardMaterial({
           metalness: 0.1,
@@ -754,6 +806,7 @@
           normalScale: condensationNormalMap ? new THREE.Vector2(0.7, 0.7) : undefined,
           transparent: true
         });
+        if (condensationNormalMap) labelMat.onBeforeCompile = dryShader;
 
         var canTabMat = tabMat.clone();
         canTabMat.transparent = true;
@@ -1365,6 +1418,21 @@
             stage3D.spot.position.set(canX, iconY - SPOT_DROP + SPOT_RISE, canFront + SPOT_DEPTH);
             stage3D.spot.target.position.set(canX, iconY - SPOT_DROP, canFront);
             stage3D.spot.target.updateMatrixWorld();
+          }
+
+          // Keep the pool of spotlight dry (see dryPatch). Its centre is the spot's aim point and
+          // its radius the beam's reach on the can, both taken back into the can's own space.
+          if (stage3D.dryPatch) {
+            var dry = stage3D.dryPatch;
+            var railScale = pose.scale * (railInner ? railInner.scale.y : 1);
+            var labelSpan = LABEL.top - LABEL.bottom;
+            var dryV = lerp(ICON_V[BENEFIT_ICON[railFrom]], ICON_V[BENEFIT_ICON[railTo]], railFrac);
+            var dryAngle = windowW < 992 ? SPOT_ANGLE_MOBILE : SPOT_ANGLE;
+            dry.amount = closeUp;
+            dry.y = LABEL.top - dryV * labelSpan - SPOT_DROP / railScale;
+            dry.radius = (Math.sqrt(SPOT_RISE * SPOT_RISE + SPOT_DEPTH * SPOT_DEPTH) * Math.tan(dryAngle) * 1.2) / railScale;
+            dry.uniforms.uDry.value = closeUp;
+            dry.uniforms.uDryAt.value.set(dry.theta, dry.y, dry.radius);
           }
 
           // Multi-can row positions
