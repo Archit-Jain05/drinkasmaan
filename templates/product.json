@@ -1,12 +1,12 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
@@ -17,7 +17,7 @@
         "enable_sticky_gallery": true,
         "show_badge": false,
         "badge_text": "Chilled Serving",
-        "show_3d_toggle": true,
+        "show_3d_toggle": false,
         "show_angle_controls": true,
         "show_thumbnails": true,
         "material_note": "100% Recyclable Matte Aluminum Can • 250ml",
@@ -57,19 +57,34 @@
         "story_flavour_jamun": {
           "type": "flavour",
           "settings": {
-            "product": "kala-jamun"
+            "product": "kala-jamun",
+            "title": "",
+            "tag": "",
+            "blurb": "",
+            "accent": "",
+            "deep": ""
           }
         },
         "story_flavour_mango": {
           "type": "flavour",
           "settings": {
-            "product": "alphonso-mango"
+            "product": "alphonso-mango",
+            "title": "",
+            "tag": "",
+            "blurb": "",
+            "accent": "",
+            "deep": ""
           }
         },
         "story_flavour_magenta": {
           "type": "flavour",
           "settings": {
-            "product": "wild-magenta"
+            "product": "wild-magenta",
+            "title": "",
+            "tag": "",
+            "blurb": "",
+            "accent": "",
+            "deep": ""
           }
         },
         "story_pack_6": {
@@ -128,7 +143,8 @@
             "dose": "60 mg",
             "name": "Magnesium bisglycinate",
             "description": "The form that is actually absorbed, rather than the cheap oxide that mostly is not.",
-            "show_in_pack_scene": false
+            "show_in_pack_scene": false,
+            "pack_scene_text": ""
           }
         },
         "story_active_5": {
@@ -137,7 +153,8 @@
             "dose": "1.4 mg",
             "name": "B6 with 2.5 µg B12",
             "description": "For normal energy metabolism — the quiet half of the formula, and the half everyone forgets.",
-            "show_in_pack_scene": false
+            "show_in_pack_scene": false,
+            "pack_scene_text": ""
           }
         },
         "story_fact_1": {
@@ -246,8 +263,41 @@
       ],
       "settings": {
         "range_first": true,
+        "collection": "",
+        "image_position_front": 1,
+        "fallback_accent": "#9089d3",
+        "fallback_deep": "#2a1d4a",
+        "spacing": 130,
+        "show_formula": true,
+        "formula_heading": "What is\nin it",
+        "formula_intro": "Five actives, at doses worth printing. No proprietary blend, nothing rounded up, and nothing in there to make the label look longer.",
+        "facts_heading": "On the can",
+        "facts_note": "Serve cold enough that the first sip is a decision. Once open, keep it refrigerated and finish it the same day.",
+        "show_pack_scene": true,
+        "pack_eyebrow": "The pack",
+        "pack_heading": "Twelve\nat a time",
+        "pack_body": "Cans ship in a plain shipper, four across and as deep as the tier you take. Nothing printed on it but the wordmark and a number — what is worth looking at is inside it.",
+        "pack_cta": "Take it to the bag",
+        "pack_frame_count": 150,
+        "label_spec_tier": "Tier",
+        "label_spec_inside": "Inside",
+        "label_spec_price": "Price",
+        "show_story": true,
+        "story_eyebrow": "The first batch",
+        "story_word_1": "Made",
+        "story_word_2": "Once",
+        "story_body": "Two hundred and forty packs, hand-numbered, brewed in one run. No second batch at this recipe — what is in the first is what the first tastes like. The list is told the morning it ships, and nobody else is told at all.",
+        "show_range": true,
+        "range_heading": "The range",
+        "range_intro": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it.",
         "show_reviews": false,
-        "reviews_note": ""
+        "reviews_heading": "From the first tasting",
+        "reviews_note": "",
+        "faq_heading": "Frequently asked\nquestions",
+        "label_pack": "Pack",
+        "label_can": "can",
+        "label_in_pack": "In your pack",
+        "label_take_this": "Take this one"
       }
     }
   },
