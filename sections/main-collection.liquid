@@ -90,6 +90,18 @@
     cursor: pointer;
   }
 
+  .shop-product-card { cursor: pointer; }
+  .shop-product-card h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .shop-product-card h3 a:focus-visible { outline: none; }
+  .shop-product-card:has(h3 a:focus-visible) { outline: 2px solid #fff; outline-offset: 2px; }
+  .product-card-actions { position: relative; z-index: 2; }
+
   @media (max-width: 767px) {
     /* The panel is far wider than the little dropdown it hangs off, so on a
        phone the ones further along the row ran off the right edge. Anchor it
@@ -121,27 +133,23 @@
         </span>
       {%- endif -%}
 
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white mb-3">
-            {{ collection.title | default: 'All Products' }}
-          </h1>
-          {%- if collection.description != blank -%}
-            <div class="text-white/60 text-sm sm:text-base max-w-2xl leading-relaxed">
-              {{ collection.description }}
-            </div>
-          {%- elsif section.settings.default_description != blank -%}
-            <p class="text-white/60 text-sm sm:text-base max-w-2xl leading-relaxed">
-              {{ section.settings.default_description }}
-            </p>
-          {%- endif -%}
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white mb-3">
+        {{ collection.title | default: 'All Products' }}
+      </h1>
+      {%- if collection.description != blank -%}
+        <div class="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          {{ collection.description }}
         </div>
+      {%- elsif section.settings.default_description != blank -%}
+        <p class="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+          {{ section.settings.default_description }}
+        </p>
+      {%- endif -%}
 
-        <!-- Product Count -->
-        <span class="text-xs font-mono text-white/40 uppercase tracking-widest self-start sm:self-end">
-          {{ 'collections.general.product_count' | t: count: collection.products_count }}
-        </span>
-      </div>
+      <!-- Product Count -->
+      <span class="block text-xs font-mono text-white/40 uppercase tracking-widest" style="margin-top: 1.25rem;">
+        {{ 'collections.general.product_count' | t: count: collection.products_count }}
+      </span>
     </div>
 
     <!-- Filter & Sort Bar -->
@@ -375,7 +383,7 @@
                 {%- endif -%}
               </div>
 
-              <div class="flex gap-2">
+              <div class="flex gap-2 product-card-actions">
                 <a href="{{ product.url }}" class="flex-1 py-2 text-center text-xs font-semibold rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-colors">
                   Details
                 </a>
