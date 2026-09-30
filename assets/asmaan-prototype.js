@@ -1599,7 +1599,7 @@
 
             // Spin speed of this can from its own spin (not the scroll pose). A jump this large in one
             // frame is the hand-over between carousel and single can, not real spinning.
-            if (stage3D.spray && !isMotionOff && dt > 0 && focus > 0.5 && config.enableCondensation !== false) {
+            if (stage3D.spray && !isMotionOff && dt > 0 && focus > 0.5 && (window.ASMAAN_CONFIG || {}).enableCondensation !== false) {
               var dSpin = canObj.spinAngle - (canObj.prevSpin === undefined ? canObj.spinAngle : canObj.prevSpin);
               if (Math.abs(dSpin) < 1.2) stage3D.spray.emit(canObj, dSpin / dt, dt);
             }
