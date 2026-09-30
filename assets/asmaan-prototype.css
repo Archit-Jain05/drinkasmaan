@@ -1302,15 +1302,32 @@ input:focus-visible {
   overflow: hidden;
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.45s ease;
+  visibility: hidden;
+  transition: grid-template-rows 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.55s;
 }
 
 .faq_answer[data-open="true"] {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s;
 }
 
 .faq_answer > div {
   overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.25s ease, transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.faq_answer[data-open="true"] > div {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.45s ease 0.1s, transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq_answer, .faq_answer > div, .faq_icon-wrapper svg { transition: none !important; }
 }
 
 .faq_icon-wrapper {
@@ -1321,7 +1338,7 @@ input:focus-visible {
 }
 
 .faq_icon-wrapper svg {
-  transition: transform 0.4s ease;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .faq_question[aria-expanded="true"] .faq_icon-wrapper svg {

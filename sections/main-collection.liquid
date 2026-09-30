@@ -146,10 +146,11 @@
         </p>
       {%- endif -%}
 
-      <!-- Product Count -->
-      <span class="block text-xs font-mono text-white/40 uppercase tracking-widest" style="margin-top: 1.25rem;">
-        {{ 'collections.general.product_count' | t: count: collection.products_count }}
-      </span>
+      {%- unless section.settings.enable_filtering or section.settings.enable_sorting -%}
+        <span class="block text-xs font-mono text-white/40 uppercase tracking-widest" style="margin-top: 1.25rem;">
+          {{ 'collections.general.product_count' | t: count: collection.products_count }}
+        </span>
+      {%- endunless -%}
     </div>
 
     <!-- Filter & Sort Bar -->
@@ -255,7 +256,10 @@
 
           <!-- Sort Dropdown -->
           {%- if section.settings.enable_sorting -%}
-            <div class="flex items-center gap-2 ml-auto">
+            <div class="flex items-center gap-3 ml-auto">
+              <span class="text-xs font-mono text-white/40 uppercase tracking-widest whitespace-nowrap">
+                {{ 'collections.general.product_count' | t: count: collection.products_count }}
+              </span>
               <label for="CollectionSortBy" class="text-xs font-mono uppercase tracking-wider text-white/50 hidden sm:inline">
                 {{ 'products.facets.sort_by_label' | t | default: 'Sort by:' }}
               </label>
@@ -330,7 +334,7 @@
           <div class="shop-product-card group relative bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 hover:border-white/30 rounded-2xl p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between">
             <div>
               <!-- Badges & Image -->
-              <div class="relative aspect-square rounded-xl overflow-hidden bg-white/5 mb-4">
+              <div class="relative aspect-square rounded-xl overflow-hidden mb-4">
                 {%- if product.featured_image -%}
                   <img
                     src="{{ product.featured_image | image_url: width: 600 }}"

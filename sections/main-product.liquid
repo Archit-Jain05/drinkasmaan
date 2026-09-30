@@ -201,6 +201,29 @@
     cursor: not-allowed;
   }
 
+  /* Drawers: the row grows from 0 to its content height, the text fades and settles, the plus turns to a cross. */
+  .product_spec_answer {
+    display: grid !important;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition: grid-template-rows 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease, visibility 0s linear 0.5s;
+  }
+  .product_spec_answer[data-open="true"] {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    visibility: visible;
+    transition: grid-template-rows 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease 0.08s, visibility 0s;
+  }
+  .product_spec_inner { overflow: hidden; min-height: 0; }
+  .product_spec_body { padding-top: 0.5rem; transform: translateY(-6px); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .product_spec_answer[data-open="true"] .product_spec_body { transform: none; }
+  .product_spec_icon { display: inline-block; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .product_spec_question[aria-expanded="true"] .product_spec_icon { transform: rotate(45deg); }
+  @media (prefers-reduced-motion: reduce) {
+    .product_spec_answer, .product_spec_answer[data-open="true"], .product_spec_body, .product_spec_icon { transition: none; }
+  }
+
   .flavour-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 1.25rem; }
   .flavour-chip {
     display: inline-flex; align-items: center; gap: 0.5rem;
@@ -468,8 +491,10 @@
                   <span>{{ section.settings.acc_1_title }}</span>
                   <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
                 </button>
-                <div id="spec-science" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+                <div id="spec-science" class="product_spec_answer" style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+                  <div class="product_spec_inner"><div class="product_spec_body">
                   {{ product.metafields.custom.scientific_formulation | default: section.settings.acc_1_content }}
+                  </div></div>
                 </div>
               </div>
             {%- endif -%}
@@ -480,8 +505,10 @@
                   <span>{{ section.settings.acc_2_title }}</span>
                   <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
                 </button>
-                <div id="spec-nutrition" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
+                <div id="spec-nutrition" class="product_spec_answer" style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
+                  <div class="product_spec_inner"><div class="product_spec_body">
                   {{ product.metafields.custom.nutrition_facts | default: section.settings.acc_2_content }}
+                  </div></div>
                 </div>
               </div>
             {%- endif -%}
@@ -492,8 +519,10 @@
                   <span>{{ section.settings.acc_3_title }}</span>
                   <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
                 </button>
-                <div id="spec-shipping" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+                <div id="spec-shipping" class="product_spec_answer" style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+                  <div class="product_spec_inner"><div class="product_spec_body">
                   {{ product.metafields.custom.shipping_details | default: section.settings.acc_3_content | replace: '[free_shipping_threshold]', free_shipping_money }}
+                  </div></div>
                 </div>
               </div>
             {%- endif -%}
@@ -507,8 +536,10 @@
                     <span>{{ block.settings.title }}</span>
                     <span class="product_spec_icon" style="font-size: 18px; font-family: var(--font-mono, monospace);">&plus;</span>
                   </button>
-                  <div id="spec-block-{{ block.id }}" class="product_spec_answer" style="display: none; padding-top: 0.5rem; font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+                  <div id="spec-block-{{ block.id }}" class="product_spec_answer" style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6;" data-open="false">
+                    <div class="product_spec_inner"><div class="product_spec_body">
                     {{ block.settings.content }}
+                    </div></div>
                   </div>
                 </div>
               {%- when '@app' -%}
@@ -696,7 +727,6 @@
         var ctrlId = btn.getAttribute('aria-controls');
         var answer = document.getElementById(ctrlId);
         var isExpanded = btn.getAttribute('aria-expanded') === 'true';
-        var icon = btn.querySelector('.product_spec_icon');
 
         // Close other drawers
         specQuestions.forEach(function(otherBtn) {
@@ -704,31 +734,13 @@
             otherBtn.setAttribute('aria-expanded', 'false');
             var otherId = otherBtn.getAttribute('aria-controls');
             var otherAns = document.getElementById(otherId);
-            if (otherAns) {
-              otherAns.style.display = 'none';
-              otherAns.setAttribute('data-open', 'false');
-            }
-            var otherIcon = otherBtn.querySelector('.product_spec_icon');
-            if (otherIcon) otherIcon.innerHTML = '&plus;';
+            if (otherAns) otherAns.setAttribute('data-open', 'false');
           }
         });
 
         // Toggle current drawer: if open -> close; if closed -> open
-        if (isExpanded) {
-          btn.setAttribute('aria-expanded', 'false');
-          if (answer) {
-            answer.style.display = 'none';
-            answer.setAttribute('data-open', 'false');
-          }
-          if (icon) icon.innerHTML = '&plus;';
-        } else {
-          btn.setAttribute('aria-expanded', 'true');
-          if (answer) {
-            answer.style.display = 'block';
-            answer.setAttribute('data-open', 'true');
-          }
-          if (icon) icon.innerHTML = '&minus;';
-        }
+        btn.setAttribute('aria-expanded', String(!isExpanded));
+        if (answer) answer.setAttribute('data-open', String(!isExpanded));
       });
     });
 

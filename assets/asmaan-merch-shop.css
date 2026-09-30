@@ -720,3 +720,21 @@
     display: none;
   }
 }
+
+/* Smooth open and close for the detail drawers. Browsers without ::details-content just open instantly. */
+.mpdp_details { interpolate-size: allow-keywords; }
+.mpdp_details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: block-size 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease, content-visibility 0.45s allow-discrete;
+}
+.mpdp_details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+.mpdp_details summary::after { display: inline-block; transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.mpdp_details[open] summary::after { content: '+'; transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .mpdp_details::details-content, .mpdp_details summary::after { transition: none; }
+}
