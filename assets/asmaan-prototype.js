@@ -549,15 +549,15 @@
     var baseDropMat;
     try {
       baseDropMat = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        roughness: 0.04,
-        metalness: 0.05,
-        transmission: 0.92,
+        // No `transmission`: it makes three render the whole scene a second time every frame
+        // (and re-filter it) just to refract the background through a few tiny drops.
+        color: 0xeaf3ff,
+        roughness: 0.02,
+        metalness: 0,
         ior: 1.333,
-        reflectivity: 0.9,
         transparent: true,
-        opacity: 0.95,
-        envMapIntensity: 2.2,
+        opacity: 0.5,
+        envMapIntensity: 3,
         clearcoat: 1.0,
         clearcoatRoughness: 0.03,
         depthWrite: false
@@ -648,7 +648,7 @@
           dropletGroup.visible = true;
 
           var focusOpacity = Math.min(1, focus * 1.3) * alphaMult;
-          dropMat.opacity = 0.95 * focusOpacity;
+          dropMat.opacity = 0.5 * focusOpacity;
           trailMat.opacity = 0.16 * focusOpacity;
 
           for (var i = 0; i < drops.length; i++) {
@@ -1014,6 +1014,13 @@
       });
     }
 
+    function warmShaders() {
+      var hiddenNow = [];
+      scene.traverse(function (o) { if (!o.visible) { hiddenNow.push(o); o.visible = true; } });
+      try { renderer.compile(scene, camera); } catch (e) {}
+      hiddenNow.forEach(function (o) { o.visible = false; });
+    }
+
     Promise.all(TASTES.map(loadTexture)).then(function () {
       for (var i = 0; i < cans.length; i++) {
         var cItem = cans[i];
@@ -1028,6 +1035,10 @@
       }
       canvas.style.opacity = '1';
       if (posterImg) posterImg.style.opacity = '0';
+      // Labels just changed every can's shader, and the cans off to the sides are hidden right
+      // now: compile them and push the label textures to the GPU before they scroll into view.
+      warmShaders();
+      if (renderer.initTexture) Object.keys(loadedTextures).forEach(function (k) { renderer.initTexture(loadedTextures[k]); });
     });
 
     canvas.style.opacity = '1';
@@ -1059,6 +1070,15 @@
     var resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(canHost);
     resize();
+
+    // Step the 3D resolution down (never back up) when frames keep running long.
+    var pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    stage3D.lowerQuality = function () {
+      if (pixelRatio <= 1) return;
+      pixelRatio = Math.max(1, pixelRatio - 0.25);
+      renderer.setPixelRatio(pixelRatio);
+      resize();
+    };
 
     // Pointer Drag Handling
     var pointerId = null;
@@ -1121,6 +1141,11 @@
     stage3D.slots = cans.length;
     stage3D.spot = spot;
     stage3D.studioLights = studioLights;
+
+    // Compile every shader now. The droplets and the spray stay hidden until needed, and three
+    // only compiles what is visible, so each used to compile the first time it showed and the
+    // page froze for a moment mid-scroll.
+    warmShaders();
   }
 
   function setTaste(index) {
@@ -1314,6 +1339,7 @@
     var lastHostLit = -1;
     var lastSkyFlavour = -1;
     var lastStageBehind = null;
+    var prevFrameAt = 0, slowMs = 0, slowN = 0;
     var rangeBlock = document.getElementById('range-section');
     var copyRight = 0; // right edge of the benefit copy, px (read pass, used next frame)
     var railLeft = 0; // left edge of the benefit icon rail, px
@@ -1361,6 +1387,18 @@
     function onFrame(now) {
       var dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
+
+      // Adaptive resolution: if 90 frames average slower than 20ms, drop the 3D pixel ratio a step.
+      var rawDt = now - prevFrameAt;
+      prevFrameAt = now;
+      if (rawDt < 100 && !lastStageBehind) {
+        slowMs += rawDt;
+        if (++slowN >= 90) {
+          if (slowMs / slowN > 20 && stage3D.lowerQuality) stage3D.lowerQuality();
+          slowMs = 0;
+          slowN = 0;
+        }
+      }
 
       var scrollY = window.scrollY || document.documentElement.scrollTop;
       var scrollProgress = docHeight > 0 ? Math.min(1, Math.max(0, scrollY / docHeight)) : 0;
@@ -1628,7 +1666,7 @@
           }
           if (stage3D.spray) stage3D.spray.update(isMotionOff ? 0 : dt);
 
-          stage3D.renderer.render(stage3D.scene, stage3D.camera);
+          if (!lastStageBehind) stage3D.renderer.render(stage3D.scene, stage3D.camera);
         }
 
         // Fixed stage opacity & exit dive (dirty checked)

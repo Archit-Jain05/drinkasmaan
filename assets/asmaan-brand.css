@@ -134,7 +134,9 @@ body .asmaan-contact__submit-label {
 .asmaan-sky__orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(100px);
+  /* The radial gradient already fades to nothing; a 100px blur on top only made the GPU
+     re-filter two huge layers whenever the flavour tint changed. */
+  will-change: transform;
   opacity: 0.34;
 }
 .asmaan-sky__orb.is-1 {
