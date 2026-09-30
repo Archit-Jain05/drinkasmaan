@@ -41,8 +41,12 @@ function escBr(s) {
 function prelaunch(p) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName('Prelaunch') || ss.insertSheet('Prelaunch');
-  if (sheet.getLastRow() === 0) sheet.appendRow(['Time', 'Name', 'Email', 'Address line 1', 'Address line 2', 'City', 'State', 'PIN code']);
-  sheet.appendRow([p.timestamp, p.name, p.email, p.address1 || p.address, p.address2 || '', p.city || '', p.state || '', p.pincode || '']);
+  if (sheet.getLastRow() === 0) sheet.appendRow(['Time', 'Name', 'Email', 'Address line 1', 'Address line 2', 'City', 'State', 'PIN code', 'Full address']);
+  // All the address fields on one line, e.g. "12 Marine Drive, Flat 4B, Mumbai, Maharashtra 400020, India"
+  const fullAddress = p.address1
+    ? [p.address1, p.address2, p.city, [p.state, p.pincode].filter(Boolean).join(' '), 'India'].filter(Boolean).join(', ')
+    : String(p.address || '').replace(/\n/g, ', ');
+  sheet.appendRow([p.timestamp, p.name, p.email, p.address1 || p.address, p.address2 || '', p.city || '', p.state || '', p.pincode || '', fullAddress]);
   const n = sheet.getLastRow() - 1; // this person's registration number
 
   MailApp.sendEmail({
