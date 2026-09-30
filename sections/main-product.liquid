@@ -412,7 +412,7 @@
       {%- if section.settings.show_spec_pills -%}
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 2rem; font-family: var(--font-mono, monospace); font-size: 12px; color: rgba(255,255,255,0.7);">
           <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
-            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_1_title | default: section.settings.spec_1_title | default: 'No Sugar' }}</span> {{ product.metafields.custom.spec_1_subtitle | default: section.settings.spec_1_subtitle | default: '10 Calories per can' }}
+            <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_1_title | default: section.settings.spec_1_title | default: 'No Sugar' }}</span> {{ product.metafields.custom.spec_1_subtitle | default: section.settings.spec_1_subtitle }}
           </div>
           <div style="padding: 0.85rem; border-radius: 0.75rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);">
             <span style="color: #fff; display: block; font-weight: bold; font-size: 14px;">{{ product.metafields.custom.spec_2_title | default: section.settings.spec_2_title | default: '34.5mg Caffeine' }}</span> {{ product.metafields.custom.spec_2_subtitle | default: section.settings.spec_2_subtitle | default: 'Low caffeine' }}
@@ -896,7 +896,7 @@
       "type": "text",
       "id": "spec_1_subtitle",
       "label": "Spec 1 Subtitle",
-      "default": "10 Calories per can"
+      "default": ""
     },
     {
       "type": "text",
