@@ -1,6 +1,7 @@
 {%- comment -%}
   Product story: everything that follows the buy box on the Drink page, for the product page.
-  Formula and doses, the 3D pack scene, the first-batch story, the flavour range, reviews and FAQ.
+  Formula and doses, the 3D pack scene, the first-batch story, reviews and FAQ. (The flavour range is its own
+  section, product-range, at the top of the page.)
   Built from the Drink section (main-drink.liquid), minus the buy box, sticky bar and waitlist
   form, which the product page has its own versions of. Content comes from this section's own
   settings and blocks, so it is edited here in the theme editor.
@@ -8,16 +9,7 @@
 <script src="{{ 'asmaan-product-story.js' | asset_url }}" defer="defer"></script>
 
 {%- liquid
-  assign flavour_blocks = section.blocks | where: 'type', 'flavour'
   assign pack_blocks = section.blocks | where: 'type', 'pack'
-  assign flavour_collection = section.settings.collection | default: settings.featured_can_collection
-  assign use_blocks = true
-  assign flavour_source = flavour_blocks
-  if flavour_blocks.size == 0
-    assign use_blocks = false
-    assign flavour_source = flavour_collection.products
-  endif
-
   assign current_accent = product.metafields.custom.accent_color.value | default: section.settings.fallback_accent
 
   assign default_pack = 0
@@ -27,8 +19,6 @@
       break
     endif
   endfor
-
-  assign idx_front = section.settings.image_position_front | minus: 1
 
   comment
     Price for each pack tier: the variant of THIS product whose option value contains the tier's
@@ -53,66 +43,6 @@
   assign default_price = tier_prices[default_pack] | plus: 0
 -%}
 
-{%- assign flavour_count = 0 -%}
-{%- capture range_html -%}
-  {%- for item in flavour_source -%}
-    {%- liquid
-      if use_blocks
-        assign p = item.settings.product
-        assign o_title = item.settings.title
-        assign o_tag = item.settings.tag
-        assign o_blurb = item.settings.blurb
-        assign o_accent = item.settings.accent
-        assign o_deep = item.settings.deep
-        assign block_attrs = item.shopify_attributes
-      else
-        assign p = item
-        assign o_title = ''
-        assign o_tag = ''
-        assign o_blurb = ''
-        assign o_accent = ''
-        assign o_deep = ''
-        assign block_attrs = ''
-      endif
-
-      if p == blank and o_title == blank
-        continue
-      endif
-
-      assign f_title = o_title | default: p.title
-      assign f_tag = o_tag | default: p.metafields.custom.tagline.value
-      assign f_blurb = o_blurb | default: p.metafields.custom.blurb.value
-      if f_blurb == blank and p.description != blank
-        assign f_blurb = p.description | strip_html | strip | truncatewords: 40
-      endif
-      assign f_accent = o_accent | default: p.metafields.custom.accent_color.value | default: section.settings.fallback_accent
-      assign f_deep = o_deep | default: p.metafields.custom.primary_color.value | default: section.settings.fallback_deep
-      assign img_front = p.images[idx_front] | default: p.featured_image
-      assign is_current = false
-      if p != blank and p.id == product.id
-        assign is_current = true
-      endif
-      assign title_words = f_title | split: ' '
-      assign flavour_count = flavour_count | plus: 1
-    -%}
-    <li class="drink_flavour" data-chosen="{{ is_current }}" style="--swatch: {{ f_accent }}; --swatch-deep: {{ f_deep }};" {{ block_attrs }}>
-      <div class="drink_flavour-shot">
-        <span class="merch_glow" style="--glow: {{ f_accent }};" aria-hidden="true"></span>
-        {%- if img_front != blank -%}
-          {{ img_front | image_url: width: 800 | image_tag: loading: 'lazy', alt: f_title }}
-        {%- endif -%}
-      </div>
-      {%- if f_tag != blank -%}<span class="merch_tag">{{ f_tag | escape }}</span>{%- endif -%}
-      <h3 class="heading-style-h3">{{ title_words.first | escape }}{% if title_words.size > 1 %}<br>{{ f_title | remove_first: title_words.first | strip | escape }}{% endif %}</h3>
-      {%- if f_blurb != blank -%}<p class="text-white/60">{{ f_blurb | escape }}</p>{%- endif -%}
-      {%- if is_current or p == blank -%}
-        <a href="#buy" class="drink_flavour-cta">{{ section.settings.label_in_pack }}</a>
-      {%- else -%}
-        <a href="{{ p.url }}" class="drink_flavour-cta" data-flavour-swap>{{ section.settings.label_take_this }}</a>
-      {%- endif -%}
-    </li>
-  {%- endfor -%}
-{%- endcapture -%}
 
 <div class="product-story drink-page-wrapper" style="--drink-air: {{ section.settings.spacing | default: 100 | divided_by: 100.0 }};">
   <div class="product-story_body">
@@ -276,24 +206,6 @@
     {%- endif -%}
     {%- endcapture -%}
 
-    {%- capture part_range -%}
-    <!-- 5. THE FLAVOURS RANGE SECTION -->
-    {%- if section.settings.show_range and flavour_count > 0 -%}
-      <section id="range" class="section relative bg-black border-t border-white/10">
-        <div class="padding-global">
-          <div class="container-large">
-            <div class="padding-section-large">
-              <h2 class="heading-style-display">{{ section.settings.range_heading | escape | newline_to_br }}</h2>
-              {%- if section.settings.range_intro != blank -%}
-                <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">{{ section.settings.range_intro | escape }}</p>
-              {%- endif -%}
-              <ul class="drink_flavours">{{ range_html }}</ul>
-            </div>
-          </div>
-        </div>
-      </section>
-    {%- endif -%}
-    {%- endcapture -%}
 
     {%- capture part_reviews -%}
     <!-- 6. REVIEWS SECTION -->
@@ -381,12 +293,7 @@
     {%- endif -%}
     {%- endcapture -%}
 
-    {%- comment -%} Order: the flavour range can sit right under the product (setting), or in its original place. {%- endcomment -%}
-    {%- if section.settings.range_first -%}
-      {{ part_range }}{{ part_formula }}{{ part_pack }}{{ part_story }}{{ part_reviews }}{{ part_faq }}
-    {%- else -%}
-      {{ part_formula }}{{ part_pack }}{{ part_story }}{{ part_range }}{{ part_reviews }}{{ part_faq }}
-    {%- endif -%}
+    {{ part_formula }}{{ part_pack }}{{ part_story }}{{ part_reviews }}{{ part_faq }}
   </div>
 </div>
 
@@ -464,41 +371,14 @@
   "max_blocks": 50,
   "settings": [
     {
-      "type": "checkbox",
-      "id": "range_first",
-      "label": "Show the flavour range right under the product",
-      "default": true
-    },
-    {
       "type": "header",
       "content": "Products"
-    },
-    {
-      "type": "collection",
-      "id": "collection",
-      "label": "Flavour collection",
-      "info": "Used only when there are no Flavour blocks. Falls back to the homepage collection in Theme settings."
-    },
-    {
-      "type": "range",
-      "id": "image_position_front",
-      "label": "Product image position: front",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "default": 1
     },
     {
       "type": "color",
       "id": "fallback_accent",
       "label": "Fallback accent colour",
       "default": "#9089D3"
-    },
-    {
-      "type": "color",
-      "id": "fallback_deep",
-      "label": "Fallback deep colour",
-      "default": "#2A1D4A"
     },
     {
       "type": "header",
@@ -644,28 +524,6 @@
     },
     {
       "type": "header",
-      "content": "Range"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_range",
-      "label": "Show range",
-      "default": true
-    },
-    {
-      "type": "textarea",
-      "id": "range_heading",
-      "label": "Heading",
-      "default": "The range"
-    },
-    {
-      "type": "textarea",
-      "id": "range_intro",
-      "label": "Intro",
-      "default": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it."
-    },
-    {
-      "type": "header",
       "content": "Reviews"
     },
     {
@@ -711,69 +569,11 @@
       "id": "label_can",
       "label": "Per can",
       "default": "can"
-    },
-    {
-      "type": "text",
-      "id": "label_in_pack",
-      "label": "Range: selected flavour",
-      "default": "In your pack"
-    },
-    {
-      "type": "text",
-      "id": "label_take_this",
-      "label": "Range: other flavour",
-      "default": "Take this one"
     }
   ],
   "blocks": [
     {
       "type": "@app"
-    },
-    {
-      "type": "flavour",
-      "name": "Flavour",
-      "settings": [
-        {
-          "type": "product",
-          "id": "product",
-          "label": "Product"
-        },
-        {
-          "type": "paragraph",
-          "content": "Leave the fields below empty to use the product's own data."
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Name override"
-        },
-        {
-          "type": "text",
-          "id": "tag",
-          "label": "Tagline override"
-        },
-        {
-          "type": "textarea",
-          "id": "blurb",
-          "label": "Description override"
-        },
-        {
-          "type": "color",
-          "id": "accent",
-          "label": "Accent colour override"
-        },
-        {
-          "type": "color",
-          "id": "deep",
-          "label": "Deep colour override"
-        },
-        {
-          "type": "image_picker",
-          "id": "label_image",
-          "label": "3D label texture override",
-          "info": "The unwrapped 360° can print. Defaults to the product's last image."
-        }
-      ]
     },
     {
       "type": "pack",

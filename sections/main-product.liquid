@@ -42,6 +42,8 @@
     min-height: 100vh;
     background: #000;
   }
+  /* The range comes first on this page and already clears the header, so the product sits closer. */
+  .shopify-section:has(.product-range) + .shopify-section .product-page-wrap { padding-top: 3.5rem; }
   .product-grid-layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -606,12 +608,14 @@
       return cache[url];
     }
 
-    // The sections on this page that depend on the flavour: the product itself and the story
-    // below it (its pack prices and "in your pack" card follow the product).
+    // The sections on this page that depend on the flavour: the range cards above (which one is
+    // "in your pack"), the product itself, and the story below it (its pack prices follow the product).
     function swappable() {
       var list = [];
       var main = sectionEl();
+      var range = document.querySelector('.product-range');
       var story = document.querySelector('.product-story');
+      if (range && range.closest('.shopify-section')) list.push(range.closest('.shopify-section'));
       if (main) list.push(main);
       if (story && story.closest('.shopify-section')) list.push(story.closest('.shopify-section'));
       return list;

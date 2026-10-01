@@ -1,14 +1,68 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
+    "range": {
+      "type": "product-range",
+      "blocks": {
+        "story_flavour_jamun": {
+          "type": "flavour",
+          "settings": {
+            "product": "kala-jamun",
+            "title": "",
+            "tag": "",
+            "blurb": "",
+            "accent": "",
+            "deep": ""
+          }
+        },
+        "story_flavour_mango": {
+          "type": "flavour",
+          "settings": {
+            "product": "alphonso-mango",
+            "title": "",
+            "tag": "",
+            "blurb": "",
+            "accent": "",
+            "deep": ""
+          }
+        },
+        "story_flavour_magenta": {
+          "type": "flavour",
+          "settings": {
+            "product": "wild-magenta",
+            "title": "",
+            "tag": "",
+            "blurb": "",
+            "accent": "",
+            "deep": ""
+          }
+        }
+      },
+      "block_order": [
+        "story_flavour_jamun",
+        "story_flavour_mango",
+        "story_flavour_magenta"
+      ],
+      "settings": {
+        "collection": "",
+        "image_position_front": 1,
+        "fallback_deep": "#2a1d4a",
+        "label_in_pack": "In your pack",
+        "label_take_this": "Take this one",
+        "show_range": true,
+        "range_heading": "The range",
+        "range_intro": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it.",
+        "spacing": 130
+      }
+    },
     "main": {
       "type": "main-product",
       "settings": {
@@ -54,39 +108,6 @@
     "story": {
       "type": "product-story",
       "blocks": {
-        "story_flavour_jamun": {
-          "type": "flavour",
-          "settings": {
-            "product": "kala-jamun",
-            "title": "",
-            "tag": "",
-            "blurb": "",
-            "accent": "",
-            "deep": ""
-          }
-        },
-        "story_flavour_mango": {
-          "type": "flavour",
-          "settings": {
-            "product": "alphonso-mango",
-            "title": "",
-            "tag": "",
-            "blurb": "",
-            "accent": "",
-            "deep": ""
-          }
-        },
-        "story_flavour_magenta": {
-          "type": "flavour",
-          "settings": {
-            "product": "wild-magenta",
-            "title": "",
-            "tag": "",
-            "blurb": "",
-            "accent": "",
-            "deep": ""
-          }
-        },
         "story_pack_6": {
           "type": "pack",
           "settings": {
@@ -239,9 +260,6 @@
         }
       },
       "block_order": [
-        "story_flavour_jamun",
-        "story_flavour_mango",
-        "story_flavour_magenta",
         "story_pack_6",
         "story_pack_12",
         "story_active_1",
@@ -262,11 +280,7 @@
         "story_faq_3"
       ],
       "settings": {
-        "range_first": true,
-        "collection": "",
-        "image_position_front": 1,
         "fallback_accent": "#9089d3",
-        "fallback_deep": "#2a1d4a",
         "spacing": 130,
         "show_formula": true,
         "formula_heading": "What is\nin it",
@@ -287,21 +301,17 @@
         "story_word_1": "Made",
         "story_word_2": "Once",
         "story_body": "Two hundred and forty packs, hand-numbered, brewed in one run. No second batch at this recipe — what is in the first is what the first tastes like. The list is told the morning it ships, and nobody else is told at all.",
-        "show_range": true,
-        "range_heading": "The range",
-        "range_intro": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it.",
         "show_reviews": false,
         "reviews_heading": "From the first tasting",
         "reviews_note": "",
         "faq_heading": "Frequently asked\nquestions",
         "label_pack": "Pack",
-        "label_can": "can",
-        "label_in_pack": "In your pack",
-        "label_take_this": "Take this one"
+        "label_can": "can"
       }
     }
   },
   "order": [
+    "range",
     "main",
     "story"
   ]

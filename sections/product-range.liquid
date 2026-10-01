@@ -1,0 +1,293 @@
+{%- comment -%}
+  Product range: the three flavours as cards, first thing on the product page. The card for the
+  flavour being viewed reads "in your pack"; the others switch the page to that flavour.
+  Built from the Drink section (main-drink.liquid).
+{%- endcomment -%}
+{%- liquid
+  assign flavour_blocks = section.blocks | where: 'type', 'flavour'
+  assign flavour_collection = section.settings.collection | default: settings.featured_can_collection
+  assign use_blocks = true
+  assign flavour_source = flavour_blocks
+  if flavour_blocks.size == 0
+    assign use_blocks = false
+    assign flavour_source = flavour_collection.products
+  endif
+  assign idx_front = section.settings.image_position_front | minus: 1
+-%}
+
+{%- assign flavour_count = 0 -%}
+{%- capture range_html -%}
+  {%- for item in flavour_source -%}
+    {%- liquid
+      if use_blocks
+        assign p = item.settings.product
+        assign o_title = item.settings.title
+        assign o_tag = item.settings.tag
+        assign o_blurb = item.settings.blurb
+        assign o_accent = item.settings.accent
+        assign o_deep = item.settings.deep
+        assign block_attrs = item.shopify_attributes
+      else
+        assign p = item
+        assign o_title = ''
+        assign o_tag = ''
+        assign o_blurb = ''
+        assign o_accent = ''
+        assign o_deep = ''
+        assign block_attrs = ''
+      endif
+
+      if p == blank and o_title == blank
+        continue
+      endif
+
+      assign f_title = o_title | default: p.title
+      assign f_tag = o_tag | default: p.metafields.custom.tagline.value
+      assign f_blurb = o_blurb | default: p.metafields.custom.blurb.value
+      if f_blurb == blank and p.description != blank
+        assign f_blurb = p.description | strip_html | strip | truncatewords: 40
+      endif
+      assign f_accent = o_accent | default: p.metafields.custom.accent_color.value | default: section.settings.fallback_accent
+      assign f_deep = o_deep | default: p.metafields.custom.primary_color.value | default: section.settings.fallback_deep
+      assign img_front = p.images[idx_front] | default: p.featured_image
+      assign is_current = false
+      if p != blank and p.id == product.id
+        assign is_current = true
+      endif
+      assign title_words = f_title | split: ' '
+      assign flavour_count = flavour_count | plus: 1
+    -%}
+    <li class="drink_flavour" data-chosen="{{ is_current }}" style="--swatch: {{ f_accent }}; --swatch-deep: {{ f_deep }};" {{ block_attrs }}>
+      <div class="drink_flavour-shot">
+        <span class="merch_glow" style="--glow: {{ f_accent }};" aria-hidden="true"></span>
+        {%- if img_front != blank -%}
+          {{ img_front | image_url: width: 800 | image_tag: loading: 'lazy', alt: f_title }}
+        {%- endif -%}
+      </div>
+      {%- if f_tag != blank -%}<span class="merch_tag">{{ f_tag | escape }}</span>{%- endif -%}
+      <h3 class="heading-style-h3">{{ title_words.first | escape }}{% if title_words.size > 1 %}<br>{{ f_title | remove_first: title_words.first | strip | escape }}{% endif %}</h3>
+      {%- if f_blurb != blank -%}<p class="text-white/60">{{ f_blurb | escape }}</p>{%- endif -%}
+      {%- if is_current or p == blank -%}
+        <a href="#buy" class="drink_flavour-cta">{{ section.settings.label_in_pack }}</a>
+      {%- else -%}
+        <a href="{{ p.url }}" class="drink_flavour-cta" data-flavour-swap>{{ section.settings.label_take_this }}</a>
+      {%- endif -%}
+    </li>
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div class="product-range drink-page-wrapper" style="--drink-air: {{ section.settings.spacing | default: 100 | divided_by: 100.0 }};">
+        {%- if section.settings.show_range and flavour_count > 0 -%}
+      <section id="range" class="section relative bg-black">
+        <div class="padding-global">
+          <div class="container-large">
+            <div class="padding-section-large">
+              <h2 class="heading-style-display">{{ section.settings.range_heading | escape | newline_to_br }}</h2>
+              {%- if section.settings.range_intro != blank -%}
+                <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">{{ section.settings.range_intro | escape }}</p>
+              {%- endif -%}
+              <ul class="drink_flavours">{{ range_html }}</ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    {%- endif -%}
+</div>
+
+<style>
+  /* Breathing room: every gap below scales with the "Page spacing" setting (--drink-air). */
+  .drink-page-wrapper [data-drink-blurb] { line-height: 1.65; margin-top: calc(var(--pad-m) * var(--drink-air)); }
+  .drink-page-wrapper .drink_field { margin-top: calc(var(--pad-l) * var(--drink-air)); }
+  .drink-page-wrapper .drink_legend { margin-bottom: calc(var(--pad-xs, 0.5rem) * var(--drink-air)); }
+  .drink-page-wrapper .drink_packs,
+  .drink-page-wrapper .drink_modes { gap: calc(var(--pad-s) * var(--drink-air)); }
+  .drink-page-wrapper .drink_total {
+    margin: calc(var(--pad-l) * var(--drink-air)) 0 calc(var(--pad-l) * var(--drink-air));
+    padding-top: calc(var(--pad-l) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_trust {
+    margin-top: calc(var(--pad-l) * var(--drink-air));
+    gap: calc(var(--pad-s) * var(--drink-air)) calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_stock {
+    margin-top: calc(var(--pad-l) * var(--drink-air));
+    padding-top: calc(var(--pad-l) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_badges {
+    margin-top: calc(var(--pad-xl) * var(--drink-air));
+    padding-top: calc(var(--pad-xl) * var(--drink-air));
+    gap: calc(var(--pad-l) * var(--drink-air)) calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_product { padding-bottom: calc(var(--pad-xxl) * var(--drink-air)); }
+  .drink-page-wrapper .drink_actives li {
+    padding: calc(var(--pad-m) * var(--drink-air)) 0;
+    gap: calc(var(--pad-m) * var(--drink-air));
+  }
+  .drink-page-wrapper .drink_actives li p { line-height: 1.6; }
+  .drink-page-wrapper .drink_facts dl > div { padding-block: calc(0.35rem * var(--drink-air)); }
+  .drink-page-wrapper .drink_flavours { margin-top: calc(var(--pad-xxl) * var(--drink-air)); gap: calc(var(--pad-xl) * var(--drink-air)); }
+  .drink-page-wrapper .faq_list > div + div { margin-top: calc(0.25rem * var(--drink-air)); }
+  .drink-page-wrapper #formula .padding-section-large,
+  .drink-page-wrapper #range .padding-section-large,
+  .drink-page-wrapper #faq .padding-section-large {
+    padding-top: calc(var(--pad-xxl) * 1.25 * var(--drink-air));
+    padding-bottom: calc(var(--pad-xxl) * 1.25 * var(--drink-air));
+  }
+
+  .drink_can-mount {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drink_can-mount > * {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+  }
+
+  /* The navbar is fixed over the top of the page; sit the banner just below it and take the
+     banner space out of the product section's own header clearance. */
+  .drink-page-wrapper.has-banner .drink_banner {
+    position: relative;
+    z-index: 1;
+    margin-top: var(--asmaan-header-h, 90px);
+  }
+  .drink-page-wrapper.has-banner #buy {
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+  }
+</style>
+<style>
+  /* First thing on the page: clear the fixed header. */
+  .product-range { padding-top: max(7rem, calc(var(--asmaan-header-h, 0px) + 2rem)); }
+</style>
+
+{% schema %}
+{
+  "name": "Product range",
+  "tag": "section",
+  "class": "product-range-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Range"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Flavour collection",
+      "info": "Used only when there are no Flavour blocks. Falls back to the homepage collection in Theme settings."
+    },
+    {
+      "type": "range",
+      "id": "image_position_front",
+      "label": "Product image position: front",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "fallback_deep",
+      "label": "Fallback deep colour",
+      "default": "#2A1D4A"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_range",
+      "label": "Show range",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "range_heading",
+      "label": "Heading",
+      "default": "The range"
+    },
+    {
+      "type": "textarea",
+      "id": "range_intro",
+      "label": "Intro",
+      "default": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it."
+    },
+    {
+      "type": "text",
+      "id": "label_in_pack",
+      "label": "Range: selected flavour",
+      "default": "In your pack"
+    },
+    {
+      "type": "text",
+      "id": "label_take_this",
+      "label": "Range: other flavour",
+      "default": "Take this one"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "label": "Page spacing",
+      "min": 100,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 130,
+      "info": "Scales the space between elements on this page."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "flavour",
+      "name": "Flavour",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "paragraph",
+          "content": "Leave the fields below empty to use the product's own data."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name override"
+        },
+        {
+          "type": "text",
+          "id": "tag",
+          "label": "Tagline override"
+        },
+        {
+          "type": "textarea",
+          "id": "blurb",
+          "label": "Description override"
+        },
+        {
+          "type": "color",
+          "id": "accent",
+          "label": "Accent colour override"
+        },
+        {
+          "type": "color",
+          "id": "deep",
+          "label": "Deep colour override"
+        },
+        {
+          "type": "image_picker",
+          "id": "label_image",
+          "label": "3D label texture override",
+          "info": "The unwrapped 360° can print. Defaults to the product's last image."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product range"
+    }
+  ]
+}
+{% endschema %}
