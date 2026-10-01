@@ -163,4 +163,18 @@ function confirmHtml(p, n) {
 </td></tr></table>
 </body></html>`;
 }
+
+// Sends both emails to one address so you can see them in a real inbox. Run it from the editor
+// (pick sendDemoEmails, click Run). It does not add a row to the sheet or email the team.
+function sendDemoEmails() {
+  const to = 'architjain2005@gmail.com';
+  const p = {
+    name: 'Aarav Mehta',
+    email: to,
+    address: '12 Marine Drive\nFlat 4B\nMumbai, Maharashtra 400020',
+    timestamp: new Date().toISOString()
+  };
+  MailApp.sendEmail({ to: to, subject: '[DEMO, team copy] New free sample request #12: ' + p.name, htmlBody: teamHtml(p, 12) });
+  MailApp.sendEmail({ to: to, name: 'Asmaan', subject: '[DEMO, sign-up copy] Thank you for registering, Aarav', htmlBody: confirmHtml(p, 12) });
+}
 ```
