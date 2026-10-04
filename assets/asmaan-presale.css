@@ -1,0 +1,410 @@
+/* ---------------------------------------------------------------------------
+   Asmaan — presale box sales page (sections/main-presale.liquid)
+
+   Hero: the box shut beside the buy panel; on desktop the hero is pinned and
+   scrolling lifts the lid off (--lift, 0 → 1, set by asmaan-presale.js).
+   Then one chapter per thing in the box, each on its own surface: the night
+   sky for the mirror, the box's own white for the notebook, the three flavour
+   colours for the cans. Rectangles only; no gradients.
+--------------------------------------------------------------------------- */
+
+.psb {
+  --psb-ink: #0b0716;
+  --psb-paper: #f3f3f1;
+  --psb-print: #14202e;
+  --psb-line: rgba(255, 255, 255, 0.18);
+  --psb-gutter: clamp(16px, 4vw, 64px);
+  color: #fff;
+}
+.psb img { display: block; max-width: 100%; }
+.psb p { margin: 0; }
+
+/* --- Buy pieces (hero panel and close) --------------------------------- */
+.psb_price {
+  font-size: clamp(36px, 3.2vw, 48px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--asmaan-track-display);
+}
+
+.psb_count { display: grid; gap: 10px; }
+.psb_cells {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 3px;
+}
+.psb_cells i {
+  display: block;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.psb_cells i.is-on { background: #fff; }
+.psb_count-text {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.psb_count-text b { color: #fff; font-weight: 600; }
+
+.psb_buy { display: flex; gap: 10px; }
+.psb_qty {
+  display: flex;
+  align-items: stretch;
+  flex: none;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.psb_qty button {
+  width: 44px;
+  background: none;
+  border: 0;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+.psb_qty button:disabled { opacity: 0.3; cursor: default; }
+.psb_qty output {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.psb_cta {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 62px;
+  padding: 0 24px;
+  background: #fff;
+  color: var(--psb-ink);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: var(--asmaan-track-body);
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.psb_cta:hover,
+.psb_cta:focus-visible { background: #9089d3; color: #fff; }
+.psb_cta.is-off {
+  justify-content: center;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--psb-line);
+}
+.psb_cta-price { font-weight: 500; font-variant-numeric: tabular-nums; }
+
+/* --- Hero ---------------------------------------------------------------- */
+.psb_hero { position: relative; }
+.psb_hero-stick {
+  padding: calc(var(--asmaan-header-h, 88px) + 32px) var(--psb-gutter) 56px;
+}
+.psb_hero-grid {
+  display: grid;
+  gap: 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.psb_frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #3a332d;
+}
+.psb_frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.psb_lid {
+  transform: translate3d(0, calc(var(--lift, 0) * -104%), 0);
+  box-shadow: 0 28px 48px rgba(0, 0, 0, calc(var(--lift, 0) * 0.5));
+  will-change: transform;
+}
+
+.psb_zones {
+  position: relative;
+  height: 64px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.psb_zones li {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: var(--w);
+  padding-top: 12px;
+  border-top: 1px solid #fff;
+  display: grid;
+  gap: 2px;
+  opacity: clamp(0, calc(var(--lift, 0) * 2 - 0.9), 1);
+  transform: translate3d(0, calc((1 - var(--lift, 0)) * 10px), 0);
+}
+.psb_zones b {
+  white-space: nowrap;
+  font-family: var(--asmaan-font-secondary);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.psb_zones span { font-size: 14px; color: rgba(255, 255, 255, 0.65); }
+
+.psb_panel { display: grid; gap: 22px; align-content: center; }
+.psb_kicker {
+  font-family: var(--asmaan-font-secondary);
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+.psb_title {
+  margin: -10px 0 0;
+  font-size: clamp(44px, 4.4vw, 72px);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: var(--asmaan-track-display);
+}
+.psb_lede {
+  max-width: 34ch;
+  font-size: 18px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.75);
+}
+.psb_panel .psb_price { margin-top: 6px; }
+.psb_notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (min-width: 990px) {
+  /* Pinned: the extra height is the scroll the lid takes to come off. */
+  .psb_hero { height: calc(100vh + 90vh); }
+  .psb_hero-stick {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-bottom: 32px;
+  }
+  .psb_hero-grid {
+    width: 100%;
+    grid-template-columns: minmax(0, 1.6fr) minmax(340px, 1fr);
+    gap: clamp(40px, 4.5vw, 80px);
+    align-items: center;
+  }
+  /* Short laptop screens: keep frame + names inside the pinned window. */
+  .psb_stage { max-width: calc((100vh - var(--asmaan-header-h, 88px) - 140px) * 1.6); }
+}
+
+/* --- Chapters ------------------------------------------------------------ */
+.psb_ch { padding: clamp(96px, 12vw, 180px) var(--psb-gutter); }
+.psb_ch-grid {
+  display: grid;
+  gap: 48px;
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: center;
+}
+.psb_photo { margin: 0; overflow: hidden; }
+.psb_photo img { width: 100%; height: auto; }
+
+.psb_name {
+  margin: 0 0 20px;
+  font-family: var(--asmaan-font-secondary);
+  font-size: clamp(52px, 6.4vw, 104px);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.psb_line {
+  max-width: 17ch;
+  font-size: clamp(28px, 2.9vw, 46px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: var(--asmaan-track-display);
+}
+.psb_body {
+  max-width: 40ch;
+  margin-top: 24px !important;
+  font-size: 18px;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+
+/* The mirror: its own slogan, set like the print on it, with the photo over its foot. */
+.psb_slogan {
+  position: relative;
+  z-index: 0;
+  margin: 0 auto -0.24em !important;
+  font-size: clamp(40px, 10.4vw, 190px);
+  font-weight: 800;
+  line-height: 0.82;
+  letter-spacing: -0.055em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.psb_ch--mirror .psb_ch-grid { position: relative; z-index: 1; }
+.psb_photo--mirror { max-width: 520px; width: 100%; justify-self: center; }
+
+/* The notebook: the box's own white and the navy it is printed in. */
+.psb_ch--book { background: var(--psb-paper); color: var(--psb-print); }
+.psb_pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.psb_photo--cover { margin-top: 96px; }
+
+/* The cans: one column of solid flavour colour each. */
+.psb_ch--cans { padding-left: 0; padding-right: 0; padding-bottom: 0; }
+.psb_cans-head {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: 0 var(--psb-gutter);
+  margin-bottom: clamp(56px, 7vw, 96px);
+}
+.psb_cans-head .psb_line { max-width: 20ch; }
+.psb_cans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.psb_cans li {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: min(76vh, 760px);
+  background: var(--c);
+  overflow: hidden;
+}
+.psb_cans img {
+  height: min(56vh, 540px);
+  width: auto;
+  max-width: none;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.psb_cans li:hover img { transform: translate3d(0, -14px, 0) rotate(-2deg); }
+.psb_cans span {
+  position: absolute;
+  left: 24px;
+  bottom: 20px;
+  color: var(--d);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* --- Close ------------------------------------------------------------- */
+.psb_close { padding: clamp(110px, 13vw, 200px) var(--psb-gutter) clamp(96px, 10vw, 160px); }
+.psb_quote {
+  max-width: 22ch;
+  margin: 0 auto clamp(80px, 9vw, 140px) !important;
+  font-family: var(--asmaan-font-secondary);
+  font-style: italic;
+  font-size: clamp(34px, 4.2vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.psb_close-grid {
+  display: grid;
+  gap: 56px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.psb_close-buy { display: grid; gap: 22px; align-content: start; }
+.psb_close-title {
+  margin: 0;
+  font-size: clamp(32px, 3vw, 44px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: var(--asmaan-track-display);
+}
+.psb_spec { margin: 0; }
+.psb_spec div {
+  display: grid;
+  grid-template-columns: 9.5em 1fr;
+  gap: 16px;
+  padding: 18px 0;
+  border-top: 1px solid var(--psb-line);
+}
+.psb_spec div:last-child { border-bottom: 1px solid var(--psb-line); }
+.psb_spec dt {
+  font-family: var(--asmaan-font-secondary);
+  font-size: 21px;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.psb_spec dd { margin: 0; font-size: 16px; line-height: 1.45; color: rgba(255, 255, 255, 0.75); }
+
+@media (min-width: 990px) {
+  .psb_ch--mirror .psb_ch-grid { grid-template-columns: 5fr 6fr; }
+  .psb_ch--book .psb_ch-grid { grid-template-columns: 5fr 7fr; gap: 80px; }
+  .psb_close-grid { grid-template-columns: 5fr 6fr; gap: 96px; }
+}
+
+/* --- Bottom bar ---------------------------------------------------------- */
+.psb_bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px var(--psb-gutter);
+  background: var(--psb-ink);
+  border-top: 1px solid var(--psb-line);
+  transform: translate3d(0, 110%, 0);
+  transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.psb_bar.is-on { transform: none; }
+.psb_bar-name { flex: 1; font-size: 17px; font-weight: 600; }
+.psb_bar-left { font-size: 15px; color: rgba(255, 255, 255, 0.65); }
+.psb_bar .psb_cta { flex: none; min-height: 50px; min-width: 260px; font-size: 16px; }
+
+/* --- Phones -------------------------------------------------------------- */
+@media (max-width: 989px) {
+  .psb_hero-stick { padding-top: calc(var(--asmaan-header-h, 72px) + 16px); }
+  .psb_stage { margin: 0 calc(var(--psb-gutter) * -1); }
+  .psb_zones { height: 48px; margin: 0 var(--psb-gutter); }
+  .psb_zones li { padding-top: 8px; }
+  .psb_zones b { font-size: 16px; }
+  .psb_zones span { display: none; }
+  .psb_photo--mirror { max-width: 420px; }
+  .psb_photo--cover { margin-top: 48px; }
+  .psb_cans li { height: 64vh; }
+  .psb_hero-grid { gap: 20px; }
+  .psb_cans img { height: auto; width: 74%; }
+  .psb_cans span { left: 12px; bottom: 12px; font-size: 14px; max-width: 7em; line-height: 1.15; }
+  .psb_spec div { grid-template-columns: 1fr; gap: 4px; }
+  .psb_bar { gap: 12px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .psb_bar-name { display: none; }
+  .psb_bar-left { flex: 1; }
+  .psb_bar .psb_cta { min-width: 0; flex: none; padding: 0 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psb_lid, .psb_zones li, .psb_cans img, .psb_bar { transition: none; }
+}

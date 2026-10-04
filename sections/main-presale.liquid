@@ -1,0 +1,276 @@
+{{ 'asmaan-presale.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'asmaan-presale.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  Sales page for the limited presale box (template product.presale). One product, one variant.
+  The hero holds the box shut and lifts the lid as you scroll; then one chapter per thing in the
+  box, then the buy block again.
+
+  "Claim" links are cart permalinks (/cart/<variant>:<qty>), which go straight to checkout with
+  just the box in it — no cart drawer step for a single-product sale.
+
+  Claimed count: when the variant tracks inventory it is edition size minus stock left, so set the
+  stock to (edition − already claimed). Without tracking, "Claimed (no inventory tracking)" is shown.
+{%- endcomment -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign edition = section.settings.edition_size | at_least: 1
+  if variant.inventory_management == 'shopify'
+    assign left = variant.inventory_quantity | at_least: 0 | at_most: edition
+    assign claimed = edition | minus: left
+  else
+    assign claimed = section.settings.claimed_count | at_least: 0 | at_most: edition
+    assign left = edition | minus: claimed
+  endif
+  assign max_qty = section.settings.max_qty | at_least: 1
+  if variant.inventory_management == 'shopify' and left < max_qty
+    assign max_qty = left | at_least: 1
+  endif
+  assign price = variant.price | default: product.price | money_without_trailing_zeros
+  assign checkout_url = routes.cart_url | append: '/' | append: variant.id | append: ':1'
+  assign sold_out = false
+  unless product.available
+    assign sold_out = true
+  endunless
+-%}
+
+{%- capture counter -%}
+  <div class="psb_count" role="img" aria-label="{{ claimed }} of {{ edition }} {{ section.settings.label_claimed | escape }}">
+    <div class="psb_cells" style="--cells: {{ edition }};" aria-hidden="true">
+      {%- for i in (1..edition) -%}<i{% if i <= claimed %} class="is-on"{% endif %}></i>{%- endfor -%}
+    </div>
+    <p class="psb_count-text" aria-hidden="true">
+      <span><b>{{ claimed }}</b> of {{ edition }} {{ section.settings.label_claimed | escape }}</span>
+      <span>{{ left }} {{ section.settings.label_left | escape }}</span>
+    </p>
+  </div>
+{%- endcapture -%}
+
+{%- capture buy -%}
+  <div class="psb_buy" data-psb-buy data-variant="{{ variant.id }}" data-max="{{ max_qty }}" data-cart="{{ routes.cart_url }}">
+    {%- if sold_out -%}
+      <span class="psb_cta is-off" aria-disabled="true">{{ section.settings.label_sold_out | escape }}</span>
+    {%- else -%}
+      {%- if max_qty > 1 -%}
+        <div class="psb_qty" role="group" aria-label="{{ section.settings.label_qty | escape }}">
+          <button type="button" data-psb-step="-1" aria-label="One fewer">&minus;</button>
+          <output data-psb-qty aria-live="polite">1</output>
+          <button type="button" data-psb-step="1" aria-label="One more">+</button>
+        </div>
+      {%- endif -%}
+      <a class="psb_cta" href="{{ checkout_url }}" data-psb-cta>
+        <span>{{ section.settings.label_cta | escape }}</span>
+        <span class="psb_cta-price" data-psb-total>{{ price }}</span>
+      </a>
+    {%- endif -%}
+  </div>
+{%- endcapture -%}
+
+<div class="psb" data-psb data-price="{{ variant.price }}" data-money="{{ shop.money_format | escape }}">
+
+  {%- comment -%} 1 · Hero: the box, shut; scrolling lifts the lid {%- endcomment -%}
+  <section class="psb_hero" data-psb-hero>
+    <div class="psb_hero-stick">
+      <div class="psb_hero-grid">
+        <div class="psb_stage">
+          <div class="psb_frame" data-psb-frame>
+            <img
+              class="psb_open"
+              src="{{ 'presale-box-open.webp' | asset_url }}"
+              srcset="{{ 'presale-box-open-1200.webp' | asset_url }} 1200w, {{ 'presale-box-open.webp' | asset_url }} 2400w"
+              sizes="(min-width: 990px) 58vw, 100vw"
+              width="2400" height="1500"
+              alt="The box open: the mirror, three cans of Ambition Tonic and the notebook in black foam"
+              fetchpriority="high"
+            >
+            <img
+              class="psb_lid"
+              src="{{ 'presale-box-closed.webp' | asset_url }}"
+              srcset="{{ 'presale-box-closed-1200.webp' | asset_url }} 1200w, {{ 'presale-box-closed.webp' | asset_url }} 2400w"
+              sizes="(min-width: 990px) 58vw, 100vw"
+              width="2400" height="1500"
+              alt="The Asmaan presale box, closed"
+              fetchpriority="high"
+              data-psb-lid
+            >
+          </div>
+          <ol class="psb_zones" aria-label="{{ section.settings.inside_label | escape }}">
+            <li style="--x: 11%; --w: 19%;"><b>{{ section.settings.mirror_name | escape }}</b><span>{{ section.settings.mirror_short | escape }}</span></li>
+            <li style="--x: 31.5%; --w: 31%;"><b>{{ section.settings.can_name | escape }}</b><span>{{ section.settings.can_short | escape }}</span></li>
+            <li style="--x: 65%; --w: 28%;"><b>{{ section.settings.book_name | escape }}</b><span>{{ section.settings.book_short | escape }}</span></li>
+          </ol>
+        </div>
+
+        <div class="psb_panel">
+          {%- if section.settings.kicker != blank -%}<p class="psb_kicker">{{ section.settings.kicker | escape }}</p>{%- endif -%}
+          <h1 class="psb_title">{{ product.title | escape }}</h1>
+          {%- if section.settings.contents_line != blank -%}<p class="psb_lede">{{ section.settings.contents_line | escape }}</p>{%- endif -%}
+          <p class="psb_price">{{ price }}</p>
+          {{ counter }}
+          {{ buy }}
+          {%- if section.settings.note_1 != blank or section.settings.note_2 != blank -%}
+            <ul class="psb_notes">
+              {%- if section.settings.note_1 != blank -%}<li>{{ section.settings.note_1 | escape }}</li>{%- endif -%}
+              {%- if section.settings.note_2 != blank -%}<li>{{ section.settings.note_2 | escape }}</li>{%- endif -%}
+            </ul>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 2 · The Reminder {%- endcomment -%}
+  <section class="psb_ch psb_ch--mirror" aria-labelledby="psb-mirror">
+    <p class="psb_slogan" aria-hidden="true">{{ section.settings.mirror_slogan | escape }}</p>
+    <div class="psb_ch-grid">
+      <figure class="psb_photo psb_photo--mirror">
+        <img src="{{ 'presale-mirror.webp' | asset_url }}" width="1200" height="1500" loading="lazy" alt="The mirror held up, with You against you printed across the bottom">
+      </figure>
+      <div class="psb_ch-copy">
+        <h2 id="psb-mirror" class="psb_name">{{ section.settings.mirror_name | escape }}</h2>
+        <p class="psb_line">{{ section.settings.mirror_line | escape }}</p>
+        {%- if section.settings.mirror_body != blank -%}<p class="psb_body">{{ section.settings.mirror_body | escape }}</p>{%- endif -%}
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 3 · The Grounder {%- endcomment -%}
+  <section class="psb_ch psb_ch--book" aria-labelledby="psb-book">
+    <div class="psb_ch-grid">
+      <div class="psb_ch-copy">
+        <h2 id="psb-book" class="psb_name">{{ section.settings.book_name | escape }}</h2>
+        <p class="psb_line">{{ section.settings.book_line | escape }}</p>
+        {%- if section.settings.book_body != blank -%}<p class="psb_body">{{ section.settings.book_body | escape }}</p>{%- endif -%}
+      </div>
+      <div class="psb_pair">
+        <figure class="psb_photo psb_photo--cover">
+          <img src="{{ 'presale-book-front.webp' | asset_url }}" width="1200" height="1500" loading="lazy" alt="The notebook's cover: For those who read in between the lines">
+        </figure>
+        <figure class="psb_photo psb_photo--spread">
+          <img src="{{ 'presale-book-spread.webp' | asset_url }}" width="1200" height="1500" loading="lazy" alt="A page inside the notebook: Go all in or don't go at all">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} 4 · The Amplifier {%- endcomment -%}
+  <section class="psb_ch psb_ch--cans" aria-labelledby="psb-cans">
+    <div class="psb_cans-head">
+      <h2 id="psb-cans" class="psb_name">{{ section.settings.can_name | escape }}</h2>
+      <p class="psb_line">{{ section.settings.can_line | escape }}</p>
+      {%- if section.settings.can_body != blank -%}<p class="psb_body">{{ section.settings.can_body | escape }}</p>{%- endif -%}
+    </div>
+    <ul class="psb_cans">
+      <li style="--c: #9089d3; --d: #2a1d4a;">
+        <img src="{{ 'jamun-front.webp' | asset_url }}" width="760" height="1950" loading="lazy" alt="">
+        <span>{{ section.settings.flavour_1 | escape }}</span>
+      </li>
+      <li style="--c: #efb36b; --d: #5a3410;">
+        <img src="{{ 'mango-front.webp' | asset_url }}" width="760" height="1950" loading="lazy" alt="">
+        <span>{{ section.settings.flavour_2 | escape }}</span>
+      </li>
+      <li style="--c: #e6a0e8; --d: #4e0749;">
+        <img src="{{ 'print-front.webp' | asset_url }}" width="760" height="1950" loading="lazy" alt="">
+        <span>{{ section.settings.flavour_3 | escape }}</span>
+      </li>
+    </ul>
+  </section>
+
+  {%- comment -%} 5 · Close: the line from the back of the notebook, then the buy block again {%- endcomment -%}
+  <section class="psb_close" aria-labelledby="psb-close" data-psb-close>
+    {%- if section.settings.close_quote != blank -%}
+      <p class="psb_quote">{{ section.settings.close_quote | escape }}</p>
+    {%- endif -%}
+    <div class="psb_close-grid">
+      <div class="psb_close-buy">
+        <h2 id="psb-close" class="psb_close-title">{{ section.settings.close_title | escape }}</h2>
+        <p class="psb_price">{{ price }}</p>
+        {{ counter }}
+        {{ buy }}
+      </div>
+      <dl class="psb_spec">
+        {%- for n in (1..5) -%}
+          {%- assign k = 'spec_' | append: n | append: '_label' -%}
+          {%- assign v = 'spec_' | append: n | append: '_value' -%}
+          {%- if section.settings[k] != blank -%}
+            <div><dt>{{ section.settings[k] | escape }}</dt><dd>{{ section.settings[v] | escape }}</dd></div>
+          {%- endif -%}
+        {%- endfor -%}
+      </dl>
+    </div>
+  </section>
+
+  {%- unless sold_out -%}
+    <div class="psb_bar" data-psb-bar hidden>
+      <span class="psb_bar-name">{{ product.title | escape }}</span>
+      <span class="psb_bar-left">{{ left }} {{ section.settings.label_left | escape }}</span>
+      <a class="psb_cta" href="{{ checkout_url }}" data-psb-cta>
+        <span>{{ section.settings.label_cta | escape }}</span>
+        <span class="psb_cta-price" data-psb-total>{{ price }}</span>
+      </a>
+    </div>
+  {%- endunless -%}
+</div>
+
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+{% schema %}
+{
+  "name": "Presale box",
+  "tag": "div",
+  "class": "section-presale",
+  "settings": [
+    { "type": "header", "content": "Edition" },
+    { "type": "range", "id": "edition_size", "label": "Edition size", "min": 10, "max": 300, "step": 10, "default": 100 },
+    { "type": "number", "id": "claimed_count", "label": "Claimed (no inventory tracking)", "info": "Only used when the variant does not track inventory. With tracking on, claimed = edition size − stock.", "default": 16 },
+    { "type": "range", "id": "max_qty", "label": "Most per order", "min": 1, "max": 5, "step": 1, "default": 2 },
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Limited presale edition" },
+    { "type": "text", "id": "contents_line", "label": "Contents line", "default": "A mirror, a notebook and three cans of Ambition Tonic, in one box." },
+    { "type": "text", "id": "note_1", "label": "Note 1", "default": "Free shipping across India" },
+    { "type": "text", "id": "note_2", "label": "Note 2", "default": "Presale: we email you the day it ships" },
+    { "type": "text", "id": "inside_label", "label": "Inside (screen readers)", "default": "In the box" },
+    { "type": "header", "content": "The mirror" },
+    { "type": "text", "id": "mirror_name", "label": "Name", "default": "The Reminder" },
+    { "type": "text", "id": "mirror_short", "label": "Under the photo", "default": "The mirror" },
+    { "type": "text", "id": "mirror_slogan", "label": "Slogan", "default": "You against you" },
+    { "type": "text", "id": "mirror_line", "label": "Line", "default": "The mirror reminds you of your toughest competition." },
+    { "type": "textarea", "id": "mirror_body", "label": "Body" },
+    { "type": "header", "content": "The notebook" },
+    { "type": "text", "id": "book_name", "label": "Name", "default": "The Grounder" },
+    { "type": "text", "id": "book_short", "label": "Under the photo", "default": "The notebook" },
+    { "type": "text", "id": "book_line", "label": "Line", "default": "The book helps you plan how to beat them." },
+    { "type": "textarea", "id": "book_body", "label": "Body", "default": "For those who read in between the lines." },
+    { "type": "header", "content": "The cans" },
+    { "type": "text", "id": "can_name", "label": "Name", "default": "The Amplifier" },
+    { "type": "text", "id": "can_short", "label": "Under the photo", "default": "Three cans of Ambition Tonic" },
+    { "type": "text", "id": "can_line", "label": "Line", "default": "And the drink helps you win that battle every day." },
+    { "type": "textarea", "id": "can_body", "label": "Body", "default": "Ashwagandha, caffeine, L-theanine, B vitamins, magnesium. One of each flavour." },
+    { "type": "text", "id": "flavour_1", "label": "Flavour 1", "default": "Kala Jamun" },
+    { "type": "text", "id": "flavour_2", "label": "Flavour 2", "default": "Alphonso Mango" },
+    { "type": "text", "id": "flavour_3", "label": "Flavour 3", "default": "Wild Magenta" },
+    { "type": "header", "content": "Close" },
+    { "type": "text", "id": "close_quote", "label": "Quote", "default": "I trust the next chapter of my life because I know the author." },
+    { "type": "text", "id": "close_title", "label": "Title", "default": "One box. One hundred made." },
+    { "type": "text", "id": "spec_1_label", "label": "Row 1 label", "default": "The Reminder" },
+    { "type": "text", "id": "spec_1_value", "label": "Row 1", "default": "Hand mirror, You against you printed across it" },
+    { "type": "text", "id": "spec_2_label", "label": "Row 2 label", "default": "The Grounder" },
+    { "type": "text", "id": "spec_2_value", "label": "Row 2", "default": "Asmaan notebook" },
+    { "type": "text", "id": "spec_3_label", "label": "Row 3 label", "default": "The Amplifier" },
+    { "type": "text", "id": "spec_3_value", "label": "Row 3", "default": "3 × 250 ml Ambition Tonic: Kala Jamun, Alphonso Mango, Wild Magenta" },
+    { "type": "text", "id": "spec_4_label", "label": "Row 4 label", "default": "Edition" },
+    { "type": "text", "id": "spec_4_value", "label": "Row 4", "default": "Limited presale, 100 boxes" },
+    { "type": "text", "id": "spec_5_label", "label": "Row 5 label", "default": "Shipping" },
+    { "type": "text", "id": "spec_5_value", "label": "Row 5", "default": "Free across India" },
+    { "type": "header", "content": "Labels" },
+    { "type": "text", "id": "label_cta", "label": "Button", "default": "Claim yours" },
+    { "type": "text", "id": "label_qty", "label": "Quantity", "default": "Quantity" },
+    { "type": "text", "id": "label_claimed", "label": "Claimed", "default": "claimed" },
+    { "type": "text", "id": "label_left", "label": "Left", "default": "left" },
+    { "type": "text", "id": "label_sold_out", "label": "Sold out", "default": "All 100 claimed" }
+  ]
+}
+{% endschema %}
