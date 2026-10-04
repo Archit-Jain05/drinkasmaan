@@ -114,7 +114,7 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #3a332d;
+  background: #e4e4e2;
 }
 .psb_frame img {
   position: absolute;
@@ -123,9 +123,9 @@
   height: 100%;
   object-fit: cover;
 }
+/* The lid is the shut box alone on transparency (its shadow included), so only the box lifts. */
 .psb_lid {
-  transform: translate3d(0, calc(var(--lift, 0) * -104%), 0);
-  box-shadow: 0 28px 48px rgba(0, 0, 0, calc(var(--lift, 0) * 0.5));
+  transform: translate3d(0, calc(var(--lift, 0) * -100%), 0);
   will-change: transform;
 }
 
