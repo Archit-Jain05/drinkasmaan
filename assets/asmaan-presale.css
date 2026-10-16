@@ -360,6 +360,40 @@
 
 /* The notebook: the box's own white and the navy it is printed in. */
 .psb_ch--book { background: var(--psb-paper); color: var(--psb-print); }
+/* The white notebook section fades in from the night sky above and out into it below, instead of
+   starting and ending on a hard edge. The fades sit just outside the section, over the dark paddings, overlapping it by 1px so no hairline shows. */
+.psb_ch--book { position: relative; }
+.psb_ch--book::before,
+.psb_ch--book::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: clamp(100px, 12vw, 170px);
+  pointer-events: none;
+  z-index: 1;
+}
+.psb_ch--book::before { bottom: calc(100% - 1px); background: linear-gradient(to bottom, transparent, var(--psb-paper)); }
+.psb_ch--book::after { top: calc(100% - 1px); background: linear-gradient(to top, transparent, var(--psb-paper)); }
+@supports (background: color-mix(in srgb, red 50%, transparent)) {
+  /* fade through the paper colour itself (not grey), with extra stops so the ramp is smooth */
+  .psb_ch--book::before {
+    background: linear-gradient(to bottom,
+      color-mix(in srgb, var(--psb-paper) 0%, transparent) 0%,
+      color-mix(in srgb, var(--psb-paper) 8%, transparent) 25%,
+      color-mix(in srgb, var(--psb-paper) 30%, transparent) 50%,
+      color-mix(in srgb, var(--psb-paper) 66%, transparent) 75%,
+      var(--psb-paper) 100%);
+  }
+  .psb_ch--book::after {
+    background: linear-gradient(to top,
+      color-mix(in srgb, var(--psb-paper) 0%, transparent) 0%,
+      color-mix(in srgb, var(--psb-paper) 8%, transparent) 25%,
+      color-mix(in srgb, var(--psb-paper) 30%, transparent) 50%,
+      color-mix(in srgb, var(--psb-paper) 66%, transparent) 75%,
+      var(--psb-paper) 100%);
+  }
+}
 .psb_pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
