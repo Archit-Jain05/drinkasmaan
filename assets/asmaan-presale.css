@@ -146,7 +146,7 @@
   /* The lid is loose, not hinged: it lifts off the box, slides back and is set down flat behind it.
      The pose (--ly up, --lz towards you, in cqw; --lrx, --lrz in degrees; --ls scale) is worked out in
      asmaan-presale.js from the scroll. At rest everything is 0 (and --ls is 1). */
-  transform: translate3d(0, calc(var(--ly, 0) * -1cqw), calc(var(--lz, 0) * 1cqw)) rotateX(calc(var(--lrx, 0) * 1deg)) rotateZ(calc(var(--lrz, 0) * 1deg)) scale(var(--ls, 1));
+  transform: translate3d(calc(var(--lx, 0) * 1cqw), calc(var(--ly, 0) * -1cqw), calc(var(--lz, 0) * 1cqw)) rotateX(calc(var(--lrx, 0) * 1deg)) rotateZ(calc(var(--lrz, 0) * 1deg)) scale(var(--ls, 1));
   will-change: transform;
 }
 .psb_lidbox > * { position: absolute; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
@@ -183,7 +183,7 @@
   width: 90%;
   height: 73.13%;
   box-shadow: 0 calc(2.4cqw + var(--lz, 0) * 0.12cqw) calc(4.2cqw + var(--lz, 0) * 0.3cqw) rgba(0, 0, 0, 0.5);
-  transform: translate3d(0, calc(var(--ly, 0) * -1cqw), 0) rotateZ(calc(var(--lrz, 0) * 1deg)) scale(var(--ls, 1));
+  transform: translate3d(calc(var(--lx, 0) * 1cqw), calc(var(--ly, 0) * -1cqw), 0) rotateZ(calc(var(--lrz, 0) * 1deg)) scale(var(--ls, 1));
   pointer-events: none;
 }
 

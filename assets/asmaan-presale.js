@@ -17,8 +17,9 @@
   // (the stylesheet's units are cqw: 1% of the picture's width). It lifts straight off the box, slides
   // back past the far edge, and is set down flat behind the box, a little smaller and turned a few degrees,
   // with a small hop as it lands.
-  var REST_UP = 40;         // where it ends up: this far up the screen (clear of the box's back edge)
-  var REST_SCALE = 0.62;    // ...and this much smaller, as it sits further back on the table
+  var REST_UP = 31;         // where it ends up: this far up the screen, still overlapping the top of the box
+  var REST_LEFT = -2;       // ...and this far to the left, so it rests across the box's top-left corner
+  var REST_SCALE = 1;       // same size throughout
   var REST_TURN = -5;       // ...turned a little, like it was put down, not placed
   var PEAK = 30;            // how high it is lifted off the box
   function lidPose(lift) {
@@ -32,6 +33,7 @@
       z = 3.2 * Math.sin(u * Math.PI) * (1 - u);
     }
     return {
+      x: REST_LEFT * slide,
       y: REST_UP * slide,
       z: z,
       rx: 5 * Math.sin(Math.min(b / 0.82, 1) * Math.PI), // tilts a touch while it travels
@@ -84,6 +86,7 @@
         }
         hero.style.setProperty('--lift', lift.toFixed(4));
         var pose = lidPose(lift);
+        hero.style.setProperty('--lx', pose.x.toFixed(3));
         hero.style.setProperty('--ly', pose.y.toFixed(3));
         hero.style.setProperty('--lz', pose.z.toFixed(3));
         hero.style.setProperty('--lrx', pose.rx.toFixed(2));
