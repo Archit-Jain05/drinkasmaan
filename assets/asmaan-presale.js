@@ -425,12 +425,13 @@
   }
 
   // --- Phone splash: the wordmark is handwritten on a white screen, then the screen crops down to the box ---
-  // The handwriting comes from two small files made from the wordmark itself:
-  //  - presale-logo-write.png: every pixel of every letter stores WHEN the pen reaches it. The pen runs along
-  //    the centre line of each stroke (letter by letter, left to right, lifting between strokes), and a pixel
-  //    takes the moment the pen passes its nearest point, so each stroke grows along its length.
-  //  - presale-logo-nib.json: the path of the pen tip over time, so the nib itself can be drawn.
-  // A canvas shows the ink laid down so far, with the pen tip at its head.
+  // The handwriting is only the way the letters appear; the letters themselves are always the clean, solid
+  // wordmark. Two small files made from the wordmark drive it:
+  //  - presale-logo-write.png: the wordmark's own shape (its alpha channel), drawn solid in the brand navy;
+  //  - presale-logo-nib.json: the path a pen would take along the centre of every stroke (letter by letter, left
+  //    to right, lifting between strokes), with the width of the stroke at each point.
+  // As the pen advances, a thick round brush follows that path and the solid wordmark shows only where the
+  // brush has been, so every stroke grows along its length and always has the finished, crisp edges.
   var WRITE_MS = 2700, HOLD_MS = 320, CROP_MS = 1050, HAND_OFF_MS = 240;
   // where the wordmark printed on the lid sits in the lid photo (fractions of the photo), and how much of
   // its own width the logo drawing uses
@@ -460,56 +461,53 @@
     canvas.className = 'psb_splash-pen';
     logo.appendChild(canvas);
 
-    var pen = null; // { w, h, time: Float32Array, cov: Uint8Array, img: ImageData, ctx }
+    var pen = null;       // { w, h, logo: canvas with the solid wordmark, ink: canvas that records where the pen has been, ctx }
+    var nibTrack = null;  // [[x, y, t, r], ...]; a negative t means the pen is lifted and travelling
+    var nibIdx = 0, nibPrev = null;
     var mapImg = new Image();
     mapImg.onload = function() {
       try {
         var w = mapImg.naturalWidth, h = mapImg.naturalHeight;
-        var tmp = document.createElement('canvas'); tmp.width = w; tmp.height = h;
-        var tctx = tmp.getContext('2d', { willReadFrequently: true });
-        tctx.drawImage(mapImg, 0, 0);
-        var px = tctx.getImageData(0, 0, w, h).data;
-        var time = new Float32Array(w * h), cov = new Uint8Array(w * h);
-        for (var i = 0; i < w * h; i++) { time[i] = px[i * 4] / 255; cov[i] = px[i * 4 + 3]; }
+        var logoCanvas = document.createElement('canvas'); logoCanvas.width = w; logoCanvas.height = h;
+        var lctx = logoCanvas.getContext('2d', { willReadFrequently: true });
+        lctx.drawImage(mapImg, 0, 0);
+        var im = lctx.getImageData(0, 0, w, h), d = im.data;
+        for (var i = 0; i < w * h; i++) { d[i * 4] = 20; d[i * 4 + 1] = 32; d[i * 4 + 2] = 46; } // solid navy; keep the wordmark's own alpha
+        lctx.putImageData(im, 0, 0);
+        var ink = document.createElement('canvas'); ink.width = w; ink.height = h;
+        var ictx = ink.getContext('2d');
+        ictx.lineCap = 'round'; ictx.lineJoin = 'round'; ictx.strokeStyle = '#000'; ictx.fillStyle = '#000';
         canvas.width = w; canvas.height = h;
-        var ctx = canvas.getContext('2d');
-        var img = ctx.createImageData(w, h);
-        for (var j = 0; j < w * h; j++) { img.data[j * 4] = 20; img.data[j * 4 + 1] = 32; img.data[j * 4 + 2] = 46; }
-        pen = { w: w, h: h, time: time, cov: cov, img: img, ctx: ctx };
-        logo.classList.add('is-pen');
+        pen = { w: w, h: h, logo: logoCanvas, ink: ink, ictx: ictx, ctx: canvas.getContext('2d') };
       } catch (e) { pen = null; }
     };
     mapImg.src = splash.getAttribute('data-write');
-    var nibTrack = null; // [[x, y, t], ...]; a negative t means the pen is lifted and travelling
     var nibUrl = splash.getAttribute('data-nib');
     if (nibUrl && window.fetch) {
       fetch(nibUrl).then(function(r) { return r.json(); }).then(function(j) { nibTrack = j.nib; }).catch(function() {});
     }
 
     function drawPen(progress) {
-      // the nib stays a touch soft so the edge of the ink never looks cut
-      var EDGE = 0.011, t = progress * (1 + EDGE);
-      var d = pen.img.data, time = pen.time, cov = pen.cov, n = time.length;
-      for (var i = 0; i < n; i++) {
-        var c = cov[i];
-        if (!c) { d[i * 4 + 3] = 0; continue; }
-        var k = (t - time[i]) / EDGE;
-        d[i * 4 + 3] = k <= 0 ? 0 : (k >= 1 ? c : c * k);
+      // lay down the ink for every point the pen has passed since the last frame
+      var ic = pen.ictx;
+      while (nibIdx < nibTrack.length && Math.abs(nibTrack[nibIdx][2]) <= progress) {
+        var p = nibTrack[nibIdx], lifted = p[2] < 0;
+        if (!lifted) {
+          ic.lineWidth = p[3] * 2;
+          if (nibPrev && !nibPrev.lifted) { ic.beginPath(); ic.moveTo(nibPrev.x, nibPrev.y); ic.lineTo(p[0], p[1]); ic.stroke(); }
+          ic.beginPath(); ic.arc(p[0], p[1], p[3], 0, 6.2832); ic.fill();
+        }
+        nibPrev = { x: p[0], y: p[1], lifted: lifted };
+        nibIdx++;
       }
-      pen.ctx.putImageData(pen.img, 0, 0);
-      if (nibTrack && progress < 1) drawNib(progress);
-    }
-    // The pen tip: a small dark point with a soft ring, at the head of the ink (smaller while it is lifted).
-    function drawNib(progress) {
-      var lo = 0, hi = nibTrack.length - 1;
-      while (lo < hi) { var mid = (lo + hi) >> 1; if (Math.abs(nibTrack[mid][2]) < progress) lo = mid + 1; else hi = mid; }
-      var p = nibTrack[lo], lifted = p[2] < 0, c = pen.ctx;
-      c.save();
-      c.beginPath(); c.arc(p[0], p[1], lifted ? 7 : 11, 0, 6.2832);
-      c.fillStyle = 'rgba(20,32,46,' + (lifted ? 0.08 : 0.16) + ')'; c.fill();
-      c.beginPath(); c.arc(p[0], p[1], lifted ? 2.4 : 4.6, 0, 6.2832);
-      c.fillStyle = 'rgb(20,32,46)'; c.fill();
-      c.restore();
+      // the solid wordmark, shown only where the pen has been
+      var c = pen.ctx;
+      c.globalCompositeOperation = 'source-over';
+      c.clearRect(0, 0, pen.w, pen.h);
+      c.drawImage(pen.logo, 0, 0);
+      c.globalCompositeOperation = 'destination-in';
+      c.drawImage(pen.ink, 0, 0);
+      c.globalCompositeOperation = 'source-over';
     }
     function setWipe(v) { logo.style.setProperty('--wipe', v.toFixed(1) + '%'); }
     setWipe(0);
@@ -521,14 +519,15 @@
       if (t0 === null) t0 = now;
       var p = Math.min((now - t0) / WRITE_MS, 1);
       var e = 0.55 * p + 0.45 * smooth(p); // mostly steady, gently eased at both ends
-      if (pen) drawPen(e); else setWipe(e * 100);
+      if (pen && nibTrack) drawPen(e); else setWipe(e * 100);
       if (p < 1) requestAnimationFrame(write);
       else setTimeout(waitForLid, HOLD_MS);
     }
     // start once the map has had a moment to load (never wait long: fall back to the wipe)
     var armedAt = performance.now();
     (function arm() {
-      if (pen || performance.now() - armedAt > 900) requestAnimationFrame(write);
+      if (pen && nibTrack) { logo.classList.add('is-pen'); requestAnimationFrame(write); }
+      else if (performance.now() - armedAt > 900) { pen = null; requestAnimationFrame(write); }
       else requestAnimationFrame(arm);
     })();
 
