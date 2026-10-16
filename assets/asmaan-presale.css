@@ -360,40 +360,47 @@
 
 /* The notebook: the box's own white and the navy it is printed in. */
 .psb_ch--book { background: var(--psb-paper); color: var(--psb-print); }
-/* The white notebook section fades in from the night sky above and out into it below, instead of
-   starting and ending on a hard edge. The fades sit just outside the section, over the dark paddings, overlapping it by 1px so no hairline shows. */
-.psb_ch--book { position: relative; }
-.psb_ch--book::before,
-.psb_ch--book::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: clamp(100px, 12vw, 170px);
-  pointer-events: none;
-  z-index: 1;
+/* The white notebook section melts into the night sky above and below, with a long, eased fade
+   (smootherstep: no visible start or end to it) instead of a hard edge. The fade is part of the
+   section's own background, and its padding keeps the words and photos on the solid paper. */
+.psb_ch--book {
+  --psb-fade: clamp(220px, 22vw, 360px);
+  padding-block: calc(var(--psb-fade) * 0.85);
 }
-.psb_ch--book::before { bottom: calc(100% - 1px); background: linear-gradient(to bottom, transparent, var(--psb-paper)); }
-.psb_ch--book::after { top: calc(100% - 1px); background: linear-gradient(to top, transparent, var(--psb-paper)); }
 @supports (background: color-mix(in srgb, red 50%, transparent)) {
-  /* fade through the paper colour itself (not grey), with extra stops so the ramp is smooth */
-  .psb_ch--book::before {
+  .psb_ch--book {
     background: linear-gradient(to bottom,
-      color-mix(in srgb, var(--psb-paper) 0%, transparent) 0%,
-      color-mix(in srgb, var(--psb-paper) 8%, transparent) 25%,
-      color-mix(in srgb, var(--psb-paper) 30%, transparent) 50%,
-      color-mix(in srgb, var(--psb-paper) 66%, transparent) 75%,
-      var(--psb-paper) 100%);
-  }
-  .psb_ch--book::after {
-    background: linear-gradient(to top,
-      color-mix(in srgb, var(--psb-paper) 0%, transparent) 0%,
-      color-mix(in srgb, var(--psb-paper) 8%, transparent) 25%,
-      color-mix(in srgb, var(--psb-paper) 30%, transparent) 50%,
-      color-mix(in srgb, var(--psb-paper) 66%, transparent) 75%,
-      var(--psb-paper) 100%);
+      color-mix(in srgb, var(--psb-paper) 0%, transparent) calc(var(--psb-fade) * 0.0000),
+      color-mix(in srgb, var(--psb-paper) 0.5%, transparent) calc(var(--psb-fade) * 0.0833),
+      color-mix(in srgb, var(--psb-paper) 3.5%, transparent) calc(var(--psb-fade) * 0.1667),
+      color-mix(in srgb, var(--psb-paper) 10.4%, transparent) calc(var(--psb-fade) * 0.2500),
+      color-mix(in srgb, var(--psb-paper) 21%, transparent) calc(var(--psb-fade) * 0.3333),
+      color-mix(in srgb, var(--psb-paper) 34.7%, transparent) calc(var(--psb-fade) * 0.4167),
+      color-mix(in srgb, var(--psb-paper) 50%, transparent) calc(var(--psb-fade) * 0.5000),
+      color-mix(in srgb, var(--psb-paper) 65.3%, transparent) calc(var(--psb-fade) * 0.5833),
+      color-mix(in srgb, var(--psb-paper) 79%, transparent) calc(var(--psb-fade) * 0.6667),
+      color-mix(in srgb, var(--psb-paper) 89.6%, transparent) calc(var(--psb-fade) * 0.7500),
+      color-mix(in srgb, var(--psb-paper) 96.5%, transparent) calc(var(--psb-fade) * 0.8333),
+      color-mix(in srgb, var(--psb-paper) 99.5%, transparent) calc(var(--psb-fade) * 0.9167),
+      color-mix(in srgb, var(--psb-paper) 100%, transparent) calc(var(--psb-fade) * 1.0000),
+      var(--psb-paper) var(--psb-fade),
+      var(--psb-paper) calc(100% - var(--psb-fade)),
+      color-mix(in srgb, var(--psb-paper) 100%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.0000),
+      color-mix(in srgb, var(--psb-paper) 99.5%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.0833),
+      color-mix(in srgb, var(--psb-paper) 96.5%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.1667),
+      color-mix(in srgb, var(--psb-paper) 89.6%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.2500),
+      color-mix(in srgb, var(--psb-paper) 79%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.3333),
+      color-mix(in srgb, var(--psb-paper) 65.3%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.4167),
+      color-mix(in srgb, var(--psb-paper) 50%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.5000),
+      color-mix(in srgb, var(--psb-paper) 34.7%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.5833),
+      color-mix(in srgb, var(--psb-paper) 21%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.6667),
+      color-mix(in srgb, var(--psb-paper) 10.4%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.7500),
+      color-mix(in srgb, var(--psb-paper) 3.5%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.8333),
+      color-mix(in srgb, var(--psb-paper) 0.5%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 0.9167),
+      color-mix(in srgb, var(--psb-paper) 0%, transparent) calc(100% - var(--psb-fade) + var(--psb-fade) * 1.0000));
   }
 }
+
 .psb_pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
