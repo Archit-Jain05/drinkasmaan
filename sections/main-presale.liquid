@@ -84,16 +84,24 @@
               alt="The box open: the mirror, three cans of Ambition Tonic and the notebook in black foam"
               fetchpriority="high"
             >
-            <img
-              class="psb_lid"
-              src="{{ 'presale-box-closed.webp' | asset_url }}"
-              srcset="{{ 'presale-box-closed-1200.webp' | asset_url }} 1200w, {{ 'presale-box-closed.webp' | asset_url }} 2400w"
-              sizes="(min-width: 990px) 58vw, 100vw"
-              width="2400" height="1500"
-              alt="The Asmaan presale box, closed"
-              fetchpriority="high"
-              data-psb-lid
-            >
+            <span class="psb_cast" aria-hidden="true"></span>
+            {%- comment -%} The lid is a slab: the photo is its top face, plus an inside face and four edges, so it has real thickness as it swings open. {%- endcomment -%}
+            <div class="psb_lidbox" data-psb-lid>
+              <img
+                class="psb_lid"
+                src="{{ 'presale-box-closed.webp' | asset_url }}"
+                srcset="{{ 'presale-box-closed-1200.webp' | asset_url }} 1200w, {{ 'presale-box-closed.webp' | asset_url }} 2400w"
+                sizes="(min-width: 990px) 58vw, 100vw"
+                width="2400" height="1500"
+                alt="The Asmaan presale box, closed"
+                fetchpriority="high"
+              >
+              <span class="psb_under" aria-hidden="true"></span>
+              <span class="psb_edge is-t" aria-hidden="true"></span>
+              <span class="psb_edge is-b" aria-hidden="true"></span>
+              <span class="psb_edge is-l" aria-hidden="true"></span>
+              <span class="psb_edge is-r" aria-hidden="true"></span>
+            </div>
           </div>
           <ol class="psb_zones" aria-label="{{ section.settings.inside_label | escape }}">
             <li style="--x: 11%; --w: 19%;"><b>{{ section.settings.mirror_name | escape }}</b><span>{{ section.settings.mirror_short | escape }}</span></li>

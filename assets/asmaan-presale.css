@@ -118,6 +118,7 @@
   /* The lid swings open in this space: the camera sits above the box, slightly towards the front. */
   perspective: 2400px;
   perspective-origin: 50% 70%;
+  container-type: inline-size; /* so the lid's thickness can scale with the picture (cqw) */
 }
 .psb_frame img {
   position: absolute;
@@ -130,14 +131,57 @@
 .psb_open { filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.5)); }
 .psb_photo--mirror img { filter: drop-shadow(0 26px 40px rgba(0, 0, 0, 0.5)); }
 
-/* The lid is the shut box alone on transparency (its shadow included). It is hinged along its far
-   edge and swings up towards you, passes edge-on, and folds away behind the box (--lift 0 → 1). */
-.psb_lid {
+/* The lid is a cardboard slab, hinged along its far edge (--lift 0 → 1). Its outline in the photo is
+   5% in from each side, 11.93% from the top, 90% wide and 73.13% tall; the slab is exactly that
+   rectangle. Faces: the photo (top), a paper inside, and four edges --d thick. */
+.psb_lidbox {
+  --d: 3.4cqw;
+  position: absolute;
+  left: 5%;
+  top: 11.93%;
+  width: 90%;
+  height: 73.13%;
+  transform-style: preserve-3d;
   transform-origin: 50% 0%;
-  transform: rotateX(calc(var(--lift, 0) * 118deg));
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  transform: rotateX(calc(var(--lift, 0) * 104deg));
   will-change: transform;
+}
+.psb_lidbox > * { position: absolute; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+/* The photo is the whole frame; shift it back so the lid lines up, and crop the baked shadow off. */
+.psb_frame .psb_lid {
+  inset: auto;
+  left: -5.5556%;
+  top: -16.31%;
+  width: 111.111%;
+  height: 136.74%;
+  max-width: none; /* the site-wide img rule would cap it to the lid width */
+  max-height: none;
+  transform: translateZ(var(--d));
+  clip-path: inset(11.93% 5% 14.94% 5%);
+}
+.psb_under {
+  inset: 0;
+  transform: rotateY(180deg);
+  background:
+    radial-gradient(120% 90% at 50% 40%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 70%),
+    linear-gradient(160deg, #e9e9e6, #d5d5d2);
+  box-shadow: inset 0 0 0 1.1cqw #d9d9d6, inset 0 0 2.2cqw rgba(0, 0, 0, 0.18);
+}
+.psb_edge { backface-visibility: hidden; }
+.psb_edge.is-t { left: 0; top: 0; width: 100%; height: var(--d); transform-origin: 50% 0; transform: rotateX(90deg); background: linear-gradient(90deg, #d8d8d5, #e8e8e5 50%, #d4d4d1); }
+.psb_edge.is-b { left: 0; bottom: 0; width: 100%; height: var(--d); transform-origin: 50% 100%; transform: rotateX(-90deg); background: linear-gradient(90deg, #c4c4c1, #d2d2cf 50%, #c0c0bd); }
+.psb_edge.is-l { left: 0; top: 0; width: var(--d); height: 100%; transform-origin: 0 50%; transform: rotateY(-90deg); background: linear-gradient(180deg, #dcdcd9, #cbcbc8); }
+.psb_edge.is-r { right: 0; top: 0; width: var(--d); height: 100%; transform-origin: 100% 50%; transform: rotateY(90deg); background: linear-gradient(180deg, #cfcfcc, #bdbdba); }
+/* The shadow the shut lid casts on the box, gone as it lifts. */
+.psb_cast {
+  position: absolute;
+  left: 5%;
+  top: 11.93%;
+  width: 90%;
+  height: 73.13%;
+  box-shadow: 0 2.4cqw 4.2cqw rgba(0, 0, 0, 0.5);
+  opacity: max(0, calc(1 - var(--lift, 0) * 3.2));
+  pointer-events: none;
 }
 
 .psb_zones {
