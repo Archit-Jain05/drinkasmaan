@@ -61,6 +61,7 @@
 
       if (hero && frame) {
         var lift;
+        var intro = 1; // 0: the big box the page opens on, 1: shrunk to its normal size
         if (still.matches) {
           lift = 1;
         } else if (pinned.matches) {
@@ -68,7 +69,19 @@
           // the open box is held for the last stretch.
           var r = hero.getBoundingClientRect();
           var span = Math.max(r.height - vh, 1);
-          lift = ease(clamp((-r.top / span - 0.027) / 0.578));
+          // Scrolling, in screens: first the box shrinks from big to its normal size (about half a screen),
+          // then the lid comes off over about two screens, then the open box is held.
+          // The opening size is up to 1.42x, but never wider than the screen allows (it grows about its centre).
+          var st = root.querySelector('.psb_stage');
+          if (st && st.offsetWidth) {
+            var sr = st.getBoundingClientRect();
+            var cx = sr.left + sr.width / 2;
+            var big = Math.max(1, Math.min(1.42, 2 * (cx - 24) / st.offsetWidth));
+            hero.style.setProperty('--ibig', big.toFixed(3));
+          }
+          var done = -r.top / vh;
+          intro = ease(clamp(done / 0.55));
+          lift = ease(clamp((done - 0.65) / 2.11));
         } else {
           // Phones: the box is pinned (sticky, inside the wrapper); the lid opens over the first part of
           // that, and the open box is held for the rest.
@@ -85,6 +98,7 @@
           }
         }
         hero.style.setProperty('--lift', lift.toFixed(4));
+        hero.style.setProperty('--ip', intro.toFixed(4));
         var pose = lidPose(lift);
         hero.style.setProperty('--lx', pose.x.toFixed(3));
         hero.style.setProperty('--ly', pose.y.toFixed(3));
