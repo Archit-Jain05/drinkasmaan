@@ -13,6 +13,31 @@
   function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function ease(t) { return t * t * (3 - 2 * t); }
 
+  // The loose lid. lift runs 0 → 1 with the scroll; the lid is a rectangle 90% x 73% of the picture,
+  // so half its height is about 22.85cqw (the units the stylesheet uses).
+  var REST_UP = 22.85;      // where it ends up: up the screen...
+  var REST_NEAR = 22.85;    // ...and towards you, standing on the back edge (turned 90 degrees)
+  var PEAK = 36;            // how high it is lifted off the box before it tips
+  function lidPose(lift) {
+    var rise = ease(clamp(lift / 0.36));                 // 1: straight up off the box
+    var b = clamp((lift - 0.3) / 0.7);                   // 2: drift back and tip onto the edge
+    var tip = Math.min(b / 0.8, 1);                      // the fall takes 80% of this part...
+    var rx = 90 * tip * tip;                             // ...and speeds up as it goes (gravity)
+    if (b > 0.8) {                                       // then a small bounce off the edge, and it settles
+      var u = (b - 0.8) / 0.2;
+      rx = 90 + 7 * Math.sin(u * Math.PI) * (1 - u);
+    }
+    var back = Math.pow(tip, 1.5);                       // slides back as it tips
+    var z = PEAK * rise + (REST_NEAR - PEAK) * ease(tip);// comes down from its peak onto the rim
+    if (lift < 0.3) z = PEAK * rise;
+    return {
+      y: REST_UP * back,
+      z: z,
+      rx: rx,
+      rz: -2.4 * Math.sin(Math.min(lift / 0.7, 1) * Math.PI) // a slight roll as it comes off
+    };
+  }
+
   function init(root) {
     if (root.dataset.psbReady) return;
     root.dataset.psbReady = 'true';
@@ -56,6 +81,11 @@
           }
         }
         hero.style.setProperty('--lift', lift.toFixed(4));
+        var pose = lidPose(lift);
+        hero.style.setProperty('--ly', pose.y.toFixed(3));
+        hero.style.setProperty('--lz', pose.z.toFixed(3));
+        hero.style.setProperty('--lrx', pose.rx.toFixed(2));
+        hero.style.setProperty('--lrz', pose.rz.toFixed(2));
       }
 
       if (bar) {

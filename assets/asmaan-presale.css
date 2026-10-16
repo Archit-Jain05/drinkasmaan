@@ -142,8 +142,12 @@
   width: 90%;
   height: 73.13%;
   transform-style: preserve-3d;
-  transform-origin: 50% 0%;
-  transform: rotateX(calc(var(--lift, 0) * 90deg));
+  transform-origin: 50% 50%;
+  /* The lid is loose, not hinged: it lifts off, drifts back, and tips over onto the box's back edge.
+     The pose (--ly up, --lz towards you, in cqw; --lrx, --lrz in degrees) is worked out in
+     asmaan-presale.js from the scroll. At rest everything is 0; fully open it is the lid standing
+     on the back edge (up and towards you by half the lid's height, turned 90 degrees). */
+  transform: translate3d(0, calc(var(--ly, 0) * -1cqw), calc(var(--lz, 0) * 1cqw)) rotateX(calc(var(--lrx, 0) * 1deg)) rotateZ(calc(var(--lrz, 0) * 1deg));
   will-change: transform;
 }
 .psb_lidbox > * { position: absolute; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
