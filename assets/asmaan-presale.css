@@ -113,10 +113,13 @@
 
 .psb_stage-pin { display: contents; }
 /* Make room above the box for the lid to be set down: the box settles lower as the lid comes off. */
-.psb_stage {
-  /* --ip: 0 = the big box the page opens on, 1 = its normal size (set from the scroll) */
-  transform: translate3d(0, calc(var(--lift, 0) * 9vh), 0) scale(calc(1 + (1 - var(--ip, 1)) * (var(--ibig, 1.42) - 1)));
-  transform-origin: 50% 45%;
+.psb_stage { transform: translate3d(0, calc(var(--lift, 0) * 9vh), 0); }
+
+/* The site navbar fills in with a dark bar once you scroll. On this page it stays transparent for the whole
+   box animation, and the bar only comes in after the hero has scrolled away. */
+body.psb-hero-live .navbar.is-scrolled:not(:hover):not(.is-hovered) .navbar_slide-bg {
+  transform: translateY(-100%) !important;
+  opacity: 0 !important;
 }
 .psb_frame {
   position: relative;
@@ -258,7 +261,7 @@
 @media (min-width: 990px) {
   /* Pinned: the extra height is the scroll the lid takes to open (about two screens), plus about
      1.3 more screens where the open box is held before the page moves on. */
-  .psb_hero { height: calc(100vh + 410vh); }
+  .psb_hero { height: calc(100vh + 365vh); }
   .psb_hero-stick {
     position: sticky;
     top: 0;
