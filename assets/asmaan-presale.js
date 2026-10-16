@@ -425,10 +425,13 @@
   }
 
   // --- Phone splash: the wordmark is handwritten on a white screen, then the screen crops down to the box ---
-  // The handwriting comes from a map (presale-logo-write.png) made from the wordmark itself: every pixel of
-  // every letter stores WHEN the pen reaches it, travelling along each stroke from where it would start the
-  // letter, letter by letter, left to right. A canvas shows the pixels the pen has reached so far.
-  var WRITE_MS = 2600, HOLD_MS = 320, CROP_MS = 1050, HAND_OFF_MS = 240;
+  // The handwriting comes from two small files made from the wordmark itself:
+  //  - presale-logo-write.png: every pixel of every letter stores WHEN the pen reaches it. The pen runs along
+  //    the centre line of each stroke (letter by letter, left to right, lifting between strokes), and a pixel
+  //    takes the moment the pen passes its nearest point, so each stroke grows along its length.
+  //  - presale-logo-nib.json: the path of the pen tip over time, so the nib itself can be drawn.
+  // A canvas shows the ink laid down so far, with the pen tip at its head.
+  var WRITE_MS = 3600, HOLD_MS = 320, CROP_MS = 1050, HAND_OFF_MS = 240;
   // where the wordmark printed on the lid sits in the lid photo (fractions of the photo), and how much of
   // its own width the logo drawing uses
   var LID_LOGO = { cx: 0.4996, cy: 0.4583, w: 0.3517 / 0.98 };
@@ -477,10 +480,15 @@
       } catch (e) { pen = null; }
     };
     mapImg.src = splash.getAttribute('data-write');
+    var nibTrack = null; // [[x, y, t], ...]; a negative t means the pen is lifted and travelling
+    var nibUrl = splash.getAttribute('data-nib');
+    if (nibUrl && window.fetch) {
+      fetch(nibUrl).then(function(r) { return r.json(); }).then(function(j) { nibTrack = j.nib; }).catch(function() {});
+    }
 
     function drawPen(progress) {
       // the nib stays a touch soft so the edge of the ink never looks cut
-      var EDGE = 0.018, t = progress * (1 + EDGE);
+      var EDGE = 0.011, t = progress * (1 + EDGE);
       var d = pen.img.data, time = pen.time, cov = pen.cov, n = time.length;
       for (var i = 0; i < n; i++) {
         var c = cov[i];
@@ -489,6 +497,19 @@
         d[i * 4 + 3] = k <= 0 ? 0 : (k >= 1 ? c : c * k);
       }
       pen.ctx.putImageData(pen.img, 0, 0);
+      if (nibTrack && progress < 1) drawNib(progress);
+    }
+    // The pen tip: a small dark point with a soft ring, at the head of the ink (smaller while it is lifted).
+    function drawNib(progress) {
+      var lo = 0, hi = nibTrack.length - 1;
+      while (lo < hi) { var mid = (lo + hi) >> 1; if (Math.abs(nibTrack[mid][2]) < progress) lo = mid + 1; else hi = mid; }
+      var p = nibTrack[lo], lifted = p[2] < 0, c = pen.ctx;
+      c.save();
+      c.beginPath(); c.arc(p[0], p[1], lifted ? 7 : 11, 0, 6.2832);
+      c.fillStyle = 'rgba(20,32,46,' + (lifted ? 0.08 : 0.16) + ')'; c.fill();
+      c.beginPath(); c.arc(p[0], p[1], lifted ? 2.4 : 4.6, 0, 6.2832);
+      c.fillStyle = 'rgb(20,32,46)'; c.fill();
+      c.restore();
     }
     function setWipe(v) { logo.style.setProperty('--wipe', v.toFixed(1) + '%'); }
     setWipe(0);
