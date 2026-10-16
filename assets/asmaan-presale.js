@@ -106,8 +106,63 @@
     render();
   }
 
+  // --- The mirror: tilts and swivels towards the cursor ------------------------
+  function initMirror(root) {
+    var mirror = root.querySelector('[data-psb-mirror]');
+    if (!mirror || mirror.dataset.psbReady) return;
+    mirror.dataset.psbReady = 'true';
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var body = mirror.querySelector('.psb_m3d-body');
+    var area = mirror.closest('.psb_ch') || mirror;
+    var rx = 0, ry = 0, tx = 0, ty = 0, gx = 50, tgx = 50;
+    var lastPointer = 0;
+    var visible = false;
+    var raf = 0;
+
+    function aim(e) {
+      var r = mirror.getBoundingClientRect();
+      var nx = Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / 560));
+      var ny = Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / 460));
+      ty = nx * 24;      // swivel left / right
+      tx = -ny * 16;     // tip up / down
+      tgx = 50 + nx * 55;
+      lastPointer = performance.now();
+    }
+    area.addEventListener('pointermove', aim);
+    area.addEventListener('pointerleave', function() { tx = 0; ty = 0; tgx = 50; lastPointer = 0; });
+
+    function tick(now) {
+      raf = 0;
+      if (!visible) return;
+      // Nobody pointing at it: a slow sway so it reads as an object you can move.
+      if (!lastPointer || now - lastPointer > 1800) {
+        ty = Math.sin(now / 1700) * 7;
+        tx = Math.sin(now / 2300) * 3;
+        tgx = 50 + Math.sin(now / 1700) * 25;
+      }
+      rx += (tx - rx) * 0.1;
+      ry += (ty - ry) * 0.1;
+      gx += (tgx - gx) * 0.1;
+      body.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+      body.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      body.style.setProperty('--gx', gx.toFixed(1) + '%');
+      raf = requestAnimationFrame(tick);
+    }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries) {
+        visible = entries[0].isIntersecting;
+        if (visible && !raf) raf = requestAnimationFrame(tick);
+      }).observe(mirror);
+    } else {
+      visible = true;
+      raf = requestAnimationFrame(tick);
+    }
+  }
+
   function boot() {
-    document.querySelectorAll('[data-psb]').forEach(init);
+    document.querySelectorAll('[data-psb]').forEach(function(root) { init(root); initMirror(root); });
   }
 
   if (document.readyState === 'loading') {

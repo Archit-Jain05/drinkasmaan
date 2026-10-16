@@ -133,7 +133,15 @@
     <p class="psb_slogan" aria-hidden="true">{{ section.settings.mirror_slogan | escape }}</p>
     <div class="psb_ch-grid">
       <figure class="psb_photo psb_photo--mirror">
-        <img src="{{ 'presale-mirror.webp' | asset_url }}" width="1200" height="1500" loading="lazy" alt="The mirror held up, with You against you printed across the bottom">
+        {%- comment -%} A 3D mirror: the photo is the face, a stack of dark copies of its outline behind it is the thickness, and it tilts towards the cursor (asmaan-presale.js). {%- endcomment -%}
+        <div class="psb_m3d" data-psb-mirror style="--mirror-mask: url('{{ 'presale-mirror.webp' | asset_url }}');">
+          <div class="psb_m3d-body">
+            <span class="psb_m3d-shadow" aria-hidden="true"></span>
+            {%- for i in (1..12) -%}<span class="psb_m3d-layer" style="--i: {{ i }};" aria-hidden="true"></span>{%- endfor -%}
+            <img class="psb_m3d-face" src="{{ 'presale-mirror.webp' | asset_url }}" width="1200" height="1500" loading="lazy" alt="The mirror held up, with You against you printed across the bottom">
+            <span class="psb_m3d-glare" aria-hidden="true"></span>
+          </div>
+        </div>
       </figure>
       <div class="psb_ch-copy">
         <h2 id="psb-mirror" class="psb_name">{{ section.settings.mirror_name | escape }}</h2>

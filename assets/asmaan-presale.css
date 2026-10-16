@@ -129,7 +129,6 @@
 }
 /* The photos are cut out (transparent backdrop); a soft shadow grounds them on the night sky. */
 .psb_open { filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.5)); }
-.psb_photo--mirror img { filter: drop-shadow(0 26px 40px rgba(0, 0, 0, 0.5)); }
 
 /* The lid is a cardboard slab, hinged along its far edge (--lift 0 → 1). Its outline in the photo is
    5% in from each side, 11.93% from the top, 90% wide and 73.13% tall; the slab is exactly that
@@ -314,7 +313,50 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
-.psb_photo--mirror { max-width: 520px; width: 100%; justify-self: center; }
+.psb_photo--mirror { max-width: 520px; width: 100%; justify-self: center; overflow: visible; }
+
+/* The mirror as an object: it tilts and swivels towards the cursor, with a glint across the glass.
+   The face is the photo; the thickness is 12 dark copies of its outline stacked behind it. */
+.psb_m3d { perspective: 1100px; touch-action: pan-y; }
+.psb_m3d-body {
+  --rx: 0deg;
+  --ry: 0deg;
+  --gx: 50%;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  will-change: transform;
+}
+.psb_m3d-body > * { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; }
+.psb_m3d-face { object-fit: fill; transform: translateZ(0); }
+.psb_m3d-layer {
+  background: #1f1f21;
+  -webkit-mask: var(--mirror-mask) center / 100% 100% no-repeat;
+  mask: var(--mirror-mask) center / 100% 100% no-repeat;
+  transform: translateZ(calc(var(--i) * -1.7px));
+  filter: brightness(calc(1.1 - var(--i) * 0.055));
+}
+.psb_m3d-glare {
+  pointer-events: none;
+  -webkit-mask: var(--mirror-mask) center / 100% 100% no-repeat;
+  mask: var(--mirror-mask) center / 100% 100% no-repeat;
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0) calc(var(--gx) - 20%), rgba(255, 255, 255, 0.34) var(--gx), rgba(255, 255, 255, 0) calc(var(--gx) + 20%));
+  transform: translateZ(1px);
+}
+.psb_m3d-shadow {
+  inset: 6% 4% -2%;
+  width: auto;
+  height: auto;
+  border-radius: 9%;
+  background: #000;
+  opacity: 0.55;
+  filter: blur(34px);
+  transform: translate3d(0, 4%, -70px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .psb_m3d-body { transform: none !important; }
+}
 
 /* The notebook: the box's own white and the navy it is printed in. */
 .psb_ch--book { background: var(--psb-paper); color: var(--psb-print); }
