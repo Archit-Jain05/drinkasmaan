@@ -114,7 +114,7 @@
   position: relative;
   aspect-ratio: 16 / 10;
   overflow: hidden;
-  background: #e4e4e2;
+  background: transparent;
 }
 .psb_frame img {
   position: absolute;
@@ -123,6 +123,10 @@
   height: 100%;
   object-fit: cover;
 }
+/* The photos are cut out (transparent backdrop); a soft shadow grounds them on the night sky. */
+.psb_open { filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.5)); }
+.psb_photo--mirror img { filter: drop-shadow(0 26px 40px rgba(0, 0, 0, 0.5)); }
+
 /* The lid is the shut box alone on transparency (its shadow included), so only the box lifts. */
 .psb_lid {
   transform: translate3d(0, calc(var(--lift, 0) * -100%), 0);
