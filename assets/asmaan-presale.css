@@ -247,8 +247,9 @@
 }
 
 @media (min-width: 990px) {
-  /* Pinned: the extra height is the scroll the lid takes to open (about three screens). */
-  .psb_hero { height: calc(100vh + 260vh); }
+  /* Pinned: the extra height is the scroll the lid takes to open (about two screens), plus about
+     one more screen where the open box is held before the page moves on. */
+  .psb_hero { height: calc(100vh + 330vh); }
   .psb_hero-stick {
     position: sticky;
     top: 0;
