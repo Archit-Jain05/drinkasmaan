@@ -274,17 +274,17 @@ body .science_panel.is-trio {
 
 body .science_band {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   height: 100%;
   overflow: hidden;
-  background: transparent;
+  background: var(--band);
 }
 
 body .science_band img {
   width: auto;
-  height: 74%;
-  transform: translateY(10%);
+  height: 80%; /* the whole can, never cropped by its band */
+  transform: none;
   filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.45));
 }
 
