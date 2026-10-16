@@ -112,6 +112,8 @@
 }
 
 .psb_stage-pin { display: contents; }
+/* Make room above the box for the lid to be set down: the box settles lower as the lid comes off. */
+.psb_stage { transform: translate3d(0, calc(var(--lift, 0) * 9vh), 0); }
 .psb_frame {
   position: relative;
   aspect-ratio: 16 / 10;
@@ -207,9 +209,9 @@
   transform: translate3d(0, calc((1 - var(--lift, 0)) * 10px), 0);
 }
 .psb_zones b {
-  white-space: nowrap;
+  white-space: normal; /* wraps instead of running into its neighbour when the box is scaled down */
   font-family: var(--asmaan-font-secondary);
-  font-size: 22px;
+  font-size: min(22px, 1.35vw);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0;
@@ -268,7 +270,7 @@
     align-items: center;
   }
   /* Short laptop screens: keep frame + names inside the pinned window. */
-  .psb_stage { max-width: calc((100vh - var(--asmaan-header-h, 88px) - 140px) * 1.6); }
+  .psb_stage { max-width: calc((100vh - var(--asmaan-header-h, 88px) - 300px) * 1.6); }
 }
 
 /* --- Chapters ------------------------------------------------------------ */
