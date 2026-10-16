@@ -73,6 +73,8 @@
   <section class="psb_hero" data-psb-hero>
     <div class="psb_hero-stick">
       <div class="psb_hero-grid">
+        {%- comment -%} On phones this wrapper is the pin: the box stays on screen while the lid opens. On desktop it is invisible (display: contents). {%- endcomment -%}
+        <div class="psb_stage-pin" data-psb-pin>
         <div class="psb_stage">
           <div class="psb_frame" data-psb-frame>
             <img
@@ -108,6 +110,7 @@
             <li style="--x: 31.5%; --w: 31%;"><b>{{ section.settings.can_name | escape }}</b><span>{{ section.settings.can_short | escape }}</span></li>
             <li style="--x: 65%; --w: 28%;"><b>{{ section.settings.book_name | escape }}</b><span>{{ section.settings.book_short | escape }}</span></li>
           </ol>
+        </div>
         </div>
 
         <div class="psb_panel">

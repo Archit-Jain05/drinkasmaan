@@ -111,6 +111,7 @@
   margin: 0 auto;
 }
 
+.psb_stage-pin { display: contents; }
 .psb_frame {
   position: relative;
   aspect-ratio: 16 / 10;
@@ -532,9 +533,17 @@
 @media (max-width: 989px) {
   .psb_hero-stick { padding-top: calc(var(--asmaan-header-h, 72px) + 16px); }
   .psb_stage { margin: 0 calc(var(--psb-gutter) * -1); }
-  .psb_zones { height: 48px; margin: 0 var(--psb-gutter); }
+  /* The box is pinned in the middle of the screen while the lid opens, then the page carries on to the
+     title and buy block. (Desktop pins the whole hero instead; there the wrapper is display: contents.) */
+  .psb_stage-pin { display: block; height: 175svh; }
+  .psb_stage-pin .psb_stage {
+    position: sticky;
+    top: max(calc(var(--asmaan-header-h, 72px) + 12px), calc((100svh - 330px) / 2));
+  }
+  .psb_zones { height: 58px; margin: 0 var(--psb-gutter); }
   .psb_zones li { padding-top: 8px; }
-  .psb_zones b { font-size: 16px; }
+  /* the three names sit side by side under the box: small and allowed to wrap so they never run together */
+  .psb_zones b { white-space: normal; font-size: 13px; line-height: 1.12; letter-spacing: -0.01em; }
   .psb_zones span { display: none; }
   .psb_photo--mirror { max-width: 420px; }
   .psb_photo--cover { margin-top: 48px; }

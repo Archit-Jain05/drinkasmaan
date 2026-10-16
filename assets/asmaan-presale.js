@@ -41,8 +41,19 @@
           var span = Math.max(r.height - vh, 1);
           lift = ease(clamp((-r.top / span - 0.027) / 0.578));
         } else {
-          // Phones: no pin; the lid opens over the first stretch of scroll.
-          lift = ease(clamp((-hero.getBoundingClientRect().top - 16) / (vh * 0.6)));
+          // Phones: the box is pinned (sticky, inside the wrapper); the lid opens over the first part of
+          // that, and the open box is held for the rest.
+          var pin = root.querySelector('[data-psb-pin]');
+          var stage = pin && pin.querySelector('.psb_stage');
+          if (pin && stage) {
+            var pr = pin.getBoundingClientRect();
+            var stuckAt = parseFloat(getComputedStyle(stage).top) || 0;
+            // scrolled distance over which the stage stays stuck (it is stuck from the very top)
+            var travel = Math.max(pr.top + window.scrollY + pr.height - stage.offsetHeight - stuckAt, 1);
+            lift = ease(clamp((window.scrollY / travel - 0.04) / 0.7));
+          } else {
+            lift = ease(clamp((-hero.getBoundingClientRect().top - 16) / (vh * 0.6)));
+          }
         }
         hero.style.setProperty('--lift', lift.toFixed(4));
       }
