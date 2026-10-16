@@ -250,7 +250,7 @@ body .science_panel {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: var(--panel);
+  background: transparent; /* no coloured square: the can sits straight on the page */
   opacity: 0;
   transition: opacity 0.6s ease;
 }
@@ -263,7 +263,7 @@ body .science_panel > img {
   width: auto;
   height: 84%;
   transform: translateY(6%);
-  filter: drop-shadow(0 24px 28px rgba(40, 20, 0, 0.32));
+  filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.5));
 }
 
 body .science_panel.is-trio {
@@ -278,14 +278,14 @@ body .science_band {
   justify-content: center;
   height: 100%;
   overflow: hidden;
-  background: var(--band);
+  background: transparent;
 }
 
 body .science_band img {
   width: auto;
   height: 74%;
   transform: translateY(10%);
-  filter: drop-shadow(0 18px 22px rgba(40, 20, 0, 0.28));
+  filter: drop-shadow(0 18px 24px rgba(0, 0, 0, 0.45));
 }
 
 body .science_list {
