@@ -186,18 +186,11 @@
     });
     if (!colours.length) return;
 
-    // Wave layers, back to front. y is measured in the canvas, base = where the layer sits on average.
+    // One wave per edge. y is measured in the canvas, base = where the wave sits on average.
+    // (The drawing code handles several layers, back to front, if more are ever wanted.)
     var LAYERS = {
-      top: [
-        { base: 186, amp: 22, k: 0.0046, s: 0.55, p: 0.0, a: 0.28, lighten: 0.38 },
-        { base: 203, amp: 24, k: 0.0062, s: -0.80, p: 1.7, a: 0.52, lighten: 0.2 },
-        { base: 220, amp: 22, k: 0.0084, s: 1.10, p: 3.1, a: 1, lighten: 0 }
-      ],
-      bottom: [
-        { base: 238, amp: 20, k: 0.0050, s: -0.60, p: 0.9, a: 0.26, lighten: 0.38 },
-        { base: 208, amp: 24, k: 0.0066, s: 0.85, p: 2.4, a: 0.5, lighten: 0.2 },
-        { base: 176, amp: 22, k: 0.0088, s: -1.05, p: 4.0, a: 1, lighten: 0 }
-      ]
+      top: [{ base: 212, amp: 27, k: 0.0068, s: 0.95, p: 3.1, a: 1, lighten: 0 }],
+      bottom: [{ base: 182, amp: 27, k: 0.0068, s: -0.95, p: 4.0, a: 1, lighten: 0 }]
     };
 
     function waveY(L, x, t) {
@@ -220,7 +213,7 @@
 
     // Where bubbles start and where they pop, per mode (canvas y).
     function spawnBubble(v, t) {
-      var L = LAYERS[v.mode][2];
+      var L = LAYERS[v.mode][LAYERS[v.mode].length - 1];
       var x = Math.random() * v.w;
       var surf = waveY(L, x, t);
       var r = 1.4 + Math.pow(Math.random(), 2.3) * 6.2;
