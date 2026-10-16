@@ -35,8 +35,8 @@
             "title": "Zero sugar",
             "body": "Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
             "note": "0 g sugar per 250 ml",
-            "assets": "mango-front.webp",
-            "surface": "#5a2a00",
+            "assets": "about-can-mango.webp",
+            "surface": "#f2b863",
             "bands": "",
             "ink": "#efb36b"
           }
@@ -49,8 +49,8 @@
             "title": "From green coffee",
             "body": "100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.",
             "note": "About a strong cup of coffee",
-            "assets": "jamun-front.webp",
-            "surface": "#2a1d4a",
+            "assets": "about-can-jamun.webp",
+            "surface": "#9089d3",
             "bands": "",
             "ink": "#9089d3"
           }
@@ -63,8 +63,8 @@
             "title": "L-theanine and KSM-66 ashwagandha",
             "body": "200 mg of L-theanine to take the edge off the caffeine, and 300 mg of KSM-66 ashwagandha under it. The curve climbs instead of spiking, then comes down flat.",
             "note": "Peaks about forty minutes in, holds for about four hours",
-            "assets": "print-front.webp",
-            "surface": "#4e0749",
+            "assets": "about-can-magenta.webp",
+            "surface": "#e6a0e8",
             "bands": "",
             "ink": "#e6a0e8"
           }
@@ -77,9 +77,9 @@
             "title": "Colour from food",
             "body": "No synthetic dyes and no proprietary blend. Every milligram in the can is printed on the can, and the colour comes from what is already in it.",
             "note": "Vegan",
-            "assets": "jamun-front.webp, mango-front.webp, print-front.webp",
+            "assets": "about-can-jamun.webp, about-can-mango.webp, about-can-magenta.webp",
             "surface": "#2a1d4a",
-            "bands": "#9089d3, #efb36b, #e6a0e8",
+            "bands": "#9089d3, #f2b863, #e6a0e8",
             "ink": "#ffffff"
           }
         }
