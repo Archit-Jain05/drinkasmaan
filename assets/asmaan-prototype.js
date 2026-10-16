@@ -1388,6 +1388,47 @@
       docHeight = document.documentElement.scrollHeight - windowH;
     }, { passive: true });
 
+    // Keeps the fixed 3D can stage in step with the page: faded out while the range block slides over it, and
+    // hidden (not drawn, behind the sky) for good once the range block has reached the top, so it can never show
+    // behind the sections after it (wear, FAQ...). Run every frame, and ALSO straight from scroll, resize and
+    // page-show events, so a phone that restores the page from its back/forward cache, or skips frames during a
+    // fling, can never be left showing it.
+    function syncStageHost() {
+      if (!canStageHost) return;
+      var targetProgress = Math.min(Math.max(progressThrough(stage, window.scrollY || document.documentElement.scrollTop, windowH), 0), 1);
+      // The fade below follows the eased progress, which trails a fast scroll, so the
+      // fixed can used to hang over the range block and the sections after it. Go by
+      // where the range block really is instead: once it is on screen, send the stage
+      // behind the sky at once.
+      // The fade is read straight off the range block's position (not the eased progress),
+      // so it tracks the scroll exactly: slow scrolling fades slowly, a fast fling fades
+      // just as fast, and it can neither pop nor trail behind. It runs from the block
+      // sitting a little below the fold to it being 40% up the screen, then the stage is
+      // sent behind the sky. Scrolling back up runs the same curve in reverse.
+      var fade = 1;
+      if (rangeBlock) {
+        var fadeT = Math.min(Math.max((rangeBlock.getBoundingClientRect().top - windowH * 0.4) / (windowH * 0.75), 0), 1);
+        fade = fadeT * fadeT * (3 - 2 * fadeT);
+      } else {
+        fade = targetProgress >= 1 ? 0 : 1;
+      }
+      var behind = fade <= 0.001;
+      if (behind !== lastStageBehind) {
+        lastStageBehind = behind;
+        canStageHost.style.zIndex = behind ? '-2' : '';
+        canStageHost.style.visibility = behind ? 'hidden' : '';
+      }
+      var lit = fade;
+      if (Math.abs(lit - lastHostLit) > 0.002) {
+        lastHostLit = lit;
+        canStageHost.style.opacity = String(lit);
+        canStageHost.style.transform = lit < 0.01 ? 'translateY(130%)' : 'none';
+      }
+        }
+    window.addEventListener('scroll', syncStageHost, { passive: true });
+    window.addEventListener('resize', syncStageHost);
+    window.addEventListener('pageshow', syncStageHost);
+
     function onFrame(now) {
       var dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
@@ -1674,36 +1715,7 @@
         }
 
         // Fixed stage opacity & exit dive (dirty checked)
-        if (canStageHost) {
-          // The fade below follows the eased progress, which trails a fast scroll, so the
-          // fixed can used to hang over the range block and the sections after it. Go by
-          // where the range block really is instead: once it is on screen, send the stage
-          // behind the sky at once.
-          // The fade is read straight off the range block's position (not the eased progress),
-          // so it tracks the scroll exactly: slow scrolling fades slowly, a fast fling fades
-          // just as fast, and it can neither pop nor trail behind. It runs from the block
-          // sitting a little below the fold to it being 40% up the screen, then the stage is
-          // sent behind the sky. Scrolling back up runs the same curve in reverse.
-          var fade = 1;
-          if (rangeBlock) {
-            var fadeT = Math.min(Math.max((rangeBlock.getBoundingClientRect().top - windowH * 0.4) / (windowH * 0.75), 0), 1);
-            fade = fadeT * fadeT * (3 - 2 * fadeT);
-          } else {
-            fade = targetProgress >= 1 ? 0 : 1;
-          }
-          var behind = fade <= 0.001;
-          if (behind !== lastStageBehind) {
-            lastStageBehind = behind;
-            canStageHost.style.zIndex = behind ? '-2' : '';
-            canStageHost.style.visibility = behind ? 'hidden' : '';
-          }
-          var lit = fade;
-          if (Math.abs(lit - lastHostLit) > 0.002) {
-            lastHostLit = lit;
-            canStageHost.style.opacity = String(lit);
-            canStageHost.style.transform = lit < 0.01 ? 'translateY(130%)' : 'none';
-          }
-        }
+        syncStageHost();
       }
 
       // 3. READ PASS: Batch all getBoundingClientRect measurements together (No layout thrashing)
