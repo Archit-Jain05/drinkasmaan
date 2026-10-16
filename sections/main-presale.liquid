@@ -67,6 +67,15 @@
   </div>
 {%- endcapture -%}
 
+{%- comment -%}
+  Phone splash: a plain white screen where the Asmaan wordmark is written, which then crops down to the
+  shut box (asmaan-presale.js). Hidden on desktop and for reduced motion; if the script never runs, the
+  stylesheet takes it away by itself after a few seconds.
+{%- endcomment -%}
+<div class="psb_splash" data-psb-splash aria-hidden="true">
+  <div class="psb_splash-logo" data-psb-splash-logo>{% render 'asmaan-logo' %}</div>
+</div>
+
 <div class="psb" data-psb data-price="{{ variant.price }}" data-money="{{ shop.money_format | escape }}">
 
   {%- comment -%} 1 · Hero: the box, shut; scrolling lifts the lid {%- endcomment -%}

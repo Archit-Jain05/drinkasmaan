@@ -17,6 +17,34 @@
   color: #fff;
 }
 .psb img { display: block; max-width: 100%; }
+
+/* --- Phone splash ---------------------------------------------------------- */
+.psb_splash { display: none; }
+@media (max-width: 989px) and (prefers-reduced-motion: no-preference) {
+  .psb_splash {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: #f3f3f1;
+    color: #14202e;
+    /* never stuck: if the script does not take it away, it goes after 6s */
+    animation: psbSplashGone 0.01s linear 6s forwards;
+  }
+  .psb_splash-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 64vw;
+    max-width: 340px;
+    transform: translate(-50%, -50%);
+    transform-origin: 50% 50%;
+    -webkit-mask: linear-gradient(90deg, #000 var(--wipe, 0%), transparent calc(var(--wipe, 0%) + 14%));
+    mask: linear-gradient(90deg, #000 var(--wipe, 0%), transparent calc(var(--wipe, 0%) + 14%));
+  }
+  .psb_splash-logo svg { display: block; width: 100%; height: auto; }
+}
+@keyframes psbSplashGone { to { visibility: hidden; opacity: 0; } }
 .psb p { margin: 0; }
 
 /* --- Buy pieces (hero panel and close) --------------------------------- */

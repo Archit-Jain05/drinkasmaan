@@ -424,8 +424,85 @@
     }
   }
 
+  // --- Phone splash: the wordmark is written on a white screen, then the screen crops down to the box ---
+  function initSplash() {
+    var splash = document.querySelector('[data-psb-splash]');
+    if (!splash || splash.dataset.psbDone) return;
+    splash.dataset.psbDone = 'true';
+    var logo = splash.querySelector('[data-psb-splash-logo]');
+    var lid = document.querySelector('[data-psb-lid]');
+    var phone = window.matchMedia('(max-width: 989px)').matches;
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function finish() {
+      splash.style.display = 'none';
+      document.documentElement.style.overflow = '';
+    }
+    if (!phone || calm || !logo || !lid || !splash.animate) { finish(); return; }
+
+    document.documentElement.style.overflow = 'hidden';
+    window.scrollTo(0, 0);
+    splash.style.animation = 'none'; // the script is in charge now; the 6 second safety net is not needed
+
+    var wipe = 0;
+    function setWipe(v) { logo.style.setProperty('--wipe', v.toFixed(1) + '%'); }
+    setWipe(0);
+
+    // 1. Write the wordmark: a soft edge sweeps left to right.
+    var WRITE = 1500, HOLD = 380, CROP = 950;
+    var t0 = null;
+    function write(now) {
+      if (t0 === null) t0 = now;
+      var p = Math.min((now - t0) / WRITE, 1);
+      var e = 1 - Math.pow(1 - p, 2.2);
+      setWipe(e * 100);
+      if (p < 1) requestAnimationFrame(write);
+      else setTimeout(waitForLid, HOLD);
+    }
+    requestAnimationFrame(write);
+
+    // 2. When the box is ready, crop the white screen down to the shut lid.
+    function waitForLid() {
+      var img = lid.querySelector('img');
+      var started = performance.now();
+      (function check() {
+        if ((img && img.complete) || performance.now() - started > 2500) crop();
+        else requestAnimationFrame(check);
+      })();
+    }
+
+    function crop() {
+      var vw = window.innerWidth, vh = window.innerHeight;
+      // The shut lid's face is 90% x 73% of the picture frame, 5% in and 11.93% down (measured from the
+      // frame: the lid element itself is 3D, so its own box is larger than what you see).
+      var fr = document.querySelector('[data-psb-frame]').getBoundingClientRect();
+      var r = { left: fr.left + fr.width * 0.05, top: fr.top + fr.height * 0.1193, width: fr.width * 0.9, height: fr.height * 0.7313 };
+      r.right = r.left + r.width; r.bottom = r.top + r.height;
+      var top = Math.max(0, r.top), left = Math.max(0, r.left);
+      var right = Math.max(0, vw - r.right), bottom = Math.max(0, vh - r.bottom);
+      // the wordmark ends up where the one printed on the lid is: centred, 38% of the lid's width
+      var lr = logo.getBoundingClientRect();
+      var scale = (r.width * 0.38) / lr.width;
+      var dx = (r.left + r.width / 2) - (lr.left + lr.width / 2);
+      var dy = (r.top + r.height / 2) - (lr.top + lr.height / 2);
+      var ease = 'cubic-bezier(0.65, 0, 0.2, 1)';
+      var a1 = splash.animate(
+        [{ clipPath: 'inset(0px 0px 0px 0px)' }, { clipPath: 'inset(' + top + 'px ' + right + 'px ' + bottom + 'px ' + left + 'px)' }],
+        { duration: CROP, easing: ease, fill: 'forwards' }
+      );
+      logo.animate(
+        [{ transform: 'translate(-50%, -50%) translate(0px, 0px) scale(1)' }, { transform: 'translate(-50%, -50%) translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')' }],
+        { duration: CROP, easing: ease, fill: 'forwards' }
+      );
+      a1.onfinish = function() {
+        // the lid underneath is now exactly the same white box with the same wordmark: hand over
+        finish();
+      };
+    }
+  }
+
   function boot() {
     document.querySelectorAll('[data-psb]').forEach(function(root) { init(root); initMirror(root); initFizz(root); });
+    initSplash();
   }
 
   if (document.readyState === 'loading') {
