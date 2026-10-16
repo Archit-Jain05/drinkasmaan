@@ -13,28 +13,30 @@
   function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function ease(t) { return t * t * (3 - 2 * t); }
 
-  // The loose lid. lift runs 0 → 1 with the scroll; the lid is a rectangle 90% x 73% of the picture,
-  // so half its height is about 22.85cqw (the units the stylesheet uses).
-  var REST_UP = 22.85;      // where it ends up: up the screen...
-  var REST_NEAR = 22.85;    // ...and towards you, standing on the back edge (turned 90 degrees)
-  var PEAK = 36;            // how high it is lifted off the box before it tips
+  // The loose lid. lift runs 0 → 1 with the scroll; the lid is a rectangle 90% x 73% of the picture
+  // (the stylesheet's units are cqw: 1% of the picture's width). It lifts straight off the box, slides
+  // back past the far edge, and is set down flat behind the box, a little smaller and turned a few degrees,
+  // with a small hop as it lands.
+  var REST_UP = 40;         // where it ends up: this far up the screen (clear of the box's back edge)
+  var REST_SCALE = 0.62;    // ...and this much smaller, as it sits further back on the table
+  var REST_TURN = -5;       // ...turned a little, like it was put down, not placed
+  var PEAK = 30;            // how high it is lifted off the box
   function lidPose(lift) {
-    var rise = ease(clamp(lift / 0.36));                 // 1: straight up off the box
-    var b = clamp((lift - 0.3) / 0.7);                   // 2: drift back and tip onto the edge
-    var tip = Math.min(b / 0.8, 1);                      // the fall takes 80% of this part...
-    var rx = 90 * tip * tip;                             // ...and speeds up as it goes (gravity)
-    if (b > 0.8) {                                       // then a small bounce off the edge, and it settles
-      var u = (b - 0.8) / 0.2;
-      rx = 90 + 7 * Math.sin(u * Math.PI) * (1 - u);
+    var rise = ease(clamp(lift / 0.3));                  // 1: straight up off the box
+    var b = clamp((lift - 0.24) / 0.76);                 // 2: slide back and come down
+    var slide = ease(Math.min(b / 0.82, 1));             // the move takes most of this part
+    var down = Math.pow(clamp((b - 0.35) / 0.47), 2);    // it drops towards the table late, speeding up
+    var z = PEAK * rise * (1 - down);
+    if (b > 0.82) {                                      // lands, hops a little, settles
+      var u = (b - 0.82) / 0.18;
+      z = 3.2 * Math.sin(u * Math.PI) * (1 - u);
     }
-    var back = Math.pow(tip, 1.5);                       // slides back as it tips
-    var z = PEAK * rise + (REST_NEAR - PEAK) * ease(tip);// comes down from its peak onto the rim
-    if (lift < 0.3) z = PEAK * rise;
     return {
-      y: REST_UP * back,
+      y: REST_UP * slide,
       z: z,
-      rx: rx,
-      rz: -2.4 * Math.sin(Math.min(lift / 0.7, 1) * Math.PI) // a slight roll as it comes off
+      rx: 5 * Math.sin(Math.min(b / 0.82, 1) * Math.PI), // tilts a touch while it travels
+      rz: -2.4 * Math.sin(Math.min(lift / 0.4, 1) * Math.PI) + REST_TURN * slide, // a slight roll as it comes off, then the turn
+      s: 1 + (REST_SCALE - 1) * slide
     };
   }
 
@@ -86,6 +88,7 @@
         hero.style.setProperty('--lz', pose.z.toFixed(3));
         hero.style.setProperty('--lrx', pose.rx.toFixed(2));
         hero.style.setProperty('--lrz', pose.rz.toFixed(2));
+        hero.style.setProperty('--ls', pose.s.toFixed(4));
       }
 
       if (bar) {
