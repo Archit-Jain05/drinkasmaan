@@ -39,7 +39,7 @@
           // the open box is held for the last stretch.
           var r = hero.getBoundingClientRect();
           var span = Math.max(r.height - vh, 1);
-          lift = ease(clamp((-r.top / span - 0.03) / 0.64));
+          lift = ease(clamp((-r.top / span - 0.027) / 0.578));
         } else {
           // Phones: no pin; the lid opens over the first stretch of scroll.
           lift = ease(clamp((-hero.getBoundingClientRect().top - 16) / (vh * 0.6)));
