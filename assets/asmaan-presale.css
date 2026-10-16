@@ -549,6 +549,7 @@ body.psb-hero-live .navbar.is-scrolled:not(:hover):not(.is-hovered) .navbar_slid
      title and buy block. (Desktop pins the whole hero instead; there the wrapper is display: contents.) */
   .psb_stage-pin { display: block; height: 175svh; }
   .psb_stage-pin .psb_stage {
+    transform: none; /* (desktop lowers the box to make room for the lid; on phones the box is pinned in place) */
     position: sticky;
     top: max(calc(var(--asmaan-header-h, 72px) + 12px), calc((100svh - 330px) / 2));
   }
