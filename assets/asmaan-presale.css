@@ -143,7 +143,7 @@
   height: 73.13%;
   transform-style: preserve-3d;
   transform-origin: 50% 0%;
-  transform: rotateX(calc(var(--lift, 0) * 104deg));
+  transform: rotateX(calc(var(--lift, 0) * 90deg));
   will-change: transform;
 }
 .psb_lidbox > * { position: absolute; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
