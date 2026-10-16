@@ -74,7 +74,10 @@
   // column to the camera once, then each benefit section glides the view down to its own icon.
   var ICON_COLUMN_U = 0.75;
   var ICON_V = [0.21, 0.417, 0.607, 0.792];
-  var BENEFIT_ICON = [0, 1, 2, 3]; // top of the column to the bottom, one per benefit section
+  // The label's icons, top to bottom: 0 research backed ingredients, 1 ashwagandha manages cortisol,
+  // 2 zero sugar, 3 sustained focus boost. One entry per benefit section, in the order the sections are on the
+  // page: zero sugar, caffeine from green coffee, L-theanine and ashwagandha, colour from food.
+  var BENEFIT_ICON = [2, 0, 1, 3];
   var ICON_FACE = -(ICON_COLUMN_U - 0.5) * Math.PI * 2;
   var ICON_FOLLOW = 8;
   var ICON_LIFT_MOBILE = 0.42; // share of the half-screen the icon sits above centre on phones
