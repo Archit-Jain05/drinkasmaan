@@ -75,9 +75,10 @@
   var ICON_COLUMN_U = 0.75;
   var ICON_V = [0.21, 0.417, 0.607, 0.792];
   // The label's icons, top to bottom: 0 research backed ingredients, 1 ashwagandha manages cortisol,
-  // 2 zero sugar, 3 sustained focus boost. One entry per benefit section, in the order the sections are on the
-  // page: zero sugar, caffeine from green coffee, L-theanine and ashwagandha, colour from food.
-  var BENEFIT_ICON = [2, 0, 1, 3];
+  // 2 zero sugar, 3 sustained focus boost. One entry per benefit section, top to bottom. The sections are in
+  // the same order (caffeine from green coffee, L-theanine and ashwagandha, zero sugar, colour from food) so the
+  // spotlight only ever travels down the column.
+  var BENEFIT_ICON = [0, 1, 2, 3];
   var ICON_FACE = -(ICON_COLUMN_U - 0.5) * Math.PI * 2;
   var ICON_FOLLOW = 8;
   var ICON_LIFT_MOBILE = 0.42; // share of the half-screen the icon sits above centre on phones
@@ -91,7 +92,7 @@
   var SPOT_DEPTH = 3.0;
   var SPOT_ANGLE = Math.PI / 17;
   var SPOT_ANGLE_MOBILE = Math.PI / 25; // the can is drawn smaller on phones, so the circle is too
-  var SPOT_DROP = 0.14; // aim a little under the icon so the circle takes in its caption too
+  var SPOT_DROP = 0; // ICON_V is already the middle of the icon and its caption together, so aim straight at it
   var FRICTION = 2.4;
   var IDLE_DELAY_MS = 1800;
 
@@ -1306,7 +1307,7 @@
       }
     });
 
-    var benefitIds = ['benefit-sugar', 'benefit-caffeine', 'benefit-crash', 'benefit-colour'];
+    var benefitIds = ['benefit-caffeine', 'benefit-crash', 'benefit-sugar', 'benefit-colour']; // top to bottom, same as the page and the label's icons
     var benefitsNav = document.querySelector('.benefits_nav');
     var bIcons = benefitsNav ? benefitsNav.querySelectorAll('.benefits_icon-wrapper') : [];
     var profileSection = document.querySelector('.profile_container') ? document.querySelector('.profile_container').closest('.section') : null;

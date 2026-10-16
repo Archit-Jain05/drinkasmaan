@@ -368,39 +368,6 @@
 
     <!-- 3. Benefits Section -->
     <div id="benefits">
-      <section id="benefit-sugar" aria-label="{{ section.settings.b1_title | default: 'Zero sugar' }}" class="section is-pinned" style="height: 170svh;">
-        <div class="benefits_container">
-          <div class="pin_fade">
-            <div class="padding-global">
-              <div class="container-large">
-                <div class="padding-section-medium">
-                  <div class="benefits_text">
-                    <div class="benefits_max-width relative" style="--benefits-line: 1;">
-                      <div class="pin_scrim" aria-hidden="true"></div>
-                      <div class="mb-[var(--pad-s)]">
-                        <div class="subhead_wrapper align-center">
-                          <div class="subhead">
-                            <div class="subhead_icon">
-                              {% render 'asmaan-icons', name: 'cross', class: 'h-2.5 w-2.5' %}
-                            </div>
-                            <div class="subhead_text">{{ section.settings.b1_struck | default: 'Sugar' }}</div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="mb-[var(--pad-xs)]">
-                        <h2 class="heading-style-h2">{{ section.settings.b1_title | default: 'Zero sugar' }}</h2>
-                      </div>
-                      <p class="text-white/75">{{ section.settings.b1_body | default: 'Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.' }}</p>
-                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.b1_note | default: '0 g sugar per 250 ml' }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section id="benefit-caffeine" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}" class="section is-pinned" style="height: 170svh;">
         <div class="benefits_container">
           <div class="pin_fade">
@@ -408,7 +375,7 @@
               <div class="container-large">
                 <div class="padding-section-medium">
                   <div class="benefits_text">
-                    <div class="benefits_max-width relative" style="--benefits-line: 0;">
+                    <div class="benefits_max-width relative" style="--benefits-line: 1;">
                       <div class="pin_scrim" aria-hidden="true"></div>
                       <div class="mb-[var(--pad-s)]">
                         <div class="subhead_wrapper align-center">
@@ -467,6 +434,39 @@
         </div>
       </section>
 
+      <section id="benefit-sugar" aria-label="{{ section.settings.b1_title | default: 'Zero sugar' }}" class="section is-pinned" style="height: 170svh;">
+        <div class="benefits_container">
+          <div class="pin_fade">
+            <div class="padding-global">
+              <div class="container-large">
+                <div class="padding-section-medium">
+                  <div class="benefits_text">
+                    <div class="benefits_max-width relative" style="--benefits-line: 0;">
+                      <div class="pin_scrim" aria-hidden="true"></div>
+                      <div class="mb-[var(--pad-s)]">
+                        <div class="subhead_wrapper align-center">
+                          <div class="subhead">
+                            <div class="subhead_icon">
+                              {% render 'asmaan-icons', name: 'cross', class: 'h-2.5 w-2.5' %}
+                            </div>
+                            <div class="subhead_text">{{ section.settings.b1_struck | default: 'Sugar' }}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mb-[var(--pad-xs)]">
+                        <h2 class="heading-style-h2">{{ section.settings.b1_title | default: 'Zero sugar' }}</h2>
+                      </div>
+                      <p class="text-white/75">{{ section.settings.b1_body | default: 'Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.' }}</p>
+                      <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.b1_note | default: '0 g sugar per 250 ml' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="benefit-colour" aria-label="{{ section.settings.b4_title | default: 'Colour from food' }}" class="section is-pinned" style="height: 170svh;">
         <div class="benefits_container">
           <div class="pin_fade">
@@ -503,15 +503,7 @@
       <!-- Benefits Floating Side-Nav -->
       <div class="benefits_nav" style="opacity: 0; visibility: hidden;" aria-hidden="true">
         <div class="contents">
-          <a href="#benefit-sugar" class="benefits_icon-wrapper is-active" aria-label="{{ section.settings.b1_title | default: 'Zero sugar' }}" aria-current="true">
-            <div class="benefits_icon">
-              {% render 'asmaan-icons', name: 'benefit', icon: 'sugar', class: 'h-full w-full' %}
-            </div>
-          </a>
-        </div>
-        <div class="contents">
-          <div class="benefits_icon-separator"></div>
-          <a href="#benefit-caffeine" class="benefits_icon-wrapper" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}" aria-current="false">
+          <a href="#benefit-caffeine" class="benefits_icon-wrapper is-active" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}" aria-current="true">
             <div class="benefits_icon">
               {% render 'asmaan-icons', name: 'benefit', icon: 'bean', class: 'h-full w-full' %}
             </div>
@@ -522,6 +514,14 @@
           <a href="#benefit-crash" class="benefits_icon-wrapper" aria-label="{{ section.settings.b3_title | default: 'L-theanine and ashwagandha' }}" aria-current="false">
             <div class="benefits_icon">
               {% render 'asmaan-icons', name: 'benefit', icon: 'curve', class: 'h-full w-full' %}
+            </div>
+          </a>
+        </div>
+        <div class="contents">
+          <div class="benefits_icon-separator"></div>
+          <a href="#benefit-sugar" class="benefits_icon-wrapper" aria-label="{{ section.settings.b1_title | default: 'Zero sugar' }}" aria-current="false">
+            <div class="benefits_icon">
+              {% render 'asmaan-icons', name: 'benefit', icon: 'sugar', class: 'h-full w-full' %}
             </div>
           </a>
         </div>
