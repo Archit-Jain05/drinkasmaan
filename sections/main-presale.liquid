@@ -72,7 +72,7 @@
   shut box (asmaan-presale.js). Hidden on desktop and for reduced motion; if the script never runs, the
   stylesheet takes it away by itself after a few seconds.
 {%- endcomment -%}
-<div class="psb_splash" data-psb-splash aria-hidden="true">
+<div class="psb_splash" data-psb-splash data-write="{{ 'presale-logo-write.png' | asset_url }}" aria-hidden="true">
   <div class="psb_splash-logo" data-psb-splash-logo>{% render 'asmaan-logo' %}</div>
 </div>
 

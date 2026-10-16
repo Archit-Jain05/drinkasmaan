@@ -39,9 +39,16 @@
     max-width: 340px;
     transform: translate(-50%, -50%);
     transform-origin: 50% 50%;
+    will-change: transform;
+  }
+  /* plain fallback (only used if the handwriting map cannot load): a soft wipe from left to right */
+  .psb_splash-logo svg {
     -webkit-mask: linear-gradient(90deg, #000 var(--wipe, 0%), transparent calc(var(--wipe, 0%) + 14%));
     mask: linear-gradient(90deg, #000 var(--wipe, 0%), transparent calc(var(--wipe, 0%) + 14%));
   }
+  .psb_splash-pen { display: none; width: 100%; height: auto; }
+  .psb_splash-logo.is-pen svg { display: none; }
+  .psb_splash-logo.is-pen .psb_splash-pen { display: block; }
   .psb_splash-logo svg { display: block; width: 100%; height: auto; }
 }
 @keyframes psbSplashGone { to { visibility: hidden; opacity: 0; } }

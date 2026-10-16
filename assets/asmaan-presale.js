@@ -424,78 +424,133 @@
     }
   }
 
-  // --- Phone splash: the wordmark is written on a white screen, then the screen crops down to the box ---
+  // --- Phone splash: the wordmark is handwritten on a white screen, then the screen crops down to the box ---
+  // The handwriting comes from a map (presale-logo-write.png) made from the wordmark itself: every pixel of
+  // every letter stores WHEN the pen reaches it, travelling along each stroke from where it would start the
+  // letter, letter by letter, left to right. A canvas shows the pixels the pen has reached so far.
+  var WRITE_MS = 2600, HOLD_MS = 320, CROP_MS = 1050, HAND_OFF_MS = 240;
+  // where the wordmark printed on the lid sits in the lid photo (fractions of the photo), and how much of
+  // its own width the logo drawing uses
+  var LID_LOGO = { cx: 0.4996, cy: 0.4583, w: 0.3517 / 0.98 };
+  // the lid's face inside the photo (matches the stylesheet's clip)
+  var LID_FACE = { l: 0.05, r: 0.05, t: 0.1193, b: 0.1494 };
+
   function initSplash() {
     var splash = document.querySelector('[data-psb-splash]');
     if (!splash || splash.dataset.psbDone) return;
     splash.dataset.psbDone = 'true';
     var logo = splash.querySelector('[data-psb-splash-logo]');
-    var lid = document.querySelector('[data-psb-lid]');
+    var lidImg = document.querySelector('.psb_lid');
     var phone = window.matchMedia('(max-width: 989px)').matches;
     var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function finish() {
       splash.style.display = 'none';
       document.documentElement.style.overflow = '';
     }
-    if (!phone || calm || !logo || !lid || !splash.animate) { finish(); return; }
+    if (!phone || calm || !logo || !lidImg || !splash.animate) { finish(); return; }
 
     document.documentElement.style.overflow = 'hidden';
     window.scrollTo(0, 0);
     splash.style.animation = 'none'; // the script is in charge now; the 6 second safety net is not needed
 
-    var wipe = 0;
+    var canvas = document.createElement('canvas');
+    canvas.className = 'psb_splash-pen';
+    logo.appendChild(canvas);
+
+    var pen = null; // { w, h, time: Float32Array, cov: Uint8Array, img: ImageData, ctx }
+    var mapImg = new Image();
+    mapImg.onload = function() {
+      try {
+        var w = mapImg.naturalWidth, h = mapImg.naturalHeight;
+        var tmp = document.createElement('canvas'); tmp.width = w; tmp.height = h;
+        var tctx = tmp.getContext('2d', { willReadFrequently: true });
+        tctx.drawImage(mapImg, 0, 0);
+        var px = tctx.getImageData(0, 0, w, h).data;
+        var time = new Float32Array(w * h), cov = new Uint8Array(w * h);
+        for (var i = 0; i < w * h; i++) { time[i] = px[i * 4] / 255; cov[i] = px[i * 4 + 3]; }
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        var img = ctx.createImageData(w, h);
+        for (var j = 0; j < w * h; j++) { img.data[j * 4] = 20; img.data[j * 4 + 1] = 32; img.data[j * 4 + 2] = 46; }
+        pen = { w: w, h: h, time: time, cov: cov, img: img, ctx: ctx };
+        logo.classList.add('is-pen');
+      } catch (e) { pen = null; }
+    };
+    mapImg.src = splash.getAttribute('data-write');
+
+    function drawPen(progress) {
+      // the nib stays a touch soft so the edge of the ink never looks cut
+      var EDGE = 0.018, t = progress * (1 + EDGE);
+      var d = pen.img.data, time = pen.time, cov = pen.cov, n = time.length;
+      for (var i = 0; i < n; i++) {
+        var c = cov[i];
+        if (!c) { d[i * 4 + 3] = 0; continue; }
+        var k = (t - time[i]) / EDGE;
+        d[i * 4 + 3] = k <= 0 ? 0 : (k >= 1 ? c : c * k);
+      }
+      pen.ctx.putImageData(pen.img, 0, 0);
+    }
     function setWipe(v) { logo.style.setProperty('--wipe', v.toFixed(1) + '%'); }
     setWipe(0);
 
-    // 1. Write the wordmark: a soft edge sweeps left to right.
-    var WRITE = 1500, HOLD = 380, CROP = 950;
+    // 1. Write. A pen is not a machine: it picks up speed after the first touch and eases off at the end.
     var t0 = null;
+    function smooth(p) { return p * p * (3 - 2 * p); }
     function write(now) {
       if (t0 === null) t0 = now;
-      var p = Math.min((now - t0) / WRITE, 1);
-      var e = 1 - Math.pow(1 - p, 2.2);
-      setWipe(e * 100);
+      var p = Math.min((now - t0) / WRITE_MS, 1);
+      var e = 0.55 * p + 0.45 * smooth(p); // mostly steady, gently eased at both ends
+      if (pen) drawPen(e); else setWipe(e * 100);
       if (p < 1) requestAnimationFrame(write);
-      else setTimeout(waitForLid, HOLD);
+      else setTimeout(waitForLid, HOLD_MS);
     }
-    requestAnimationFrame(write);
+    // start once the map has had a moment to load (never wait long: fall back to the wipe)
+    var armedAt = performance.now();
+    (function arm() {
+      if (pen || performance.now() - armedAt > 900) requestAnimationFrame(write);
+      else requestAnimationFrame(arm);
+    })();
 
     // 2. When the box is ready, crop the white screen down to the shut lid.
     function waitForLid() {
-      var img = lid.querySelector('img');
       var started = performance.now();
       (function check() {
-        if ((img && img.complete) || performance.now() - started > 2500) crop();
+        if (lidImg.complete || performance.now() - started > 2500) crop();
         else requestAnimationFrame(check);
       })();
     }
 
     function crop() {
       var vw = window.innerWidth, vh = window.innerHeight;
-      // The shut lid's face is 90% x 73% of the picture frame, 5% in and 11.93% down (measured from the
-      // frame: the lid element itself is 3D, so its own box is larger than what you see).
-      var fr = document.querySelector('[data-psb-frame]').getBoundingClientRect();
-      var r = { left: fr.left + fr.width * 0.05, top: fr.top + fr.height * 0.1193, width: fr.width * 0.9, height: fr.height * 0.7313 };
-      r.right = r.left + r.width; r.bottom = r.top + r.height;
-      var top = Math.max(0, r.top), left = Math.max(0, r.left);
-      var right = Math.max(0, vw - r.right), bottom = Math.max(0, vh - r.bottom);
-      // the wordmark ends up where the one printed on the lid is: centred, 38% of the lid's width
+      // The lid photo's projected rectangle (it is a 3D element, so this already includes the slight
+      // perspective growth); the lid's face and its printed wordmark are fixed fractions of it.
+      var ir = lidImg.getBoundingClientRect();
+      var left = ir.left + ir.width * LID_FACE.l, right = ir.right - ir.width * LID_FACE.r;
+      var top = ir.top + ir.height * LID_FACE.t, bottom = ir.bottom - ir.height * LID_FACE.b;
+      var insetFrom = 'inset(0px 0px 0px 0px)';
+      var insetTo = 'inset(' + Math.max(0, top) + 'px ' + Math.max(0, vw - right) + 'px ' + Math.max(0, vh - bottom) + 'px ' + Math.max(0, left) + 'px)';
+      // the wordmark lands exactly on the one printed on the lid
       var lr = logo.getBoundingClientRect();
-      var scale = (r.width * 0.38) / lr.width;
-      var dx = (r.left + r.width / 2) - (lr.left + lr.width / 2);
-      var dy = (r.top + r.height / 2) - (lr.top + lr.height / 2);
+      var tx = ir.left + ir.width * LID_LOGO.cx, ty = ir.top + ir.height * LID_LOGO.cy;
+      var scale = (ir.width * LID_LOGO.w) / lr.width;
+      var dx = tx - (lr.left + lr.width / 2), dy = ty - (lr.top + lr.height / 2);
       var ease = 'cubic-bezier(0.65, 0, 0.2, 1)';
-      var a1 = splash.animate(
-        [{ clipPath: 'inset(0px 0px 0px 0px)' }, { clipPath: 'inset(' + top + 'px ' + right + 'px ' + bottom + 'px ' + left + 'px)' }],
-        { duration: CROP, easing: ease, fill: 'forwards' }
-      );
+      var clip = splash.animate([{ clipPath: insetFrom }, { clipPath: insetTo }], { duration: CROP_MS, easing: ease, fill: 'forwards' });
       logo.animate(
-        [{ transform: 'translate(-50%, -50%) translate(0px, 0px) scale(1)' }, { transform: 'translate(-50%, -50%) translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')' }],
-        { duration: CROP, easing: ease, fill: 'forwards' }
+        [{ transform: 'translate(-50%, -50%) translate(0px, 0px) scale(1)' }, { transform: 'translate(-50%, -50%) translate(' + dx.toFixed(2) + 'px, ' + dy.toFixed(2) + 'px) scale(' + scale.toFixed(4) + ')' }],
+        { duration: CROP_MS, easing: ease, fill: 'forwards' }
       );
-      a1.onfinish = function() {
-        // the lid underneath is now exactly the same white box with the same wordmark: hand over
-        finish();
+      // the white screen takes on the lid's own soft light as it closes in: the photo of the lid runs from
+      // #f6f6f4 (top left) to #efefed (bottom right), so the same gradient fades in under the wordmark
+      var sheen = document.createElement('div');
+      sheen.style.cssText = 'position:absolute;inset:0;opacity:0;background:linear-gradient(135deg,#f6f6f4,#efefed);';
+      splash.insertBefore(sheen, logo);
+      sheen.animate([{ opacity: 0 }, { opacity: 1 }], { duration: CROP_MS, easing: ease, fill: 'forwards' });
+      clip.onfinish = function() {
+        // Hand over with a short cross-fade. The box underneath is the same white lid with the same
+        // wordmark, so anything left over (a pixel of anti-aliasing, the photo's soft light) just melts.
+        var out = splash.animate([{ opacity: 1 }, { opacity: 0 }], { duration: HAND_OFF_MS, easing: 'ease-out', fill: 'forwards' });
+        out.onfinish = finish;
       };
     }
   }
