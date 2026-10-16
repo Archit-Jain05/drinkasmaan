@@ -378,6 +378,14 @@
   margin-bottom: clamp(56px, 7vw, 96px);
 }
 .psb_cans-head .psb_line { max-width: 20ch; }
+/* room for the fizz wave above the columns, so its crest never touches the words */
+.psb_ch--cans .psb_cans-head { margin-bottom: clamp(150px, 14vw, 210px); }
+/* Fizz wave canvases: the top one ends 12px inside the first row, the bottom one starts 130px
+   inside the last, so the waves join the flavour columns with no seam. */
+.psb_cans-wrap { position: relative; }
+.psb_fizz { position: absolute; left: 0; width: 100%; display: block; pointer-events: none; z-index: 2; }
+.psb_fizz.is-top { top: -288px; height: 300px; }
+.psb_fizz.is-bottom { bottom: -190px; height: 320px; }
 .psb_cans {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

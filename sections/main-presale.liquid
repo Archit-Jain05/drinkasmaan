@@ -177,6 +177,9 @@
       <p class="psb_line">{{ section.settings.can_line | escape }}</p>
       {%- if section.settings.can_body != blank -%}<p class="psb_body">{{ section.settings.can_body | escape }}</p>{%- endif -%}
     </div>
+    <div class="psb_cans-wrap">
+    {%- comment -%} A moving fizz wave at the top and bottom edge: layered waves in the three flavour colours with bubbles rising and popping (asmaan-presale.js). {%- endcomment -%}
+    <canvas class="psb_fizz is-top" data-psb-fizz="top" aria-hidden="true"></canvas>
     <ul class="psb_cans">
       <li style="--c: #9089d3; --d: #2a1d4a;">
         <img src="{{ 'jamun-front.webp' | asset_url }}" width="760" height="1950" loading="lazy" alt="">
@@ -191,6 +194,8 @@
         <span>{{ section.settings.flavour_3 | escape }}</span>
       </li>
     </ul>
+    <canvas class="psb_fizz is-bottom" data-psb-fizz="bottom" aria-hidden="true"></canvas>
+    </div>
   </section>
 
   {%- comment -%} 5 · Close: the line from the back of the notebook, then the buy block again {%- endcomment -%}
