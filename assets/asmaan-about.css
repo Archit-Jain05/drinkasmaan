@@ -139,10 +139,10 @@ body .about_panel-frame img {
   position: absolute;
   left: 50%;
   top: 0;
-  width: 125%;
+  width: 108%;
   max-width: none;
   height: auto;
-  transform: translate(-55.5%, -11.5%);
+  transform: translate(-53.6%, -5.45%);
 }
 
 body .about_panel figcaption {
