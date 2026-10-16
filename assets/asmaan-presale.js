@@ -431,7 +431,7 @@
   //    takes the moment the pen passes its nearest point, so each stroke grows along its length.
   //  - presale-logo-nib.json: the path of the pen tip over time, so the nib itself can be drawn.
   // A canvas shows the ink laid down so far, with the pen tip at its head.
-  var WRITE_MS = 3600, HOLD_MS = 320, CROP_MS = 1050, HAND_OFF_MS = 240;
+  var WRITE_MS = 2700, HOLD_MS = 320, CROP_MS = 1050, HAND_OFF_MS = 240;
   // where the wordmark printed on the lid sits in the lid photo (fractions of the photo), and how much of
   // its own width the logo drawing uses
   var LID_LOGO = { cx: 0.4996, cy: 0.4583, w: 0.3517 / 0.98 };
