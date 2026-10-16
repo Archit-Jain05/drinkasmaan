@@ -1,6 +1,6 @@
 /**
  * Asmaan — presale box sales page (assets/asmaan-presale.js)
- * - Lifts the box lid as the hero scrolls (--lift 0 → 1 on the hero).
+ * - Opens the box lid (a hinged 3D swing) as the hero scrolls (--lift 0 → 1 on the hero).
  * - Quantity steppers: keep every buy block on the same count and point the
  *   "Claim" links at the matching cart permalink (/cart/<variant>:<qty> → checkout).
  * - Shows the bottom bar between the hero and the closing buy block.
@@ -35,13 +35,14 @@
         if (still.matches) {
           lift = 1;
         } else if (pinned.matches) {
-          // The hero is pinned for (its height − one screen); the lid comes off over that.
+          // The hero is pinned for (its height − one screen); the lid opens over most of that and
+          // the open box is held for the last stretch.
           var r = hero.getBoundingClientRect();
           var span = Math.max(r.height - vh, 1);
-          lift = ease(clamp((-r.top / span - 0.06) / 0.72));
+          lift = ease(clamp((-r.top / span - 0.04) / 0.8));
         } else {
-          // Phones: no pin; the lid comes off over the first stretch of scroll.
-          lift = ease(clamp((-hero.getBoundingClientRect().top - 16) / (vh * 0.3)));
+          // Phones: no pin; the lid opens over the first stretch of scroll.
+          lift = ease(clamp((-hero.getBoundingClientRect().top - 16) / (vh * 0.6)));
         }
         hero.style.setProperty('--lift', lift.toFixed(4));
       }

@@ -99,7 +99,8 @@
 .psb_cta-price { font-weight: 500; font-variant-numeric: tabular-nums; }
 
 /* --- Hero ---------------------------------------------------------------- */
-.psb_hero { position: relative; }
+/* overflow-x: clip (not hidden) so the lid swinging wider than the screen never adds a sideways scrollbar, and the pinned hero keeps working. */
+.psb_hero { position: relative; overflow-x: clip; }
 .psb_hero-stick {
   padding: calc(var(--asmaan-header-h, 88px) + 32px) var(--psb-gutter) 56px;
 }
@@ -113,8 +114,10 @@
 .psb_frame {
   position: relative;
   aspect-ratio: 16 / 10;
-  overflow: hidden;
   background: transparent;
+  /* The lid swings open in this space: the camera sits above the box, slightly towards the front. */
+  perspective: 2400px;
+  perspective-origin: 50% 70%;
 }
 .psb_frame img {
   position: absolute;
@@ -127,9 +130,13 @@
 .psb_open { filter: drop-shadow(0 26px 36px rgba(0, 0, 0, 0.5)); }
 .psb_photo--mirror img { filter: drop-shadow(0 26px 40px rgba(0, 0, 0, 0.5)); }
 
-/* The lid is the shut box alone on transparency (its shadow included), so only the box lifts. */
+/* The lid is the shut box alone on transparency (its shadow included). It is hinged along its far
+   edge and swings up towards you, passes edge-on, and folds away behind the box (--lift 0 → 1). */
 .psb_lid {
-  transform: translate3d(0, calc(var(--lift, 0) * -100%), 0);
+  transform-origin: 50% 0%;
+  transform: rotateX(calc(var(--lift, 0) * 118deg));
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   will-change: transform;
 }
 
@@ -196,8 +203,8 @@
 }
 
 @media (min-width: 990px) {
-  /* Pinned: the extra height is the scroll the lid takes to come off. */
-  .psb_hero { height: calc(100vh + 90vh); }
+  /* Pinned: the extra height is the scroll the lid takes to open (about three screens). */
+  .psb_hero { height: calc(100vh + 260vh); }
   .psb_hero-stick {
     position: sticky;
     top: 0;
