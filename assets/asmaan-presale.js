@@ -170,6 +170,7 @@
     var rx = 0, ry = 0, tx = 0, ty = 0, gx = 50, tgx = 50;
     var lastPointer = 0;
     var visible = false;
+    var touchOnly = window.matchMedia('(pointer: coarse)').matches;
     var raf = 0;
 
     function aim(e) {
@@ -180,6 +181,7 @@
       tx = -ny * 16;     // tip up / down
       tgx = 50 + nx * 55;
       lastPointer = performance.now();
+      if (visible && !raf) raf = requestAnimationFrame(tick);
     }
     area.addEventListener('pointermove', aim);
     area.addEventListener('pointerleave', function() { tx = 0; ty = 0; tgx = 50; lastPointer = 0; });
@@ -187,8 +189,10 @@
     function tick(now) {
       raf = 0;
       if (!visible) return;
-      // Nobody pointing at it: a slow sway so it reads as an object you can move.
-      if (!lastPointer || now - lastPointer > 1800) {
+      // Nobody pointing at it: a slow sway so it reads as an object you can move. (Not on touch screens:
+      // there it stays still until it is touched, which keeps it perfectly steady.)
+      if (touchOnly) { if (!lastPointer || now - lastPointer > 1800) { tx = 0; ty = 0; tgx = 50; } }
+      else if (!lastPointer || now - lastPointer > 1800) {
         ty = Math.sin(now / 1700) * 7;
         tx = Math.sin(now / 2300) * 3;
         tgx = 50 + Math.sin(now / 1700) * 25;
@@ -199,6 +203,8 @@
       body.style.setProperty('--rx', rx.toFixed(2) + 'deg');
       body.style.setProperty('--ry', ry.toFixed(2) + 'deg');
       body.style.setProperty('--gx', gx.toFixed(1) + '%');
+      // On touch screens, stop updating once it has settled (it starts again on the next touch).
+      if (touchOnly && Math.abs(tx - rx) < 0.02 && Math.abs(ty - ry) < 0.02 && now - lastPointer > 1800) return;
       raf = requestAnimationFrame(tick);
     }
 

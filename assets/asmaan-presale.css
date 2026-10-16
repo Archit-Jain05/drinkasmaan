@@ -402,6 +402,15 @@ body.psb-hero-live .navbar.is-scrolled:not(:hover):not(.is-hovered) .navbar_slid
   filter: blur(34px);
   transform: translate3d(0, 4%, -70px);
 }
+/* Phones and tablets: the stacked 3D layers, the blurred shadow and the masked glint flicker on mobile GPUs
+   (dozens of masked, depth-sorted layers). There the mirror is one flat picture that tilts a little, with
+   a plain shadow, which stays perfectly steady. */
+@media (max-width: 989px), (pointer: coarse) {
+  .psb_m3d { perspective: none; }
+  .psb_m3d-layer, .psb_m3d-shadow, .psb_m3d-glare { display: none; }
+  .psb_m3d-body { transform-style: flat; will-change: auto; }
+  .psb_m3d-face { filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45)); backface-visibility: hidden; }
+}
 @media (prefers-reduced-motion: reduce) {
   .psb_m3d-body { transform: none !important; }
 }
