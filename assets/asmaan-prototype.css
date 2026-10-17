@@ -2042,10 +2042,10 @@ input:focus-visible {
 .navbar_slide-bg {
   /* a floating pill around the header content, not a full-width bar */
   position: absolute !important;
-  top: 0.8rem !important;
+  top: 0.6rem !important;
   left: max(0.5rem, calc(var(--page-padding, 4%) - 1.1rem)) !important;
   right: max(0.5rem, calc(var(--page-padding, 4%) - 1.1rem)) !important;
-  bottom: 0.2rem !important;
+  bottom: -1rem !important; /* centred on the Menu button and logo row */
   width: auto !important;
   height: auto !important;
   background: rgba(5, 5, 8, 0.94) !important;
@@ -2053,7 +2053,7 @@ input:focus-visible {
   -webkit-backdrop-filter: blur(28px) !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   border-radius: 9999px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7) !important;
   transform: translateY(-100%) !important;
   opacity: 0 !important;
   pointer-events: none !important;
