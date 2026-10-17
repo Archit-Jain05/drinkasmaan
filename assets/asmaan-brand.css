@@ -334,3 +334,15 @@ body .loader_letter {
   line-height: 0;
 }
 body .loader_letter .asmaan-logo { height: clamp(88px, 17vw, 210px); }
+
+/* Decorative loops stand still for anyone who asks the system for reduced motion (and cost nothing then). */
+@media (prefers-reduced-motion: reduce) {
+  .asmaan-sky__orb,
+  .asmaan-sky__star,
+  .manifesto_blob,
+  .asmaan-marquee,
+  [class*="marquee"] {
+    animation: none !important;
+  }
+  .asmaan-sky__star { opacity: 0.5; }
+}

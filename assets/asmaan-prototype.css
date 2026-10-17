@@ -2048,8 +2048,7 @@ input:focus-visible {
   width: 100% !important;
   height: 100% !important;
   background: rgba(5, 5, 8, 0.96) !important;
-  backdrop-filter: blur(28px) !important;
-  -webkit-backdrop-filter: blur(28px) !important;
+  /* (was backdrop-filter: blur(28px): the bar is 96% opaque, so the blur was invisible but re-filtered the whole width every scroll frame) */
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7) !important;
   transform: translateY(-100%) !important;

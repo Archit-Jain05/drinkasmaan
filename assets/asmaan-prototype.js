@@ -1960,7 +1960,7 @@
     var width = 0;
     var height = 0;
     var stars = [];
-    var starCount = 240;
+    var starCount = (window.innerWidth || 1200) < 768 ? 110 : 240; // fewer on phones
 
     var mouseX = 0;
     var mouseY = 0;
@@ -1991,7 +1991,7 @@
           baseAlpha: 0.2 + Math.random() * 0.75,
           twinkleSpeed: 0.015 + Math.random() * 0.035,
           twinklePhase: Math.random() * Math.PI * 2,
-          colorPrefix: colors[Math.floor(Math.random() * colors.length)]
+          c: [0, 0, 1, 2][Math.floor(Math.random() * 4)]
         });
       }
     }
@@ -2009,48 +2009,61 @@
       targetMouseY = (e.clientY / (height || 1) - 0.5) * 2;
     }, { passive: true });
 
-    function animateStarfield() {
+    // Drawn at 30 frames a second (the stars drift a fraction of a pixel per frame, so nobody can tell), one
+    // fillStyle per colour instead of one per star, and not at all while the tab is hidden.
+    var STAR_RGB = ['255,255,255', '215,210,255', '255,240,215'];
+    var lastDraw = 0;
+    function animateStarfield(now) {
       requestAnimationFrame(animateStarfield);
+      if (document.hidden) return;
+      if (now - lastDraw < 30) return; // ~33fps
+      var step = Math.min((now - lastDraw) / 16.7, 3); // keep the drift speed the same as at 60fps
+      lastDraw = now;
 
       var isMotionOff = document.documentElement.dataset.motion === 'off';
 
-      mouseX += (targetMouseX - mouseX) * 0.05;
-      mouseY += (targetMouseY - mouseY) * 0.05;
+      mouseX += (targetMouseX - mouseX) * 0.1;
+      mouseY += (targetMouseY - mouseY) * 0.1;
 
       ctx.clearRect(0, 0, width, height);
 
-      for (var i = 0; i < stars.length; i++) {
-        var s = stars[i];
+      for (var c = 0; c < STAR_RGB.length; c++) {
+        ctx.fillStyle = 'rgb(' + STAR_RGB[c] + ')';
+        for (var i = 0; i < stars.length; i++) {
+          var s = stars[i];
+          if (s.c !== c) continue;
 
-        if (!isMotionOff) {
-          s.y -= (0.12 * s.z);
-          if (s.y < -10) s.y = height + 10;
-          s.twinklePhase += s.twinkleSpeed;
-        }
+          if (!isMotionOff) {
+            s.y -= (0.12 * s.z) * step;
+            if (s.y < -10) s.y = height + 10;
+            s.twinklePhase += s.twinkleSpeed * step;
+          }
 
-        var px = s.x - (mouseX * 38 * s.z);
-        var py = s.y - (mouseY * 38 * s.z);
+          var px = s.x - (mouseX * 38 * s.z);
+          var py = s.y - (mouseY * 38 * s.z);
 
-        if (px < -10) px += width + 20;
-        else if (px > width + 10) px -= width + 20;
+          if (px < -10) px += width + 20;
+          else if (px > width + 10) px -= width + 20;
 
-        if (py < -10) py += height + 20;
-        else if (py > height + 10) py -= height + 20;
+          if (py < -10) py += height + 20;
+          else if (py > height + 10) py -= height + 20;
 
-        var currentAlpha = s.baseAlpha * (0.65 + 0.35 * Math.sin(s.twinklePhase));
-        ctx.fillStyle = s.colorPrefix + currentAlpha + ')';
-
-        ctx.beginPath();
-        ctx.arc(px, py, s.r * s.z, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (s.r * s.z > 1.3 && currentAlpha > 0.6) {
-          ctx.fillStyle = s.colorPrefix + (currentAlpha * 0.25) + ')';
+          var currentAlpha = s.baseAlpha * (0.65 + 0.35 * Math.sin(s.twinklePhase));
+          var rad = s.r * s.z;
+          ctx.globalAlpha = currentAlpha;
           ctx.beginPath();
-          ctx.arc(px, py, s.r * s.z * 2.2, 0, Math.PI * 2);
+          ctx.arc(px, py, rad, 0, 6.2832);
           ctx.fill();
+
+          if (rad > 1.3 && currentAlpha > 0.6) {
+            ctx.globalAlpha = currentAlpha * 0.25;
+            ctx.beginPath();
+            ctx.arc(px, py, rad * 2.2, 0, 6.2832);
+            ctx.fill();
+          }
         }
       }
+      ctx.globalAlpha = 1;
     }
 
     requestAnimationFrame(animateStarfield);

@@ -453,6 +453,7 @@
             img.src = firstFrameUrl.replace(/pack-frame-\d+\.webp/, 'pack-frame-' + frameNum + '.webp');
             img.onload = function() {
               if (index === 1 && lastDrawnIndex === -1) drawFrame(0);
+              if (typeof wake === 'function') { lastDrawnIndex = -2; wake(); } // a late frame may be the one now needed
             };
             frameImages.push(img);
           })(f);
@@ -468,18 +469,24 @@
         if (packHold) packHold.style.setProperty('--build', targetProgress);
       };
 
+      // Runs only while the pack animation is catching up with the scroll; it stops itself when it has arrived
+      // and the next scroll starts it again (it used to spin every frame for the life of the page).
+      var packRaf = 0;
       var animLoop = function() {
+        packRaf = 0;
         if (frameImages.length > 0) {
           currentProgress += (targetProgress - currentProgress) * 0.22;
           var destIndex = Math.min(Math.max(Math.round(currentProgress * (totalFrames - 1)), 0), totalFrames - 1);
           if (destIndex !== lastDrawnIndex) drawFrame(destIndex);
+          if (Math.abs(targetProgress - currentProgress) < 0.0004) { currentProgress = targetProgress; return; }
         }
-        requestAnimationFrame(animLoop);
+        packRaf = requestAnimationFrame(animLoop);
       };
+      var wake = function() { if (!packRaf) packRaf = requestAnimationFrame(animLoop); };
 
-      window.addEventListener('scroll', onScrollPack, { passive: true });
+      window.addEventListener('scroll', function() { onScrollPack(); wake(); }, { passive: true });
       onScrollPack();
-      requestAnimationFrame(animLoop);
+      wake();
     }
 
     // Sticky DrinkBar
