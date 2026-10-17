@@ -1429,6 +1429,27 @@
     window.addEventListener('resize', syncStageHost);
     window.addEventListener('pageshow', syncStageHost);
 
+    // The "Ambition Tonic" manifesto layer is fixed behind the page, shown only while its own section is on
+    // screen. It is normally updated once per animation frame; on a busy page frames arrive late, so after a
+    // fast scroll it could still be showing behind the sections below (the FAQ). Re-check it on every scroll
+    // event too, straight from the manifesto section's real position.
+    function syncManifesto() {
+      if (!manifestoLayer) return;
+      for (var mi = 0; mi < pinnedCache.length; mi++) {
+        var m = pinnedCache[mi];
+        if (!m.isManifesto) continue;
+        var a = pinAmount(m.sec.getBoundingClientRect(), window.innerHeight).amount;
+        var show = a > 0.01;
+        if (!show && manifestoLayer.style.visibility !== 'hidden') {
+          manifestoLayer.style.opacity = '0';
+          manifestoLayer.style.visibility = 'hidden';
+          manifestoLayer.setAttribute('data-active', 'false');
+          m.lastAmount = 0;
+        }
+      }
+    }
+    window.addEventListener('scroll', syncManifesto, { passive: true });
+
     function onFrame(now) {
       var dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
