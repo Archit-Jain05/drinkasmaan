@@ -438,26 +438,32 @@
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: inherit;
-    opacity: 0.72;
+    font-weight: 600;
+    margin-bottom: 8px;
+    opacity: 1;
   }
   .asmaan-contact__input {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 10px 0 12px;
-    border: 0;
-    border-bottom: 2px solid color-mix(in srgb, var(--panel-ink) 32%, transparent);
+    padding: 13px 16px;
+    border: 2px solid color-mix(in srgb, var(--panel-ink) 75%, transparent);
     border-radius: 0;
-    background: transparent;
+    background: color-mix(in srgb, #fff 38%, transparent);
     color: inherit;
     font-family: var(--font-sans);
     font-size: 18px;
     font-weight: 500;
     line-height: 1.4;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .asmaan-contact__input::placeholder { color: color-mix(in srgb, var(--panel-ink) 45%, transparent); }
-  .asmaan-contact__input:focus { outline: none; border-bottom-color: var(--panel-ink); }
+  .asmaan-contact__input::placeholder { color: color-mix(in srgb, var(--panel-ink) 72%, transparent); opacity: 1; }
+  .asmaan-contact__input:focus {
+    outline: none;
+    border-color: var(--panel-ink);
+    background: color-mix(in srgb, #fff 58%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--panel-ink) 35%, transparent);
+  }
   .asmaan-contact__input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 100px var(--panel) inset;
     -webkit-text-fill-color: var(--panel-ink);
