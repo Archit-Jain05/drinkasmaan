@@ -1960,7 +1960,7 @@
     var width = 0;
     var height = 0;
     var stars = [];
-    var starCount = (window.innerWidth || 1200) < 768 ? 110 : 240; // fewer on phones
+    var starCount = 240;
 
     var mouseX = 0;
     var mouseY = 0;
