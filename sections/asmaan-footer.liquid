@@ -31,7 +31,21 @@
               {%- for policy in shop.policies -%}
                 <li><a href="{{ policy.url }}" class="asmaan-footer-link">{{ policy.title | upcase | escape }}</a></li>
               {%- endfor -%}
-              <li><a href="{{ section.settings.pol_6_url | default: '/pages/join' }}" class="asmaan-footer-link">{{ section.settings.pol_6_label | default: 'AMBASSADOR PROGRAM' }}</a></li>
+              {%- liquid
+                # Same rule as the navbar menu: while the page this links to is hidden or deleted,
+                # leave the link out instead of sending people to a 404.
+                assign ambassador_url = section.settings.pol_6_url | default: '/pages/join'
+                assign ambassador_visible = true
+                if ambassador_url contains '/pages/'
+                  assign ambassador_handle = ambassador_url | split: '/pages/' | last | split: '#' | first | split: '?' | first
+                  if pages[ambassador_handle] == empty
+                    assign ambassador_visible = false
+                  endif
+                endif
+              -%}
+              {%- if ambassador_visible -%}
+                <li><a href="{{ ambassador_url }}" class="asmaan-footer-link">{{ section.settings.pol_6_label | default: 'AMBASSADOR PROGRAM' }}</a></li>
+              {%- endif -%}
             </ul>
           </nav>
         </div>

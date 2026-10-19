@@ -92,8 +92,20 @@
           </span>
         </button>
 
-        {%- if section.settings.cta_text != blank -%}
-          <a class="button is-small hidden lg:inline-flex" href="{{ section.settings.cta_link | default: '/pages/drink' }}">
+        {%- liquid
+          # Same rule as the menu below: while the page the button points at is hidden or deleted,
+          # leave the button out instead of sending people to a 404.
+          assign cta_url = section.settings.cta_link | default: '/pages/drink'
+          assign cta_visible = true
+          if cta_url contains '/pages/'
+            assign cta_handle = cta_url | split: '/pages/' | last | split: '#' | first | split: '?' | first
+            if pages[cta_handle] == empty
+              assign cta_visible = false
+            endif
+          endif
+        -%}
+        {%- if section.settings.cta_text != blank and cta_visible -%}
+          <a class="button is-small hidden lg:inline-flex" href="{{ cta_url }}">
             {{ section.settings.cta_text | default: 'Get Early Access' }}
           </a>
         {%- endif -%}
