@@ -78,6 +78,27 @@ links in `PRELAUNCH_SETUP.md`.
 - Drink page: the box animation shows the new can rising out of the carton.
 - Cart and checkout thumbnails come from the product images (step 2b).
 
+## Store policies (published 20 Oct 2026)
+
+Refund, Shipping and Terms of service are live (Settings › Policies, `/policies/...`), from the
+client's four documents. The Privacy policy is not yet: Shopify manages it automatically, so turn
+off automatic management under Settings › Policies › Privacy policy, then publish
+`.qa/policies-2026-10-20/privacy.html` (or ask Claude to). The old auto-generated text is saved in
+`.qa/policies-2026-10-20/backup-before.json`.
+
+How the documents' blanks were filled, and what still needs the client:
+- Website: `xhp0ym-sn.myshopify.com` (no custom domain is connected; drinkasmaan.com does not
+  exist yet). When a domain is connected, update the URL in all four policies.
+- Email: `drinkasmaan@gmail.com` (the store's contact email). The contact page shows
+  `hello@drinkasmaan.com`, which cannot receive mail until that domain exists.
+- Phone: none known, so the phone lines were left out. Add a real support number (payment
+  providers such as Razorpay usually expect one).
+- The policies name Asmaan Beverages and Nutrition Pvt Ltd (Dwarka, Delhi); the can label names
+  OFLO BLUSH Pvt Ltd; Shopify's billing address is Bandra West, Mumbai.
+- Terms send disputes to Mumbai courts although the registered office is in Delhi.
+- The shipping policy charges shipping at actuals; the site advertises free shipping across India
+  (and a ₹999 free-shipping threshold in the cart).
+
 ## 4. Optional follow-ups
 
 - The product-page view buttons are still named "Botanical", "Nutritional", "Disclaimer"; they now
