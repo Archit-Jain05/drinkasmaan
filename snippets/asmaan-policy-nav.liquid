@@ -1,0 +1,14 @@
+{% doc %}
+  Links between the store policies, shown above each policy page (layout/theme.liquid).
+  shop.policies lists only the policies that have text.
+
+  @example
+  {% render 'asmaan-policy-nav' %}
+{% enddoc %}
+{%- if shop.policies.size > 1 -%}
+  <nav class="asmaan-policy-nav" aria-label="Store policies">
+    {%- for policy in shop.policies -%}
+      <a href="{{ policy.url }}"{% if request.path == policy.url %} aria-current="page"{% endif %}>{{ policy.title | escape }}</a>
+    {%- endfor -%}
+  </nav>
+{%- endif -%}

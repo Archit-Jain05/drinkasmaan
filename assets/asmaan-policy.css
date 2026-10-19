@@ -1,0 +1,171 @@
+/* Store policy pages (/policies/...). Loaded only there (layout/theme.liquid).
+   Shopify renders the markup itself:
+   .shopify-policy__container > .shopify-policy__title > h1
+                              > .shopify-policy__body > .rte > the policy text */
+
+body.template-policy #MainContent {
+  padding: calc(var(--asmaan-header-h, 90px) + clamp(2rem, 5vw, 3.5rem)) 1.25rem clamp(4rem, 9vw, 7.5rem);
+}
+
+/* The four policies, linked to each other (snippets/asmaan-policy-nav.liquid) */
+.asmaan-policy-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.75rem;
+  max-width: 46rem;
+  margin: 0 auto clamp(2.75rem, 6vw, 4.5rem);
+}
+.asmaan-policy-nav a {
+  font-family: var(--asmaan-font-primary);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.asmaan-policy-nav a:hover,
+.asmaan-policy-nav a:focus-visible {
+  color: #fff;
+}
+.asmaan-policy-nav a[aria-current="page"] {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.85);
+}
+
+.shopify-policy__container {
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+/* Page title: the same centred display type as the other pages */
+.shopify-policy__title {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.shopify-policy__title h1 {
+  margin: 0;
+  font-family: var(--asmaan-font-primary);
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: var(--asmaan-track-display);
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.shopify-policy__body .rte {
+  font-family: var(--asmaan-font-primary);
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  letter-spacing: var(--asmaan-track-body);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* "Last updated" opens every policy: set it under the title as a quiet date line */
+.shopify-policy__body .rte > p:first-child {
+  text-align: center;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 clamp(2.5rem, 6vw, 3.75rem);
+}
+
+.shopify-policy__body .rte p {
+  margin: 0 0 1.1em;
+}
+
+/* Numbered sections: a hairline above each, the heading in white */
+.shopify-policy__body .rte h3 {
+  margin: 2.75rem 0 0.9rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  font-family: var(--asmaan-font-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: var(--asmaan-track-display);
+  color: #fff;
+}
+
+.shopify-policy__body .rte ul {
+  list-style: none;
+  margin: 0 0 1.25em;
+  padding: 0;
+}
+.shopify-policy__body .rte li {
+  position: relative;
+  margin-bottom: 0.45em;
+  padding-left: 1.5rem;
+}
+.shopify-policy__body .rte li::before {
+  content: "";
+  position: absolute;
+  left: 0.1rem;
+  top: 0.875em;
+  width: 0.6rem;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.shopify-policy__body .rte a {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  transition: text-decoration-color 0.2s ease;
+  overflow-wrap: anywhere;
+}
+.shopify-policy__body .rte a:hover {
+  text-decoration-color: #fff;
+}
+
+.shopify-policy__body .rte strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Shipping policy: delivery times */
+.shopify-policy__body .rte table {
+  width: 100%;
+  margin: 0.5rem 0 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.shopify-policy__body .rte th,
+.shopify-policy__body .rte td {
+  padding: 0.8rem 1rem 0.8rem 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+.shopify-policy__body .rte th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.shopify-policy__body .rte td:first-child {
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .asmaan-policy-nav {
+    gap: 0.5rem 1.25rem;
+  }
+  .shopify-policy__body .rte {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .shopify-policy__body .rte h3 {
+    margin-top: 2.25rem;
+    padding-top: 1.25rem;
+    font-size: 1.125rem;
+  }
+}
