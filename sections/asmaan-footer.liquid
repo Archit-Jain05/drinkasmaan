@@ -31,6 +31,12 @@
               {%- for policy in shop.policies -%}
                 <li><a href="{{ policy.url }}" class="asmaan-footer-link">{{ policy.title | upcase | escape }}</a></li>
               {%- endfor -%}
+              {%- comment -%} Pages on the "legal" template (Pricing details) sit with the policies. {%- endcomment -%}
+              {%- for legal_page in pages -%}
+                {%- if legal_page.template_suffix == 'legal' -%}
+                  <li><a href="{{ legal_page.url }}" class="asmaan-footer-link">{{ legal_page.title | upcase | escape }}</a></li>
+                {%- endif -%}
+              {%- endfor -%}
               {%- liquid
                 # Same rule as the navbar menu: while the page this links to is hidden or deleted,
                 # leave the link out instead of sending people to a 404.

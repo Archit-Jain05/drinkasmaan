@@ -1,0 +1,21 @@
+{%- comment -%}
+  A page that reads like the store policies (Pricing details and similar). It outputs the same
+  markup Shopify renders for /policies/*, so assets/asmaan-policy.css styles both, and the
+  policy links (snippets/asmaan-policy-nav.liquid) and footer list it next to the policies.
+  To use it, choose the "legal" template for a page in Online Store > Pages.
+{%- endcomment -%}
+<div class="shopify-policy__container">
+  <div class="shopify-policy__title">
+    <h1>{{ page.title | escape }}</h1>
+  </div>
+  <div class="shopify-policy__body">
+    <div class="rte">{{ page.content }}</div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Legal page",
+  "settings": []
+}
+{% endschema %}

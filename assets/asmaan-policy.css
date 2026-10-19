@@ -1,9 +1,10 @@
-/* Store policy pages (/policies/...). Loaded only there (layout/theme.liquid).
-   Shopify renders the markup itself:
+/* Store policy pages (/policies/...) and pages on the "legal" template (Pricing details).
+   Loaded only there (layout/theme.liquid, which also sets body.is-legal-doc). Shopify renders
+   the policy markup itself; sections/main-legal-page.liquid outputs the same for pages:
    .shopify-policy__container > .shopify-policy__title > h1
-                              > .shopify-policy__body > .rte > the policy text */
+                              > .shopify-policy__body > .rte > the text */
 
-body.template-policy #MainContent {
+body.is-legal-doc #MainContent {
   padding: calc(var(--asmaan-header-h, 90px) + clamp(2rem, 5vw, 3.5rem)) 1.25rem clamp(4rem, 9vw, 7.5rem);
 }
 
@@ -153,6 +154,15 @@ body.template-policy #MainContent {
 }
 .shopify-policy__body .rte td:first-child {
   color: #fff;
+}
+/* Pricing table: keep the price column ("Rs. 1,199") on one line */
+.shopify-policy__body .rte td:last-child:nth-child(3) {
+  white-space: nowrap;
+}
+/* A heading straight after a table: the table's last rule already separates them */
+.shopify-policy__body .rte table + h3 {
+  border-top: 0;
+  padding-top: 0;
 }
 
 @media (max-width: 767px) {

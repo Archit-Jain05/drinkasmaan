@@ -1,14 +1,18 @@
 {% doc %}
-  Links between the store policies, shown above each policy page (layout/theme.liquid).
-  shop.policies lists only the policies that have text.
+  Links between the store policies and the pages on the "legal" template (Pricing details),
+  shown above each of them (layout/theme.liquid). shop.policies lists only the policies that
+  have text; pages lists only published pages, so a hidden page drops out by itself.
 
   @example
   {% render 'asmaan-policy-nav' %}
 {% enddoc %}
-{%- if shop.policies.size > 1 -%}
-  <nav class="asmaan-policy-nav" aria-label="Store policies">
-    {%- for policy in shop.policies -%}
-      <a href="{{ policy.url }}"{% if request.path == policy.url %} aria-current="page"{% endif %}>{{ policy.title | escape }}</a>
-    {%- endfor -%}
-  </nav>
-{%- endif -%}
+<nav class="asmaan-policy-nav" aria-label="Store policies">
+  {%- for policy in shop.policies -%}
+    <a href="{{ policy.url }}"{% if request.path == policy.url %} aria-current="page"{% endif %}>{{ policy.title | escape }}</a>
+  {%- endfor -%}
+  {%- for legal_page in pages -%}
+    {%- if legal_page.template_suffix == 'legal' -%}
+      <a href="{{ legal_page.url }}"{% if request.path == legal_page.url %} aria-current="page"{% endif %}>{{ legal_page.title | escape }}</a>
+    {%- endif -%}
+  {%- endfor -%}
+</nav>

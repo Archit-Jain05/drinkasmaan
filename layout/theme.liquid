@@ -36,7 +36,10 @@
     {{ 'asmaan-mobile.css' | asset_url | stylesheet_tag }}
     {%- comment -%} Night-sky background and logo; overrides the black surfaces above. {%- endcomment -%}
     {{ 'asmaan-brand.css' | asset_url | stylesheet_tag }}
-    {%- if request.page_type == 'policy' -%}
+    {%- comment -%} Store policies, and pages on the "legal" template (Pricing details), share one look. {%- endcomment -%}
+    {%- assign legal_doc = false -%}
+    {%- if request.page_type == 'policy' or template.suffix == 'legal' -%}{%- assign legal_doc = true -%}{%- endif -%}
+    {%- if legal_doc -%}
       {{ 'asmaan-policy.css' | asset_url | stylesheet_tag }}
     {%- endif -%}
 
@@ -62,7 +65,7 @@
   </head>
 
   {%- comment -%} Policy pages have no template name; without page_type they fell back to template-index and took the homepage's sky. {%- endcomment -%}
-  <body class="template-{{ template.name | default: request.page_type | default: 'index' }} min-h-full text-white antialiased bg-black">
+  <body class="template-{{ template.name | default: request.page_type | default: 'index' }}{% if legal_doc %} is-legal-doc{% endif %} min-h-full text-white antialiased bg-black">
     {% render 'asmaan-sky' %}
     <a class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:p-4" href="#MainContent">
       Skip to content
@@ -89,7 +92,7 @@
     {%- endunless -%}
     <div id="top">
       <main id="MainContent" role="main" tabindex="-1">
-        {%- if request.page_type == 'policy' -%}{% render 'asmaan-policy-nav' %}{%- endif -%}
+        {%- if legal_doc -%}{% render 'asmaan-policy-nav' %}{%- endif -%}
         {{ content_for_layout }}
       </main>
     </div>
