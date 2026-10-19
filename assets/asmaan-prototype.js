@@ -70,12 +70,13 @@
   var CLOSE_UP_LID = 0.15; // desktop: the lid's distance down from the top, as a share of the screen
   var CLOSE_UP_FOLLOW = 0.2; // share of the icon's travel the camera follows
   // The label's benefit icon column: its u on the print, and each icon's centre measured down
-  // from the top of the print (research, cortisol, zero sugar, focus). The close-up turns that
-  // column to the camera once, then each benefit section glides the view down to its own icon.
-  var ICON_COLUMN_U = 0.75;
-  var ICON_V = [0.21, 0.417, 0.607, 0.792];
-  // The label's icons, top to bottom: 0 research backed ingredients, 1 ashwagandha manages cortisol,
-  // 2 zero sugar, 3 sustained focus boost. One entry per benefit section, top to bottom. The sections are in
+  // from the top of the print (research, stress response, sugar free, focus). The close-up turns
+  // that column to the camera once, then each benefit section glides the view down to its own icon.
+  // Measured off the final label artwork (Oct 2026), with the wrap turned so the wordmark is at u 0.5.
+  var ICON_COLUMN_U = 0.691;
+  var ICON_V = [0.18, 0.358, 0.526, 0.692];
+  // The label's icons, top to bottom: 0 research backed ingredients, 1 ashwagandha helps manage stress
+  // response, 2 sugar free, 3 L-theanine helps with focus. One entry per benefit section, top to bottom. The sections are in
   // the same order (caffeine from green coffee, L-theanine and ashwagandha, zero sugar, colour from food) so the
   // spotlight only ever travels down the column.
   var BENEFIT_ICON = [0, 1, 2, 3];

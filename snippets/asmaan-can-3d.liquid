@@ -55,13 +55,15 @@
     endif
   endif
 
+  # Turns that bring each panel of the final label round to the camera: right = benefit icons,
+  # back = ingredients and nutrition, left = founder's note. Same values as VIEW_SPIN in the engine.
   case can_view
     when 'right'
-      assign spin = -1.5707963
+      assign spin = -1.2
     when 'back'
-      assign spin = 3.1415927
+      assign spin = -2.482
     when 'left'
-      assign spin = 1.5707963
+      assign spin = 1.929
     else
       assign spin = 0
   endcase
