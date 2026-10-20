@@ -1724,8 +1724,10 @@
             }
 
             // Spin speed of this can from its own spin (not the scroll pose). A jump this large in one
-            // frame is the hand-over between carousel and single can, not real spinning.
-            if (stage3D.spray && !isMotionOff && dt > 0 && focus > 0.5 && (window.ASMAAN_CONFIG || {}).enableCondensation !== false) {
+            // frame is the hand-over between carousel and single can, not real spinning. No spray in
+            // the close-up (zooming in, on the icons, zooming out): the can is held facing its icons
+            // there, so dragging only threw water off a can that wasn't turning.
+            if (stage3D.spray && !isMotionOff && dt > 0 && focus > 0.5 && closeUp <= 0 && (window.ASMAAN_CONFIG || {}).enableCondensation !== false) {
               var dSpin = canObj.spinAngle - (canObj.prevSpin === undefined ? canObj.spinAngle : canObj.prevSpin);
               if (Math.abs(dSpin) < 1.2) stage3D.spray.emit(canObj, dSpin / dt, dt);
             }
