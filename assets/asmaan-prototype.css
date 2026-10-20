@@ -2040,21 +2040,23 @@ input:focus-visible {
   box-sizing: border-box !important;
 }
 .navbar_slide-bg {
-  /* a full-width bar pinned to the top edge. The floating box (a capsule, then rounded
-     corners) left a strip above it where the page scrolled through; a hairline, not a
-     drop shadow, separates the bar from the section under it */
+  /* full width from the top edge, fading out at the bottom into the page. Frosted, so it
+     takes on the colours behind it; while a can is in focus, the can's colours lie over it
+     (::before below). The floating box this replaced left a strip above it where the page
+     scrolled through */
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
   right: 0 !important;
-  bottom: 0 !important;
+  bottom: -2.25rem !important; /* the fade below starts under the logo row, not across it */
   width: 100% !important;
-  height: 100% !important;
-  background: rgba(5, 5, 8, 0.94) !important;
-  backdrop-filter: blur(28px) !important;
-  -webkit-backdrop-filter: blur(28px) !important;
+  height: auto !important;
+  background: rgba(8, 5, 22, 0.55) !important; /* night violet: thin enough to blend, thick enough that big headlines don't read through the logo */
+  backdrop-filter: blur(40px) saturate(1.4) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(1.4) !important;
+  -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent) !important;
+  mask-image: linear-gradient(to bottom, #000 74%, transparent) !important;
   border: 0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   transform: translateY(-100%) !important;
@@ -2068,6 +2070,30 @@ input:focus-visible {
 .navbar.is-hovered .navbar_slide-bg {
   transform: translateY(0) !important;
   opacity: 1 !important;
+}
+/* The can in focus (--taste-primary / --taste-secondary, set on a flavour change) as a
+   gradient, brightest under the wordmark. --asmaan-nav-tint is how much of it shows: 0 by
+   default, so the bar only blends in; the homepage follows its flavour sky, and pages about
+   one can (body.is-can-page, layout/theme.liquid) show it fully. The colours cross-fade
+   through the sky's registered properties in asmaan-brand.css. */
+.navbar_slide-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  --asmaan-sky-deep: var(--taste-primary, #2a1d4a);
+  --asmaan-sky-glow: var(--taste-secondary, #9089d3);
+  background: linear-gradient(90deg,
+    color-mix(in oklab, var(--asmaan-sky-glow) 30%, var(--asmaan-sky-deep)) 0%,
+    color-mix(in oklab, var(--asmaan-sky-glow) 55%, var(--asmaan-sky-deep)) 50%,
+    color-mix(in oklab, var(--asmaan-sky-glow) 30%, var(--asmaan-sky-deep)) 100%);
+  opacity: calc(var(--asmaan-nav-tint, 0) * 0.85);
+  transition: --asmaan-sky-deep 0.9s ease, --asmaan-sky-glow 0.9s ease, opacity 0.4s ease;
+}
+body.template-index {
+  --asmaan-nav-tint: var(--asmaan-sky-flavour, 1);
+}
+body.is-can-page {
+  --asmaan-nav-tint: 1;
 }
 .navbar_content {
   position: relative !important;

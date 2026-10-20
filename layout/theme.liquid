@@ -64,8 +64,12 @@
     {{ content_for_header }}
   </head>
 
+  {%- comment -%} Pages about one can (a flavour's product page, the Drink page): the header bar wears that can's colours. {%- endcomment -%}
+  {%- assign can_page = false -%}
+  {%- if template.name == 'product' and template.suffix == blank -%}{%- assign can_page = true -%}{%- endif -%}
+  {%- if template.name == 'page' and template.suffix == 'shop' -%}{%- assign can_page = true -%}{%- endif -%}
   {%- comment -%} Policy pages have no template name; without page_type they fell back to template-index and took the homepage's sky. {%- endcomment -%}
-  <body class="template-{{ template.name | default: request.page_type | default: 'index' }}{% if legal_doc %} is-legal-doc{% endif %} min-h-full text-white antialiased bg-black">
+  <body class="template-{{ template.name | default: request.page_type | default: 'index' }}{% if legal_doc %} is-legal-doc{% endif %}{% if can_page %} is-can-page{% endif %} min-h-full text-white antialiased bg-black">
     {% render 'asmaan-sky' %}
     <a class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-black focus:p-4" href="#MainContent">
       Skip to content
