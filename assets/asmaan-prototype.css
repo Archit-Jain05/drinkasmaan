@@ -2051,7 +2051,9 @@ input:focus-visible {
   bottom: -2.25rem !important; /* the fade below starts under the logo row, not across it */
   width: 100% !important;
   height: auto !important;
-  background: rgba(8, 5, 22, 0.55) !important; /* night violet: thin enough to blend, thick enough that big headlines don't read through the logo */
+  /* night violet: thin enough to blend, thick enough that big headlines don't read through the
+     logo; thinner still while a can's colours lie over it, so the scene shows through */
+  background: rgba(8, 5, 22, calc(0.55 - var(--asmaan-nav-tint, 0) * 0.25)) !important;
   backdrop-filter: blur(40px) saturate(1.4) !important;
   -webkit-backdrop-filter: blur(40px) saturate(1.4) !important;
   -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent) !important;
@@ -2071,8 +2073,9 @@ input:focus-visible {
   transform: translateY(0) !important;
   opacity: 1 !important;
 }
-/* The can in focus (--taste-primary / --taste-secondary, set on a flavour change) as a
-   gradient, brightest under the wordmark. --asmaan-nav-tint is how much of it shows: 0 by
+/* The can in focus (--taste-primary / --taste-secondary, set on a flavour change) as a glow
+   from the top edge behind the wordmark, dissolving downwards. An even band read as a lit
+   stripe over the darker sections. --asmaan-nav-tint is how much of it shows: 0 by
    default, so the bar only blends in; the homepage follows its flavour sky, and pages about
    one can (body.is-can-page, layout/theme.liquid) show it fully. The colours cross-fade
    through the sky's registered properties in asmaan-brand.css. */
@@ -2082,11 +2085,10 @@ input:focus-visible {
   inset: 0;
   --asmaan-sky-deep: var(--taste-primary, #2a1d4a);
   --asmaan-sky-glow: var(--taste-secondary, #9089d3);
-  background: linear-gradient(90deg,
-    color-mix(in oklab, var(--asmaan-sky-glow) 30%, var(--asmaan-sky-deep)) 0%,
-    color-mix(in oklab, var(--asmaan-sky-glow) 55%, var(--asmaan-sky-deep)) 50%,
-    color-mix(in oklab, var(--asmaan-sky-glow) 30%, var(--asmaan-sky-deep)) 100%);
-  opacity: calc(var(--asmaan-nav-tint, 0) * 0.85);
+  background:
+    radial-gradient(60% 150% at 50% -25%, color-mix(in oklab, var(--asmaan-sky-glow) 60%, var(--asmaan-sky-deep)) 0%, transparent 72%),
+    linear-gradient(to bottom, color-mix(in oklab, var(--asmaan-sky-glow) 18%, var(--asmaan-sky-deep)) 0%, transparent 100%);
+  opacity: calc(var(--asmaan-nav-tint, 0) * 0.9);
   transition: --asmaan-sky-deep 0.9s ease, --asmaan-sky-glow 0.9s ease, opacity 0.4s ease;
 }
 body.template-index {
