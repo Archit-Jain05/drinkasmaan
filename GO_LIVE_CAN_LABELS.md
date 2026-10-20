@@ -1,8 +1,9 @@
 # Final can labels — going live
 
-The site has been updated to the final can labels (Mango, Jamun, Mixed Berries, from the client's
-Illustrator PDFs, 19 Oct 2026). The theme changes are committed on `main` **locally and not pushed**.
-Pushing `main` publishes the live store, so do the steps below in order.
+The site shows the final can labels (Mango, Jamun, Mixed Berries, from the client's Illustrator
+PDFs, 19 Oct 2026). They went live on 20 Oct 2026: the product images were replaced and the theme
+pushed within the same minute (section 2, kept as the record). Section 1 still needs the client,
+and the Apps Script in 2c still needs the new links.
 
 Files that only exist on this Mac (not in git): `.qa/labels-2026-10-19/`
 - `upload/` — the replacement Shopify product images (step 2b)
@@ -27,7 +28,11 @@ the can itself, so they may need fixing in the artwork before it goes to print.
 | Tagline | "AMBITION FUEL" | "Ambition Tonic" everywhere (splash, footer, SEO title, shop, carton in the drink-page animation) |
 | Placeholders | "[phone #]", "[email id]", "Lic. No.:--------" | — |
 
-## 2. Go live (do a, b and c together, minutes apart)
+## 2. Go live (done 20 Oct 2026, except the Apps Script in c)
+
+Rolling back: the replaced originals are saved in `.qa/labels-2026-10-19/media-backup-2026-10-20/`.
+`python3 .qa/labels-2026-10-19/tools/swap_media.py swap media-backup-2026-10-20` puts them back in
+the same slots; then revert commits 55e0fb0 and 1bf1eac and push.
 
 **a. Push the theme**
 
@@ -57,15 +62,15 @@ Why together: the theme now aims the homepage close-up spotlight and the product
 buttons at the new label. Until the images are swapped, the 3D cans still wear the old label, and
 the spotlight lands beside the icons.
 
-(Claude can swap all of these in place through the Admin API, keeping the same image slots and
-order. Ask it to.)
+(Done through the Admin API on 20 Oct: `fileUpdate` replaced each file in place, keeping the same
+image slots, IDs and order.)
 
-**c. Update the free-sample email script**
+**c. Update the free-sample email script** (done in `PRELAUNCH_SETUP.md`; the Apps Script still needs it)
 
-`PRELAUNCH_SETUP.md` has the can photos' CDN links hardcoded in the Google Apps Script (`CANS`).
-New product images get new links, so copy each product's new front image URL into `CANS` in the
-Apps Script and redeploy (Deploy › Manage deployments › edit › New version). Update the same three
-links in `PRELAUNCH_SETUP.md`.
+The Google Apps Script hardcodes the can photos' CDN links (`CANS`). The file names did not change,
+only the `?v=` number, and links with the old numbers keep serving the old cans. Copy the three
+`CANS` links from `PRELAUNCH_SETUP.md` into the Apps Script and redeploy (Deploy › Manage
+deployments › edit › New version).
 
 ## 3. Check once it's live (hard-refresh; the CDN can lag a few minutes)
 
@@ -80,11 +85,10 @@ links in `PRELAUNCH_SETUP.md`.
 
 ## Store policies (published 20 Oct 2026)
 
-Refund, Shipping and Terms of service are live (Settings › Policies, `/policies/...`), from the
-client's four documents. The Privacy policy is not yet: Shopify manages it automatically, so turn
-off automatic management under Settings › Policies › Privacy policy, then publish
-`.qa/policies-2026-10-20/privacy.html` (or ask Claude to). The old auto-generated text is saved in
-`.qa/policies-2026-10-20/backup-before.json`.
+Privacy, Refund, Shipping and Terms of service are live (Settings › Policies, `/policies/...`),
+from the client's four documents, plus Contact information (`/policies/contact-information`) and a
+Pricing details page (Online Store › Pages, on the "legal" template, `/pages/pricing-details`).
+Shopify's old auto-generated privacy policy is saved in `.qa/policies-2026-10-20/backup-before.json`.
 
 How the documents' blanks were filled, and what still needs the client:
 - Website: `xhp0ym-sn.myshopify.com` (no custom domain is connected; drinkasmaan.com does not

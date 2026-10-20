@@ -22,9 +22,9 @@ const TEAM = ['rbm299@gmail.com', 'drinkasmaan@gmail.com'];
 const INSTAGRAM = 'https://www.instagram.com/drinkasmaan';
 // Front of each can: Wild Magenta, Kala Jamun, Alphonso Mango. Served as PNG so every email app can show them.
 const CANS = [
-  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image.webp?v=1789322428',
-  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_d49a29a3-72dc-4aa7-a49f-4bd438390958.webp?v=1789322504',
-  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_9cc3ceb6-1495-47b1-88b1-b96bd5b9baea.webp?v=1789322526'
+  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image.webp?v=1792495231',
+  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_d49a29a3-72dc-4aa7-a49f-4bd438390958.webp?v=1792495228',
+  'https://cdn.shopify.com/s/files/1/0808/2400/8936/files/01_featured_front_image_9cc3ceb6-1495-47b1-88b1-b96bd5b9baea.webp?v=1792495231'
 ].map(u => u + '&format=png&width=240');
 
 // Run this ONCE from the editor (pick "authorizeOnce" in the function menu, click Run, then Allow).
