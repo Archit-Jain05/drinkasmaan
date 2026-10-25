@@ -93,8 +93,8 @@ Shopify's old auto-generated privacy policy is saved in `.qa/policies-2026-10-20
 How the documents' blanks were filled, and what still needs the client:
 - Website: `xhp0ym-sn.myshopify.com` (no custom domain is connected; drinkasmaan.com does not
   exist yet). When a domain is connected, update the URL in all four policies.
-- Email: `drinkasmaan@gmail.com` (the store's contact email). The contact page shows
-  `hello@drinkasmaan.com`, which cannot receive mail until that domain exists.
+- Email: `drinkasmaan@gmail.com` (the store's contact email). The contact page now shows it
+  too (it used `hello@drinkasmaan.com`, which cannot receive mail until that domain exists).
 - Phone: none known, so the phone lines were left out. Add a real support number (payment
   providers such as Razorpay usually expect one).
 - The policies name Asmaan Beverages and Nutrition Pvt Ltd (Dwarka, Delhi); the can label names
