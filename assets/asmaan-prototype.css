@@ -3710,6 +3710,14 @@ body.is-can-page {
   object-fit: contain;
 }
 
+.drink_flavour h3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2lh;
+  text-align: center;
+}
+
 .drink_flavour p {
   font-size: 0.875rem;
   line-height: 1.5;
