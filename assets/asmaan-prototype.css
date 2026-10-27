@@ -3717,7 +3717,6 @@ body.is-can-page {
 
 .drink_flavour-cta {
   margin-top: auto;
-  align-self: center;
   padding-top: var(--pad-s);
   font-family: var(--font-mono);
   font-size: 0.6875rem;
@@ -3727,6 +3726,10 @@ body.is-can-page {
   text-decoration: none;
   border-bottom: 1px solid var(--taste-secondary, #9089d3);
   transition: opacity 0.25s;
+}
+
+.drink_flavour .drink_flavour-cta {
+  align-self: center;
 }
 
 .drink_flavour-cta:hover {
