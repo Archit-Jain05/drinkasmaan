@@ -339,7 +339,7 @@
     <!-- Product Information & Purchase Flow -->
     <div>
       {%- if section.settings.show_vendor -%}
-        <span style="font-family: var(--font-mono, monospace); font-size: 12px; text-transform: uppercase; letter-spacing: 0.25em; display: block; margin-bottom: 0.5rem; color: {{ accent_color }};">
+        <span style="font-family: var(--font-mono, monospace); font-size: 12px; text-transform: capitalize; letter-spacing: 0.25em; display: block; margin-bottom: 0.5rem; color: {{ accent_color }};">
           {{ product.type | default: 'Ambition Tonic' }} &bull; {{ product.vendor | default: 'Asmaan' }}
         </span>
       {%- endif -%}
@@ -350,7 +350,7 @@
 
       {%- if section.settings.show_flavours -%}
         {%- assign flavour_handles = section.settings.flavour_handles | split: ',' -%}
-        <span style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.6rem;">Flavours</span>
+        <span style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: capitalize; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.6rem;">Flavours</span>
         <div class="flavour-chips" role="group" aria-label="Flavour">
           {%- for h in flavour_handles -%}
             {%- assign fh = h | strip -%}
