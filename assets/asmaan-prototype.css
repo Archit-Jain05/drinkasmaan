@@ -3678,7 +3678,8 @@ body.is-can-page {
 .drink_flavour {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: var(--pad-xs);
   padding: var(--pad-l);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -3716,11 +3717,12 @@ body.is-can-page {
 
 .drink_flavour-cta {
   margin-top: auto;
+  align-self: center;
   padding-top: var(--pad-s);
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.2em;
-  text-transform: uppercase;
+  text-transform: capitalize;
   color: #fff;
   text-decoration: none;
   border-bottom: 1px solid var(--taste-secondary, #9089d3);
