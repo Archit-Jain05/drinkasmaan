@@ -204,7 +204,7 @@ body.template-product {
   --asmaan-sky: linear-gradient(180deg, #04020b 0%, #07041a 16%, #0e0729 34%, #180c42 52%, #261263 70%, #391c89 86%, #5530a3 100%);
 }
 body.template-product .asmaan-sky__orb.is-1 {
-  background: radial-gradient(circle, rgba(124, 92, 255, 0.6), transparent 68%);
+  display: none; /* the glow at the top of the page */
 }
 .asmaan-sky__flavour {
   display: none;
