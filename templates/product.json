@@ -100,7 +100,7 @@
         "acc_1_title": "Scientific Formulation",
         "acc_1_content": "Zero sugar and no calories in the can, with 34.5mg of low caffeine, 100mg of L-Theanine for a crash-free focus boost, and 300mg of KSM-66 Ashwagandha to manage cortisol and support memory and brain function.",
         "acc_2_title": "Ingredients",
-        "acc_2_content": "Carbonated Water, Vitamin & Mineral Premix (Magnesium Chloride, Vitamin B3, Vitamin B6, Vitamin B12), L-Theanine, Acidity Regulators (INS330, INS331(iii)), Ashwagandha (KSM-66) (0.12%), Caffeine (Green Tea Extract), Preservatives (INS202, INS211), Nature-Identical Flavour (Mango), Black Salt, Natural Colour (INS100), Carotenoid (INS160a), Non-Caloric Sweeteners (INS955, INS960).",
+        "acc_2_content": "Carbonated Water, Vitamin & Mineral Premix (Vitamin B3, Vitamin B6, Vitamin B12), L-Theanine, Acidity Regulators (INS330, INS331(iii)), Ashwagandha (KSM-66) (0.12%), Caffeine (Green Tea Extract), Preservatives (INS202, INS211), Nature-Identical Flavour (Mango), Black Salt, Natural Colour (INS100), Carotenoid (INS160a), Non-Caloric Sweeteners (INS955, INS960).",
         "acc_3_title": "Shipping & Freshness Guarantee",
         "acc_3_content": "All orders are dispatched in custom recyclable shockproof boxes directly from our facility. Free express nationwide courier delivery on all orders over [free_shipping_threshold]."
       }
@@ -156,16 +156,6 @@
             "description": "Low caffeine, drawn from green tea extract rather than synthesised. Slower in and longer held, so the lift arrives without the crash.",
             "show_in_pack_scene": true,
             "pack_scene_text": "Low caffeine from green tea extract. Slower release and longer sustained attention, with no crash."
-          }
-        },
-        "story_active_4": {
-          "type": "active",
-          "settings": {
-            "dose": "110 mg",
-            "name": "Magnesium",
-            "description": "Added as magnesium chloride in the vitamin and mineral premix, to keep the body calm while the mind works.",
-            "show_in_pack_scene": false,
-            "pack_scene_text": ""
           }
         },
         "story_active_5": {
@@ -265,7 +255,6 @@
         "story_active_1",
         "story_active_2",
         "story_active_3",
-        "story_active_4",
         "story_active_5",
         "story_fact_1",
         "story_fact_3",
@@ -284,7 +273,7 @@
         "spacing": 130,
         "show_formula": true,
         "formula_heading": "What is\nin it",
-        "formula_intro": "Five actives, at doses worth printing. No proprietary blend, nothing rounded up, and nothing in there to make the label look longer.",
+        "formula_intro": "Four actives, at doses worth printing. No proprietary blend, nothing rounded up, and nothing in there to make the label look longer.",
         "facts_heading": "On the can",
         "facts_note": "Serve cold enough that the first sip is a decision. Once open, keep it refrigerated and finish it the same day.",
         "show_pack_scene": true,

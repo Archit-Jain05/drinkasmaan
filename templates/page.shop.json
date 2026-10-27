@@ -88,15 +88,6 @@
             "pack_scene_text": "Clean lift from green coffee beans. Slower release, longer sustained attention, zero crash."
           }
         },
-        "active_4": {
-          "type": "active",
-          "settings": {
-            "dose": "60 mg",
-            "name": "Magnesium bisglycinate",
-            "description": "The form that is actually absorbed, rather than the cheap oxide that mostly is not.",
-            "show_in_pack_scene": false
-          }
-        },
         "active_5": {
           "type": "active",
           "settings": {
@@ -220,7 +211,6 @@
         "active_1",
         "active_2",
         "active_3",
-        "active_4",
         "active_5",
         "fact_1",
         "fact_3",
