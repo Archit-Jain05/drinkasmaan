@@ -194,17 +194,16 @@ body.template-index {
 body.template-index .asmaan-sky__orb.is-1 {
   background: radial-gradient(circle, rgba(124, 92, 255, 0.6), transparent 68%);
 }
-body.template-index .asmaan-sky__orb.is-2,
-body.template-product .asmaan-sky__orb.is-2 {
+body.template-index .asmaan-sky__orb.is-2 {
   background: radial-gradient(circle, rgba(200, 110, 255, 0.48), transparent 68%);
 }
 /* Product pages keep the plain night sky: no flavour-coloured glow from the bottom of the page or the orbs
    (the flavour is already on the can and the cards). */
 body.template-product {
-  --asmaan-sky: linear-gradient(180deg, #04020b 0%, #07041a 16%, #0e0729 34%, #180c42 52%, #261263 70%, #391c89 86%, #5530a3 100%);
+  --asmaan-sky: linear-gradient(180deg, #030208 0%, #04030c 45%, #060414 75%, #0a0720 100%);
 }
-body.template-product .asmaan-sky__orb.is-1 {
-  display: none; /* the glow at the top of the page */
+body.template-product .asmaan-sky__orb {
+  display: none; /* no drifting glows: a plain black night sky with the stars */
 }
 .asmaan-sky__flavour {
   display: none;
