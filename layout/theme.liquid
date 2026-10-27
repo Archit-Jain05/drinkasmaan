@@ -2,6 +2,25 @@
 <html class="no-js min-h-full antialiased" lang="{{ request.locale.iso_code }}">
   <head>
     <meta charset="utf-8">
+    {%- comment -%}
+      Pre-launch lock: only the three flavour product pages are open. Everything else (home, pages,
+      collections, other products, blog, search) is sent to the Jamun page. Cart, checkout, customer
+      accounts, policies and gift cards stay reachable. To open the whole site again, set
+      asmaan_prelaunch to false. The theme editor preview is never redirected.
+    {%- endcomment -%}
+    {%- assign asmaan_prelaunch = true -%}
+    {%- assign asmaan_open_products = "kala-jamun,alphonso-mango,wild-magenta" | split: "," -%}
+    {%- assign asmaan_allowed = false -%}
+    {%- if request.design_mode or request.page_type == "cart" or request.page_type == "policy" or request.page_type == "gift_card" or request.page_type contains "customers/" -%}
+      {%- assign asmaan_allowed = true -%}
+    {%- elsif request.page_type == "product" and asmaan_open_products contains product.handle -%}
+      {%- assign asmaan_allowed = true -%}
+    {%- endif -%}
+    {%- if asmaan_prelaunch and asmaan_allowed == false -%}
+      <meta http-equiv="refresh" content="0;url=/products/kala-jamun">
+      <script>window.location.replace("/products/kala-jamun");</script>
+      <meta name="robots" content="noindex">
+    {%- endif -%}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="#000000">
