@@ -135,7 +135,7 @@
             "name": "KSM-66 ashwagandha",
             "description": "Root extract, at the dose the research is run on. It sits under the caffeine and takes the edge off the push.",
             "show_in_pack_scene": true,
-            "pack_scene_text": "Root extract at clinical dose. Sustains calm focus and cognitive endurance during intense creative sessions."
+            "pack_scene_text": "Manages cortisol and supports memory and brain function, so focus stays calm through intense creative sessions."
           }
         },
         "story_active_2": {
@@ -145,7 +145,7 @@
             "name": "L-theanine",
             "description": "From green tea. Smooths the front of the curve, so the lift arrives as attention rather than pressure.",
             "show_in_pack_scene": true,
-            "pack_scene_text": "From organic green tea. Smooths the caffeine curve into alert, clear-headed flow with zero jitters."
+            "pack_scene_text": "Smooths the caffeine curve into a crash-free focus boost, with zero jitters."
           }
         },
         "story_active_3": {
@@ -155,7 +155,7 @@
             "name": "Natural caffeine",
             "description": "Low caffeine, drawn from green tea extract rather than synthesised. Slower in and longer held, so the lift arrives without the crash.",
             "show_in_pack_scene": true,
-            "pack_scene_text": "Clean lift from green coffee beans. Slower release, longer sustained attention, zero crash."
+            "pack_scene_text": "Low caffeine from green tea extract. Slower release and longer sustained attention, with no crash."
           }
         },
         "story_active_4": {
