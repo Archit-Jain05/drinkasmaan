@@ -2095,7 +2095,7 @@ body.template-index {
   --asmaan-nav-tint: var(--asmaan-sky-flavour, 1);
 }
 body.is-can-page {
-  --asmaan-nav-tint: 1;
+  --asmaan-nav-tint: 0; /* product pages: no flavour-coloured glow in the header */
 }
 .navbar_content {
   position: relative !important;
