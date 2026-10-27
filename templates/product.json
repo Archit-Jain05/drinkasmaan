@@ -141,7 +141,7 @@
         "story_active_2": {
           "type": "active",
           "settings": {
-            "dose": "200 mg",
+            "dose": "100 mg",
             "name": "L-theanine",
             "description": "From green tea. Smooths the front of the curve, so the lift arrives as attention rather than pressure.",
             "show_in_pack_scene": true,
@@ -151,9 +151,9 @@
         "story_active_3": {
           "type": "active",
           "settings": {
-            "dose": "100 mg",
+            "dose": "34.5 mg",
             "name": "Natural caffeine",
-            "description": "Drawn from green coffee beans rather than synthesised. Slower in, longer held, about a third less than the category.",
+            "description": "Low caffeine, drawn from green tea extract rather than synthesised. Slower in and longer held, so the lift arrives without the crash.",
             "show_in_pack_scene": true,
             "pack_scene_text": "Clean lift from green coffee beans. Slower release, longer sustained attention, zero crash."
           }
@@ -161,9 +161,9 @@
         "story_active_4": {
           "type": "active",
           "settings": {
-            "dose": "60 mg",
-            "name": "Magnesium bisglycinate",
-            "description": "The form that is actually absorbed, rather than the cheap oxide that mostly is not.",
+            "dose": "110 mg",
+            "name": "Magnesium",
+            "description": "Added as magnesium chloride in the vitamin and mineral premix, to keep the body calm while the mind works.",
             "show_in_pack_scene": false,
             "pack_scene_text": ""
           }
@@ -171,9 +171,9 @@
         "story_active_5": {
           "type": "active",
           "settings": {
-            "dose": "1.4 mg",
-            "name": "B6 with 2.5 µg B12",
-            "description": "For normal energy metabolism — the quiet half of the formula, and the half everyone forgets.",
+            "dose": "1.5 mg",
+            "name": "B6, with B3 and B12",
+            "description": "Alongside 8 mg of B3 and 2 µg of B12, for normal energy metabolism. The quiet half of the formula, and the half everyone forgets.",
             "show_in_pack_scene": false,
             "pack_scene_text": ""
           }
@@ -196,14 +196,14 @@
           "type": "fact",
           "settings": {
             "label": "Caffeine",
-            "value": "100 mg (40 mg / 100 ml)"
+            "value": "34.5 mg (13.8 mg / 100 ml)"
           }
         },
         "story_fact_5": {
           "type": "fact",
           "settings": {
             "label": "Colour",
-            "value": "From food, not dye"
+            "value": "Natural colour"
           }
         },
         "story_fact_6": {
@@ -248,7 +248,7 @@
           "type": "faq",
           "settings": {
             "question": "How much caffeine is in a can?",
-            "answer": "<p>100 mg per 250 ml can — about the same as a strong cup of coffee, with no jitters.</p>"
+            "answer": "<p>34.5 mg per 250 ml can, a low dose of natural caffeine from green tea extract, balanced with L-theanine so there are no jitters.</p>"
           }
         },
         "story_faq_3": {
