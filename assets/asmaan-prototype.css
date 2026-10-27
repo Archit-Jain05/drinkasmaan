@@ -3716,16 +3716,23 @@ body.is-can-page {
 }
 
 .drink_flavour-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
   margin-top: auto;
-  padding-top: var(--pad-s);
+  padding: 0.8rem 1.6rem;
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: capitalize;
   color: #fff;
   text-decoration: none;
-  border-bottom: 1px solid var(--taste-secondary, #9089d3);
-  transition: opacity 0.25s;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--taste-secondary, #9089d3);
+  border-radius: 9999px;
+  transition: background-color 0.25s, color 0.25s, transform 0.25s;
 }
 
 .drink_flavour .drink_flavour-cta {
@@ -3733,7 +3740,13 @@ body.is-can-page {
 }
 
 .drink_flavour-cta:hover {
-  opacity: 0.7;
+  background: #fff;
+  color: #050508;
+  transform: translateY(-1px);
+}
+.drink_flavour-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
 }
 
 .drink_reviews {
