@@ -3748,10 +3748,34 @@ body.is-can-page {
 }
 
 .drink_flavour-cta:hover {
-  background: #fff;
+  background: transparent;
   color: #050508;
   transform: translateY(-1px);
 }
+/* Hover: a white fill sweeps up from the bottom edge. */
+.drink_flavour-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.drink_flavour-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  border-radius: inherit;
+  transform: translateY(101%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.drink_flavour-cta:hover::before,
+.drink_flavour-cta:focus-visible::before {
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .drink_flavour-cta::before { transition: none; }
+}
+
 .drink_flavour-cta:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 3px;

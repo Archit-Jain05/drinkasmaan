@@ -711,8 +711,32 @@
   transition: background-color 0.25s, color 0.25s;
 }
 
-.merch_details:hover {
+/* Hover: a white fill sweeps up from the bottom edge. */
+.merch_details {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.merch_details::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: #fff;
+  border-radius: inherit;
+  transform: translateY(101%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.merch_details:hover::before,
+.merch_details:focus-visible::before {
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .merch_details::before { transition: none; }
+}
+
+.merch_details:hover {
+  background: transparent;
   color: #050508;
 }
 
