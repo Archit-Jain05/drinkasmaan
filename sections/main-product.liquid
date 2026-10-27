@@ -305,7 +305,7 @@
         <div class="can-angle-btn-list" id="can-angle-controls">
           <button type="button" class="can-angle-btn is-active" data-asmaan-can-view="front" aria-pressed="true">Front</button>
           <button type="button" class="can-angle-btn" data-asmaan-can-view="left" aria-pressed="false">Notes</button>
-          <button type="button" class="can-angle-btn" data-asmaan-can-view="back" aria-pressed="false">Nutritional</button>
+          <button type="button" class="can-angle-btn" data-asmaan-can-view="back" aria-pressed="false">Ingredients</button>
           <button type="button" class="can-angle-btn" data-asmaan-can-view="right" aria-pressed="false">Benefits</button>
         </div>
       {%- endif -%}
@@ -509,7 +509,13 @@
                 </button>
                 <div id="spec-nutrition" class="product_spec_answer" style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.6; font-family: var(--font-mono, monospace);" data-open="false">
                   <div class="product_spec_inner"><div class="product_spec_body">
-                  {{ product.metafields.custom.nutrition_facts | default: section.settings.acc_2_content }}
+                  {%- case product.handle -%}
+                  {% when 'alphonso-mango' %}{% assign flavour_ingredients = "Carbonated Water, Vitamin & Mineral Premix (Magnesium Chloride, Vitamin B3, Vitamin B6, Vitamin B12), L-Theanine, Acidity Regulators (INS330, INS331(iii)), Ashwagandha (KSM-66) (0.12%), Caffeine (Green Tea Extract), Preservatives (INS202, INS211), Nature-Identical Flavour (Mango), Black Salt, Natural Colour (INS100), Carotenoid (INS160a), Non-Caloric Sweeteners (INS955, INS960)." %}
+                  {% when 'kala-jamun' %}{% assign flavour_ingredients = "Carbonated Water, Vitamin & Mineral Premix (Magnesium Chloride, Vitamin B3, Vitamin B6, Vitamin B12), L-Theanine, Acidity Regulators (INS330, INS331(iii)), Ashwagandha (KSM-66) (0.12%), Fruit Extract Concentrate (Sweet Potato Concentrate, Apple Juice Concentrate, INS330), Caffeine (Green Tea Extract), Preservatives (INS202, INS211), Nature-Identical Flavour (Jamun), Black Salt, Non-Caloric Sweeteners (INS955, INS960), Natural Colour [Jagua (Genipin-Glycine) Blue]." %}
+                  {% when 'wild-magenta' %}{% assign flavour_ingredients = "Carbonated Water, Vitamin & Mineral Premix (Magnesium Chloride, Vitamin B3, Vitamin B6, Vitamin B12), L-Theanine, Acidity Regulators (INS330, INS331(iii)), Ashwagandha (KSM-66) (0.12%), Caffeine (Green Tea Extract), Preservatives (INS202, INS211), Nature-Identical Flavour (Mixed Berry), Black Salt, Fruit Extract Concentrate (Sweet Potato Concentrate, Apple Juice Concentrate, INS330), Non-Caloric Sweeteners (INS955, INS960)." %}
+                  {%- else -%}{%- assign flavour_ingredients = section.settings.acc_2_content -%}
+                  {%- endcase -%}
+                  {{ product.metafields.custom.nutrition_facts | default: flavour_ingredients }}
                   </div></div>
                 </div>
               </div>
@@ -1045,19 +1051,19 @@
       "type": "textarea",
       "id": "acc_1_content",
       "label": "Accordion 1 Content",
-      "default": "Combines 100mg of raw green coffee bean caffeine with 200mg of Suntheanine® L-Theanine in an optimal 1:2 ratio. This prevents vasoconstriction and eliminates peripheral nervousness, allowing sustained creative flow."
+      "default": "Zero sugar and no calories in the can, with 34.5mg of low caffeine, 100mg of L-Theanine for a crash-free focus boost, and 300mg of KSM-66 Ashwagandha to manage cortisol and support memory and brain function."
     },
     {
       "type": "text",
       "id": "acc_2_title",
       "label": "Accordion 2 Heading",
-      "default": "Full Nutrition Facts (250ml)"
+      "default": "Ingredients"
     },
     {
       "type": "textarea",
       "id": "acc_2_content",
       "label": "Accordion 2 Content",
-      "default": "Energy: 10 kcal • Protein: 0g • Fat: 0g • Total Carbohydrates: 0g • Total Sugars: 0g • Sodium: 14mg • Caffeine: 100mg • L-Theanine: 200mg • KSM-66: 300mg."
+      "default": "Carbonated Water, Vitamin & Mineral Premix (Magnesium Chloride, Vitamin B3, Vitamin B6, Vitamin B12), L-Theanine, Acidity Regulators (INS330, INS331(iii)), Ashwagandha (KSM-66) (0.12%), Caffeine (Green Tea Extract), Preservatives (INS202, INS211), Nature-Identical Flavour (Mango), Black Salt, Natural Colour (INS100), Carotenoid (INS160a), Non-Caloric Sweeteners (INS955, INS960)."
     },
     {
       "type": "text",
