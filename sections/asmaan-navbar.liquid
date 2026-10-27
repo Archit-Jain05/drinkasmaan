@@ -32,7 +32,9 @@
 
     <div class="navbar_container">
       <div class="navbar_side flex items-center gap-2">
+        {%- comment -%} Menu button hidden for the pre-launch lock; delete the hidden attribute below to show it again. {%- endcomment -%}
         <button
+          hidden
           type="button"
           class="navbar_menu-button"
           aria-expanded="false"
@@ -149,6 +151,7 @@
 </div>
 
 <style>
+  .navbar_menu-button[hidden] { display: none !important; }
   /* Menu overlay: links in a grid so the whole menu fits on one screen without scrolling.
      !important is needed because asmaan-prototype.css declares these properties !important. */
   .navbar_menu .navbar_link-list {
