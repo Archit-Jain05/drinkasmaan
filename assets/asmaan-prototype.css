@@ -3738,7 +3738,7 @@ body.is-can-page {
   color: #fff;
   text-decoration: none;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--taste-secondary, #9089d3);
+  border: 1px solid var(--swatch, var(--taste-secondary, #9089d3));
   border-radius: 9999px;
   transition: background-color 0.25s, color 0.25s, transform 0.25s;
 }
@@ -3786,7 +3786,8 @@ body.is-can-page {
 }
 .drink_flavour-cta:hover,
 .drink_flavour-cta:focus-visible {
-  background: rgba(144, 137, 211, 0.28);
+  background: color-mix(in srgb, var(--swatch, var(--taste-secondary, #9089d3)) 72%, #000);
+  border-color: var(--swatch, var(--taste-secondary, #9089d3));
 }
 .drink_flavour-cta:hover::before,
 .drink_flavour-cta:focus-visible::before {

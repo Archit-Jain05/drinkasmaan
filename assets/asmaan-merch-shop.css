@@ -747,7 +747,7 @@
 }
 .merch_details:hover,
 .merch_details:focus-visible {
-  background: rgba(144, 137, 211, 0.28);
+  background: color-mix(in srgb, var(--swatch, var(--taste-secondary, #9089d3)) 72%, #000);
 }
 .merch_details:hover::before,
 .merch_details:focus-visible::before {
