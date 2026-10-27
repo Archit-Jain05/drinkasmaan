@@ -350,6 +350,7 @@
 
       {%- if section.settings.show_flavours -%}
         {%- assign flavour_handles = section.settings.flavour_handles | split: ',' -%}
+        <span style="display: block; font-family: var(--font-mono, monospace); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: rgba(255,255,255,0.6); margin-bottom: 0.6rem;">Flavours</span>
         <div class="flavour-chips" role="group" aria-label="Flavour">
           {%- for h in flavour_handles -%}
             {%- assign fh = h | strip -%}
