@@ -14,6 +14,7 @@
 
         <!-- Navigation Columns -->
         <div class="asmaan-footer-columns">
+          {%- comment -%} Primary navigation column hidden on request; remove this comment wrapper to show it again.
           <!-- Column 1: Primary Navigation -->
           <nav class="asmaan-footer-nav-col" aria-label="Footer Primary Navigation">
             <ul class="asmaan-footer-links">
@@ -24,6 +25,7 @@
               <li><a href="{{ section.settings.link_5_url | default: '/pages/contact' }}" class="asmaan-footer-link">{{ section.settings.link_5_label | default: 'SUPPORT' }}</a></li>
             </ul>
           </nav>
+          {%- endcomment -%}
 
           <!-- Column 2: Legal and Policies -->
           <nav class="asmaan-footer-nav-col" aria-label="Footer Policies and Legal">
