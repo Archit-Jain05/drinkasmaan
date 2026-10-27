@@ -64,9 +64,7 @@
           {{ img_front | image_url: width: 800 | image_tag: loading: 'lazy', alt: f_title }}
         {%- endif -%}
       </div>
-      {%- if f_tag != blank -%}<span class="merch_tag">{{ f_tag | escape }}</span>{%- endif -%}
       <h3 class="heading-style-h3">{{ title_words.first | escape }}{% if title_words.size > 1 %}<br>{{ f_title | remove_first: title_words.first | strip | escape }}{% endif %}</h3>
-      {%- if f_blurb != blank -%}<p class="text-white/60">{{ f_blurb | escape }}</p>{%- endif -%}
       {%- if is_current or p == blank -%}
         <a href="#buy" class="drink_flavour-cta">{{ section.settings.label_in_pack }}</a>
       {%- else -%}

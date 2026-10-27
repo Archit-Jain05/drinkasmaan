@@ -94,9 +94,6 @@
                     </span>
                   {%- endif -%}
                   <span class="asmaan-range-title relative heading-style-h3">{{ c_title | escape }}</span>
-                  {%- if c_tag != blank -%}
-                    <span class="asmaan-range-tag relative font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ c_tag | escape }}</span>
-                  {%- endif -%}
                 </button>
               </li>
               {%- assign card_index = card_index | plus: 1 -%}

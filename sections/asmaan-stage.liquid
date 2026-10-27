@@ -341,7 +341,6 @@
                         -%}
                         <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}" {{ block.shopify_attributes }}>
                           <p class="text-white/80">{{ b_blurb }}</p>
-                          <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ b_tag }}</p>
                         </div>
                       {%- endfor -%}
                     {%- elsif stage_collection != blank and stage_collection.products.size > 0 -%}
@@ -352,7 +351,6 @@
                         -%}
                         <div class="carousel_slide" data-active="{% if forloop.first %}true{% else %}false{% endif %}">
                           <p class="text-white/80">{{ b_blurb }}</p>
-                          <p class="mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ b_tag }}</p>
                         </div>
                       {%- endfor -%}
                     {%- endif -%}
