@@ -711,33 +711,67 @@
   transition: background-color 0.25s, color 0.25s;
 }
 
-/* Hover: a white fill sweeps up from the bottom edge. */
+/* Hover: soda fizz. The pill tints like a filled glass and two layers of bubbles rise through it. */
 .merch_details {
   position: relative;
   isolation: isolate;
   overflow: hidden;
 }
-.merch_details::before {
+.merch_details::before,
+.merch_details::after {
   content: "";
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 200%;
   z-index: -1;
-  background: #fff;
-  border-radius: inherit;
-  transform: translateY(101%);
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.merch_details::before {
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.75) 0 1.6px, transparent 2.4px),
+    radial-gradient(circle, rgba(255,255,255,0.55) 0 1px, transparent 1.8px),
+    radial-gradient(circle, rgba(255,255,255,0.65) 0 2.2px, transparent 3px);
+  background-size: 46px 46px, 31px 31px, 67px 67px;
+  background-position: 6px 0, 18px 10px, 40px 5px;
+}
+.merch_details::after {
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.5) 0 1.2px, transparent 2px),
+    radial-gradient(circle, rgba(255,255,255,0.7) 0 1.9px, transparent 2.7px);
+  background-size: 53px 53px, 38px 38px;
+  background-position: 28px 20px, 4px 30px;
+}
+.merch_details:hover,
+.merch_details:focus-visible {
+  background: rgba(144, 137, 211, 0.28);
 }
 .merch_details:hover::before,
 .merch_details:focus-visible::before {
-  transform: translateY(0);
+  opacity: 1;
+  animation: asmaan-fizz-rise 1.6s linear infinite;
+}
+.merch_details:hover::after,
+.merch_details:focus-visible::after {
+  opacity: 1;
+  animation: asmaan-fizz-rise 2.3s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .merch_details::before { transition: none; }
+  .merch_details:hover::before,
+  .merch_details:hover::after,
+  .merch_details:focus-visible::before,
+  .merch_details:focus-visible::after { animation: none; }
+}
+@keyframes asmaan-fizz-rise {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
 }
 
 .merch_details:hover {
-  background: transparent;
-  color: #050508;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 767px) {
