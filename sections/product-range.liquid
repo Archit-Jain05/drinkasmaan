@@ -88,8 +88,8 @@
                 {%- comment -%} One count for all flavours: starting count + shop metafield asmaan.cans_sold, which the "Cans sold" Flow workflow raises on every order. {%- endcomment -%}
                 {%- assign cans_sold = shop.metafields.asmaan.cans_sold.value | default: 0 | plus: section.settings.sold_start -%}
                 <div class="range-sold">
-                  <span class="range-sold_num" data-sold-count="{{ cans_sold }}">{{ cans_sold }}</span>
-                  <span class="range-sold_label">Cans sold<span>across all three flavours</span></span>
+                  <span class="range-sold_num" data-sold-count="{{ cans_sold }}" data-section="{{ section.id }}">{{ cans_sold }}</span>
+                  <span class="range-sold_label">Cans<br>sold</span>
                 </div>
               {%- endif -%}
               <ul class="drink_flavours">{{ range_html }}</ul>
@@ -181,34 +181,83 @@
     color: #fff; font-variant-numeric: tabular-nums; padding-right: 0.06em;
   }
   .range-sold_label {
-    display: flex; flex-direction: column; gap: 0.35rem; text-align: left;
-    font-weight: 800; font-size: clamp(1rem, 1.6vw, 1.35rem); line-height: 1; text-transform: uppercase; color: #fff;
+    font-weight: 800; font-size: clamp(1rem, 1.6vw, 1.35rem); line-height: 1; text-align: left;
+    text-transform: uppercase; color: #fff;
   }
-  .range-sold_label span {
-    font-family: var(--font-serif, serif); font-weight: 400; font-size: clamp(0.85rem, 1.1vw, 1rem);
-    text-transform: none; letter-spacing: 0; color: rgba(255, 255, 255, 0.6);
-  }
+
+  /* Slot reels: one strip of digits per place, clipped to one digit high (sideways overflow kept for the italic). */
+  .range-sold_num.is-reels { display: inline-flex; line-height: 1; }
+  .range-sold_reel { display: block; height: 1em; clip-path: inset(0 -0.4em); }
+  .range-sold_strip { display: block; will-change: transform; }
+  .range-sold_strip > span { display: block; height: 1em; line-height: 1em; text-align: center; }
+  .range-sold_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 </style>
 <script>
-  // Count the figure up from zero the first time it scrolls into view.
+  // Slot machine: each digit is a reel. They spin and land left to right when the figure comes into
+  // view, spin again every few seconds while it stays on screen, and the real count is re-read every
+  // 30 s (Section Rendering API), so a new order rolls the reels to the new number.
   (function () {
     var el = document.querySelector('[data-sold-count]');
-    if (!el || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var target = +el.getAttribute('data-sold-count');
-    if (!target) return;
-    el.style.minWidth = el.offsetWidth + 'px';
-    el.textContent = '0';
-    var io = new IntersectionObserver(function (entries) {
-      if (!entries[0].isIntersecting) return;
-      io.disconnect();
-      var t0 = performance.now(), dur = 1400;
-      (function step(t) {
-        var k = Math.min(1, (t - t0) / dur);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
-        if (k < 1) requestAnimationFrame(step);
-      })(t0);
-    });
-    io.observe(el);
+    if (!el || !el.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var LAPS = 3, value = +el.getAttribute('data-sold-count'), reels = [], visible = false, timer;
+
+    function build(n) {
+      var digits = String(n).split(''), html = '';
+      digits.forEach(function () {
+        var cells = '';
+        for (var i = 0; i < (LAPS + 1) * 10; i++) cells += '<span>' + (i % 10) + '</span>';
+        html += '<span class="range-sold_reel" aria-hidden="true"><span class="range-sold_strip">' + cells + '</span></span>';
+      });
+      el.innerHTML = html + '<span class="range-sold_sr">' + n + '</span>';
+      el.classList.add('is-reels');
+      reels = [].map.call(el.querySelectorAll('.range-sold_strip'), function (s, i) {
+        s.style.transform = 'translateY(-' + digits[i] + 'em)';
+        return { strip: s, at: +digits[i], anim: null };
+      });
+    }
+
+    function spin(n) {
+      var digits = String(n).split('');
+      if (digits.length !== reels.length) build(n);
+      el.querySelector('.range-sold_sr').textContent = n;
+      reels.forEach(function (r, i) {
+        var to = +digits[i];
+        if (r.anim) r.anim.cancel();
+        r.anim = r.strip.animate([
+          { transform: 'translateY(-' + r.at + 'em)', filter: 'blur(0)' },
+          { filter: 'blur(1.5px)', offset: 0.15 },
+          { filter: 'blur(1.5px)', offset: 0.75 },
+          { transform: 'translateY(-' + (LAPS * 10 + to) + 'em)', filter: 'blur(0)' }
+        ], { duration: 1100 + i * 450, easing: 'cubic-bezier(0.2, 0.75, 0.3, 1.06)' });
+        r.anim.onfinish = function () { r.strip.style.transform = 'translateY(-' + to + 'em)'; r.anim = null; };
+        r.at = to;
+      });
+    }
+
+    function loop() {
+      clearInterval(timer);
+      if (visible) timer = setInterval(function () { if (!document.hidden) spin(value); }, 6000);
+    }
+
+    build(value);
+    new IntersectionObserver(function (entries) {
+      var was = visible;
+      visible = entries[0].isIntersecting;
+      if (visible && !was) spin(value);
+      loop();
+    }).observe(el);
+
+    var section = el.getAttribute('data-section');
+    setInterval(function () {
+      if (document.hidden) return;
+      fetch(location.pathname + '?section_id=' + section)
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var m = html.match(/data-sold-count="(\d+)"/);
+          if (m && +m[1] !== value) { value = +m[1]; spin(value); loop(); }
+        })
+        .catch(function () {});
+    }, 30000);
   })();
 </script>
 
