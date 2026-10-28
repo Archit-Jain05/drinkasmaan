@@ -2,8 +2,9 @@
 
 ## What is where
 
-- **Counter** (product pages, under the price): `starting count + shop metafield asmaan.cans_sold`.
-  Starting count is the section setting *Cans sold counter > Starting count* (70).
+- **Counter** (product pages, big slot-machine figure under the range intro): **cans left** =
+  `batch size (1000) - already sold (70) - shop metafield asmaan.cans_sold`, so it starts at 930.
+  Both numbers are Product range section settings (*Cans left: batch size / already sold*).
   The metafield exists (definition "Cans sold", number, storefront readable) and is 0.
 - **Mixed Pack**: product `mixed-pack`, one variant "6 Cans (2 of each)", SKU `ASM-MIX-6`, Rs. 599,
   published to Online Store. Inventory is **not tracked** (it never sells out and does not draw down
@@ -13,7 +14,7 @@
 - The old "First-batch cans left" counter (Apps Script sign-ups) is switched off in
   templates/product.json, not deleted.
 
-## The Flow workflow that makes the number go up (one-time, in admin)
+## The Flow workflow that makes the number go down (one-time, in admin)
 
 Shopify admin > Apps > **Flow** > Create workflow:
 

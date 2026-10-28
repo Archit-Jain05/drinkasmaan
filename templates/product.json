@@ -61,6 +61,7 @@
         "range_heading": "The range",
         "range_intro": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it.",
         "show_sold_counter": true,
+        "batch_total": 1000,
         "sold_start": 70,
         "spacing": 130
       }

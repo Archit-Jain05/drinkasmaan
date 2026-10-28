@@ -85,11 +85,12 @@
                 <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">{{ section.settings.range_intro | escape }}</p>
               {%- endif -%}
               {%- if section.settings.show_sold_counter -%}
-                {%- comment -%} One count for all flavours: starting count + shop metafield asmaan.cans_sold, which the "Cans sold" Flow workflow raises on every order. {%- endcomment -%}
+                {%- comment -%} One count for all flavours, counting down: batch size minus the cans sold before the counter minus shop metafield asmaan.cans_sold, which the "Cans sold" Flow workflow raises on every order. {%- endcomment -%}
                 {%- assign cans_sold = shop.metafields.asmaan.cans_sold.value | default: 0 | plus: section.settings.sold_start -%}
+                {%- assign cans_left = section.settings.batch_total | minus: cans_sold | at_least: 0 -%}
                 <div class="range-sold">
-                  <span class="range-sold_num" data-sold-count="{{ cans_sold }}" data-section="{{ section.id }}">{{ cans_sold }}</span>
-                  <span class="range-sold_label">Cans<br>sold</span>
+                  <span class="range-sold_num" data-sold-count="{{ cans_left }}" data-section="{{ section.id }}">{{ cans_left }}</span>
+                  <span class="range-sold_label">Cans<br>left</span>
                 </div>
               {%- endif -%}
               <ul class="drink_flavours">{{ range_html }}</ul>
@@ -168,7 +169,7 @@
   /* First thing on the page: clear the fixed header. */
   .product-range { padding-top: max(7rem, calc(var(--asmaan-header-h, 0px) + 2rem)); }
 
-  /* Cans sold: one big figure under the intro, above the flavour cards. */
+  /* Cans left: one big figure under the intro, above the flavour cards. */
   .range-sold {
     display: flex; align-items: center; justify-content: center; gap: clamp(1rem, 2.5vw, 1.75rem);
     width: fit-content; margin: calc(var(--pad-l) * var(--drink-air)) auto 0;
@@ -195,7 +196,7 @@
 <script>
   // Slot machine: each digit is a reel. They spin and land left to right when the figure comes into
   // view, spin again every few seconds while it stays on screen, and the real count is re-read every
-  // 30 s (Section Rendering API), so a new order rolls the reels to the new number.
+  // 30 s (Section Rendering API), so a new order rolls the reels down to the new number.
   (function () {
     var el = document.querySelector('[data-sold-count]');
     if (!el || !el.animate || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -313,15 +314,21 @@
     {
       "type": "checkbox",
       "id": "show_sold_counter",
-      "label": "Show the cans sold counter",
+      "label": "Show the cans left counter",
       "default": true
     },
     {
       "type": "number",
+      "id": "batch_total",
+      "label": "Cans left: batch size",
+      "default": 1000
+    },
+    {
+      "type": "number",
       "id": "sold_start",
-      "label": "Cans sold: starting count",
+      "label": "Cans left: already sold",
       "default": 70,
-      "info": "Orders add to this through the shop metafield asmaan.cans_sold (set by the Cans sold Flow workflow)."
+      "info": "The counter shows batch size minus this, minus the cans in every order (shop metafield asmaan.cans_sold, set by the Cans sold Flow workflow)."
     },
     {
       "type": "text",
