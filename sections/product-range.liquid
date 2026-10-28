@@ -84,6 +84,14 @@
               {%- if section.settings.range_intro != blank -%}
                 <p class="max-width-medium text-size-medium mt-[var(--pad-m)] text-white/65">{{ section.settings.range_intro | escape }}</p>
               {%- endif -%}
+              {%- if section.settings.show_sold_counter -%}
+                {%- comment -%} One count for all flavours: starting count + shop metafield asmaan.cans_sold, which the "Cans sold" Flow workflow raises on every order. {%- endcomment -%}
+                {%- assign cans_sold = shop.metafields.asmaan.cans_sold.value | default: 0 | plus: section.settings.sold_start -%}
+                <div class="range-sold">
+                  <span class="range-sold_num" data-sold-count="{{ cans_sold }}">{{ cans_sold }}</span>
+                  <span class="range-sold_label">Cans sold<span>across all three flavours</span></span>
+                </div>
+              {%- endif -%}
               <ul class="drink_flavours">{{ range_html }}</ul>
             </div>
           </div>
@@ -159,7 +167,50 @@
 <style>
   /* First thing on the page: clear the fixed header. */
   .product-range { padding-top: max(7rem, calc(var(--asmaan-header-h, 0px) + 2rem)); }
+
+  /* Cans sold: one big figure under the intro, above the flavour cards. */
+  .range-sold {
+    display: flex; align-items: center; justify-content: center; gap: clamp(1rem, 2.5vw, 1.75rem);
+    width: fit-content; margin: calc(var(--pad-l) * var(--drink-air)) auto 0;
+    padding: clamp(1rem, 2vw, 1.4rem) clamp(1.5rem, 3.5vw, 2.5rem);
+    border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 1.25rem; background: rgba(255, 255, 255, 0.04);
+  }
+  .range-sold_num {
+    font-family: var(--font-heading); font-weight: 900; font-style: italic;
+    font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.8; letter-spacing: var(--asmaan-track-display);
+    color: #fff; font-variant-numeric: tabular-nums; padding-right: 0.06em;
+  }
+  .range-sold_label {
+    display: flex; flex-direction: column; gap: 0.35rem; text-align: left;
+    font-weight: 800; font-size: clamp(1rem, 1.6vw, 1.35rem); line-height: 1; text-transform: uppercase; color: #fff;
+  }
+  .range-sold_label span {
+    font-family: var(--font-serif, serif); font-weight: 400; font-size: clamp(0.85rem, 1.1vw, 1rem);
+    text-transform: none; letter-spacing: 0; color: rgba(255, 255, 255, 0.6);
+  }
 </style>
+<script>
+  // Count the figure up from zero the first time it scrolls into view.
+  (function () {
+    var el = document.querySelector('[data-sold-count]');
+    if (!el || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var target = +el.getAttribute('data-sold-count');
+    if (!target) return;
+    el.style.minWidth = el.offsetWidth + 'px';
+    el.textContent = '0';
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      io.disconnect();
+      var t0 = performance.now(), dur = 1400;
+      (function step(t) {
+        var k = Math.min(1, (t - t0) / dur);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
+    });
+    io.observe(el);
+  })();
+</script>
 
 {% schema %}
 {
@@ -209,6 +260,19 @@
       "id": "range_intro",
       "label": "Intro",
       "default": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sold_counter",
+      "label": "Show the cans sold counter",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "sold_start",
+      "label": "Cans sold: starting count",
+      "default": 70,
+      "info": "Orders add to this through the shop metafield asmaan.cans_sold (set by the Cans sold Flow workflow)."
     },
     {
       "type": "text",

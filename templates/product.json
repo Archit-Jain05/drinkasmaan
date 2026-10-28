@@ -60,6 +60,8 @@
         "show_range": true,
         "range_heading": "The range",
         "range_intro": "Three colourways, one formula. Take the pack in one, or say so at checkout and we will split it.",
+        "show_sold_counter": true,
+        "sold_start": 70,
         "spacing": 130
       }
     },
@@ -92,8 +94,6 @@
         "show_flavours": true,
         "flavour_handles": "kala-jamun, alphonso-mango, wild-magenta",
         "mixed_pack": "mixed-pack",
-        "show_sold_counter": true,
-        "sold_start": 70,
         "show_batch_counter": false,
         "counter_label": "First-batch cans left",
         "counter_total": 1000,
