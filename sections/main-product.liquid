@@ -250,6 +250,14 @@
   .batch-count_num b { color: #fff; font-size: 15px; font-weight: 700; }
   .batch-count_bar { flex-basis: 100%; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, 0.12); overflow: hidden; }
   .batch-count_bar i { display: block; height: 100%; width: 100%; background: var(--taste-secondary, #9089d3); transition: width 1.2s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+  .sold-count {
+    display: flex; align-items: baseline; gap: 0.6rem; margin: -0.5rem 0 1.5rem;
+    font-family: var(--font-mono, monospace); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.6);
+  }
+  .sold-count b { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+  .pack-opt-note { display: block; margin-top: 2px; font-family: var(--font-mono, monospace); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
 </style>
 
 <section class="product-page-wrap" id="buy">
@@ -383,6 +391,12 @@
         {%- endif -%}
       </div>
 
+      {%- if section.settings.show_sold_counter -%}
+        {%- comment -%} Starting count + shop metafield asmaan.cans_sold, which the "Cans sold" Flow workflow raises on every order. {%- endcomment -%}
+        {%- assign cans_sold = shop.metafields.asmaan.cans_sold.value | default: 0 | plus: section.settings.sold_start -%}
+        <p class="sold-count"><b>{{ cans_sold }}</b> cans sold</p>
+      {%- endif -%}
+
       {%- if section.settings.show_batch_counter and section.settings.counter_sheet_url != blank -%}
         <div class="batch-count" data-batch-count data-sheet-url="{{ section.settings.counter_sheet_url }}" data-total="{{ section.settings.counter_total }}" data-per="{{ section.settings.counter_per }}" hidden>
           <span>{{ section.settings.counter_label | escape }}</span>
@@ -429,6 +443,32 @@
                 </span>
               </button>
             {%- endfor -%}
+            {%- assign mixed = section.settings.mixed_pack -%}
+            {%- if mixed != blank and mixed.id != product.id -%}
+              {%- assign mixed_variant = mixed.selected_or_first_available_variant -%}
+              <button
+                type="button"
+                class="pack-opt-btn{% unless mixed_variant.available %} is-soldout{% endunless %}"
+                data-variant-id="{{ mixed_variant.id }}"
+                data-price="{{ mixed_variant.price | money }}"
+                data-compare-price="{% if mixed_variant.compare_at_price > mixed_variant.price %}{{ mixed_variant.compare_at_price | money }}{% endif %}"
+                data-available="{{ mixed_variant.available }}"
+                data-title="{{ mixed.title | escape }}"
+                data-other-product
+              >
+                <span style="display: block; font-size: 12px; font-weight: bold; color: #fff; text-transform: uppercase;">
+                  Mixed 6
+                </span>
+                <span class="pack-opt-note">2 of each</span>
+                <span style="display: block; font-size: 12px; color: {% if mixed_variant.available %}#34d399{% else %}rgba(255,255,255,0.4){% endif %}; font-family: var(--font-mono, monospace); margin-top: 2px;">
+                  {% if mixed_variant.available %}
+                    {{ mixed_variant.price | money }}
+                  {% else %}
+                    Sold Out
+                  {% endif %}
+                </span>
+              </button>
+            {%- endif -%}
           </div>
         </div>
       {%- endif -%}
@@ -746,8 +786,8 @@
           stillImg.src = mediaUrl;
         }
 
-        // Update URL query string without reloading page
-        if (variantId && window.history && window.history.replaceState) {
+        // Update URL query string without reloading page (the mixed pack is another product, so it stays out of the URL)
+        if (variantId && !btn.hasAttribute('data-other-product') && window.history && window.history.replaceState) {
           var url = new URL(window.location.href);
           url.searchParams.set('variant', variantId);
           window.history.replaceState({}, '', url.toString());
@@ -996,6 +1036,33 @@
       "label": "Flavour product handles, in order",
       "default": "kala-jamun, alphonso-mango, wild-magenta",
       "info": "Comma separated. Each opens that product's page."
+    },
+    {
+      "type": "header",
+      "content": "Mixed pack"
+    },
+    {
+      "type": "product",
+      "id": "mixed_pack",
+      "label": "Mixed pack product",
+      "info": "Shown as an extra \"Mixed 6, 2 of each\" option next to this flavour's packs. Leave empty to hide it."
+    },
+    {
+      "type": "header",
+      "content": "Cans sold counter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sold_counter",
+      "label": "Show the cans sold counter under the price",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "sold_start",
+      "label": "Starting count",
+      "default": 70,
+      "info": "Orders add to this through the shop metafield asmaan.cans_sold (set by the Cans sold Flow workflow)."
     },
     {
       "type": "header",
