@@ -366,7 +366,7 @@
 
     <!-- 3. Benefits Section -->
     <div id="benefits">
-      <section id="benefit-caffeine" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}" class="section is-pinned" style="height: 170svh;">
+      <section id="benefit-caffeine" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green tea extract' }}" class="section is-pinned" style="height: 170svh;">
         <div class="benefits_container">
           <div class="pin_fade">
             <div class="padding-global">
@@ -386,9 +386,9 @@
                         </div>
                       </div>
                       <div class="mb-[var(--pad-xs)]">
-                        <h2 class="heading-style-h2">{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}</h2>
+                        <h2 class="heading-style-h2">{{ section.settings.b2_title | default: 'Caffeine from green tea extract' }}</h2>
                       </div>
-                      <p class="text-white/75">{{ section.settings.b2_body | default: '100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.' }}</p>
+                      <p class="text-white/75">{{ section.settings.b2_body | default: '100 mg drawn from green tea extract rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.' }}</p>
                       <div class="max-width-xsmall mt-[var(--pad-s)] font-mono text-size-tiny uppercase tracking-[0.22em] text-white/40">{{ section.settings.b2_note | default: '100 mg per can' }}</div>
                     </div>
                   </div>
@@ -501,7 +501,7 @@
       <!-- Benefits Floating Side-Nav -->
       <div class="benefits_nav" style="opacity: 0; visibility: hidden;" aria-hidden="true">
         <div class="contents">
-          <a href="#benefit-caffeine" class="benefits_icon-wrapper is-active" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green coffee' }}" aria-current="true">
+          <a href="#benefit-caffeine" class="benefits_icon-wrapper is-active" aria-label="{{ section.settings.b2_title | default: 'Caffeine from green tea extract' }}" aria-current="true">
             <div class="benefits_icon">
               {% render 'asmaan-icons', name: 'benefit', icon: 'bean', class: 'h-full w-full' %}
             </div>
@@ -641,13 +641,13 @@
       "type": "text",
       "id": "b2_title",
       "label": "Title",
-      "default": "Caffeine from green coffee"
+      "default": "Caffeine from green tea extract"
     },
     {
       "type": "textarea",
       "id": "b2_body",
       "label": "Description",
-      "default": "100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version."
+      "default": "100 mg drawn from green tea extract rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version."
     },
     {
       "type": "text",

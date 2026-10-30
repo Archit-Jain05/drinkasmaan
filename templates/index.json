@@ -75,8 +75,8 @@
         "b1_body": "Nothing is sweetened up to cover a flat recipe — the fruit is doing the work, so there is nothing to hide behind.",
         "b1_note": "0 g sugar per 250 ml",
         "b2_struck": "Synthetic caffeine",
-        "b2_title": "Caffeine from green coffee",
-        "b2_body": "100 mg drawn from green coffee beans rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.",
+        "b2_title": "Caffeine from green tea extract",
+        "b2_body": "100 mg drawn from green tea extract rather than synthesised. It arrives slower, holds longer, and lands nothing like a shot of the lab-made version.",
         "b2_note": "100 mg per can",
         "b3_struck": "The crash",
         "b3_title": "L-theanine and ashwagandha",
@@ -169,7 +169,7 @@
           "type": "faq_item",
           "settings": {
             "question": "What makes Asmaan different from other energy drinks?",
-            "answer": "Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, it is paired with L-theanine and KSM-66 ashwagandha so the lift climbs instead of spiking, and there is no sugar to crash off. Everything in it is printed on the can — no proprietary blend."
+            "answer": "Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green tea extract instead of a synthesised powder, it is paired with L-theanine and KSM-66 ashwagandha so the lift climbs instead of spiking, and there is no sugar to crash off. Everything in it is printed on the can — no proprietary blend."
           }
         },
         "faq_2": {
@@ -183,7 +183,7 @@
           "type": "faq_item",
           "settings": {
             "question": "What is actually in it?",
-            "answer": "300 mg KSM-66 ashwagandha root extract, 200 mg L-theanine from green tea, 100 mg natural caffeine from green coffee, and 1.4 mg B6 with 2.5 µg B12 for normal energy metabolism."
+            "answer": "300 mg KSM-66 ashwagandha root extract, 200 mg L-theanine from green tea, 100 mg natural caffeine from green tea extract, and 1.4 mg B6 with 2.5 µg B12 for normal energy metabolism."
           }
         },
         "faq_4": {

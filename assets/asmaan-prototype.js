@@ -77,7 +77,7 @@
   var ICON_V = [0.18, 0.358, 0.526, 0.692];
   // The label's icons, top to bottom: 0 research backed ingredients, 1 ashwagandha helps manage stress
   // response, 2 sugar free, 3 L-theanine helps with focus. One entry per benefit section, top to bottom. The sections are in
-  // the same order (caffeine from green coffee, L-theanine and ashwagandha, zero sugar, colour from food) so the
+  // the same order (caffeine from green tea extract, L-theanine and ashwagandha, zero sugar, colour from food) so the
   // spotlight only ever travels down the column.
   var BENEFIT_ICON = [0, 1, 2, 3];
   var ICON_FACE = -(ICON_COLUMN_U - 0.5) * Math.PI * 2;

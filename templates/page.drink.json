@@ -41,7 +41,7 @@
           "type": "badge",
           "settings": {
             "title": "Natural caffeine",
-            "text": "100 mg from green coffee."
+            "text": "100 mg from green tea extract."
           }
         },
         "badge_3": {
@@ -83,9 +83,9 @@
           "settings": {
             "dose": "100 mg",
             "name": "Natural caffeine",
-            "description": "Drawn from green coffee beans rather than synthesised. Slower in, longer held, about a third less than the category.",
+            "description": "Drawn from green tea extract rather than synthesised. Slower in, longer held, about a third less than the category.",
             "show_in_pack_scene": true,
-            "pack_scene_text": "Clean lift from green coffee beans. Slower release, longer sustained attention, zero crash."
+            "pack_scene_text": "Clean lift from green tea extract. Slower release, longer sustained attention, zero crash."
           }
         },
         "active_5": {
@@ -160,7 +160,7 @@
           "type": "faq",
           "settings": {
             "question": "What makes Asmaan different from other energy drinks?",
-            "answer": "<p>Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green coffee instead of a synthesised powder, paired with L-theanine and KSM-66 ashwagandha.</p>"
+            "answer": "<p>Asmaan was built as a working drink rather than a stimulant. The caffeine comes from green tea extract instead of a synthesised powder, paired with L-theanine and KSM-66 ashwagandha.</p>"
           }
         },
         "faq_2": {

@@ -75,7 +75,7 @@ Each section uses **sticky scroll pinning** (`height: 170svh; position: sticky`)
 |---------|-------------|
 | **Hero Range** | 3D can carousel with flavour title, pagination, and scroll prompt |
 | **Tasting Notes** | Per-flavour blurb with corner bracket UI, cross-fading titles |
-| **Benefits ×4** | Zero Sugar · Green Coffee Caffeine · L-theanine & Ashwagandha · Natural Colour — each a full-height sticky panel with animated icon side-nav |
+| **Benefits ×4** | Zero Sugar · Green Tea Extract Caffeine · L-theanine & Ashwagandha · Natural Colour — each a full-height sticky panel with animated icon side-nav |
 | **Manifesto** | Full-bleed "NOTHING HIDDEN" typographic splash with blob field |
 | **The Range** | Product card grid with Buy Now flows |
 | **Wear** | Apparel / merch section |
@@ -233,7 +233,7 @@ git push origin main
 
 **Asmaan** is India's first zero-sugar, zero-jitter botanical focus drink. Each 250 ml can contains:
 
-- **100 mg** caffeine from raw green coffee beans (not synthetic)
+- **100 mg** caffeine from green tea extract (not synthetic)
 - **200 mg** L-theanine (Suntheanine) for smooth, jitter-free focus
 - **300 mg** KSM-66 ashwagandha to dampen stress and mental fatigue
 - **0 g sugar** — no crash, no artificial colour
